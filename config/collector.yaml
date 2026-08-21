@@ -1,0 +1,62 @@
+# Collector configuration — endpoint cadences, client behaviour, storage paths.
+# See fpl-trends-superprompt.md §2 for the spec this implements.
+
+api:
+  base_url: "https://fantasy.premierleague.com/api"
+  # Undocumented API — identify ourselves courteously (§2.2).
+  user_agent: "fpl-trends-collector/0.1 (contact: puriskyb@gmail.com)"
+  rate_limit_per_second: 1
+  max_retries: 5
+  backoff_base_seconds: 1.0
+  backoff_jitter_seconds: 0.5
+  # Never poll in the final N minutes before a deadline (§2.2).
+  deadline_blackout_minutes: 10
+
+# Set to your FPL team ID to enable the entry/* endpoints. Left unset by default.
+own_entry_id: null
+
+endpoints:
+  bootstrap_static:
+    path: "/bootstrap-static/"
+    cadence: hourly
+  fixtures:
+    path: "/fixtures/"
+    cadence: daily
+    matchday_cadence: hourly
+  element_summary:
+    path: "/element-summary/{element_id}/"
+    cadence: daily
+  event_live:
+    path: "/event/{event_id}/live/"
+    cadence: live
+    live_interval_minutes: 5
+  entry:
+    path: "/entry/{entry_id}/"
+    cadence: daily
+  entry_history:
+    path: "/entry/{entry_id}/history/"
+    cadence: post_deadline
+  entry_transfers:
+    path: "/entry/{entry_id}/transfers/"
+    cadence: post_deadline
+  entry_picks:
+    path: "/entry/{entry_id}/event/{event_id}/picks/"
+    cadence: post_deadline
+
+storage:
+  raw_dir: "data/raw"
+  distilled_dir: "data/distilled"
+  reference_dir: "data/reference"
+  raw_retention_days: 14
+
+# Columns tracked in the distilled, delta-only time series (§2.3).
+distilled_columns:
+  - now_cost
+  - selected_by_percent
+  - transfers_in_event
+  - transfers_out_event
+  - form
+  - status
+  - chance_of_playing_next_round
+  - news_added
+  - ep_next

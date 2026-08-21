@@ -1,0 +1,13 @@
+# Environments
+.venv/
+__pycache__/
+*.pyc
+
+# Raw tier: insurance, not archive — 14-day rolling retention, never committed.
+data/raw/*.json.gz
+
+# Historical backfill: large, sourced from external repos, not committed (Phase 1).
+data/historical/*
+
+# Local overrides
+.env

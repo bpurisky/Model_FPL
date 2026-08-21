@@ -1,0 +1,32 @@
+[project]
+name = "fpl-trends"
+version = "0.1.0"
+description = "Fantasy Premier League analytics platform"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28",
+    "pydantic>=2.9",
+    "duckdb>=1.1",
+    "pyarrow>=18.0",
+    "polars>=1.12",
+    # Not in the superprompt's locked stack (§1.1); required to parse the
+    # mandated config/*.yaml files (§1.2). See collector/config.py.
+    "pyyaml>=6.0",
+    # Not in the locked stack either; duckdb's Python DBAPI needs it to
+    # convert TIMESTAMPTZ columns back to Python datetimes via fetchall()
+    # (the .pl()/Arrow path doesn't need it, so this only bites ad-hoc
+    # `duckdb.sql(...).fetchall()` querying of the distilled Parquet).
+    "pytz>=2024.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

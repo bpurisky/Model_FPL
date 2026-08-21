@@ -1,0 +1,56 @@
+name: collect
+
+on:
+  schedule:
+    # Hourly: bootstrap-static + fixtures + element-summary (§2.1, §2.5).
+    # Actions cron is best-effort and can drift 5-15 min under load — fine
+    # for hourly trend data, not for live-match polling (separate job below).
+    - cron: "5 * * * *"
+    # Every 5 minutes: event-live, gated internally on whether any fixture
+    # is currently in its live window (collector/__main__.py cmd_live).
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+# Prevent overlapping runs from racing on the same Parquet shards / commits.
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  hourly:
+    if: github.event.schedule == '5 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run python -m collector bootstrap
+      - run: uv run python -m collector element-summary
+      - run: uv run python -m collector prune
+      - name: Upload raw payloads (insurance, not permanent — 14-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-${{ github.run_id }}
+          path: data/raw/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Commit snapshot
+        run: |
+          git config user.name "fpl-trends-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/reference data/distilled
+          git diff --staged --quiet || git commit -m "collector: hourly snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
+
+  live:
+    if: github.event.schedule == '*/5 * * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run python -m collector live
