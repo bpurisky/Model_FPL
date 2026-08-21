@@ -17,6 +17,10 @@ dependencies = [
     # (the .pl()/Arrow path doesn't need it, so this only bites ad-hoc
     # `duckdb.sql(...).fetchall()` querying of the distilled Parquet).
     "pytz>=2024.1",
+    # Not in the locked stack either; Windows has no built-in IANA time zone
+    # database, so stdlib zoneinfo (which polars uses for tz-aware datetime
+    # columns) needs this backport to resolve "UTC" at all on this platform.
+    "tzdata>=2024.1",
 ]
 
 [dependency-groups]

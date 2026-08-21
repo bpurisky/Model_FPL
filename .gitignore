@@ -6,8 +6,14 @@ __pycache__/
 # Raw tier: insurance, not archive — 14-day rolling retention, never committed.
 data/raw/*.json.gz
 
-# Historical backfill: large, sourced from external repos, not committed (Phase 1).
-data/historical/*
+# Historical backfill: raw downloads are re-fetchable cache, not committed.
+# The normalized data/historical/{season}.parquet *is* committed — §8 requires
+# every reported metric to regenerate from a single command against committed
+# data, and the backtest harness must not depend on vaastav's repo staying up.
+data/historical/raw/
+
+# Generated report — regenerate with `uv run python -m backtest run`.
+backtest/report.json
 
 # Local overrides
 .env

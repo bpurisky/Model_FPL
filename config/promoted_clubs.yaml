@@ -1,0 +1,30 @@
+# Clubs promoted from the Championship into each season (§3.2).
+#
+# These players/teams have no prior top-flight data. baselines.py falls back
+# to a pooled promoted-club prior for them (never a null, never last season's
+# relegated club by name) — see backtest/baselines.py:promoted_club_prior.
+#
+# Team names match the `team` field used in data/historical/{season}.parquet
+# (vaastav/Fantasy-Premier-League's naming, e.g. "Nott'm Forest", "Spurs").
+
+"2023-24":
+  - "Burnley"
+  - "Sheffield Utd"
+  - "Luton"
+
+"2024-25":
+  - "Leicester"
+  - "Ipswich"
+  - "Southampton"
+
+"2025-26":
+  - "Leeds"
+  - "Burnley"
+  - "Sunderland"
+
+# 2026/27 promoted clubs (§0.2, §3.2) — no historical top-flight data exists
+# for these yet; this entry documents the prior for when Phase 2/3 need it.
+"2026-27":
+  - "Coventry"
+  - "Hull"
+  - "Ipswich"

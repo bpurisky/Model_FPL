@@ -1,0 +1,74 @@
+"""§3.5 metrics and §3.6 / §8 reproducibility of the report output."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import polars as pl
+import pytest
+
+from backtest.report import build_report, calibration_curve, mae, rmse, spearman, write_report
+
+
+def _results_df() -> pl.DataFrame:
+    # predictions perfectly track actuals for FWDs, are noise for MIDs —
+    # gives a clean, known-answer case for MAE/RMSE/Spearman.
+    rows = [
+        {"season": "2024-25", "gw": 2, "baseline": "trailing_mean", "element_id": 1, "position": "FWD", "prediction": 5.0, "total_points": 5.0, "minutes": 90, "goals_scored": 1, "assists": 0, "clean_sheets": 0, "bonus": 1, "bps": 20},
+        {"season": "2024-25", "gw": 2, "baseline": "trailing_mean", "element_id": 2, "position": "FWD", "prediction": 2.0, "total_points": 2.0, "minutes": 90, "goals_scored": 0, "assists": 0, "clean_sheets": 0, "bonus": 0, "bps": 10},
+        {"season": "2024-25", "gw": 2, "baseline": "trailing_mean", "element_id": 3, "position": "FWD", "prediction": 8.0, "total_points": 8.0, "minutes": 90, "goals_scored": 2, "assists": 0, "clean_sheets": 0, "bonus": 3, "bps": 40},
+        {"season": "2024-25", "gw": 2, "baseline": "trailing_mean", "element_id": 4, "position": "MID", "prediction": 5.0, "total_points": 1.0, "minutes": 90, "goals_scored": 0, "assists": 0, "clean_sheets": 0, "bonus": 0, "bps": 5},
+    ]
+    for row in rows:
+        row["error"] = row["prediction"] - row["total_points"]
+    return pl.DataFrame(rows)
+
+
+def test_mae_and_rmse_known_values():
+    df = _results_df()
+    fwd_only = df.filter(pl.col("position") == "FWD")
+    assert mae(fwd_only) == pytest.approx(0.0)  # FWD predictions are exact
+    assert rmse(fwd_only) == pytest.approx(0.0)
+
+    mid_only = df.filter(pl.col("position") == "MID")
+    assert mae(mid_only) == pytest.approx(4.0)  # |5 - 1|
+
+
+def test_spearman_perfect_rank_agreement():
+    df = _results_df().filter(pl.col("position") == "FWD")
+    assert spearman(df["prediction"], df["total_points"]) == pytest.approx(1.0)
+
+
+def test_mae_empty_dataframe_is_nan_not_an_error():
+    empty = _results_df().filter(pl.col("season") == "nonexistent")
+    assert mae(empty) != mae(empty)  # NaN != NaN
+
+
+def test_calibration_curve_shape():
+    df = _results_df()
+    curve = calibration_curve(df, n_bins=2)
+    assert len(curve) <= 2
+    for bucket in curve:
+        assert "mean_prediction" in bucket and "mean_actual" in bucket and "n" in bucket
+
+
+def test_build_report_has_per_season_and_pooled_sections():
+    df = _results_df()
+    report = build_report(df)
+    assert report["n_rows"] == df.height
+    assert "trailing_mean" in report["pooled_baseline"]
+    assert "('2024-25', 'trailing_mean')" in report["per_season_baseline"]
+
+
+def test_report_round_trips_through_json(tmp_path: Path):
+    report = build_report(_results_df())
+    out_path = tmp_path / "report.json"
+    write_report(report, out_path)
+    reloaded = json.loads(out_path.read_text(encoding="utf-8"))
+    assert reloaded["n_rows"] == report["n_rows"]
+
+
+def test_build_report_empty_input_does_not_raise():
+    report = build_report(pl.DataFrame())
+    assert report["n_rows"] == 0
