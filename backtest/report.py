@@ -123,3 +123,58 @@ def build_report(results: pl.DataFrame) -> dict:
 def write_report(report: dict, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
+
+
+def component_decomposition_mae(predicted_components: list[dict[str, float]], actual_components: list[dict[str, float]]) -> dict[str, float]:
+    """A true per-component error decomposition (§3.5, §4.4): MAE between
+    the event model's predicted point contribution and the realized one,
+    per event-type bucket (minutes, goals, assists, clean_sheets,
+    goals_conceded, saves, defensive_contribution, bonus, cards_and_other).
+
+    Supersedes error_by_event_occurrence (Phase 1's proxy, kept for the
+    scalar-only baselines that have no per-component prediction to compare
+    against) now that analytics/projections.py exists to predict one.
+    Requires `predicted_components`/`actual_components` from
+    analytics.evaluate.run_component_decomposition — same length, same
+    bucket keys, row-aligned.
+    """
+    if not predicted_components:
+        return {}
+    keys = predicted_components[0].keys()
+    result = {}
+    for key in keys:
+        diffs = [abs(p[key] - a[key]) for p, a in zip(predicted_components, actual_components)]
+        result[key] = sum(diffs) / len(diffs)
+    return result
+
+
+def minutes_head_metrics(predicted_minutes_dist: list[dict[str, float]], actual_minutes: list[int], short_threshold: int = 60) -> dict[str, float]:
+    """§4.4: "Minutes head evaluated separately with its own metrics" —
+    §4.2 calls minutes prediction the highest-leverage, most-failure-prone
+    component, so it gets its own scorecard rather than being folded into
+    the pooled MAE. Brier score per bucket (lower is better-calibrated;
+    0 is perfect, 1 is maximally wrong) plus MAE of a derived expected-
+    minutes scalar against actual minutes played.
+    """
+    n = len(actual_minutes)
+    if n == 0:
+        return {"brier_blank": float("nan"), "brier_short": float("nan"), "brier_full": float("nan"), "mae_expected_minutes": float("nan"), "n": 0}
+
+    brier_blank = sum((row["p_blank"] - (1.0 if m == 0 else 0.0)) ** 2 for row, m in zip(predicted_minutes_dist, actual_minutes)) / n
+    brier_short = sum((row["p_short"] - (1.0 if 0 < m < short_threshold else 0.0)) ** 2 for row, m in zip(predicted_minutes_dist, actual_minutes)) / n
+    brier_full = sum((row["p_full"] - (1.0 if m >= short_threshold else 0.0)) ** 2 for row, m in zip(predicted_minutes_dist, actual_minutes)) / n
+
+    # A short appearance's expected minutes uses the FPL short-band
+    # midpoint as a rough per-bucket reference point, not a claim about the
+    # true conditional mean — this scalar exists only to give minutes MAE a
+    # comparable "how far off in actual minutes" figure, not to drive scoring.
+    expected_minutes = [row["p_short"] * (short_threshold / 2) + row["p_full"] * 90 for row in predicted_minutes_dist]
+    mae_expected_minutes = sum(abs(e - m) for e, m in zip(expected_minutes, actual_minutes)) / n
+
+    return {
+        "brier_blank": brier_blank,
+        "brier_short": brier_short,
+        "brier_full": brier_full,
+        "mae_expected_minutes": mae_expected_minutes,
+        "n": n,
+    }

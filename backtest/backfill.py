@@ -15,6 +15,9 @@ Known hazards this module exists to handle (§3.2):
     reclassifications would silently leak into historical training data.
   - Promoted clubs (config/promoted_clubs.yaml) get flagged so baselines.py
     can apply a principled prior instead of nulling out their early gameweeks.
+  - Defensive contribution columns (§4.1) don't exist at all before 2025-26
+    — not null, absent — so they're read conditionally on the season's own
+    CSV header and filled with null (not 0) where the rule didn't yet exist.
 """
 
 from __future__ import annotations
@@ -77,6 +80,11 @@ _MERGED_GW_COLUMNS = [
     "transfers_out",
 ]
 
+# Defensive contribution (§4.1) — introduced 2025-26, absent from earlier
+# seasons' merged_gw.csv entirely (not null: the column doesn't exist).
+# Read only when present so older seasons don't error on a missing column.
+_DEFENSIVE_CONTRIBUTION_COLUMNS = ["clearances_blocks_interceptions", "defensive_contribution", "recoveries", "tackles"]
+
 
 def load_promoted_clubs(season: str, config_path: Path = PROMOTED_CLUBS_CONFIG) -> list[str]:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
@@ -109,11 +117,35 @@ def download_season_files(season: str, client: httpx.Client | None = None) -> di
             client.close()
 
 
+def load_teams(teams_path: Path) -> pl.DataFrame:
+    """id -> name for a season. Public because analytics/fdr.py needs the
+    same mapping to resolve Elo (keyed by FPL's numeric team id) onto
+    data/historical/*.parquet's `team` column (a readable name)."""
+    return pl.read_csv(teams_path, columns=["id", "name"])
+
+
 def _load_teams(teams_path: Path) -> pl.DataFrame:
     """id -> name, so `opponent_team` can be a readable name like `team` is,
     instead of a per-season-arbitrary numeric id that means nothing without
     this file alongside it."""
-    return pl.read_csv(teams_path, columns=["id", "name"]).rename({"id": "opponent_team", "name": "opponent_team_name"})
+    return load_teams(teams_path).rename({"id": "opponent_team", "name": "opponent_team_name"})
+
+
+def load_match_results(fixtures_path: Path) -> pl.DataFrame:
+    """One row per finished fixture: fixture (id), event, team_h, team_a,
+    scores, kickoff_time. Feeds analytics/fdr.py's Elo computation — kept
+    separate from `_load_fixture_difficulty` because Elo needs the actual
+    results, not just FPL's own published difficulty rating. `fixture`
+    matches `_load_fixture_difficulty`'s `fixture` column, so the two can
+    be joined for a direct ours-vs-FPL comparison.
+    """
+    df = pl.read_csv(
+        fixtures_path,
+        columns=["id", "event", "team_h", "team_a", "team_h_score", "team_a_score", "kickoff_time", "finished"],
+        schema_overrides={"id": pl.Int64, "event": pl.Int64, "team_h": pl.Int64, "team_a": pl.Int64},
+        try_parse_dates=False,
+    ).rename({"id": "fixture"}).with_columns(pl.col("kickoff_time").str.to_datetime(time_zone="UTC", strict=False))
+    return df.filter(pl.col("finished") & pl.col("team_h_score").is_not_null() & pl.col("team_a_score").is_not_null())
 
 
 def _load_fixture_difficulty(fixtures_path: Path) -> pl.DataFrame:
@@ -133,12 +165,28 @@ def _load_fixture_difficulty(fixtures_path: Path) -> pl.DataFrame:
 
 
 def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: Path = PROMOTED_CLUBS_CONFIG) -> pl.DataFrame:
+    available_columns = set(pl.scan_csv(files["merged_gw"]).collect_schema().names())
+    dc_columns_present = [c for c in _DEFENSIVE_CONTRIBUTION_COLUMNS if c in available_columns]
+
     raw = pl.read_csv(
         files["merged_gw"],
-        columns=_MERGED_GW_COLUMNS,
+        columns=_MERGED_GW_COLUMNS + dc_columns_present,
         schema_overrides={"opponent_team": pl.Int64, "fixture": pl.Int64, "round": pl.Int64},
         try_parse_dates=False,
     )
+    for missing in set(_DEFENSIVE_CONTRIBUTION_COLUMNS) - set(dc_columns_present):
+        # The rule didn't exist yet this season — null, not 0: "not applicable"
+        # is a different fact than "zero defensive actions recorded."
+        raw = raw.with_columns(pl.lit(None, dtype=pl.Int64).alias(missing))
+
+    # position == "AM": FPL's short-lived "Assistant Manager" pick, added
+    # mid-season at 2024-25 round 23. These rows are real Premier League
+    # head coaches (Thomas Frank, Fabian Hurzeler, ...), scored by team
+    # results (win/draw/loss, team clean sheets and goals) via the `mng_*`
+    # columns this module already excludes — a genuinely different game
+    # mechanic, not a player, and not one this schema (or the rest of the
+    # spec, which never mentions it) is trying to represent. ~1.2% of rows.
+    raw = raw.filter(pl.col("position") != "AM")
 
     fixture_difficulty = _load_fixture_difficulty(files["fixtures"])
     teams = _load_teams(files["teams"])
@@ -174,6 +222,7 @@ def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: P
         "minutes", "starts", "total_points", "goals_scored", "assists", "clean_sheets", "goals_conceded",
         "own_goals", "penalties_saved", "penalties_missed", "yellow_cards", "red_cards", "saves", "bonus", "bps",
         "influence", "creativity", "threat", "ict_index",
+        *_DEFENSIVE_CONTRIBUTION_COLUMNS,
     ]
     carried_first = ["season", "name", "team", "position", "is_promoted_club", "value", "selected", "transfers_in", "transfers_out"]
 
@@ -221,6 +270,10 @@ def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: P
             "saves",
             "bonus",
             "bps",
+            "clearances_blocks_interceptions",
+            "defensive_contribution",
+            "recoveries",
+            "tackles",
             "influence",
             "creativity",
             "threat",

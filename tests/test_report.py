@@ -8,7 +8,16 @@ from pathlib import Path
 import polars as pl
 import pytest
 
-from backtest.report import build_report, calibration_curve, mae, rmse, spearman, write_report
+from backtest.report import (
+    build_report,
+    calibration_curve,
+    component_decomposition_mae,
+    mae,
+    minutes_head_metrics,
+    rmse,
+    spearman,
+    write_report,
+)
 
 
 def _results_df() -> pl.DataFrame:
@@ -72,3 +81,37 @@ def test_report_round_trips_through_json(tmp_path: Path):
 def test_build_report_empty_input_does_not_raise():
     report = build_report(pl.DataFrame())
     assert report["n_rows"] == 0
+
+
+def test_component_decomposition_mae_per_bucket():
+    predicted = [{"goals": 0.4, "minutes": 1.8}, {"goals": 0.1, "minutes": 1.5}]
+    actual = [{"goals": 4.0, "minutes": 2.0}, {"goals": 0.0, "minutes": 0.0}]
+    result = component_decomposition_mae(predicted, actual)
+    assert result["goals"] == pytest.approx((3.6 + 0.1) / 2)
+    assert result["minutes"] == pytest.approx((0.2 + 1.5) / 2)
+
+
+def test_component_decomposition_mae_empty_input():
+    assert component_decomposition_mae([], []) == {}
+
+
+def test_minutes_head_metrics_perfect_predictions_score_zero_brier():
+    predicted = [{"p_blank": 1.0, "p_short": 0.0, "p_full": 0.0}, {"p_blank": 0.0, "p_short": 0.0, "p_full": 1.0}]
+    actual_minutes = [0, 90]
+    result = minutes_head_metrics(predicted, actual_minutes)
+    assert result["brier_blank"] == pytest.approx(0.0)
+    assert result["brier_full"] == pytest.approx(0.0)
+    assert result["n"] == 2
+
+
+def test_minutes_head_metrics_uniformly_wrong_predictions_score_maximal_brier():
+    predicted = [{"p_blank": 0.0, "p_short": 0.0, "p_full": 1.0}]  # confidently predicts 90 min
+    actual_minutes = [0]  # player didn't play at all
+    result = minutes_head_metrics(predicted, actual_minutes)
+    assert result["brier_full"] == pytest.approx(1.0)  # maximally wrong
+    assert result["brier_blank"] == pytest.approx(1.0)
+
+
+def test_minutes_head_metrics_empty_input():
+    result = minutes_head_metrics([], [])
+    assert result["n"] == 0

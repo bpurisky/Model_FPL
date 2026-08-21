@@ -183,6 +183,29 @@ def test_double_gameweek_rows_are_summed_not_rejected(season_files, promoted_clu
     assert other["n_fixtures"] == 1
 
 
+def test_assistant_manager_pick_rows_are_excluded(season_files, promoted_clubs_config):
+    """FPL's short-lived 'Assistant Manager' pick (real head coaches, scored
+    by team results, not individual events) shows up as position=="AM" in
+    the real 2024-25 data starting round 23 — not a player, not part of
+    this schema."""
+    with season_files["merged_gw"].open("a", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=MERGED_GW_COLUMNS)
+        writer.writerow(
+            {
+                "element": 999, "name": "Some Head Coach", "team": "Team A", "position": "AM", "opponent_team": 2,
+                "was_home": True, "kickoff_time": "2025-01-01T12:00:00Z", "round": 1, "fixture": 101,
+                "minutes": 0, "starts": 0, "total_points": 8, "goals_scored": 0, "assists": 0, "clean_sheets": 0,
+                "goals_conceded": 0, "own_goals": 0, "penalties_saved": 0, "penalties_missed": 0, "yellow_cards": 0,
+                "red_cards": 0, "saves": 0, "bonus": 0, "bps": 0, "influence": "0.0", "creativity": "0.0",
+                "threat": "0.0", "ict_index": "0.0", "value": 50, "selected": 1000, "transfers_in": 0,
+                "transfers_out": 0, "xP": 0,
+            }
+        )
+    df = normalize_season("2024-25", season_files, promoted_clubs_config)
+    assert df.filter(pl.col("element_id") == 999).height == 0
+    assert "AM" not in df["position"].unique().to_list()
+
+
 @pytest.mark.skipif(not (NORMALIZED_DIR / "2024-25.parquet").exists(), reason="requires the committed backfilled data")
 def test_real_2024_25_data_resolves_a_known_mid_season_transfer_per_gameweek():
     """Armando Broja (element 156, 2024-25): Chelsea gw1-2, then Everton for

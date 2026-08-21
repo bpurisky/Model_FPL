@@ -1,0 +1,70 @@
+# FPL scoring rules, 2025/26 season — used to replay historical gameweeks
+# and validate analytics/scoring.py (§4.1 acceptance: >=95% exact match).
+# Defensive contribution introduced this season (§4.1: "unchanged from
+# 2025/26" going into 2026/27 — this file is that baseline). BPS
+# clearances/blocks/interceptions rate and GK save tiers are still the
+# pre-2026-27 values.
+
+minutes:
+  none: 0
+  short: 1
+  full: 2
+  short_threshold: 60
+
+goals_scored:
+  GK: 6
+  DEF: 6
+  MID: 5
+  FWD: 4
+
+assists:
+  GK: 3
+  DEF: 3
+  MID: 3
+  FWD: 3
+
+clean_sheets:
+  GK: 4
+  DEF: 4
+  MID: 1
+  FWD: 0
+
+goals_conceded:
+  per: 2
+  points: -1
+  positions: [GK, DEF]
+
+saves:
+  mode: per_n
+  n: 3
+  points: 1
+
+own_goals: -2
+penalties_missed: -2
+penalties_saved: 5
+
+yellow_cards: -1
+red_cards: -3
+
+# Verified against real 2025-26 data (§4.1): DEF threshold 10, MID/FWD 12,
+# +2 points, using FPL's own precomputed `defensive_contribution` count
+# (clearances + blocks + interceptions + tackles for DEF; that plus
+# recoveries for MID/FWD) rather than re-deriving it from raw components.
+defensive_contribution:
+  points: 2
+  thresholds:
+    GK: null
+    DEF: 10
+    MID: 12
+    FWD: 12
+
+bps_clearances_blocks_interceptions_per: 2  # pre-2026-27 rate
+bps_tackled_penalty: -1                      # pre-2026-27: tackled costs BPS
+
+chips:
+  sets: 1
+  per_half: false
+  expiry_deadline: null
+
+free_transfers:
+  max_banked: 5

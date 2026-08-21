@@ -12,8 +12,9 @@ data/raw/*.json.gz
 # data, and the backtest harness must not depend on vaastav's repo staying up.
 data/historical/raw/
 
-# Generated report — regenerate with `uv run python -m backtest run`.
+# Generated reports — regenerate with the commands in README.md.
 backtest/report.json
+analytics/report.json
 
 # Local overrides
 .env

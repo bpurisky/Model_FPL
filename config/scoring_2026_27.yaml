@@ -1,0 +1,77 @@
+# FPL scoring rules, 2026/27 season (§4.1). Unlike scoring_2025_26.yaml,
+# this file has NO completed gameweek to validate against yet — the 2026/27
+# season's first deadline is the day this repo's collector went live. The
+# rule deltas below are as described in the spec text; the two GK save
+# bonus values are not officially published anywhere and are provisional
+# defaults — change them here, not in code, once real values are known.
+# Everything else is unit-tested directly against the documented rule text
+# (analytics/scoring.py's tests), not against real results.
+
+minutes:
+  none: 0
+  short: 1
+  full: 2
+  short_threshold: 60
+
+goals_scored:
+  GK: 6
+  DEF: 6
+  MID: 5
+  FWD: 4
+
+assists:
+  GK: 3
+  DEF: 3
+  MID: 3
+  FWD: 3
+
+clean_sheets:
+  GK: 4
+  DEF: 4
+  MID: 1
+  FWD: 0
+
+goals_conceded:
+  per: 2
+  points: -1
+  positions: [GK, DEF]
+
+# Changed for 2026/27: flat rate per save (not per-3), plus stacking bonuses
+# for save difficulty. `close_range_saves` / `big_chance_saves` are counts
+# of the *subset* of `saves` that qualify for each bonus tier — a save can
+# count toward both. PROVISIONAL VALUES — see module docstring above.
+saves:
+  mode: flat_plus_bonus
+  flat_rate: 1
+  close_range_bonus: 1
+  big_chance_bonus: 1
+
+own_goals: -2
+penalties_missed: -2
+penalties_saved: 5
+
+yellow_cards: -1
+red_cards: -3
+
+# Unchanged from 2025/26 (§4.1).
+defensive_contribution:
+  points: 2
+  thresholds:
+    GK: null
+    DEF: 10
+    MID: 12
+    FWD: 12
+
+# Changed for 2026/27: one point per THREE (was two).
+bps_clearances_blocks_interceptions_per: 3
+# Changed for 2026/27: the -1 for being tackled is removed entirely.
+bps_tackled_penalty: 0
+
+chips:
+  sets: 2
+  per_half: true
+  # First set expires at the gameweek 19 deadline; does not carry over.
+  expiry_deadline: "2027-01-02T13:30:00Z"
+
+free_transfers:
+  max_banked: 5

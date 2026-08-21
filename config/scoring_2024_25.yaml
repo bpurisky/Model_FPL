@@ -1,0 +1,61 @@
+# FPL scoring rules, 2024/25 season — used to replay historical gameweeks
+# and validate analytics/scoring.py (§4.1 acceptance: >=95% exact match).
+# No defensive contribution rule yet (introduced 2025-26); no GK save-bonus
+# tiers (introduced 2026-27); BPS clearances/blocks/interceptions rate is
+# the pre-2026-27 value (one point per two, not three).
+
+minutes:
+  none: 0          # 0 minutes
+  short: 1          # 1-59 minutes
+  full: 2           # 60+ minutes
+  short_threshold: 60
+
+goals_scored:
+  GK: 6
+  DEF: 6
+  MID: 5
+  FWD: 4
+
+assists:
+  GK: 3
+  DEF: 3
+  MID: 3
+  FWD: 3
+
+clean_sheets:
+  # Only awarded to players on 60+ minutes (enforced in scoring.py, not here).
+  GK: 4
+  DEF: 4
+  MID: 1
+  FWD: 0
+
+goals_conceded:
+  # -1 per 2 conceded, only for players on 60+ minutes. GK and DEF only.
+  per: 2
+  points: -1
+  positions: [GK, DEF]
+
+saves:
+  mode: per_n
+  n: 3
+  points: 1
+
+own_goals: -2
+penalties_missed: -2
+penalties_saved: 5
+
+yellow_cards: -1
+red_cards: -3
+
+defensive_contribution: null  # rule doesn't exist this season
+
+bps_clearances_blocks_interceptions_per: 2  # pre-2026-27 rate
+bps_tackled_penalty: -1                      # pre-2026-27: tackled costs BPS
+
+chips:
+  sets: 1
+  per_half: false
+  expiry_deadline: null
+
+free_transfers:
+  max_banked: 5  # the up-to-5 banking rule took effect this season
