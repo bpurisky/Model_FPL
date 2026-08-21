@@ -309,7 +309,9 @@ def parse_entry_history(raw: dict[str, Any], logger: logging.Logger) -> EntryHis
 
 class EntryTransfer(_LenientModel):
     element_in: int
+    element_in_cost: int
     element_out: int
+    element_out_cost: int
     entry: int
     event: int
     time: datetime
@@ -330,11 +332,24 @@ class EntryPick(_LenientModel):
     multiplier: int
     is_captain: bool
     is_vice_captain: bool
+    # §5.3 says the picks endpoint provides selling_price directly. Verified
+    # live against a real 2026/27 gw1 payload (2026-08-21) and it does not:
+    # neither field is present pre-match, at least this season. Optional,
+    # not required, so a real payload doesn't hard-fail schema validation
+    # (§0.5) — squad/reconstruct.py's caller falls back to current now_cost
+    # when these are absent, which is exact (not approximate) for a squad
+    # that has never been transferred, since no price move is possible with
+    # zero elapsed time. Revisit if a later gameweek's payload does include
+    # them — that would mean the fields activate post-deadline-lock rather
+    # than being gone for good.
+    purchase_price: int | None = None
+    selling_price: int | None = None
 
 
 class EntryPicksPayload(_LenientModel):
     picks: list[EntryPick]
     entry_history: dict[str, Any]
+    active_chip: str | None = None
 
 
 def parse_entry_picks(raw: dict[str, Any], logger: logging.Logger) -> EntryPicksPayload:

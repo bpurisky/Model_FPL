@@ -9,7 +9,13 @@ from datetime import datetime, timedelta, timezone
 import polars as pl
 import pytest
 
-from analytics.fdr import build_fdr_comparison, compute_elo_ratings, custom_difficulty, team_gameweek_difficulty
+from analytics.fdr import (
+    build_fdr_comparison,
+    compute_elo_ratings,
+    custom_difficulty,
+    team_gameweek_difficulty,
+    upcoming_team_difficulty,
+)
 from backtest.backfill import NORMALIZED_DIR, RAW_CACHE_DIR, load_match_results
 
 BASE_DAY = datetime(2025, 8, 1, tzinfo=timezone.utc)
@@ -116,6 +122,54 @@ def test_team_gameweek_difficulty_aggregates_double_gameweeks_like_backfill_does
     result = team_gameweek_difficulty(matches, teams)
     row = result.filter((pl.col("team") == "Team A") & (pl.col("gw") == 2))
     assert row.height == 1  # one row per (team, gw), even across two fixtures
+
+
+def test_upcoming_team_difficulty_needs_no_scores():
+    """§5's live use case: a fixture list for gameweeks that haven't been
+    played has no team_h_score/team_a_score to give compute_elo_ratings —
+    this must work from final Elo alone."""
+    teams = pl.DataFrame([{"id": 10, "name": "Team A"}, {"id": 20, "name": "Team B"}])
+    fixtures = pl.DataFrame([{"event": 5, "team_h": 10, "team_a": 20}])
+    elo_final = {10: 1700.0, 20: 1300.0}  # Team A much stronger
+
+    result = upcoming_team_difficulty(elo_final, fixtures, teams)
+
+    team_a_row = result.filter(pl.col("team") == "Team A").row(0, named=True)
+    team_b_row = result.filter(pl.col("team") == "Team B").row(0, named=True)
+    assert team_a_row["gw"] == 5
+    assert team_a_row["custom_difficulty"] < team_b_row["custom_difficulty"]  # A's fixture is easier than B's
+
+
+def test_upcoming_team_difficulty_aggregates_double_gameweeks():
+    teams = pl.DataFrame([{"id": 10, "name": "Team A"}, {"id": 20, "name": "Team B"}, {"id": 30, "name": "Team C"}])
+    fixtures = pl.DataFrame(
+        [
+            {"event": 2, "team_h": 10, "team_a": 20},
+            {"event": 2, "team_h": 30, "team_a": 10},
+        ]
+    )
+    result = upcoming_team_difficulty({10: 1500.0, 20: 1500.0, 30: 1500.0}, fixtures, teams)
+    row = result.filter((pl.col("team") == "Team A") & (pl.col("gw") == 2))
+    assert row.height == 1  # one row per (team, gw), even across two fixtures
+
+
+def test_upcoming_team_difficulty_defaults_unseen_teams_to_initial_elo():
+    """A newly promoted club (§3.2) with no completed-match Elo yet must not
+    crash or silently drop from the result — it gets the same difficulty as
+    an established team that happens to carry exactly the initial rating."""
+    teams = pl.DataFrame([{"id": 10, "name": "Team A"}, {"id": 20, "name": "Established Average"}, {"id": 40, "name": "Promoted FC"}])
+    fixtures = pl.DataFrame([{"event": 1, "team_h": 10, "team_a": 20}, {"event": 1, "team_h": 10, "team_a": 40}])
+    result = upcoming_team_difficulty({10: 1700.0, 20: 1500.0}, fixtures, teams)  # 40 absent -> defaults to 1500
+
+    established = result.filter(pl.col("team") == "Established Average").row(0, named=True)["custom_difficulty"]
+    promoted = result.filter(pl.col("team") == "Promoted FC").row(0, named=True)["custom_difficulty"]
+    assert promoted == pytest.approx(established)
+
+
+def test_upcoming_team_difficulty_empty_fixtures_returns_empty_frame():
+    teams = pl.DataFrame([{"id": 10, "name": "Team A"}])
+    result = upcoming_team_difficulty({}, pl.DataFrame(schema={"event": pl.Int64, "team_h": pl.Int64, "team_a": pl.Int64}), teams)
+    assert result.height == 0
 
 
 @pytest.mark.skipif(

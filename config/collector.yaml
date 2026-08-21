@@ -13,7 +13,7 @@ api:
   deadline_blackout_minutes: 10
 
 # Set to your FPL team ID to enable the entry/* endpoints. Left unset by default.
-own_entry_id: null
+own_entry_id: 2986528
 
 endpoints:
   bootstrap_static:

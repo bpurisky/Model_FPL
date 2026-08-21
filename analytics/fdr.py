@@ -149,6 +149,50 @@ def team_gameweek_difficulty(matches: pl.DataFrame, teams: pl.DataFrame, **elo_k
     )
 
 
+def upcoming_team_difficulty(elo_final: dict[int, float], fixtures: pl.DataFrame, teams: pl.DataFrame, **kwargs) -> pl.DataFrame:
+    """§4.3/§5's live counterpart to `team_gameweek_difficulty`: that
+    function derives difficulty from `EloRatings.per_fixture`, which only
+    has an entry for a fixture already present in `compute_elo_ratings`'s
+    input — i.e. one with a final score, so Elo can update on it. A squad
+    recommendation needs difficulty for fixtures that haven't been played
+    yet, where the pairing (team_h/team_a/event) is known well in advance
+    but there is no score to process.
+
+    Takes `elo_final` (an `EloRatings.final` dict — each team's rating as of
+    the most recent *completed* match, from any Elo history the caller has
+    already built) and applies it directly to `fixtures` (event, team_h,
+    team_a — no scores required) via the same `custom_difficulty` used
+    everywhere else, so an upcoming fixture is scored on the strength each
+    side actually carries into it, not a stale end-of-last-season snapshot.
+    A team with no Elo yet (e.g. newly promoted, §3.2) gets `initial_elo`.
+    """
+    initial = kwargs.get("initial_elo", INITIAL_ELO)
+    home_advantage = kwargs.get("home_advantage", HOME_ADVANTAGE)
+    if fixtures.height == 0:
+        return pl.DataFrame(schema={"team": pl.Utf8, "gw": pl.Int64, "custom_difficulty": pl.Float64})
+
+    def _rows(home_col: str, away_col: str, is_home: bool) -> pl.DataFrame:
+        return fixtures.select(
+            pl.col(home_col).alias("team_id"),
+            pl.col("event").alias("gw"),
+            pl.struct([home_col, away_col])
+            .map_elements(
+                lambda s: custom_difficulty(
+                    elo_final.get(s[home_col], initial), elo_final.get(s[away_col], initial), is_home, home_advantage
+                ),
+                return_dtype=pl.Float64,
+            )
+            .alias("difficulty"),
+        )
+
+    per_team_gw = pl.concat([_rows("team_h", "team_a", True), _rows("team_a", "team_h", False)]).group_by(
+        ["team_id", "gw"]
+    ).agg(pl.col("difficulty").mean().alias("custom_difficulty"))
+    return per_team_gw.join(teams, left_on="team_id", right_on="id", how="left").select(
+        pl.col("name").alias("team"), "gw", "custom_difficulty"
+    )
+
+
 def build_fdr_comparison(elo_ratings: EloRatings, fpl_difficulty: pl.DataFrame) -> pl.DataFrame:
     """Side by side: our Elo-based difficulty and FPL's own published
     rating for the same fixtures (§4.3 — "report both ... so the

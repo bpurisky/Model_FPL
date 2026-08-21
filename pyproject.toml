@@ -21,6 +21,10 @@ dependencies = [
     # database, so stdlib zoneinfo (which polars uses for tz-aware datetime
     # columns) needs this backport to resolve "UTC" at all on this platform.
     "tzdata>=2024.1",
+    # Locked stack (§1.1) offers pulp or ortools for the squad optimizer;
+    # pulp chosen — pure-Python wheel with a bundled CBC binary, no extra
+    # system/compiler dependency to install on top of uv sync.
+    "pulp>=2.8",
 ]
 
 [dependency-groups]
