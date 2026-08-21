@@ -411,3 +411,38 @@ The FPL API sends no CORS headers, so arbitrary team-ID lookups need the Cloudfl
 ## 9. Starting instruction
 
 Begin with Phase 0 only. Build the collector, verify it against its acceptance criteria, and get it running on schedule before anything else. Then stop and report before starting Phase 1.
+
+---
+
+## Progress log
+
+Everything below this line is not part of the original spec — it's a running record of what's actually been built, kept up to date so a fresh session (no memory of prior conversations) can pick up correctly. See [README.md](README.md) for the user-facing description of what exists; this log is oriented toward *resuming work*, not describing the finished product.
+
+### Status as of 2026-08-21: Phases 0-2 complete and committed
+
+- **Phase 0 (collector)** — done, tested, deployed. `.github/workflows/collect.yml` runs hourly on GitHub Actions (repo: `bpurisky/Model_FPL`, pushed and confirmed running — workflow permissions were set to "Read and write" so it can commit snapshots back to `main`).
+- **Phase 1 (backtest harness)** — done. Three seasons (2023-24, 2024-25, 2025-26) backfilled from `vaastav/Fantasy-Premier-League` into committed `data/historical/*.parquet`. Leakage framework, three baselines, walk-forward harness, report metrics all in place and tested.
+- **Phase 2 (event model + scoring)** — done. Config-driven scoring (`analytics/scoring.py` + `config/scoring_{2024_25,2025_26,2026_27}.yaml`), self-contained Elo-based FDR (`analytics/fdr.py`), and a statistical event model (`analytics/features.py`, `analytics/projections.py`) that beats all three Phase 1 baselines on pooled MAE and beats fixture-adjusted trailing mean on within-position Spearman rank correlation — both §4.4 acceptance criteria, verified against real data via `uv run python -m analytics evaluate`.
+- **Phase 3 (squad integration) — not started.** This is the next phase per §9's phase-gate discipline (Phase 0 → stop and report → Phase 1 → ... — the pattern has continued by user request each time, not automatically).
+
+103 tests pass (`uv run pytest`). Local commits are ahead of `origin/main` by design in past sessions — check `git status`/`git log` before assuming what's pushed; the user has sometimes pushed manually rather than asking the assistant to.
+
+### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
+
+1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
+2. **Raw tier (`data/raw/`) is gitignored**, not committed — insurance, not archive, per §2.3's own framing. Uploaded as a 14-day GitHub Actions artifact instead (see `collect.yml`).
+3. **`data/historical/{season}.parquet` IS committed** (unlike raw data) — §8's reproducibility requirement means the backtest can't depend on `vaastav/Fantasy-Premier-League` staying up. Only `data/historical/raw/` (the downloaded CSV cache) is gitignored.
+4. **Double gameweeks are summed, not rejected**: real data (2023-24 gw7 alone: 983 rows) has rearranged fixtures giving one player two matches in one FPL round. `backtest/backfill.py` sums per-fixture stats the way FPL sums a manager's week.
+5. **`position == "AM"` rows excluded**: FPL's short-lived "Assistant Manager" pick (2024-25 round 23+) — real head coaches scored by team results, not players. Found during scoring validation, not anticipated.
+6. **Elo is self-built** (`analytics/fdr.py`), not sourced from `olbauday/FPL-Core-Insights` as §3.1 suggests — that repo only has genuine per-gameweek dynamic Elo for one of the three backtest seasons (2025-26); the other two are single static end-of-season snapshots that would leak final-season strength into early-gameweek predictions. Point-in-time discipline (§0.3) won out over the literal sourcing suggestion.
+7. **Full BPS reproduction is out of scope** — FPL has never published the complete formula/weights. `bonus` is used as a direct input to `compute_points` (already correct in the historical data) rather than re-derived from a BPS-ranking-within-fixture simulation. `analytics/scoring.py:compute_bps` is an illustrative, documented-as-approximate reconstruction that exists only to make the two BPS rule deltas §4.1 names (CBI divisor, tackled deduction) config-driven and testable.
+8. **2026/27 GK save-bonus point values are provisional** (`config/scoring_2026_27.yaml`) — the rule change is documented in §4.1 but no exact values are published anywhere, and there's no completed 2026/27 gameweek yet to validate against (the season's first deadline was gw1, 2026-08-21 — the same day Phase 0 went live). Change the config, not the code, once real values are known.
+9. **2023-24 reuses `config/scoring_2024_25.yaml`** — no scoring rule differs between the two seasons, and §1.2's file layout doesn't call for a separate 2023-24 file.
+10. **`GOALS_CONCEDED_SHRINKAGE = 0.7`** in `analytics/projections.py` — not arbitrary tuning. An ablation showed the goals-conceded penalty term, at full weight, pulled within-position Spearman below the baseline it needs to beat (concentrated in DEF) despite improving MAE; at zero weight the reverse. 0.6-0.85 is a wide, robust plateau clearing both bars; 0.7 is the middle of it. If Phase 3+ work touches `projections.py`, don't "clean up" this constant without rerunning `uv run python -m analytics evaluate` to confirm both bars still clear.
+
+### Before starting Phase 3
+
+- Re-read §5 in full (squad reconstruction, free transfer derivation, price rules, the ILP solver). It depends on live `/entry/*` data Phase 0's collector can fetch (`collector/entry.py`) but has not yet been exercised against a real team — `own_entry_id` in `config/collector.yaml` is still `null`. **Ask the user for their FPL team ID** (or confirm it's still intentionally unset) before assuming test data exists.
+- `pulp` or `ortools` (§1.1's locked solver options) are not yet a dependency — add one when building `squad/optimize.py`, with the same "justify at the import site" comment convention used for pyyaml/pytz/tzdata.
+- `squad/reconstruct.py`, `squad/transfers.py` need the `chips`/`free_transfers` metadata already sitting in `config/scoring_*.yaml` (§4.1 put it there specifically so Phase 3 wouldn't have to redefine it) — read it from there, don't hardcode chip windows again.
+- The walk-forward harness (`backtest/harness.py`) and event model (`analytics/projections.py`) are stable and tested; Phase 3's squad optimizer should consume `analytics/projections.py`'s output (per-gameweek point projections) rather than reimplementing prediction logic.
