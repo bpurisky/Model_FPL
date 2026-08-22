@@ -21,22 +21,20 @@ import polars as pl
 from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import BootstrapStatic, parse_bootstrap_static, parse_event_live
-from squad.live import POSITION_BY_ELEMENT_TYPE, PROMOTED_CLUB_SHORT_NAMES
+from squad.live import POSITION_BY_ELEMENT_TYPE, PROMOTED_CLUB_SHORT_NAMES, STAT_COLUMNS, TRAIN_SCHEMA
 
 logger = logging.getLogger("papertrade.actuals")
 
 ACTUALS_PATH = Path("data/current_season/2026-27.parquet")
 
-_STAT_COLUMNS = [
-    "minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded", "saves", "bonus",
-    "yellow_cards", "red_cards", "own_goals", "penalties_missed", "penalties_saved",
-    "defensive_contribution", "total_points",
-]
-
-_SCHEMA = {
-    "gw": pl.Int64, "element_id": pl.Int64, "position": pl.Utf8, "team": pl.Utf8, "is_promoted_club": pl.Boolean,
-    **{c: pl.Int64 for c in _STAT_COLUMNS},
-}
+# This store's schema *is* `squad/live.py:build_train_df`'s output schema:
+# that function concatenates rows read straight out of this file with a row
+# it reconstructs for the not-yet-recorded gameweek, so a drift between the
+# two would break the concat (or, worse, reorder a column silently). One
+# definition, over there rather than here, because papertrade already
+# depends on squad.live and the reverse import would be circular.
+_STAT_COLUMNS = STAT_COLUMNS
+_SCHEMA = TRAIN_SCHEMA
 
 
 def gw_is_finished(bootstrap: BootstrapStatic, gw: int) -> bool:

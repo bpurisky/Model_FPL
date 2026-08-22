@@ -29,8 +29,13 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run python -m papertrade freeze
+      # record-actuals BEFORE freeze, not after: squad/live.py:build_train_df
+      # now trains on data/current_season/, and drops the latest gameweek
+      # entirely if an earlier one is missing from that store. A gameweek
+      # confirmed shortly before the next deadline would otherwise sit
+      # unrecorded until the run *after* the freeze that needed it.
       - run: uv run python -m papertrade record-actuals
+      - run: uv run python -m papertrade freeze
       - name: Commit freezes and actuals
         run: |
           git config user.name "fpl-trends-papertrade"

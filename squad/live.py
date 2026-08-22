@@ -8,18 +8,24 @@ on disk when a recommendation is asked for right now. `squad/reconstruct.py`
 and `squad/transfers.py` only need parsed payload objects, which this module
 gets directly, without a round trip through disk.
 
-Known limitation, not fixed here: analytics/projections.py's trailing-window
-machinery (analytics/features.py) expects one row per (element_id, gw) so it
-can take the last N gameweeks. Only gameweek 1 has any 2026/27 result at
-all as of this module's first use, so `build_train_df` sources that single
-row from bootstrap-static's per-element season-cumulative stats — exact
-while only one gameweek exists, because cumulative-so-far *is* gw1's total.
-Once gw2 finishes, cumulative totals stop being safe to reuse this way
-(they'd blend multiple gameweeks into one row and defeat the trailing
-WINDOW itself) — switch to per-gameweek splits from
-`/element-summary/{id}/`'s `history`, batched via
-`collector.snapshot.run_element_summary_snapshot`'s existing rate-limited
-fetch pattern, before running this again after gw2.
+analytics/projections.py's trailing-window machinery (analytics/features.py)
+expects one row per (element_id, gw) so it can take the last N gameweeks.
+`build_train_df` sources those per-gameweek splits from
+`data/current_season/2026-27.parquet` — the append-only actuals store
+`papertrade/actuals.py` writes from `/event/{gw}/live/`, which reports each
+gameweek's own stats rather than a season-cumulative total.
+
+Bootstrap-static is still read, but only for the one gameweek that store
+cannot yet hold: the most recent one, which at freeze time is typically
+played but not yet confirmed (`record-actuals` gates on event-level
+`finished`, which lags full time by many hours). That gameweek is recovered
+exactly, as cumulative-so-far minus the sum of the gameweeks already
+recorded — no blending, and no 600-request `/element-summary/` batch.
+
+Until 2026-08-22 this module read bootstrap-static's cumulative totals as if
+they were gw1's, which was exact only while gw1 was the only gameweek in
+existence; the moment gw2 completed it would have silently blended two
+gameweeks into one row and defeated the trailing WINDOW itself.
 """
 
 from __future__ import annotations
@@ -66,13 +72,27 @@ PROMOTED_CLUB_SHORT_NAMES = {"COV", "HUL", "IPS"}
 _ELO_BOOTSTRAP_SEASON = "2025-26"
 
 # Per-gw stat columns needed by analytics/projections.py's trailing-rate
-# heads, read straight off bootstrap-static's raw element dicts (the
-# trimmed `Element` pydantic model in collector/schemas.py deliberately
-# only covers Phase 0's distilled-trending columns, §2.3, not these).
-_STAT_COLUMNS = [
+# heads, plus total_points for backtest/baselines.py. Read straight off
+# bootstrap-static's raw element dicts when a gameweek has to be
+# reconstructed (the trimmed `Element` pydantic model in
+# collector/schemas.py deliberately only covers Phase 0's
+# distilled-trending columns, §2.3, not these).
+STAT_COLUMNS = [
     "minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded", "saves", "bonus",
     "yellow_cards", "red_cards", "own_goals", "penalties_missed", "penalties_saved", "defensive_contribution",
+    "total_points",
 ]
+
+# The schema of both `build_train_df`'s output and the actuals store it
+# reads (papertrade/actuals.py imports this). One definition rather than
+# two because build_train_df concatenates rows straight off that file with
+# rows it reconstructs here, so the two must agree column-for-column;
+# it lives in this module only because papertrade already depends on
+# squad.live and the reverse would be circular.
+TRAIN_SCHEMA = {
+    "gw": pl.Int64, "element_id": pl.Int64, "position": pl.Utf8, "team": pl.Utf8, "is_promoted_club": pl.Boolean,
+    **{c: pl.Int64 for c in STAT_COLUMNS},
+}
 
 
 @dataclass(frozen=True)
@@ -92,6 +112,11 @@ class LiveData:
     data_gw: int
     teams_with_played_data: int
     teams_total: int
+    # Distinct gameweeks actually present in train_df — not `data_gw`,
+    # which is only the latest one. They differ whenever a `record-actuals`
+    # run was missed, and the gap is exactly what makes a projection
+    # thinner than it looks (see build_train_df's missing-gameweek path).
+    history_gws: int
 
 
 def _team_name(bootstrap: BootstrapStatic, team_id: int) -> str:
@@ -117,43 +142,144 @@ def build_target_roster(bootstrap: BootstrapStatic) -> pl.DataFrame:
     return pl.DataFrame(rows)
 
 
-def build_train_df(
-    bootstrap: BootstrapStatic, bootstrap_raw: dict[str, Any], fixtures_raw: list[dict[str, Any]], gw: int
+def _recorded_totals(history: pl.DataFrame, before_gw: int) -> dict[int, dict[str, int]]:
+    """element_id -> its stats summed over every recorded gameweek before
+    `before_gw`. This is exactly the quantity subtracted out of
+    bootstrap-static's season-cumulative totals to recover `before_gw`'s
+    own stats, so it must cover every earlier gameweek or not be used at
+    all — `build_train_df` checks that before calling this."""
+    prior = history.filter(pl.col("gw") < before_gw)
+    if prior.height == 0:
+        return {}
+    summed = prior.group_by("element_id").agg([pl.col(col).sum() for col in STAT_COLUMNS])
+    return {row["element_id"]: row for row in summed.to_dicts()}
+
+
+def _reconstruct_gw(
+    bootstrap: BootstrapStatic,
+    bootstrap_raw: dict[str, Any],
+    fixtures_raw: list[dict[str, Any]],
+    gw: int,
+    history: pl.DataFrame,
 ) -> pl.DataFrame:
-    """One row per element for `gw`, for teams whose gw-`gw` fixture has
-    actually been played (see module docstring's limitation: this whole
-    function is only correct while `gw` is the only gameweek that exists
-    at all this season). "Played" is `collector.schemas.fixture_is_played`,
-    not the raw `finished` flag — read that function's docstring before
-    changing this, because gating on `finished` alone is precisely the bug
-    that made every player fall through to the pooled prior below.
-    Excluding not-yet-played teams matters: a gameweek
-    in progress reports `minutes: 0` for anyone whose fixture hasn't
-    kicked off yet, indistinguishable in the raw data from a genuine blank
-    -- verified live (2026-08-21) against a real case, Haaland showing
-    `minutes: 0` purely because Man City's gw1 fixture hadn't started,
-    which would otherwise crater his minutes-distribution projection on
-    fabricated absence. Excluded players fall through to the pooled-prior
-    fallback (`analytics.features.fill_missing_with_pooled_prior`) instead
-    of a false zero.
-    """
+    """`gw`'s own per-player stats, derived as bootstrap-static's
+    season-cumulative totals minus everything already recorded for the
+    gameweeks before it. Only teams whose gw-`gw` fixture has actually been
+    played contribute a row — see `build_train_df` for why that gate
+    exists and why it is not the raw `finished` flag."""
     played_teams = {
         team
         for f in fixtures_raw
         if f["event"] == gw and fixture_is_played(f)
         for team in (f["team_h"], f["team_a"])
     }
-    target_roster = build_target_roster(bootstrap)
     team_by_element = {e.id: e.team for e in bootstrap.elements}
-    stats_by_id = {el["id"]: el for el in bootstrap_raw["elements"]}
-    rows = [
-        {**row, "gw": gw, **{col: stats_by_id[row["element_id"]][col] for col in _STAT_COLUMNS}}
-        for row in target_roster.to_dicts()
-        if team_by_element[row["element_id"]] in played_teams
-    ]
-    schema = {"element_id": pl.Int64, "position": pl.Utf8, "team": pl.Utf8, "is_promoted_club": pl.Boolean, "gw": pl.Int64}
-    schema.update({c: pl.Int64 for c in _STAT_COLUMNS})
-    return pl.DataFrame(rows, schema=schema)
+    cumulative_by_id = {el["id"]: el for el in bootstrap_raw["elements"]}
+    recorded = _recorded_totals(history, gw)
+
+    rows = []
+    clamped = 0
+    for row in build_target_roster(bootstrap).to_dicts():
+        element_id = row["element_id"]
+        if team_by_element[element_id] not in played_teams:
+            continue
+        cumulative = cumulative_by_id[element_id]
+        already = recorded.get(element_id, {})
+        stats = {}
+        for col in STAT_COLUMNS:
+            value = cumulative[col] - already.get(col, 0)
+            if value < 0:
+                # FPL revises finished gameweeks after the fact (the
+                # dubious goals panel, bonus recalculation), so a total
+                # already written to the append-only store can end up
+                # larger than the current cumulative one. A negative event
+                # count is not a thing; 0 is the only honest floor, and
+                # the revision is by construction small.
+                clamped += 1
+                value = 0
+            stats[col] = value
+        rows.append({"gw": gw, **row, **stats})
+
+    if clamped:
+        logger.warning(
+            "gw%d: clamped %d negative stat deltas to 0 — a gameweek already in the actuals "
+            "store appears to have been revised by FPL since it was recorded",
+            gw, clamped,
+        )
+    return pl.DataFrame(rows, schema=TRAIN_SCHEMA)
+
+
+def build_train_df(
+    bootstrap: BootstrapStatic,
+    bootstrap_raw: dict[str, Any],
+    fixtures_raw: list[dict[str, Any]],
+    gw: int,
+    actuals: pl.DataFrame | None = None,
+) -> pl.DataFrame:
+    """This season's history as one row per (element_id, gameweek), for
+    every gameweek up to and including `gw`.
+
+    Gameweeks the actuals store has already recorded are read from it
+    verbatim. `gw` itself usually has not been — `record-actuals` gates on
+    event-level `finished`, which lags full time by many hours, so at
+    freeze time the latest gameweek is typically played but unconfirmed.
+    That one gameweek is reconstructed from bootstrap-static's cumulative
+    totals minus the recorded ones (`_reconstruct_gw`), which is exact
+    whenever every earlier gameweek is in the store. When it is not — a
+    missed `record-actuals` run — the gameweek is dropped rather than
+    guessed at, because subtracting an incomplete history would silently
+    fold two gameweeks into one row: the failure mode this function was
+    rewritten to remove, and one that produces no error at all.
+
+    Only teams whose gw-`gw` fixture has actually been played contribute a
+    reconstructed row. "Played" is `collector.schemas.fixture_is_played`,
+    not the raw `finished` flag — read that function's docstring before
+    changing this, because gating on `finished` alone is precisely the bug
+    that made every player fall through to the pooled prior. Excluding
+    not-yet-played teams matters: a gameweek in progress reports
+    `minutes: 0` for anyone whose fixture hasn't kicked off yet,
+    indistinguishable in the raw data from a genuine blank -- verified live
+    (2026-08-21) against a real case, Haaland showing `minutes: 0` purely
+    because Man City's gw1 fixture hadn't started, which would otherwise
+    crater his minutes-distribution projection on fabricated absence. An
+    excluded player now falls through to his *own* earlier gameweeks, and
+    only to the pooled-prior fallback
+    (`analytics.features.fill_missing_with_pooled_prior`) if he has none.
+
+    Anything after `gw` is filtered out rather than assumed absent:
+    `papertrade/freeze.py` calls this with `gw = target_gw - 1`, so this
+    filter is the last thing standing between a late-arriving actuals row
+    and training on the very gameweek being predicted (§6.5's leakage
+    criterion).
+    """
+    if actuals is None:
+        # Deferred import: papertrade.actuals imports this module's
+        # POSITION_BY_ELEMENT_TYPE/PROMOTED_CLUB_SHORT_NAMES/TRAIN_SCHEMA,
+        # so importing it at module scope here would be circular. Only the
+        # default path needs it; every caller under test passes a frame.
+        from papertrade.actuals import load_actuals
+
+        actuals = load_actuals()
+
+    history = actuals.filter(pl.col("gw") <= gw).select(list(TRAIN_SCHEMA)).sort(["element_id", "gw"])
+    recorded_gws = set(history["gw"].to_list())
+
+    if gw in recorded_gws:
+        return history
+
+    missing = [g for g in range(1, gw) if g not in recorded_gws]
+    if missing:
+        logger.warning(
+            "gw%d is not in the actuals store and gameweek(s) %s are missing before it, so it "
+            "cannot be recovered from cumulative totals without double-counting — omitting it. "
+            "Projections fall back to gameweeks %s, or the pooled prior where a player has none. "
+            "Run `python -m papertrade record-actuals` and retry.",
+            gw, missing, sorted(recorded_gws) or "(none)",
+        )
+        return history
+
+    reconstructed = _reconstruct_gw(bootstrap, bootstrap_raw, fixtures_raw, gw, history)
+    return pl.concat([history, reconstructed]).sort(["element_id", "gw"])
 
 
 def build_player_pool(bootstrap: BootstrapStatic) -> list[Player]:
@@ -268,6 +394,7 @@ async def fetch_live_data(
         data_gw=last_played_event,
         teams_with_played_data=len(played_teams),
         teams_total=len(gw_teams),
+        history_gws=train_df["gw"].n_unique(),
     )
 
 

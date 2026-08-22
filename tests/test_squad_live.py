@@ -1,20 +1,46 @@
-"""§5's live data bridge (squad/live.py). Focused on the bug found while
-first running this against the real API (2026-08-21): an in-progress
-gameweek reports `minutes: 0` for any team whose fixture hasn't kicked off
-yet, indistinguishable in the raw payload from a genuine blank -- which
-would otherwise crater a not-yet-played star's minutes-distribution
-projection on fabricated absence (Haaland, verified live, minutes: 0 purely
-because Man City's fixture hadn't started).
+"""§5's live data bridge (squad/live.py).
+
+Two things under test here. First, the bug found while first running this
+against the real API (2026-08-21): an in-progress gameweek reports
+`minutes: 0` for any team whose fixture hasn't kicked off yet,
+indistinguishable in the raw payload from a genuine blank -- which would
+otherwise crater a not-yet-played star's minutes-distribution projection on
+fabricated absence (Haaland, verified live, minutes: 0 purely because Man
+City's fixture hadn't started).
+
+Second, `build_train_df`'s per-gameweek sourcing. Bootstrap-static reports
+season-cumulative totals, so reading them as one gameweek's stats is exact
+only while one gameweek exists. The history now comes from the actuals
+store and only the latest gameweek is reconstructed, as cumulative minus
+what is already recorded -- a subtraction that is exact when the store is
+complete and dangerously plausible when it is not, which is why the
+missing-gameweek case is tested as carefully as the happy path.
 """
 
 from __future__ import annotations
 
 from datetime import datetime, timezone
 
+import polars as pl
+
 from collector.schemas import BootstrapStatic, Element, Event, Team
-from squad.live import build_target_roster, build_train_df
+from squad.live import STAT_COLUMNS, TRAIN_SCHEMA, build_target_roster, build_train_df
 
 DEADLINE = datetime(2026, 8, 21, 17, 30, tzinfo=timezone.utc)
+
+
+def _actual(element_id: int, gw: int, position: str = "FWD", team: str = "Team A", promoted: bool = False, **stats) -> dict:
+    return {
+        "gw": gw, "element_id": element_id, "position": position, "team": team, "is_promoted_club": promoted,
+        **{col: 0 for col in STAT_COLUMNS}, **stats,
+    }
+
+
+def _actuals(*rows: dict) -> pl.DataFrame:
+    return pl.DataFrame(list(rows), schema=TRAIN_SCHEMA)
+
+
+NO_ACTUALS = _actuals()
 
 
 def _team(team_id: int, name: str, short_name: str) -> Team:
@@ -40,15 +66,12 @@ def _bootstrap() -> BootstrapStatic:
 
 
 def _raw_elements() -> list[dict]:
-    base = {
-        "minutes": 0, "goals_scored": 0, "assists": 0, "clean_sheets": 0, "goals_conceded": 0,
-        "saves": 0, "bonus": 0, "yellow_cards": 0, "red_cards": 0, "own_goals": 0,
-        "penalties_missed": 0, "penalties_saved": 0, "defensive_contribution": 0,
-    }
+    """bootstrap-static's `elements`: season-cumulative, not per-gameweek."""
+    base = {col: 0 for col in STAT_COLUMNS}
     return [
-        {"id": 1, **{**base, "minutes": 90, "goals_scored": 2}},  # played a full match
+        {"id": 1, **{**base, "minutes": 90, "goals_scored": 2, "total_points": 12}},  # played a full match
         {"id": 2, **base},  # fixture hasn't kicked off -- minutes: 0 is NOT a real blank
-        {"id": 3, **{**base, "minutes": 45}},
+        {"id": 3, **{**base, "minutes": 45, "total_points": 2}},
     ]
 
 
@@ -69,7 +92,7 @@ def test_train_df_excludes_teams_without_a_finished_fixture():
     bootstrap_raw = {"elements": _raw_elements()}
     fixtures_raw = _fixtures(team1_finished=True, team2_started=False)
 
-    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1)
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1, actuals=NO_ACTUALS)
 
     included = set(df["element_id"].to_list())
     assert included == {1, 3}  # team 1 (finished) and team 7/Coventry (finished, same fixture)
@@ -81,7 +104,7 @@ def test_train_df_empty_when_no_fixtures_finished():
     bootstrap_raw = {"elements": _raw_elements()}
     fixtures_raw = _fixtures(team1_finished=False, team2_started=False)
 
-    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1)
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1, actuals=NO_ACTUALS)
 
     assert df.height == 0
 
@@ -91,7 +114,7 @@ def test_train_df_carries_real_stats_for_finished_teams():
     bootstrap_raw = {"elements": _raw_elements()}
     fixtures_raw = _fixtures(team1_finished=True, team2_started=False)
 
-    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1)
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1, actuals=NO_ACTUALS)
 
     row = df.filter(df["element_id"] == 1).row(0, named=True)
     assert row["minutes"] == 90
@@ -114,12 +137,126 @@ def test_train_df_includes_a_provisionally_finished_fixture():
     bootstrap_raw = {"elements": _raw_elements()}
     fixtures_raw = _fixtures(team1_finished=False, team2_started=False, team1_provisional=True)
 
-    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1)
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1, actuals=NO_ACTUALS)
 
     included = set(df["element_id"].to_list())
     assert included == {1, 3}
     assert df.filter(df["element_id"] == 1).row(0, named=True)["minutes"] == 90
     assert 2 not in included  # still excluded: neither flag set on team 2's fixture
+
+
+def _gw2_fixtures(team1_played: bool = True) -> list[dict]:
+    """Both gw1 fixtures done, gw2 in progress: team 1 v Coventry played,
+    team 2's not kicked off."""
+    return [
+        {"event": 1, "team_h": 1, "team_a": 7, "finished": True, "finished_provisional": True},
+        {"event": 1, "team_h": 2, "team_a": 999, "finished": True, "finished_provisional": True},
+        {"event": 2, "team_h": 1, "team_a": 7, "finished": False, "finished_provisional": team1_played},
+        {"event": 2, "team_h": 2, "team_a": 999, "finished": False, "finished_provisional": False},
+    ]
+
+
+def test_train_df_reconstructs_the_latest_gw_as_a_delta_not_a_cumulative_total():
+    """The whole point of the rewrite. Element 1's bootstrap totals are
+    90 minutes / 2 goals *for the season*; gw1 already accounts for 90 and
+    2 of that, so gw2's own row must be 0 and 0 -- not another 90 and 2."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": [{**el, "minutes": 135, "goals_scored": 3, "total_points": 14} if el["id"] == 1 else el
+                                  for el in _raw_elements()]}
+    actuals = _actuals(
+        _actual(1, gw=1, minutes=90, goals_scored=2, total_points=12),
+        _actual(3, gw=1, position="DEF", team="Coventry City", promoted=True, minutes=45, total_points=2),
+    )
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    gw2 = df.filter(pl.col("gw") == 2).filter(pl.col("element_id") == 1).row(0, named=True)
+    assert gw2["minutes"] == 45  # 135 cumulative - 90 recorded in gw1
+    assert gw2["goals_scored"] == 1  # 3 - 2
+    assert gw2["total_points"] == 2  # 14 - 12
+
+
+def test_train_df_keeps_recorded_history_alongside_the_reconstructed_gw():
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}
+    actuals = _actuals(_actual(1, gw=1, minutes=90, goals_scored=2, total_points=12))
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    assert sorted(df.filter(pl.col("element_id") == 1)["gw"].to_list()) == [1, 2]
+    # Element 2's team hasn't played gw2 and has no gw1 record: absent entirely,
+    # rather than present as a fabricated blank.
+    assert 2 not in set(df["element_id"].to_list())
+
+
+def test_train_df_drops_the_latest_gw_when_an_earlier_one_is_unrecorded():
+    """A missed `record-actuals` run. Subtracting an incomplete history
+    would fold gw1 and gw2 into one row and report it as gw2 -- wrong, and
+    silent. Dropping gw2 leaves the projection thin but honest."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}
+    fixtures_raw = _gw2_fixtures() + [
+        {"event": 3, "team_h": 1, "team_a": 7, "finished": False, "finished_provisional": True},
+    ]
+    actuals = _actuals(_actual(1, gw=1, minutes=90, total_points=12))  # gw2 never recorded
+
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=3, actuals=actuals)
+
+    assert df["gw"].to_list() == [1]
+
+
+def test_train_df_returns_a_recorded_gw_verbatim_without_touching_bootstrap():
+    """Once `record-actuals` has confirmed the gameweek there is nothing to
+    reconstruct, and bootstrap's cumulative totals must not get a second
+    vote."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": [{**el, "minutes": 9999} for el in _raw_elements()]}
+    actuals = _actuals(
+        _actual(1, gw=1, minutes=90, total_points=12),
+        _actual(1, gw=2, minutes=60, total_points=5),
+    )
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    assert df["minutes"].to_list() == [90, 60]
+
+
+def test_train_df_never_trains_on_a_gameweek_after_the_one_asked_for():
+    """papertrade/freeze.py calls this with gw = target - 1, so a
+    late-arriving actuals row for the target gameweek must not leak in
+    (§6.5's leakage criterion)."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}
+    actuals = _actuals(
+        _actual(1, gw=1, minutes=90, total_points=12),
+        _actual(1, gw=2, minutes=60, total_points=5),  # the gameweek being predicted
+    )
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=1, actuals=actuals)
+
+    assert df["gw"].to_list() == [1]
+
+
+def test_train_df_clamps_a_negative_delta_from_a_retroactive_revision():
+    """FPL's dubious goals panel can shrink a total after it was recorded.
+    A negative event count would poison every trailing mean downstream."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}  # element 1: 2 goals cumulative
+    actuals = _actuals(_actual(1, gw=1, minutes=90, goals_scored=3, total_points=12))  # was recorded with 3
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    gw2 = df.filter(pl.col("gw") == 2).filter(pl.col("element_id") == 1).row(0, named=True)
+    assert gw2["goals_scored"] == 0  # 2 - 3 clamped, not -1
+
+
+def test_train_df_schema_matches_the_actuals_store():
+    """build_train_df concatenates rows read out of the store with rows it
+    builds itself, so a column-order drift between the two would be a
+    silent mis-assignment."""
+    from papertrade.actuals import _SCHEMA
+
+    assert list(_SCHEMA) == list(TRAIN_SCHEMA)
 
 
 def test_target_roster_flags_promoted_club_by_short_name():

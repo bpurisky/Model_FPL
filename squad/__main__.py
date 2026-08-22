@@ -36,14 +36,16 @@ def format_report(live, result: OptimizationResult, horizon: list[int]) -> str:
     lines.append("=" * 70)
     lines.append("")
     lines.append(
-        f"CAVEAT: gameweek {live.data_gw} of 2026/27 is this season's only "
-        f"data so far, and only {live.teams_with_played_data}/{live.teams_total} "
-        "teams have *played* their fixture in it as of this run -- an "
-        "in-progress match's cumulative stats (e.g. 0 minutes because a "
+        f"CAVEAT: this is trained on {live.history_gws} gameweek(s) of 2026/27 "
+        f"data, through gameweek {live.data_gw}, in which only "
+        f"{live.teams_with_played_data}/{live.teams_total} "
+        "teams have *played* their fixture as of this run -- an "
+        "in-progress match's stats (e.g. 0 minutes because a "
         "fixture hasn't kicked off yet, not because of a blank) are "
-        "deliberately excluded, so any team not yet counted here is "
-        "projected from the position-level pooled average, not its own "
-        "form. Every projection is otherwise a single-match trailing rate "
+        "deliberately excluded, so a team not yet counted here contributes "
+        "nothing to that gameweek and is projected from its earlier ones, "
+        "or from the position-level pooled average if it has none. "
+        "Every projection is otherwise a trailing rate "
         "plus custom fixture difficulty (Elo carried over from 2025/26) -- "
         "not the validated model from Phase 2's backtest, which needed "
         "several seasons of data to clear its baselines. Treat this as a "
