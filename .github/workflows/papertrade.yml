@@ -1,0 +1,41 @@
+name: papertrade
+
+on:
+  schedule:
+    # Daily, well clear of this season's Friday 17:30 UTC deadlines and of
+    # collect.yml's hourly/5-minute jobs. Safe to run every day: `freeze`
+    # refuses to re-freeze an already-frozen gameweek (a no-op most days,
+    # not a failure — see papertrade/__main__.py:cmd_freeze), and
+    # `record-actuals` auto-detects whichever finished gameweeks aren't
+    # recorded yet, so a missed day just gets caught up the next run.
+    - cron: "0 8 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: papertrade
+  cancel-in-progress: false
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run python -m papertrade freeze
+      - run: uv run python -m papertrade record-actuals
+      - name: Commit freezes and actuals
+        run: |
+          git config user.name "fpl-trends-papertrade"
+          git config user.email "actions@users.noreply.github.com"
+          # data/current_season/ doesn't exist until the first gameweek is
+          # recorded -- `git add` on a missing path fails the step (bash
+          # runs with -e by default), so only add it if it's actually there.
+          # (`[ -d x ] && cmd` alone would itself trip -e when the test is
+          # false, hence the explicit if/fi rather than a one-liner.)
+          if [ -d papertrade/freezes ]; then git add papertrade/freezes; fi
+          if [ -d data/current_season ]; then git add data/current_season; fi
+          git diff --staged --quiet || git commit -m "papertrade: weekly freeze/actuals $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

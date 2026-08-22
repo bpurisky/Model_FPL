@@ -15,6 +15,7 @@ data/historical/raw/
 # Generated reports — regenerate with the commands in README.md.
 backtest/report.json
 analytics/report.json
+papertrade/report.json
 
 # Local overrides
 .env

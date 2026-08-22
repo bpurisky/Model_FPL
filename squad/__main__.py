@@ -14,7 +14,7 @@ from pathlib import Path
 
 from collector.config import load_config
 from squad.live import build_projections, fetch_live_data
-from squad.optimize import OptimizationResult, optimize_squad, template_risk_flags
+from squad.optimize import OptimizationResult, optimize_squad, pair_transfers_by_position, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)  # one INFO line per request is noise, not signal, here
@@ -62,20 +62,12 @@ def format_report(live, result: OptimizationResult, horizon: list[int]) -> str:
 
     if result.transfers_out or result.transfers_in:
         lines.append("-- Recommended transfers --")
-        # squad composition is fixed per position (§5.4), so a transfer
-        # never changes position mix -- pairing out/in *within* each
-        # position is exact, not a guess, unlike a plain zip of the two
-        # id-sorted sets (which pairs across positions and reads as
-        # nonsense, e.g. a sold GK "paired" with a bought DEF).
-        for pos in ["GK", "DEF", "MID", "FWD"]:
-            outs = sorted(eid for eid in result.transfers_out if pool_by_id[eid].position == pos)
-            ins = sorted(eid for eid in result.transfers_in if pool_by_id[eid].position == pos)
-            for out_id, in_id in zip(outs, ins):
-                out_p, in_p = pool_by_id[out_id], pool_by_id[in_id]
-                lines.append(
-                    f"  OUT: {_name(live, out_id)} ({out_p.position}, {out_p.club}) "
-                    f"-> IN: {_name(live, in_id)} ({in_p.position}, {in_p.club}, {_price(in_p.now_cost)})"
-                )
+        for out_id, in_id in pair_transfers_by_position(result.transfers_out, result.transfers_in, pool_by_id):
+            out_p, in_p = pool_by_id[out_id], pool_by_id[in_id]
+            lines.append(
+                f"  OUT: {_name(live, out_id)} ({out_p.position}, {out_p.club}) "
+                f"-> IN: {_name(live, in_id)} ({in_p.position}, {in_p.club}, {_price(in_p.now_cost)})"
+            )
         if result.hits_taken:
             lines.append(f"  Hits taken: {result.hits_taken} (-{result.hits_taken * 4} pts)")
         lines.append(f"  Bank after: {_price(result.bank_after)}")
@@ -121,7 +113,7 @@ async def cmd_recommend(args: argparse.Namespace) -> None:
     live = await fetch_live_data(cfg, entry_id, horizon=horizon)
     horizon = horizon or [live.next_event, live.next_event + 1, live.next_event + 2]
 
-    projections = build_projections(live, horizon)
+    projections = build_projections(live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon)
     result = optimize_squad(
         live.squad, live.pool, projections, horizon=horizon, free_transfers=live.free_transfers,
         max_transfers=args.max_transfers, hit_cost=args.hit_cost,

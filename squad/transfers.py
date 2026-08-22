@@ -31,6 +31,19 @@ class FreeTransferState:
     hit_count: int  # transfers beyond the free allowance (0 during a chip week)
 
 
+def accrue_free_transfers(available_before: int, made: int, max_banked: int = 5, is_chip_week: bool = False) -> int:
+    """The single-gameweek step of the rule (module docstring): one FT
+    accrues, banked up to `max_banked`, unless it's a wildcard/free-hit week
+    (unlimited transfers, but the bank neither resets nor consumes).
+    Exposed on its own — not just inlined into `derive_free_transfers`'s
+    loop — because `papertrade/freeze.py` needs to advance the shadow
+    team's own free-transfer count one week at a time without replaying its
+    whole transfer history each run.
+    """
+    leftover = available_before if is_chip_week else max(0, available_before - made)
+    return min(max_banked, leftover + 1)
+
+
 def derive_free_transfers(
     transfers: list[EntryTransfer],
     chips: list[EntryChip],
@@ -50,14 +63,11 @@ def derive_free_transfers(
     available = 1
     for event in range(start_event, through_event + 1):
         made = transfer_counts.get(event, 0)
-        if event in chip_events:
-            used, hits, leftover = 0, 0, available
-        else:
-            used = made
-            hits = max(0, made - available)
-            leftover = max(0, available - made)
+        is_chip_week = event in chip_events
+        used = 0 if is_chip_week else made
+        hits = 0 if is_chip_week else max(0, made - available)
         states.append(FreeTransferState(event=event, available_before=available, used=used, hit_count=hits))
-        available = min(max_banked, leftover + 1)
+        available = accrue_free_transfers(available, made, max_banked, is_chip_week)
     return states
 
 

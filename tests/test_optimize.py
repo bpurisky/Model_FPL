@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from squad.optimize import Player, optimize_squad, template_risk_flags
+from squad.optimize import Player, optimize_squad, pair_transfers_by_position, template_risk_flags
 from squad.reconstruct import SquadPlayer, SquadState
 
 AS_OF = datetime(2026, 8, 24, tzinfo=timezone.utc)
@@ -231,6 +231,20 @@ def test_budget_uses_selling_price_not_now_cost():
 
     assert candidate_id not in result.transfers_in
     assert target_id not in result.transfers_out
+
+
+def test_pair_transfers_by_position_never_crosses_positions():
+    pool_by_id = {
+        1: Player(element_id=1, position="GK", club="ARS", now_cost=50),
+        2: Player(element_id=2, position="DEF", club="ARS", now_cost=50),
+        3: Player(element_id=3, position="GK", club="CHE", now_cost=45),
+        4: Player(element_id=4, position="DEF", club="CHE", now_cost=45),
+    }
+    pairs = pair_transfers_by_position(frozenset({1, 2}), frozenset({3, 4}), pool_by_id)
+
+    assert set(pairs) == {(1, 3), (2, 4)}  # GK paired with GK, DEF paired with DEF
+    for out_id, in_id in pairs:
+        assert pool_by_id[out_id].position == pool_by_id[in_id].position
 
 
 def test_template_risk_flag_fires_on_high_ownership_sale():

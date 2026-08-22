@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 import pytest
 
 from collector.schemas import EntryPick, EntryPicksPayload, EntryTransfer
-from squad.reconstruct import reconstruct_squad
+from squad.reconstruct import reconstruct_squad, squad_state_from_dict, squad_state_to_dict
 
 
 def _dt(s: str) -> datetime:
@@ -163,3 +163,14 @@ def test_missing_price_without_current_prices_raises():
     picks = _picks_payload([_priceless_pick(101, 1)], bank=5)
     with pytest.raises(ValueError, match="101"):
         reconstruct_squad(picks, SNAPSHOT_TS, transfers=[], as_of=SNAPSHOT_TS)
+
+
+def test_squad_state_json_round_trip():
+    picks = _picks_payload([_pick(101, 1, 50, 52, is_captain=True), _pick(102, 2, 40, 40)], bank=7)
+    state = reconstruct_squad(picks, SNAPSHOT_TS, transfers=[], as_of=SNAPSHOT_TS)
+
+    restored = squad_state_from_dict(squad_state_to_dict(state))
+
+    assert restored.bank == state.bank
+    assert restored.as_of == state.as_of
+    assert restored.players == state.players

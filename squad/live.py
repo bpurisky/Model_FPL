@@ -260,9 +260,18 @@ async def fetch_live_data(
     )
 
 
-def build_projections(live: LiveData, horizon: list[int]) -> dict[int, dict[int, float]]:
+def build_projections(
+    train_df: pl.DataFrame,
+    target_roster: pl.DataFrame,
+    scoring_config: dict[str, Any],
+    difficulty_table: pl.DataFrame,
+    horizon: list[int],
+) -> dict[int, dict[int, float]]:
+    """Split out of `LiveData` on purpose — `papertrade/freeze.py` needs to
+    project points for the shadow team's own state, which has no `LiveData`
+    of its own (that struct is specific to the real, live-fetched entry)."""
     projections: dict[int, dict[int, float]] = {}
     for gw in horizon:
-        df = project_points(live.train_df, live.target_roster, gw, live.scoring_config, live.difficulty_table)
+        df = project_points(train_df, target_roster, gw, scoring_config, difficulty_table)
         projections[gw] = dict(zip(df["element_id"].to_list(), df["prediction"].to_list()))
     return projections

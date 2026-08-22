@@ -24,9 +24,9 @@ price movement between "picked" and "priced from current_prices".
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Mapping, Sequence
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from typing import Any, Mapping, Sequence
 
 from collector.schemas import EntryPicksPayload, EntryTransfer
 
@@ -49,7 +49,21 @@ class SquadState:
     bank: int  # 0.1m units, same unit as now_cost/selling_price everywhere in the API
 
 
-def _apply_price_move(purchase_price: int, now_cost: int) -> int:
+def squad_state_to_dict(state: SquadState) -> dict[str, Any]:
+    """§6.1: the shadow team's state needs to round-trip through a frozen
+    JSON file so next week's freeze run can pick up where the last one
+    left off without needing to replay the whole season."""
+    return {"as_of": state.as_of.isoformat(), "bank": state.bank, "players": [asdict(p) for p in state.players]}
+
+
+def squad_state_from_dict(data: dict[str, Any]) -> SquadState:
+    as_of = datetime.fromisoformat(data["as_of"])
+    if as_of.tzinfo is None:
+        as_of = as_of.replace(tzinfo=timezone.utc)
+    return SquadState(as_of=as_of, bank=data["bank"], players=tuple(SquadPlayer(**p) for p in data["players"]))
+
+
+def apply_price_move(purchase_price: int, now_cost: int) -> int:
     """§5.3's public rule: a rise only banks half the profit, rounded down
     to the nearest 0.1m tick (so a single 0.1m rise nets the seller nothing —
     two are required); a drop passes through in full."""
@@ -125,7 +139,7 @@ def reconstruct_squad(
             eid: (
                 sp
                 if eid not in current_prices
-                else _replace_selling_price(sp, _apply_price_move(sp.purchase_price, current_prices[eid]))
+                else _replace_selling_price(sp, apply_price_move(sp.purchase_price, current_prices[eid]))
             )
             for eid, sp in players.items()
         }

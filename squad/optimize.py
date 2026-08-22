@@ -165,6 +165,26 @@ def optimize_squad(
     )
 
 
+def pair_transfers_by_position(
+    transfers_out: frozenset[int], transfers_in: frozenset[int], pool_by_id: Mapping[int, Player]
+) -> list[tuple[int, int]]:
+    """Squad composition is fixed per position (§5.4's composition
+    constraint), so a transfer never changes the position mix — the number
+    sold and bought at each position always matches exactly, which makes
+    "who replaced whom" well-defined per position even though `optimize_squad`
+    only returns the two sets, not a pairing. Pairing across positions
+    instead (e.g. a plain zip of two id-sorted sets) produces nonsense like
+    a sold goalkeeper "paired" with a bought defender — this is the one
+    correct way to present or apply a multi-transfer recommendation.
+    """
+    pairs: list[tuple[int, int]] = []
+    for pos in ["GK", "DEF", "MID", "FWD"]:
+        outs = sorted(eid for eid in transfers_out if pool_by_id[eid].position == pos)
+        ins = sorted(eid for eid in transfers_in if pool_by_id[eid].position == pos)
+        pairs.extend(zip(outs, ins))
+    return pairs
+
+
 def template_risk_flags(
     transfers_out: frozenset[int],
     ownership: Mapping[int, float],

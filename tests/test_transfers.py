@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from collector.schemas import EntryChip, EntryTransfer
-from squad.transfers import derive_free_transfers, hit_cost
+from squad.transfers import accrue_free_transfers, derive_free_transfers, hit_cost
 
 
 def _dt(gw: int) -> datetime:
@@ -78,6 +78,17 @@ def test_free_hit_week_also_leaves_bank_untouched():
     # free hit, so event 4 sees 2 + 1 accrual.
     assert by_event[3].available_before == 2
     assert by_event[4].available_before == 3
+
+
+def test_accrue_free_transfers_single_step_matches_derive():
+    """papertrade/freeze.py advances the shadow team's FT count one week at
+    a time via this function directly, without replaying full history --
+    it must agree exactly with derive_free_transfers's own internal use of
+    the same rule."""
+    assert accrue_free_transfers(available_before=2, made=1, max_banked=5) == 2  # 2-1+1
+    assert accrue_free_transfers(available_before=1, made=3, max_banked=5) == 1  # floored at 0, +1
+    assert accrue_free_transfers(available_before=4, made=0, max_banked=5) == 5  # capped
+    assert accrue_free_transfers(available_before=3, made=6, max_banked=5, is_chip_week=True) == 4  # untouched, +1
 
 
 def test_full_season_walk_with_mixed_activity_and_a_chip():
