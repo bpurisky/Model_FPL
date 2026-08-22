@@ -19,12 +19,21 @@ missing-gameweek case is tested as carefully as the happy path.
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 
 import polars as pl
+import pytest
 
 from collector.schemas import BootstrapStatic, Element, Event, Team
-from squad.live import STAT_COLUMNS, TRAIN_SCHEMA, build_target_roster, build_train_df
+from squad.live import (
+    FLOAT_STAT_COLUMNS,
+    INT_STAT_COLUMNS,
+    STAT_COLUMNS,
+    TRAIN_SCHEMA,
+    build_target_roster,
+    build_train_df,
+)
 
 DEADLINE = datetime(2026, 8, 21, 17, 30, tzinfo=timezone.utc)
 
@@ -66,12 +75,19 @@ def _bootstrap() -> BootstrapStatic:
 
 
 def _raw_elements() -> list[dict]:
-    """bootstrap-static's `elements`: season-cumulative, not per-gameweek."""
-    base = {col: 0 for col in STAT_COLUMNS}
+    """bootstrap-static's `elements`: season-cumulative, not per-gameweek.
+
+    The FLOAT_STAT_COLUMNS are strings here because that is what FPL
+    actually serves ("0.28", not 0.28) on both bootstrap-static and
+    /event/{gw}/live/ -- verified 2026-08-22. Using real floats would let
+    a missing `float()` in the reconstruction path pass these tests and
+    then concatenate strings in production.
+    """
+    base = {**{col: 0 for col in INT_STAT_COLUMNS}, **{col: "0.0" for col in FLOAT_STAT_COLUMNS}}
     return [
-        {"id": 1, **{**base, "minutes": 90, "goals_scored": 2, "total_points": 12}},  # played a full match
+        {"id": 1, **{**base, "minutes": 90, "goals_scored": 2, "total_points": 12, "expected_goals": "1.25"}},
         {"id": 2, **base},  # fixture hasn't kicked off -- minutes: 0 is NOT a real blank
-        {"id": 3, **{**base, "minutes": 45, "total_points": 2}},
+        {"id": 3, **{**base, "minutes": 45, "total_points": 2, "expected_goals": "0.40"}},
     ]
 
 
@@ -267,3 +283,63 @@ def test_target_roster_flags_promoted_club_by_short_name():
     other_row = roster.filter(roster["element_id"] == 1).row(0, named=True)
     assert coventry_row["is_promoted_club"] is True
     assert other_row["is_promoted_club"] is False
+
+
+def test_train_df_reconstructs_float_stats_by_exact_subtraction():
+    """The expected_* columns arrive from FPL as decimal strings and are
+    recovered the same way the integer counts are -- cumulative minus
+    what's already recorded. A missing float() here would concatenate
+    rather than subtract, which is why _raw_elements() serves them as
+    strings."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}  # element 1: xG "1.25" cumulative
+    actuals = _actuals(_actual(1, gw=1, minutes=90, expected_goals=0.5))
+
+    df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    gw2 = df.filter(pl.col("gw") == 2).filter(pl.col("element_id") == 1).row(0, named=True)
+    assert gw2["expected_goals"] == pytest.approx(0.75)  # 1.25 - 0.50
+
+
+def test_train_df_does_not_warn_on_float_rounding_noise(caplog):
+    """Subtracting two 2dp values parsed from strings routinely lands a
+    hair below zero with nothing revised at all. Those floor to 0.0
+    silently; only a revision bigger than _FLOAT_CLAMP_EPS is a real
+    clamp worth warning about."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}  # element 1: xG "1.25" cumulative
+    # Recorded a hair above cumulative -- arithmetic noise, not a revision.
+    actuals = _actuals(_actual(1, gw=1, minutes=90, expected_goals=1.25 + 1e-12))
+
+    with caplog.at_level(logging.WARNING, logger="squad.live"):
+        df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    gw2 = df.filter(pl.col("gw") == 2).filter(pl.col("element_id") == 1).row(0, named=True)
+    assert gw2["expected_goals"] == 0.0
+    assert "clamped" not in caplog.text
+
+
+def test_train_df_warns_on_a_real_float_revision(caplog):
+    """The other side of the tolerance: a revision FPL actually made is
+    still reported, so a store row silently disagreeing with the API
+    doesn't pass unnoticed."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}  # element 1: xG "1.25" cumulative
+    actuals = _actuals(_actual(1, gw=1, minutes=90, expected_goals=1.9))  # recorded well above
+
+    with caplog.at_level(logging.WARNING, logger="squad.live"):
+        df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    gw2 = df.filter(pl.col("gw") == 2).filter(pl.col("element_id") == 1).row(0, named=True)
+    assert gw2["expected_goals"] == 0.0
+    assert "clamped" in caplog.text
+
+
+def test_train_df_stat_columns_are_typed_consistently():
+    """INT_STAT_COLUMNS and FLOAT_STAT_COLUMNS partition STAT_COLUMNS, and
+    TRAIN_SCHEMA types each accordingly. A column landing in neither list
+    would be dropped from the store without any test noticing."""
+    assert INT_STAT_COLUMNS + FLOAT_STAT_COLUMNS == STAT_COLUMNS
+    assert not set(INT_STAT_COLUMNS) & set(FLOAT_STAT_COLUMNS)
+    assert all(TRAIN_SCHEMA[c] == pl.Int64 for c in INT_STAT_COLUMNS)
+    assert all(TRAIN_SCHEMA[c] == pl.Float64 for c in FLOAT_STAT_COLUMNS)

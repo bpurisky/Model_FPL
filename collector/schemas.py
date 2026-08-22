@@ -276,9 +276,46 @@ def parse_element_summary(raw: dict[str, Any], logger: logging.Logger, context: 
 
 
 class LiveElementStats(_LenientModel):
+    """Every per-gameweek stat papertrade/actuals.py writes to the
+    append-only store, declared required rather than left to `extra`.
+
+    Same reasoning as `Fixture.finished_provisional`: the pipeline
+    genuinely depends on these, so one going missing is real drift and
+    belongs as a hard error here — with the endpoint and the offending
+    payload attached — rather than as a `KeyError` raised later inside
+    `_build_actuals_frame`, after the drift has already been read past.
+
+    The four `expected_*` fields arrive as decimal strings; pydantic
+    coerces them, and the frame builder parses the raw dict separately.
+    """
+
     minutes: int
     total_points: int
     bps: int
+    goals_scored: int
+    assists: int
+    clean_sheets: int
+    goals_conceded: int
+    saves: int
+    bonus: int
+    yellow_cards: int
+    red_cards: int
+    own_goals: int
+    penalties_missed: int
+    penalties_saved: int
+    defensive_contribution: int
+    starts: int
+    clearances_blocks_interceptions: int
+    recoveries: int
+    tackles: int
+    expected_goals: float
+    expected_assists: float
+    expected_goal_involvements: float
+    expected_goals_conceded: float
+    influence: float
+    creativity: float
+    threat: float
+    ict_index: float
 
 
 class LiveElement(_LenientModel):

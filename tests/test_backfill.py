@@ -12,6 +12,7 @@ import polars as pl
 import pytest
 import yaml
 
+from backtest.backfill import _EXPECTED_COLUMNS as EXPECTED_COLUMNS
 from backtest.backfill import NORMALIZED_DIR, normalize_season
 
 MERGED_GW_COLUMNS = [
@@ -216,3 +217,97 @@ def test_real_2024_25_data_resolves_a_known_mid_season_transfer_per_gameweek():
     broja = df.filter(pl.col("element_id") == 156).sort("gw")
     assert broja.filter(pl.col("gw") <= 2)["team"].to_list() == ["Chelsea", "Chelsea"]
     assert broja.filter(pl.col("gw") >= 3)["team"].unique().to_list() == ["Everton"]
+
+
+def _write_merged_gw_with_expected(path: Path) -> None:
+    """The same synthetic season, but with the expected-goals columns the
+    base fixture omits — i.e. a season from 2022-23 onward."""
+    fieldnames = MERGED_GW_COLUMNS + EXPECTED_COLUMNS
+    with path.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        for element, name, team, position, opponent_team, was_home, gw, fixture in _ROWS:
+            writer.writerow({
+                "element": element, "name": name, "team": team, "position": position,
+                "opponent_team": opponent_team, "was_home": was_home,
+                "kickoff_time": f"2025-0{gw}-01T12:00:00Z", "round": gw, "fixture": fixture,
+                "minutes": 90, "starts": 1, "total_points": 5, "goals_scored": 0, "assists": 0,
+                "clean_sheets": 0, "goals_conceded": 1, "own_goals": 0, "penalties_saved": 0,
+                "penalties_missed": 0, "yellow_cards": 0, "red_cards": 0, "saves": 0, "bonus": 0,
+                "bps": 20, "influence": "10.0", "creativity": "5.0", "threat": "5.0", "ict_index": "2.0",
+                "value": 55, "selected": 100000, "transfers_in": 0, "transfers_out": 0, "xP": "9.9",
+                "expected_goals": "0.25", "expected_assists": "0.10",
+                "expected_goal_involvements": "0.35", "expected_goals_conceded": "1.20",
+            })
+
+
+def test_expected_goals_columns_read_when_the_season_has_them(tmp_path, promoted_clubs_config):
+    """The four expected-goals columns exist in merged_gw.csv from 2022-23
+    onward. They were excluded from this module until 2026-08-22, which
+    left the project with no xG at any grain to backtest the current
+    season's actuals store against."""
+    merged_gw = tmp_path / "merged_gw.csv"
+    _write_merged_gw_with_expected(merged_gw)
+    _write_fixtures(tmp_path / "fixtures.csv")
+    _write_teams(tmp_path / "teams.csv")
+    files = {"merged_gw": merged_gw, "fixtures": tmp_path / "fixtures.csv", "teams": tmp_path / "teams.csv"}
+
+    df = normalize_season("2024-25", files, promoted_clubs_config)
+
+    row = df.filter((pl.col("element_id") == 1) & (pl.col("gw") == 1)).row(0, named=True)
+    assert row["expected_goals"] == pytest.approx(0.25)
+    assert row["expected_assists"] == pytest.approx(0.10)
+    assert row["expected_goal_involvements"] == pytest.approx(0.35)
+    assert row["expected_goals_conceded"] == pytest.approx(1.20)
+    assert df.schema["expected_goals"] == pl.Float64
+
+
+def test_era_dependent_columns_stay_null_not_zero_when_the_season_predates_them(
+    season_files, promoted_clubs_config
+):
+    """The regression this test exists for: the null fill is applied
+    before the double-gameweek aggregation, and `sum()` over an all-null
+    group returns 0, not null. That silently turned "the rule didn't exist
+    this season" into "the player recorded none of it" for every
+    defensive-contribution value in 2023-24 and 2024-25.
+
+    The base fixture's CSV carries neither column family, so both must
+    come out null.
+    """
+    df = normalize_season("2024-25", season_files, promoted_clubs_config)
+
+    for col in ["defensive_contribution", "clearances_blocks_interceptions", "recoveries", "tackles",
+                "expected_goals", "expected_assists", "expected_goal_involvements", "expected_goals_conceded"]:
+        assert df[col].null_count() == df.height, f"{col} should be all-null, got {df[col].to_list()}"
+
+
+def test_expected_goals_summed_across_a_double_gameweek(tmp_path, promoted_clubs_config):
+    """xG from two fixtures in one round adds, the same way goals do."""
+    merged_gw = tmp_path / "merged_gw.csv"
+    fieldnames = MERGED_GW_COLUMNS + EXPECTED_COLUMNS
+    base = {
+        "element": 1, "name": "Star Player", "team": "Team A", "position": "MID",
+        "was_home": True, "round": 1, "minutes": 90, "starts": 1, "total_points": 5,
+        "goals_scored": 0, "assists": 0, "clean_sheets": 0, "goals_conceded": 1, "own_goals": 0,
+        "penalties_saved": 0, "penalties_missed": 0, "yellow_cards": 0, "red_cards": 0, "saves": 0,
+        "bonus": 0, "bps": 20, "influence": "10.0", "creativity": "5.0", "threat": "5.0",
+        "ict_index": "2.0", "value": 55, "selected": 100000, "transfers_in": 0, "transfers_out": 0,
+        "xP": "9.9", "expected_assists": "0.10", "expected_goal_involvements": "0.35",
+        "expected_goals_conceded": "1.20",
+    }
+    with merged_gw.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow({**base, "opponent_team": 2, "fixture": 101,
+                         "kickoff_time": "2025-01-01T12:00:00Z", "expected_goals": "0.25"})
+        writer.writerow({**base, "opponent_team": 3, "fixture": 102,
+                         "kickoff_time": "2025-01-03T12:00:00Z", "expected_goals": "0.40"})
+    _write_fixtures(tmp_path / "fixtures.csv")
+    _write_teams(tmp_path / "teams.csv")
+    files = {"merged_gw": merged_gw, "fixtures": tmp_path / "fixtures.csv", "teams": tmp_path / "teams.csv"}
+
+    df = normalize_season("2024-25", files, promoted_clubs_config)
+
+    row = df.filter((pl.col("element_id") == 1) & (pl.col("gw") == 1)).row(0, named=True)
+    assert row["n_fixtures"] == 2
+    assert row["expected_goals"] == pytest.approx(0.65)

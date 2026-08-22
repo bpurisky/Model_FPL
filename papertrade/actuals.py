@@ -6,9 +6,20 @@ per-gameweek splits ... before running this again after gw2").
 
 Sourced from `/event/{gw}/live/`, which reports that gameweek's own stats
 directly — no cumulative-total delta needed, no 600-request per-player
-batch, one call. Schema is a subset of `data/historical/{season}.parquet`'s,
-so `backtest/baselines.py` and `backtest/report.py`'s already-tested
-functions work against it unmodified once enough gameweeks accumulate.
+batch, one call.
+
+Schema is a strict subset of `data/historical/{season}.parquet`'s, which is
+what lets `backtest/baselines.py` and `backtest/report.py`'s already-tested
+functions work against it unmodified once enough gameweeks accumulate, and
+what makes a single cross-season panel a concat rather than a merge. The
+columns the historical panel has and this store does not are all fixture
+context, price and ownership (`opponent_team`, `was_home`, `kickoff_time`,
+`n_fixtures`, `value`, `selected`, ...) — none of them served by
+`/event/{gw}/live/`, all of them derivable after the fact from
+`data/reference/fixtures.parquet` and the distilled shards, which is why
+they are not recorded here.
+
+That subset relation is enforced by a test; see tests/test_actuals.py.
 """
 
 from __future__ import annotations
@@ -21,7 +32,14 @@ import polars as pl
 from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import BootstrapStatic, parse_bootstrap_static, parse_event_live
-from squad.live import POSITION_BY_ELEMENT_TYPE, PROMOTED_CLUB_SHORT_NAMES, STAT_COLUMNS, TRAIN_SCHEMA
+from squad.live import (
+    FLOAT_STAT_COLUMNS,
+    INT_STAT_COLUMNS,
+    POSITION_BY_ELEMENT_TYPE,
+    PROMOTED_CLUB_SHORT_NAMES,
+    STAT_COLUMNS,
+    TRAIN_SCHEMA,
+)
 
 logger = logging.getLogger("papertrade.actuals")
 
@@ -34,6 +52,8 @@ ACTUALS_PATH = Path("data/current_season/2026-27.parquet")
 # definition, over there rather than here, because papertrade already
 # depends on squad.live and the reverse import would be circular.
 _STAT_COLUMNS = STAT_COLUMNS
+_INT_STAT_COLUMNS = INT_STAT_COLUMNS
+_FLOAT_STAT_COLUMNS = FLOAT_STAT_COLUMNS
 _SCHEMA = TRAIN_SCHEMA
 
 
@@ -67,7 +87,11 @@ def _build_actuals_frame(bootstrap: BootstrapStatic, live_raw: dict, gw: int) ->
         stats = el["stats"]
         rows.append({
             "gw": gw, "element_id": eid, "position": position, "team": team, "is_promoted_club": is_promoted,
-            **{col: stats[col] for col in _STAT_COLUMNS},
+            **{col: stats[col] for col in _INT_STAT_COLUMNS},
+            # Served as decimal strings ("0.28") on this endpoint exactly as
+            # on bootstrap-static; parsed here so the store holds numbers
+            # and squad/live.py's reconstruction can subtract against them.
+            **{col: float(stats[col]) for col in _FLOAT_STAT_COLUMNS},
         })
     return pl.DataFrame(rows, schema=_SCHEMA)
 

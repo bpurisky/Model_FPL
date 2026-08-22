@@ -15,9 +15,13 @@ Known hazards this module exists to handle (§3.2):
     reclassifications would silently leak into historical training data.
   - Promoted clubs (config/promoted_clubs.yaml) get flagged so baselines.py
     can apply a principled prior instead of nulling out their early gameweeks.
-  - Defensive contribution columns (§4.1) don't exist at all before 2025-26
+  - Era-dependent columns don't exist at all in seasons that predate them
     — not null, absent — so they're read conditionally on the season's own
-    CSV header and filled with null (not 0) where the rule didn't yet exist.
+    CSV header and filled with null (not 0) where the stat didn't yet
+    exist. Two families: defensive contribution (§4.1, from 2025-26) and
+    the expected-goals four (from 2022-23). Note that the fill has to be
+    re-applied *after* the double-gameweek aggregation, because summing an
+    all-null group yields 0 rather than null — see `normalize_season`.
 """
 
 from __future__ import annotations
@@ -84,6 +88,37 @@ _MERGED_GW_COLUMNS = [
 # seasons' merged_gw.csv entirely (not null: the column doesn't exist).
 # Read only when present so older seasons don't error on a missing column.
 _DEFENSIVE_CONTRIBUTION_COLUMNS = ["clearances_blocks_interceptions", "defensive_contribution", "recoveries", "tackles"]
+
+# The expected-goals family. Published by FPL from 2022-23 onward and
+# carried per-gameweek in merged_gw.csv ever since, so present for every
+# season in SEASONS today — but era-dependent in exactly the way the
+# defensive-contribution columns are, and SEASONS can grow backwards.
+#
+# These were excluded from this module until 2026-08-22, which left the
+# project with no xG at any grain: not here, not in the current-season
+# actuals store, not in analytics/projections.py. They are read now
+# because papertrade/actuals.py records them per gameweek for 2026/27
+# (from /event/{gw}/live/), and a store column with no historical
+# counterpart cannot be backtested against anything.
+#
+# Floats, unlike the counting stats above — hence the separate dtype when
+# filling a season that predates them.
+_EXPECTED_COLUMNS = [
+    "expected_goals",
+    "expected_assists",
+    "expected_goal_involvements",
+    "expected_goals_conceded",
+]
+
+# Every column that exists only from some season onward, with the dtype to
+# fill it with where it doesn't. Read conditionally, then null-filled —
+# never zero-filled, because "the stat wasn't published yet" and "the
+# player recorded none" are different facts (§3.3, and the same rule
+# Phase 5's export contract restates as nulls-are-data).
+_ERA_DEPENDENT_COLUMNS: dict[str, pl.DataType] = {
+    **{c: pl.Int64 for c in _DEFENSIVE_CONTRIBUTION_COLUMNS},
+    **{c: pl.Float64 for c in _EXPECTED_COLUMNS},
+}
 
 
 def load_promoted_clubs(season: str, config_path: Path = PROMOTED_CLUBS_CONFIG) -> list[str]:
@@ -166,18 +201,26 @@ def _load_fixture_difficulty(fixtures_path: Path) -> pl.DataFrame:
 
 def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: Path = PROMOTED_CLUBS_CONFIG) -> pl.DataFrame:
     available_columns = set(pl.scan_csv(files["merged_gw"]).collect_schema().names())
-    dc_columns_present = [c for c in _DEFENSIVE_CONTRIBUTION_COLUMNS if c in available_columns]
+    era_columns_present = [c for c in _ERA_DEPENDENT_COLUMNS if c in available_columns]
 
     raw = pl.read_csv(
         files["merged_gw"],
-        columns=_MERGED_GW_COLUMNS + dc_columns_present,
-        schema_overrides={"opponent_team": pl.Int64, "fixture": pl.Int64, "round": pl.Int64},
+        columns=_MERGED_GW_COLUMNS + era_columns_present,
+        schema_overrides={
+            "opponent_team": pl.Int64, "fixture": pl.Int64, "round": pl.Int64,
+            # Pinned rather than inferred: a season where every xG cell is
+            # blank infers as str, and the column would then be silently
+            # the wrong type in one season's parquet and not the others.
+            **{c: _ERA_DEPENDENT_COLUMNS[c] for c in era_columns_present},
+        },
         try_parse_dates=False,
     )
-    for missing in set(_DEFENSIVE_CONTRIBUTION_COLUMNS) - set(dc_columns_present):
-        # The rule didn't exist yet this season — null, not 0: "not applicable"
-        # is a different fact than "zero defensive actions recorded."
-        raw = raw.with_columns(pl.lit(None, dtype=pl.Int64).alias(missing))
+    for missing, dtype in _ERA_DEPENDENT_COLUMNS.items():
+        if missing in era_columns_present:
+            continue
+        # The stat didn't exist yet this season — null, not 0: "not
+        # applicable" is a different fact than "zero recorded."
+        raw = raw.with_columns(pl.lit(None, dtype=dtype).alias(missing))
 
     # position == "AM": FPL's short-lived "Assistant Manager" pick, added
     # mid-season at 2024-25 round 23. These rows are real Premier League
@@ -223,6 +266,9 @@ def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: P
         "own_goals", "penalties_saved", "penalties_missed", "yellow_cards", "red_cards", "saves", "bonus", "bps",
         "influence", "creativity", "threat", "ict_index",
         *_DEFENSIVE_CONTRIBUTION_COLUMNS,
+        # xG over a double gameweek is the sum of both fixtures', the same
+        # way goals are.
+        *_EXPECTED_COLUMNS,
     ]
     carried_first = ["season", "name", "team", "position", "is_promoted_club", "value", "selected", "transfers_in", "transfers_out"]
 
@@ -240,6 +286,26 @@ def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: P
             .alias("was_home"),
         ]
     )
+
+    # Restore the nulls the aggregation just destroyed. `pl.col(c).sum()`
+    # folds an all-null group to 0, so a column null-filled above because
+    # the season predates it comes back out of the group_by as a solid
+    # column of zeros — undoing the fill two steps earlier and reporting
+    # "the stat didn't exist" as "the player recorded none of it."
+    #
+    # This was live for `defensive_contribution` from the day this module
+    # was written until 2026-08-22: 2023-24 and 2024-25 both shipped
+    # 28,742 and 26,919 rows of `defensive_contribution == 0` where the
+    # rule did not yet exist. Nothing consumed it wrongly — both seasons'
+    # scoring configs set `defensive_contribution: null`, so
+    # analytics/projections.py never built a DC feature for them — but the
+    # committed data was wrong, and Phase 5's export contract makes this
+    # exact column its worked example of nulls-are-data.
+    missing_era_columns = [c for c in _ERA_DEPENDENT_COLUMNS if c not in era_columns_present]
+    if missing_era_columns:
+        df = df.with_columns(
+            [pl.lit(None, dtype=_ERA_DEPENDENT_COLUMNS[c]).alias(c) for c in missing_era_columns]
+        )
 
     return df.select(
         [
@@ -278,6 +344,10 @@ def normalize_season(season: str, files: dict[str, Path], promoted_clubs_path: P
             "creativity",
             "threat",
             "ict_index",
+            "expected_goals",
+            "expected_assists",
+            "expected_goal_involvements",
+            "expected_goals_conceded",
             "value",
             "selected",
             "transfers_in",

@@ -71,17 +71,53 @@ PROMOTED_CLUB_SHORT_NAMES = {"COV", "HUL", "IPS"}
 
 _ELO_BOOTSTRAP_SEASON = "2025-26"
 
-# Per-gw stat columns needed by analytics/projections.py's trailing-rate
-# heads, plus total_points for backtest/baselines.py. Read straight off
-# bootstrap-static's raw element dicts when a gameweek has to be
-# reconstructed (the trimmed `Element` pydantic model in
-# collector/schemas.py deliberately only covers Phase 0's
+# Per-gw stat columns. Read straight off bootstrap-static's raw element
+# dicts when a gameweek has to be reconstructed (the trimmed `Element`
+# pydantic model in collector/schemas.py deliberately only covers Phase 0's
 # distilled-trending columns, §2.3, not these).
-STAT_COLUMNS = [
+#
+# Every column here must be *additive over gameweeks* — bootstrap-static
+# reports each as a season-cumulative total and `_reconstruct_gw` recovers
+# a single gameweek by subtracting the recorded ones, which is only exact
+# for a quantity that sums. Verified against the live API on 2026-08-22:
+# for all 22 columns, cumulative equalled gw1 exactly while gw1 was the
+# only gameweek played. Do not add a column here without checking that.
+#
+# The first fourteen are what analytics/projections.py's trailing-rate
+# heads and backtest/baselines.py consume. The rest are recorded but not
+# yet modelled: they are what Phase 5's export contract needs at
+# player-gameweek grain, and the store is append-only, so a column not
+# captured as each gameweek finishes costs a rewrite of an immutable file
+# to recover later. Widening is cheap now and expensive after gw1 lands.
+INT_STAT_COLUMNS = [
     "minutes", "goals_scored", "assists", "clean_sheets", "goals_conceded", "saves", "bonus",
     "yellow_cards", "red_cards", "own_goals", "penalties_missed", "penalties_saved", "defensive_contribution",
     "total_points",
+    "starts", "bps", "clearances_blocks_interceptions", "recoveries", "tackles",
 ]
+
+# The same, for the columns FPL serves as decimal *strings* on both
+# endpoints — `float()` at the boundary, `pl.Float64` in the frame.
+#
+# NOTE on the ICT four: as of 2026-08-22 FPL publishes 0.0 for influence,
+# creativity, threat and ict_index for all 604 elements, on both
+# bootstrap-static and /event/{gw}/live/ — the index appears to be
+# unpopulated this season, where xG/xA/bps are populated normally. They are
+# recorded anyway, verbatim, so that a mid-season change is captured from
+# the gameweek it happens rather than not at all. Anything reading them
+# must treat 0.0 here as "FPL published nothing", not as a measured zero.
+FLOAT_STAT_COLUMNS = [
+    "expected_goals", "expected_assists", "expected_goal_involvements", "expected_goals_conceded",
+    "influence", "creativity", "threat", "ict_index",
+]
+
+STAT_COLUMNS = INT_STAT_COLUMNS + FLOAT_STAT_COLUMNS
+
+# How far below zero a reconstructed float delta may fall before it counts
+# as a real FPL revision rather than binary-floating-point noise. FPL
+# publishes these to two decimal places, so anything this small is
+# arithmetic, not football. See `_reconstruct_gw`.
+_FLOAT_CLAMP_EPS = 1e-6
 
 # The schema of both `build_train_df`'s output and the actuals store it
 # reads (papertrade/actuals.py imports this). One definition rather than
@@ -91,7 +127,8 @@ STAT_COLUMNS = [
 # squad.live and the reverse would be circular.
 TRAIN_SCHEMA = {
     "gw": pl.Int64, "element_id": pl.Int64, "position": pl.Utf8, "team": pl.Utf8, "is_promoted_club": pl.Boolean,
-    **{c: pl.Int64 for c in STAT_COLUMNS},
+    **{c: pl.Int64 for c in INT_STAT_COLUMNS},
+    **{c: pl.Float64 for c in FLOAT_STAT_COLUMNS},
 }
 
 
@@ -186,7 +223,7 @@ def _reconstruct_gw(
         cumulative = cumulative_by_id[element_id]
         already = recorded.get(element_id, {})
         stats = {}
-        for col in STAT_COLUMNS:
+        for col in INT_STAT_COLUMNS:
             value = cumulative[col] - already.get(col, 0)
             if value < 0:
                 # FPL revises finished gameweeks after the fact (the
@@ -197,6 +234,21 @@ def _reconstruct_gw(
                 # the revision is by construction small.
                 clamped += 1
                 value = 0
+            stats[col] = value
+        for col in FLOAT_STAT_COLUMNS:
+            # FPL serves these as decimal strings ("0.28"); parse before
+            # subtracting or this silently concatenates.
+            value = float(cumulative[col]) - already.get(col, 0.0)
+            if value < 0.0:
+                # Same revision case as above, but the floor is applied on
+                # a tolerance rather than at exactly 0: subtracting two
+                # 2dp values parsed from strings routinely lands a hair
+                # below zero (~1e-16) with nothing revised at all, and
+                # counting those would make the warning cry wolf on every
+                # single run. Only a real revision clears FLOAT_CLAMP_EPS.
+                if value < -_FLOAT_CLAMP_EPS:
+                    clamped += 1
+                value = 0.0
             stats[col] = value
         rows.append({"gw": gw, **row, **stats})
 

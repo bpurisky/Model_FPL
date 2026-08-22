@@ -12,17 +12,20 @@ from analytics.price_model import PriceModelEvaluation
 from papertrade.actuals import _SCHEMA
 from papertrade.evaluate import evaluate_gw_player_level, evaluate_squad_level, launch_gate_report
 from papertrade.freeze import write_freeze
+from squad.live import FLOAT_STAT_COLUMNS, INT_STAT_COLUMNS
 from squad.reconstruct import SquadPlayer, SquadState, squad_state_to_dict
 
 AS_OF = datetime(2026, 8, 28, tzinfo=timezone.utc)
 
 
 def _actual_row(gw: int, eid: int, position: str, total_points: int) -> dict:
+    # Built from the column lists, not longhand -- see tests/test_actuals.py:_row
+    # for why a literal here goes silently null when the schema widens.
     return {
         "gw": gw, "element_id": eid, "position": position, "team": "Team A", "is_promoted_club": False,
-        "minutes": 90, "goals_scored": 0, "assists": 0, "clean_sheets": 0, "goals_conceded": 0, "saves": 0,
-        "bonus": 0, "yellow_cards": 0, "red_cards": 0, "own_goals": 0, "penalties_missed": 0,
-        "penalties_saved": 0, "defensive_contribution": 0, "total_points": total_points,
+        **{col: 0 for col in INT_STAT_COLUMNS},
+        **{col: 0.0 for col in FLOAT_STAT_COLUMNS},
+        **{"minutes": 90, "total_points": total_points},
     }
 
 
