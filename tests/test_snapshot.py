@@ -206,3 +206,30 @@ def test_malformed_payload_halts_and_preserves_raw(tmp_path: Path, bootstrap_pay
 
     # And the malformed run must not have written a distilled shard.
     assert not (tmp_path / "distilled").exists() or not any((tmp_path / "distilled").rglob("*.parquet"))
+
+
+def test_reference_fixtures_record_match_state(tmp_path: Path, bootstrap_payload, fixtures_payload):
+    """The reference tier used to keep only {id, event, team_h, team_a,
+    kickoff_time, finished} — six fields, none of which changes once FPL
+    publishes the calendar. data/reference/fixtures.parquet was therefore
+    byte-identical from its first commit through twenty-odd hourly runs,
+    and nothing downstream could tell a played match from an unplayed one.
+    """
+    import polars as pl
+
+    from collector.schemas import parse_fixtures
+    from collector.snapshot import write_reference
+
+    fixtures_payload[0].update(
+        {"finished": False, "finished_provisional": True, "started": True, "team_h_score": 3, "team_a_score": 0}
+    )
+    bootstrap = parse_bootstrap_static(bootstrap_payload, logging.getLogger("test"))
+    fixtures = parse_fixtures(fixtures_payload, logging.getLogger("test"))
+
+    write_reference(tmp_path, bootstrap, fixtures)
+
+    row = pl.read_parquet(tmp_path / "fixtures.parquet").row(0, named=True)
+    assert row["started"] is True
+    assert row["finished_provisional"] is True
+    assert row["finished"] is False
+    assert (row["team_h_score"], row["team_a_score"]) == (3, 0)

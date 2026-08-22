@@ -87,6 +87,10 @@ def _base_fixtures_payload() -> list[dict]:
             "team_a": 2,
             "kickoff_time": "2026-08-22T14:00:00Z",
             "finished": False,
+            "finished_provisional": False,
+            "started": False,
+            "team_h_score": None,
+            "team_a_score": None,
         }
     ]
 

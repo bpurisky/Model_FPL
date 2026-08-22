@@ -40,6 +40,7 @@ from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import (
     BootstrapStatic,
+    fixture_is_played,
     parse_bootstrap_static,
     parse_entry_history,
     parse_entry_picks,
@@ -89,7 +90,7 @@ class LiveData:
     web_names: dict[int, str]
     now_cost_by_id: dict[int, int]
     data_gw: int
-    teams_with_finished_data: int
+    teams_with_played_data: int
     teams_total: int
 
 
@@ -120,9 +121,13 @@ def build_train_df(
     bootstrap: BootstrapStatic, bootstrap_raw: dict[str, Any], fixtures_raw: list[dict[str, Any]], gw: int
 ) -> pl.DataFrame:
     """One row per element for `gw`, for teams whose gw-`gw` fixture has
-    actually finished (see module docstring's limitation: this whole
+    actually been played (see module docstring's limitation: this whole
     function is only correct while `gw` is the only gameweek that exists
-    at all this season). Excluding not-yet-played teams matters: a gameweek
+    at all this season). "Played" is `collector.schemas.fixture_is_played`,
+    not the raw `finished` flag — read that function's docstring before
+    changing this, because gating on `finished` alone is precisely the bug
+    that made every player fall through to the pooled prior below.
+    Excluding not-yet-played teams matters: a gameweek
     in progress reports `minutes: 0` for anyone whose fixture hasn't
     kicked off yet, indistinguishable in the raw data from a genuine blank
     -- verified live (2026-08-21) against a real case, Haaland showing
@@ -132,8 +137,11 @@ def build_train_df(
     fallback (`analytics.features.fill_missing_with_pooled_prior`) instead
     of a false zero.
     """
-    finished_teams = {
-        team for f in fixtures_raw if f["event"] == gw and f["finished"] for team in (f["team_h"], f["team_a"])
+    played_teams = {
+        team
+        for f in fixtures_raw
+        if f["event"] == gw and fixture_is_played(f)
+        for team in (f["team_h"], f["team_a"])
     }
     target_roster = build_target_roster(bootstrap)
     team_by_element = {e.id: e.team for e in bootstrap.elements}
@@ -141,7 +149,7 @@ def build_train_df(
     rows = [
         {**row, "gw": gw, **{col: stats_by_id[row["element_id"]][col] for col in _STAT_COLUMNS}}
         for row in target_roster.to_dicts()
-        if team_by_element[row["element_id"]] in finished_teams
+        if team_by_element[row["element_id"]] in played_teams
     ]
     schema = {"element_id": pl.Int64, "position": pl.Utf8, "team": pl.Utf8, "is_promoted_club": pl.Boolean, "gw": pl.Int64}
     schema.update({c: pl.Int64 for c in _STAT_COLUMNS})
@@ -237,8 +245,11 @@ async def fetch_live_data(
     scoring_config = load_scoring_config(Path(scoring_config_path))
 
     gw_teams = {t for f in fixtures_raw if f["event"] == last_played_event for t in (f["team_h"], f["team_a"])}
-    finished_teams = {
-        t for f in fixtures_raw if f["event"] == last_played_event and f["finished"] for t in (f["team_h"], f["team_a"])
+    played_teams = {
+        t
+        for f in fixtures_raw
+        if f["event"] == last_played_event and fixture_is_played(f)
+        for t in (f["team_h"], f["team_a"])
     }
 
     return LiveData(
@@ -255,7 +266,7 @@ async def fetch_live_data(
         web_names=web_names,
         now_cost_by_id=now_cost_by_id,
         data_gw=last_played_event,
-        teams_with_finished_data=len(finished_teams),
+        teams_with_played_data=len(played_teams),
         teams_total=len(gw_teams),
     )
 

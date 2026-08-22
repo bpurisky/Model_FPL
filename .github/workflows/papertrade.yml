@@ -2,13 +2,18 @@ name: papertrade
 
 on:
   schedule:
-    # Daily, well clear of this season's Friday 17:30 UTC deadlines and of
-    # collect.yml's hourly/5-minute jobs. Safe to run every day: `freeze`
-    # refuses to re-freeze an already-frozen gameweek (a no-op most days,
-    # not a failure — see papertrade/__main__.py:cmd_freeze), and
+    # Every two hours, NOT daily. `freeze` now only writes inside the six
+    # hours before a deadline (papertrade/freeze.py:FREEZE_WINDOW_HOURS) —
+    # a daily cron would hit a six-hour window only by luck, and deadlines
+    # move around anyway (gw1-3 are Fri 17:30 UTC, gw4 is Sat 12:30). At
+    # this cadence roughly three runs land inside every window, so one
+    # failed or skipped run doesn't cost the gameweek.
+    #
+    # Safe to run this often: `freeze` no-ops both when the gw is already
+    # frozen and when the window hasn't opened (see cmd_freeze), and
     # `record-actuals` auto-detects whichever finished gameweeks aren't
-    # recorded yet, so a missed day just gets caught up the next run.
-    - cron: "0 8 * * *"
+    # recorded yet, so nothing here depends on any single run happening.
+    - cron: "0 */2 * * *"
   workflow_dispatch: {}
 
 concurrency:

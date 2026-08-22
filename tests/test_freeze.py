@@ -13,8 +13,11 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from papertrade.freeze import (
+    FREEZE_WINDOW_HOURS,
+    FreezeTooEarly,
     assert_before_deadline,
     assert_immutable_in_git,
+    assert_within_freeze_window,
     bootstrap_shadow_state,
     latest_frozen_gw,
     load_freeze,
@@ -65,6 +68,38 @@ def test_assert_immutable_in_git_rejects_more_than_one_commit():
 def test_assert_immutable_in_git_rejects_no_commits():
     with pytest.raises(AssertionError, match="no commits"):
         assert_immutable_in_git([], DEADLINE)
+
+
+def test_assert_within_freeze_window_rejects_a_freeze_a_week_early():
+    """The gw2 regression, as data: it was frozen 2026-08-21T21:03Z against
+    a 2026-08-28T17:30Z deadline. Under the window guard that run is a
+    no-op, and gw2 stays freezable until it can be decided on real
+    information."""
+    frozen_at = datetime(2026, 8, 21, 21, 3, tzinfo=timezone.utc)
+    with pytest.raises(FreezeTooEarly, match="too early"):
+        assert_within_freeze_window(frozen_at, DEADLINE, gw=2)
+
+
+def test_assert_within_freeze_window_allows_a_run_inside_the_window():
+    assert_within_freeze_window(DEADLINE - timedelta(hours=1), DEADLINE, gw=2)  # must not raise
+
+
+def test_assert_within_freeze_window_opens_exactly_on_the_boundary():
+    assert_within_freeze_window(DEADLINE - timedelta(hours=FREEZE_WINDOW_HOURS), DEADLINE, gw=2)  # must not raise
+
+
+def test_assert_within_freeze_window_rejects_one_second_before_it_opens():
+    just_early = DEADLINE - timedelta(hours=FREEZE_WINDOW_HOURS, seconds=1)
+    with pytest.raises(FreezeTooEarly):
+        assert_within_freeze_window(just_early, DEADLINE, gw=2)
+
+
+def test_freeze_window_leaves_room_for_a_retry_at_the_scheduled_cadence():
+    """The window and .github/workflows/papertrade.yml's cron are one
+    decision, not two: a two-hourly job must get more than one shot inside
+    the window, or a single failed run silently costs a gameweek."""
+    cron_interval_hours = 2
+    assert FREEZE_WINDOW_HOURS // cron_interval_hours >= 3
 
 
 def test_assert_before_deadline_passes_when_before():

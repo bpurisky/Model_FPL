@@ -63,8 +63,18 @@ async def cmd_live(cfg: CollectorConfig) -> None:
         return
     fixtures_df = pl.read_parquet(fixtures_path)
     now = datetime.now(timezone.utc)
+    # `finished` alone reads a completed match as still live for hours
+    # (collector/schemas.py:fixture_is_played), so treat a provisionally
+    # finished fixture as done too. Guarded on the column existing because
+    # this job reads whatever fixtures.parquet the last hourly run
+    # committed, which is the pre-2026-08-22 six-column shape until one
+    # has run since — the three-hour kickoff window below is the real
+    # bound either way, so a missing column degrades, it doesn't break.
+    played = pl.col("finished")
+    if "finished_provisional" in fixtures_df.columns:
+        played = played | pl.col("finished_provisional").fill_null(False)
     live_window = fixtures_df.filter(
-        (~pl.col("finished"))
+        (~played)
         & pl.col("kickoff_time").is_not_null()
         & (pl.col("kickoff_time") <= now)
         & (pl.col("kickoff_time") >= now - pl.duration(hours=3))

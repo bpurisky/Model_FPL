@@ -216,8 +216,25 @@ def write_reference(reference_dir: Path, bootstrap: BootstrapStatic, fixtures: l
     pl.DataFrame(
         [e.model_dump(include={"id", "name", "deadline_time", "finished", "is_current", "is_next"}) for e in bootstrap.events]
     ).write_parquet(reference_dir / "events.parquet")
+    # `started` / `finished_provisional` / the scores were dropped here
+    # until 2026-08-22, which had a consequence beyond the missing columns:
+    # of the six fields kept, none changes once FPL publishes the season's
+    # calendar, so this file was byte-identical from its first commit
+    # through twenty-odd hourly runs and the reference tier recorded
+    # nothing at all about matches being played. See
+    # collector/schemas.py:fixture_is_played for why `finished` alone is
+    # not the "match is over" signal it looks like.
     pl.DataFrame(
-        [f.model_dump(include={"id", "event", "team_h", "team_a", "kickoff_time", "finished"}) for f in fixtures]
+        [
+            f.model_dump(
+                include={
+                    "id", "event", "team_h", "team_a", "kickoff_time",
+                    "finished", "finished_provisional", "started",
+                    "team_h_score", "team_a_score",
+                }
+            )
+            for f in fixtures
+        ]
     ).write_parquet(reference_dir / "fixtures.parquet")
 
 

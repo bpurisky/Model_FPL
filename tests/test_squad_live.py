@@ -52,10 +52,15 @@ def _raw_elements() -> list[dict]:
     ]
 
 
-def _fixtures(team1_finished: bool, team2_started: bool) -> list[dict]:
+def _fixtures(team1_finished: bool, team2_started: bool, team1_provisional: bool = False) -> list[dict]:
     return [
-        {"event": 1, "team_h": 1, "team_a": 7, "finished": team1_finished},
-        {"event": 1, "team_h": 2, "team_a": 999, "finished": False},  # team 2's own match: not finished either way
+        {
+            "event": 1, "team_h": 1, "team_a": 7,
+            "finished": team1_finished,
+            "finished_provisional": team1_finished or team1_provisional,
+        },
+        # team 2's own match: not played on either flag
+        {"event": 1, "team_h": 2, "team_a": 999, "finished": False, "finished_provisional": False},
     ]
 
 
@@ -92,6 +97,29 @@ def test_train_df_carries_real_stats_for_finished_teams():
     assert row["minutes"] == 90
     assert row["goals_scored"] == 2
     assert row["gw"] == 1
+
+
+def test_train_df_includes_a_provisionally_finished_fixture():
+    """The regression that motivated collector/schemas.py:fixture_is_played.
+
+    A match that has been played but whose bonus FPL hasn't confirmed yet
+    reports `finished: false` with `finished_provisional: true`, and stays
+    that way for many hours — long enough to cover the whole window in
+    which a recommendation or a freeze actually gets made. Gating on
+    `finished` alone put every player on the pooled prior for that entire
+    period, which is how papertrade/freezes/gw2.json ended up with one
+    identical projection for all 600 players.
+    """
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}
+    fixtures_raw = _fixtures(team1_finished=False, team2_started=False, team1_provisional=True)
+
+    df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=1)
+
+    included = set(df["element_id"].to_list())
+    assert included == {1, 3}
+    assert df.filter(df["element_id"] == 1).row(0, named=True)["minutes"] == 90
+    assert 2 not in included  # still excluded: neither flag set on team 2's fixture
 
 
 def test_target_roster_flags_promoted_club_by_short_name():

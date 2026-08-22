@@ -19,3 +19,7 @@ papertrade/report.json
 
 # Local overrides
 .env
+
+# Generated knowledge graph (/graphify) — AST cache, graph.json, graph.html.
+# Regenerates from the source it indexes; 3.4MB of churn, not an input to anything.
+graphify-out/

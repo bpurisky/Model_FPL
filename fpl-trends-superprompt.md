@@ -418,7 +418,7 @@ Begin with Phase 0 only. Build the collector, verify it against its acceptance c
 
 Everything below this line is not part of the original spec — it's a running record of what's actually been built, kept up to date so a fresh session (no memory of prior conversations) can pick up correctly. See [README.md](README.md) for the user-facing description of what exists; this log is oriented toward *resuming work*, not describing the finished product.
 
-### Status as of 2026-08-21: Phases 0-3 complete and committed, Phase 4 infrastructure built and automated (13-gameweek process just starting)
+### Status as of 2026-08-22: Phases 0-3 complete and pushed, Phase 4 infrastructure built, automated, and pushed (13-gameweek process just starting)
 
 - **Phase 0 (collector)** — done, tested, deployed. `.github/workflows/collect.yml` runs hourly on GitHub Actions (repo: `bpurisky/Model_FPL`, pushed and confirmed running — workflow permissions were set to "Read and write" so it can commit snapshots back to `main`).
 - **Phase 1 (backtest harness)** — done. Three seasons (2023-24, 2024-25, 2025-26) backfilled from `vaastav/Fantasy-Premier-League` into committed `data/historical/*.parquet`. Leakage framework, three baselines, walk-forward harness, report metrics all in place and tested.
@@ -444,7 +444,7 @@ Also added `analytics/fdr.py:upcoming_team_difficulty` — `team_gameweek_diffic
 
 177 tests pass (`uv run pytest`) as of the end of the Phase 4 pass below, up from 103 before Phase 3 started.
 
-Local commits are ahead of `origin/main` by design in past sessions — check `git status`/`git log` before assuming what's pushed; the user has sometimes pushed manually rather than asking the assistant to.
+Phase 3 committed as `1517e5b`.
 
 ### Phase 4 (paper trade) — built 2026-08-21, immediately after Phase 3
 
@@ -475,6 +475,30 @@ Local commits are ahead of `origin/main` by design in past sessions — check `g
 
 **Weekly operating loop from here**: mostly automated now. `papertrade.yml` runs `freeze` and `record-actuals` daily and commits the results — check `papertrade/freezes/` and `data/current_season/2026-27.parquet`'s `gw` column to see how far it's gotten before assuming manual action is needed. `python -m papertrade evaluate` is not automated (prints a report and writes the gitignored `papertrade/report.json` — nothing to commit) and can be run anytime to see where things stand.
 
+Phase 4 committed as `44ede48`, then merged with `origin/main`'s own new automated collector commits (`collector: hourly snapshot ...` — the hourly workflow kept running throughout this session and had moved origin ahead; the merge was clean, no conflicts, since it only touched `data/reference/`/`data/distilled/`, nothing this session's work touched) as merge commit `12e0843`. **Pushed and confirmed live**: a fresh `git fetch origin main` shows `origin/main` at `12e0843`, matching local `HEAD` exactly — this session's own `git push` attempts failed outright in this environment (`fatal: could not read Username`, no credential helper configured, no `gh` CLI available, in both the Bash and PowerShell tools), so the push that actually landed was very likely done manually by the user in the background, consistent with this repo's established pattern. **Don't assume push access exists in a fresh session** — verify with `git fetch` + compare against `HEAD` before assuming local commits reached GitHub, the same way this session had to.
+
+### Phase 4 correctness pass — 2026-08-22
+
+Two bugs found by checking the running system against the live API rather than trusting the log above. Both were silently stalling the whole 13-gameweek process; neither would have surfaced on its own.
+
+**1. `finished` is not the "match is over" flag.** FPL flips `finished_provisional` at full time and `finished` only once the gameweek's data is confirmed, which lags by many hours. Verified live 2026-08-22: gw1's Friday fixture (Arsenal 3-0, kicked off 2026-08-21T19:00Z) still reported `finished: false` with `finished_provisional: true` more than eighteen hours after full time.
+
+`squad/live.py:build_train_df` gated on `finished` alone, so *no team ever qualified as played* and every one of the 600 players fell through to `analytics/features.py`'s pooled prior. This is the real cause of the "hold the squad" output the previous entry recorded as expected behaviour waiting on gw1 — it was not waiting on matches, it was waiting on a flag that lags, and it would not have self-resolved. The evidence is `papertrade/freezes/gw2.json`: all 600 players carry the identical projection 0.8, so its XI, captain and bench order are arbitrary solver tie-breaks over a flat objective.
+
+Fixed with `collector/schemas.py:fixture_is_played` (read its docstring before touching any of this), used at both gates in `squad/live.py`. Verified live after the fix: 2 of gw1's 10 fixtures are played, `build_train_df` returns 131 rows with real minutes/goals/bonus, against 0 rows before.
+
+Deliberately **not** changed: `papertrade/actuals.py` gates on event-level `finished`, which is the correct flag there — recording a gameweek's actuals must wait for confirmation, learning trailing rates from minutes and goals need not.
+
+`collector/schemas.py:Fixture` now also carries `started`, `finished_provisional`, `team_h_score`, `team_a_score`, and `write_reference` persists them. `finished_provisional` is required (the pipeline depends on it, so a missing one is real drift per §0.5); the rest are optional, recorded for the current-season Elo `analytics/fdr.py` will need later. Note what the old six-field schema hid: none of those six fields ever changes once FPL publishes the calendar, so `data/reference/fixtures.parquet` was byte-identical from its first commit (`af91fa3`) through twenty-odd hourly runs — the reference tier recorded nothing whatsoever about matches being played. `collector/__main__.py:cmd_live`'s live-window filter also treats provisional as done, guarded on the column existing so it degrades rather than breaking on a pre-2026-08-22 committed parquet.
+
+**2. Freezes fired about a week early.** `run_freeze` defaults to bootstrap-static's `next` event and `papertrade.yml` ran daily, so the moment one deadline passed the next gameweek was frozen — with the least information it would ever have. gw2 is the evidence: `frozen_at` 2026-08-21T21:03Z against a 2026-08-28T17:30Z deadline, six days and twenty hours early. That is not a small inefficiency: §6.2's whole comparison is model versus operator judgment, and the operator decides at the deadline with a full week of team news.
+
+Fixed with `papertrade/freeze.py:assert_within_freeze_window` (+ `FREEZE_WINDOW_HOURS = 6`, `FreezeTooEarly`), which `cmd_freeze` treats as a benign no-op exactly like an already-frozen gameweek. `papertrade.yml`'s cron moved from daily to `0 */2 * * *` — the window and the cadence are one decision, not two: three runs land inside every window, so a single failed run doesn't cost a gameweek. A test asserts that relationship holds. Verified live: `python -m papertrade freeze` now exits 0 with "gw2's freeze window opens at 2026-08-28 11:30:00+00:00".
+
+**What this means for the 13-gameweek window.** gw2 stays frozen as-is — deleting and re-freezing would give the path more than one commit and break `assert_immutable_in_git`'s own guarantee. So gw2 is a null observation and should be excluded from evaluation, at player level as well as squad level (a flat-0.8 projection set would pollute MAE, not just the squad track). **That exclusion is not implemented yet.** The first freeze that carries real signal is gw3, deadline 2026-09-04 17:30Z.
+
+217 tests pass (`uv run pytest`), up from 204. The 13 new ones cover the provisional-finish regression in `build_train_df`, `fixture_is_played`'s four cases, `finished_provisional` being a hard error when absent, the reference tier persisting match state, and the four freeze-window boundaries.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
@@ -490,6 +514,7 @@ Local commits are ahead of `origin/main` by design in past sessions — check `g
 
 ### Before continuing Phase 4
 
+- **This session had no git push access** (no credential helper, no `gh` CLI, in either Bash or PowerShell) — commits landed on `origin/main` anyway, most likely because the user pushed manually in the background. Don't assume a fresh session has push access either; verify with `git fetch` + compare against `HEAD` before relying on it, and fall back to asking the user to push if `git push` fails the same way.
 - **The weekly loop is now automated** (`.github/workflows/papertrade.yml`, daily) — check it's actually running (Actions tab / commit history for `"papertrade: weekly freeze/actuals ..."` commits) rather than assuming it silently is. If it's been disabled or failing, `papertrade/freezes/`'s highest `gw{N}.json` and `data/current_season/2026-27.parquet`'s `gw` column show exactly how far it's gotten.
 - **Three §6.5 launch-gate gaps remain, by explicit user choice, not oversight**: live baseline comparison (criteria 1-2), live leakage tracking (criterion 3), manual-correction tracking (criterion 4). The price-model gap (criterion 5) was fixed this same session — don't assume the other three are done too because that one now is.
 - `squad/live.py:build_train_df`'s cumulative-stats shortcut (documented in its own module docstring) stops being valid once gw2 exists — check whether it's been swapped for true per-gameweek splits before trusting projections beyond gw1's single-datapoint case. `papertrade/actuals.py` already fetches true per-gw splits via `/event/{gw}/live/`; reusing that same source for `build_train_df` (instead of bootstrap-static's cumulative totals) is the natural fix once it's needed.

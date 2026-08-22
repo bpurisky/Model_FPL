@@ -30,7 +30,7 @@ from papertrade.evaluate import (
     launch_gate_report,
     run_price_model_for_gate,
 )
-from papertrade.freeze import FREEZES_DIR, latest_frozen_gw, run_freeze
+from papertrade.freeze import FREEZES_DIR, FreezeTooEarly, latest_frozen_gw, run_freeze
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -44,11 +44,13 @@ async def cmd_freeze(args: argparse.Namespace) -> None:
         raise SystemExit("no --entry-id given and config/collector.yaml's own_entry_id is unset")
     try:
         path = await run_freeze(cfg, entry_id, gw=args.gw)
-    except FileExistsError as exc:
-        # Expected steady state for a daily automated run: the current gw is
-        # already frozen most days, and that's not a failure -- only the day
-        # the next gw becomes freezable does this actually write something.
-        logger.info("nothing new to freeze: %s", exc)
+    except (FileExistsError, FreezeTooEarly) as exc:
+        # Expected steady state for a scheduled run, in two flavours, neither
+        # a failure: the gameweek is already frozen, or its deadline is still
+        # far enough out that freezing now would burn the gameweek on a stale
+        # view of the world (papertrade/freeze.py:assert_within_freeze_window).
+        # Only a run inside the window, on a gw not yet frozen, writes anything.
+        logger.info("nothing to freeze: %s", exc)
         return
     logger.info("froze gw%s -> %s", args.gw or "(next)", path)
 

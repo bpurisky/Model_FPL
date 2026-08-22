@@ -37,8 +37,8 @@ def format_report(live, result: OptimizationResult, horizon: list[int]) -> str:
     lines.append("")
     lines.append(
         f"CAVEAT: gameweek {live.data_gw} of 2026/27 is this season's only "
-        f"data so far, and only {live.teams_with_finished_data}/{live.teams_total} "
-        "teams have a *finished* fixture in it as of this run -- an "
+        f"data so far, and only {live.teams_with_played_data}/{live.teams_total} "
+        "teams have *played* their fixture in it as of this run -- an "
         "in-progress match's cumulative stats (e.g. 0 minutes because a "
         "fixture hasn't kicked off yet, not because of a blank) are "
         "deliberately excluded, so any team not yet counted here is "

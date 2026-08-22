@@ -23,7 +23,7 @@ from __future__ import annotations
 import json
 import logging
 import subprocess
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -41,6 +41,10 @@ logger = logging.getLogger("papertrade.freeze")
 
 FREEZES_DIR = Path("papertrade/freezes")
 BOOTSTRAP_EVENT = 1  # gw1: the real, pre-model squad the shadow team starts from (§6.2)
+
+# How long before a deadline a gameweek becomes freezable
+# (see assert_within_freeze_window for why this bound exists at all).
+FREEZE_WINDOW_HOURS = 6
 
 
 def freeze_path(gw: int, freezes_dir: Path = FREEZES_DIR) -> Path:
@@ -91,6 +95,50 @@ def assert_immutable_in_git(commit_times: list[datetime], deadline: datetime) ->
         raise AssertionError(f"frozen file's only commit ({commit_times[0]}) is after its deadline ({deadline})")
 
 
+class FreezeTooEarly(RuntimeError):
+    """Not a failure — the scheduled job ran outside the freeze window.
+
+    Distinct from the errors `run_freeze` raises for genuinely broken
+    conditions, so `papertrade/__main__.py:cmd_freeze` can treat it the way
+    it already treats an already-frozen gameweek: a logged no-op, not a
+    red workflow run on every one of the six days a week it applies.
+    """
+
+
+def assert_within_freeze_window(
+    now: datetime, deadline: datetime, gw: int, window_hours: int = FREEZE_WINDOW_HOURS
+) -> None:
+    """§6.1 says "before every deadline"; this pins down how long before.
+
+    The first version of the weekly automation froze whatever gameweek
+    bootstrap-static called `next`, on a daily cron, with no lower bound.
+    The moment one deadline passed the following gameweek became `next`,
+    so every freeze landed roughly a week early, with the least information
+    it would ever have. gw2 is the surviving evidence: frozen
+    2026-08-21T21:03Z against a 2026-08-28T17:30Z deadline, six days and
+    twenty hours ahead of it.
+
+    That is not a small inefficiency. The shadow team (§6.2) exists to
+    answer whether the model beats the operator's judgment, and the
+    operator gets to decide at the deadline with a full week of team news;
+    handing the model a week-stale view makes the comparison meaningless
+    in the model's disfavour. Freezing inside a window before the deadline
+    is what makes the two tracks comparable.
+
+    The window is hours rather than minutes because the job needs room to
+    retry: a missed or failed run inside a six-hour window still has later
+    runs to land on, whereas a thirty-minute window turns one flaky
+    GitHub Actions run into a permanently unfrozen gameweek. It also keeps
+    the API calls well clear of §2.2's final-ten-minutes blackout.
+    """
+    opens_at = deadline - timedelta(hours=window_hours)
+    if now < opens_at:
+        raise FreezeTooEarly(
+            f"gw{gw}'s freeze window opens at {opens_at} ({window_hours}h before its "
+            f"{deadline} deadline); it is {now} — too early to freeze"
+        )
+
+
 def assert_before_deadline(now: datetime, deadline: datetime, gw: int) -> None:
     """§0.3's point-in-time discipline, enforced for the automated weekly
     loop specifically: a freeze run that's late (workflow skipped, retried,
@@ -138,6 +186,7 @@ async def run_freeze(
 
         gw_deadline = next(ev.deadline_time for ev in bootstrap.events if ev.id == gw)
         now = datetime.now(timezone.utc)
+        assert_within_freeze_window(now, gw_deadline, gw)
         assert_before_deadline(now, gw_deadline, gw)
 
         now_cost_by_id = {e.id: e.now_cost for e in bootstrap.elements}

@@ -9,6 +9,7 @@ and must halt the run; an unrecognised extra field is merely noteworthy.
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,7 @@ __all__ = [
     "resolve_next_event",
     "parse_bootstrap_static",
     "parse_fixtures",
+    "fixture_is_played",
     "parse_element_summary",
     "parse_event_live",
     "parse_entry",
@@ -189,9 +191,51 @@ class Fixture(_LenientModel):
     team_a: int
     kickoff_time: datetime | None
     finished: bool
+    # Required alongside `finished` because the pipeline genuinely depends
+    # on it (see fixture_is_played) — under this module's own rule, that
+    # makes a missing one real drift and a hard error, not a warning.
+    finished_provisional: bool
+    # Recorded for the reference tier rather than depended on yet: scores
+    # are what analytics/fdr.py's Elo will need to rate current-season
+    # form once enough gameweeks exist, and until Phase 0 persisted them
+    # they were simply thrown away every run. Optional, so a missing one
+    # doesn't halt a collector run over data nothing reads yet.
+    started: bool | None = None
+    team_h_score: int | None = None
+    team_a_score: int | None = None
 
 
 _FixturesAdapter = TypeAdapter(list[Fixture])
+
+
+def fixture_is_played(fixture: Mapping[str, Any]) -> bool:
+    """Whether a fixture is over, and so whether its stats can be learned from.
+
+    FPL exposes two flags here and they are not interchangeable.
+    `finished_provisional` flips at full time, once provisional bonus has
+    been applied. `finished` flips only once the gameweek's data has been
+    confirmed, which lags by many hours — verified live on 2026-08-22,
+    when gw1's Friday fixture (Arsenal 3-0, kicked off 2026-08-21T19:00Z)
+    still reported `finished: false` alongside `finished_provisional: true`
+    more than eighteen hours after full time.
+
+    Gating "has this team played?" on `finished` alone therefore reads a
+    completed match as unplayed for most of a gameweek. That is not a
+    hypothetical: `squad/live.py:build_train_df` did exactly this, so every
+    player fell through to the pooled prior and `papertrade/freezes/gw2.json`
+    was frozen with one identical projection (0.8) for all 600 players.
+
+    Deliberately NOT the right predicate for "is this gameweek's result
+    final" — provisional bonus can still move. `papertrade/actuals.py`
+    gates on event-level `finished` for that, and should keep doing so:
+    recording actuals must wait for confirmation, learning trailing rates
+    from minutes and goals need not.
+
+    Takes a raw payload dict rather than a `Fixture`, because every caller
+    (squad/live.py, via papertrade/freeze.py) works from the raw
+    `/fixtures/` JSON that `parse_fixtures` only validates in passing.
+    """
+    return bool(fixture.get("finished") or fixture.get("finished_provisional"))
 
 
 def parse_fixtures(raw: list[dict[str, Any]], logger: logging.Logger) -> list[Fixture]:
