@@ -27,6 +27,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from analytics.projections import DEFAULT_WINDOW
 from analytics.scoring import load_scoring_config
 from collector.client import FPLClient
 from collector.config import CollectorConfig
@@ -53,6 +54,49 @@ BOOTSTRAP_EVENT = 1  # gw1: the real, pre-model squad the shadow team starts fro
 # How long before a deadline a gameweek becomes freezable
 # (see assert_within_freeze_window for why this bound exists at all).
 FREEZE_WINDOW_HOURS = 6
+
+# The optimizer may not pay for transfer hits until the model has at least
+# as many gameweeks of current-season history as its own trailing window.
+#
+# Not a taste call about aggression. optimize_squad maximizes projected
+# points net of hit cost and treats each projection as a point estimate
+# with no uncertainty attached, so the thinner the history the more
+# willing it is to buy noise. Verified live on 2026-08-23, one gameweek
+# into the season: uncapped it proposed 11 transfers for -40 points,
+# benching Haaland and B.Fernandes behind players who happened to return
+# in gw1; capped to the free transfer it proposed one, and kept them.
+#
+# The threshold is the model's own DEFAULT_WINDOW rather than a number
+# picked here: below it every trailing mean is averaging fewer
+# observations than the window the event model was tuned and backtested
+# against (§4.2, §4.4), so the projections the optimizer is paying 4
+# points a time to act on are outside the regime where they were shown
+# to beat the baselines at all.
+HIT_ELIGIBILITY_GWS = DEFAULT_WINDOW
+
+
+def transfer_cap(n_train_gws: int, free_transfers: int) -> dict[str, Any]:
+    """How many transfers the optimizer may make this gameweek, and why.
+
+    Returns the record that goes into the freeze verbatim.
+    `max_transfers` of None means uncapped — optimize_squad is free to
+    pay hits because the history is deep enough to be worth paying for.
+    Below the threshold the cap is the free allowance exactly, which is
+    the same statement as "no hits": a hit is by definition a transfer
+    beyond it.
+
+    Note a free_transfers of 0 caps at 0, forcing a hold. That is the
+    intended reading rather than an edge case — with no free transfer and
+    a model below its own window, every available move costs 4 points
+    against a projection that has not earned them.
+    """
+    applied = n_train_gws < HIT_ELIGIBILITY_GWS
+    return {
+        "applied": applied,
+        "max_transfers": free_transfers if applied else None,
+        "n_train_gws": n_train_gws,
+        "threshold_gws": HIT_ELIGIBILITY_GWS,
+    }
 
 
 def freeze_path(gw: int, freezes_dir: Path = FREEZES_DIR) -> Path:
@@ -220,6 +264,11 @@ async def run_freeze(
     event) for the shadow team, advancing it from whatever the previous
     freeze file (or, for gw2, the real gw1 squad) left it in.
 
+    Transfers are capped at the free allowance until the model has
+    HIT_ELIGIBILITY_GWS gameweeks of current-season history; the cap and
+    the evidence for it are recorded in the freeze under `transfer_cap`
+    whether or not it bound.
+
     `manual_correction` records, permanently and in the gameweek's own
     freeze, that a human intervened in this run — §6.5 criterion 4 asks
     for 13 consecutive gameweeks *without* one. It is a free-text reason
@@ -285,7 +334,22 @@ async def run_freeze(
     scoring_config = load_scoring_config(Path(scoring_config_path))
     projections = build_projections(train_df, target_roster, scoring_config, difficulty_table, horizon)
 
-    result = optimize_squad(shadow_state, pool, projections, horizon=horizon, free_transfers=free_transfers, hit_cost=hit_cost)
+    # Cap transfers at the free allowance while the history is too thin for
+    # the model to be paying hits on it (see HIT_ELIGIBILITY_GWS). Recorded
+    # in the payload either way, so a reader can tell a held squad that the
+    # optimizer chose from one it was not allowed to change.
+    n_train_gws = int(train_df["gw"].n_unique()) if train_df.height else 0
+    cap = transfer_cap(n_train_gws, free_transfers)
+    if cap["applied"]:
+        logger.info(
+            "gw%d: %d gameweek(s) of history < %d, capping transfers at the free allowance (%d) so no hits are paid",
+            gw, n_train_gws, HIT_ELIGIBILITY_GWS, cap["max_transfers"],
+        )
+
+    result = optimize_squad(
+        shadow_state, pool, projections, horizon=horizon,
+        free_transfers=free_transfers, max_transfers=cap["max_transfers"], hit_cost=hit_cost,
+    )
 
     shadow_state_after = apply_recommendation(shadow_state, result, pool_by_id, now_cost_by_id, next_gw=gw, as_of=now)
     free_transfers_after = accrue_free_transfers(free_transfers, len(result.transfers_out), scoring_config["free_transfers"]["max_banked"])
@@ -326,6 +390,12 @@ async def run_freeze(
             "hits_taken": result.hits_taken,
             "bank_after": result.bank_after,
         },
+        # Whether the optimizer was free to pay hits this gameweek, and on
+        # what evidence. Without this a capped hold and a chosen hold are
+        # indistinguishable in the record, and §6.3's squad-level series
+        # would be read as the optimizer's judgement when it was a
+        # constraint (see HIT_ELIGIBILITY_GWS).
+        "transfer_cap": cap,
         "free_transfers_after": free_transfers_after,
         "shadow_state_after": squad_state_to_dict(shadow_state_after),
     }

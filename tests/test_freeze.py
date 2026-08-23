@@ -14,6 +14,7 @@ import pytest
 
 from papertrade.freeze import (
     FREEZE_WINDOW_HOURS,
+    HIT_ELIGIBILITY_GWS,
     FreezeTooEarly,
     assert_before_deadline,
     assert_immutable_in_git,
@@ -21,6 +22,7 @@ from papertrade.freeze import (
     bootstrap_shadow_state,
     latest_frozen_gw,
     load_freeze,
+    transfer_cap,
     write_freeze,
 )
 
@@ -140,3 +142,60 @@ def test_bootstrap_shadow_state_uses_current_prices_for_priceless_picks():
         assert sp.purchase_price == sp.selling_price == now_cost_by_id[sp.element_id]
     captain = next(sp for sp in state.players if sp.is_captain)
     assert captain.element_id == 101
+
+
+# --- transfer cap (the optimizer's licence to pay hits) -------------------
+
+
+def test_transfer_cap_binds_at_one_gameweek_of_history():
+    """The gw2 case, and the reason this exists: one gameweek in, the
+    uncapped optimizer proposed 11 transfers for -40 points against
+    projections that are trailing means over a single observation."""
+    cap = transfer_cap(n_train_gws=1, free_transfers=1)
+
+    assert cap["applied"] is True
+    assert cap["max_transfers"] == 1  # the free allowance exactly: no hits
+
+
+def test_transfer_cap_lifts_once_the_model_reaches_its_own_window():
+    """Uncapped means max_transfers=None -- optimize_squad may pay hits
+    again, because the trailing means now average over the window the
+    event model was actually validated at."""
+    cap = transfer_cap(n_train_gws=HIT_ELIGIBILITY_GWS, free_transfers=2)
+
+    assert cap["applied"] is False
+    assert cap["max_transfers"] is None
+
+
+def test_transfer_cap_is_inclusive_at_the_threshold():
+    assert transfer_cap(HIT_ELIGIBILITY_GWS - 1, 1)["applied"] is True
+    assert transfer_cap(HIT_ELIGIBILITY_GWS, 1)["applied"] is False
+
+
+def test_transfer_cap_with_no_free_transfers_forces_a_hold():
+    """Intended, not an edge case: with nothing free and a model below its
+    own window, every available move costs 4 points against a projection
+    that has not earned them."""
+    cap = transfer_cap(n_train_gws=2, free_transfers=0)
+
+    assert cap["applied"] is True
+    assert cap["max_transfers"] == 0
+
+
+def test_transfer_cap_records_its_evidence_either_way():
+    """A capped hold and a chosen hold are the same squad on disk. §6.3's
+    squad-level series is only readable if the freeze says which it was."""
+    for n in (0, 1, HIT_ELIGIBILITY_GWS, HIT_ELIGIBILITY_GWS + 3):
+        cap = transfer_cap(n_train_gws=n, free_transfers=1)
+        assert cap["n_train_gws"] == n
+        assert cap["threshold_gws"] == HIT_ELIGIBILITY_GWS
+        assert set(cap) == {"applied", "max_transfers", "n_train_gws", "threshold_gws"}
+
+
+def test_hit_eligibility_threshold_is_the_models_own_window():
+    """Not a number chosen here. If DEFAULT_WINDOW moves, this moves with
+    it -- the claim is 'below the window the model was tuned at', not
+    'below five'."""
+    from analytics.projections import DEFAULT_WINDOW
+
+    assert HIT_ELIGIBILITY_GWS == DEFAULT_WINDOW
