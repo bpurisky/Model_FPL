@@ -23,3 +23,10 @@ papertrade/report.json
 # Generated knowledge graph (/graphify) — AST cache, graph.json, graph.html.
 # Regenerates from the source it indexes; 3.4MB of churn, not an input to anything.
 graphify-out/
+
+# §5.3.4: panel.parquet and timeseries.parquet are build artifacts, not
+# committed — size and churn. columns.json and the other seven JSON files
+# ARE committed, so a fresh clone renders Correlation Lab, Comparison,
+# Explorer, Model Board and Scorecard with no pipeline run. The routes
+# that need these two show an explanatory empty state when they're absent.
+data/web/v1/*.parquet

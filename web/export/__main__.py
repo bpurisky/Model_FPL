@@ -20,6 +20,7 @@ from pathlib import Path
 from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
 from web.export.normalize import normalization_basis
+from web.export.panel import build_panel, write_panel
 
 logger = logging.getLogger("web.export")
 
@@ -48,8 +49,19 @@ def cmd_columns(args: argparse.Namespace) -> None:
     logger.info("wrote %d column entries -> %s", len(REGISTRY), path)
 
 
+def cmd_panel(args: argparse.Namespace) -> None:
+    """The tidy long table (§5.3.2). A build artifact, not committed."""
+    df = build_panel()
+    path = write_panel(df, Path(args.out))
+    size_mb = path.stat().st_size / 1_048_576
+    logger.info(
+        "wrote panel: %d rows x %d cols, %.1f MB -> %s", df.height, df.width, size_mb, path
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
+    cmd_panel(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -58,6 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("columns").set_defaults(func=cmd_columns)
+    subparsers.add_parser("panel").set_defaults(func=cmd_panel)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 
