@@ -24,7 +24,7 @@ truthful without re-deriving it in TypeScript, which §5.6 forbids.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any, Literal
+from typing import Any, Literal, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict
 
@@ -115,6 +115,61 @@ class ColumnsFile(_Strict):
     columns: list[ColumnSpec]
 
 
+class CorrelationCell(_Strict):
+    """One metric pair, within one position group (§5.3.2).
+
+    `rho` and `p_value` are nullable and `n` is not. A pair can fail to
+    produce a correlation — too few complete rows, or a metric with no
+    spread in the group — and the honest report of that is a null rho
+    beside the n that explains it, never a 0.0 that reads as "measured, no
+    relationship" (§5.3.3).
+
+    `n` is the count of rows where *both* metrics are present, not the
+    size of the group. The two differ by a lot here: four metrics exist
+    only from 2025-26, so their cells draw on a third of the pooled
+    population.
+    """
+
+    group: str
+    a: str
+    b: str
+    rho: float | None
+    n: int
+    p_value: float | None
+
+
+class GroupSummary(_Strict):
+    """One entry of the position filter (§5.4.1).
+
+    `mixed_position` is the flag §5.7.5's caution copy hangs off. It is a
+    property of the population rather than of any one cell, which is why
+    it lives here and is not repeated 91 times.
+    """
+
+    key: str
+    n_player_seasons: int
+    mixed_position: bool
+
+
+class CorrelationsFile(_Strict):
+    """`correlations.json`.
+
+    `min_n_cell` travels *in the file* rather than being read from
+    `config/frontend.yaml` by the UI: the threshold that decides whether a
+    cell is hatched has to be the one that was in force when these numbers
+    were computed, and a browser reading today's config against a file
+    built last week would hatch the wrong cells.
+    """
+
+    header: Header
+    basis: str
+    min_n_cell: int
+    seasons: list[str]
+    metrics: list[str]
+    groups: list[GroupSummary]
+    cells: list[CorrelationCell]
+
+
 def build_header(
     *,
     rows: int,
@@ -154,7 +209,7 @@ def contract_shape() -> dict[str, Any]:
     than a guard.
     """
     shape: dict[str, Any] = {}
-    for model in (Header, ColumnSpec, ColumnsFile):
+    for model in (Header, ColumnSpec, ColumnsFile, CorrelationCell, GroupSummary, CorrelationsFile):
         fields = {}
         for name, field in model.model_fields.items():
             fields[name] = {
@@ -166,11 +221,20 @@ def contract_shape() -> dict[str, Any]:
 
 
 def _type_name(annotation: Any) -> str:
-    """A coarse, zod-expressible name for an annotation."""
-    origin = getattr(annotation, "__origin__", None)
+    """A coarse, zod-expressible name for an annotation.
+
+    `get_origin` rather than `__origin__`: PEP 604 unions (`float | None`)
+    are `types.UnionType` and carry no `__origin__` at all, so reading the
+    attribute directly sent every nullable field in this module — `unit`,
+    `higher_is_better`, `source_gameweek`, `model_git_sha` and the rest —
+    down the fallback path and described them all as a bare "union". The
+    §5.12.2 test would then have accepted a `schema.ts` that got each of
+    their inner types wrong, which is most of what that test is for.
+    """
+    origin = get_origin(annotation)
     if origin is not None:
-        args = [a for a in getattr(annotation, "__args__", ()) if a is not type(None)]
-        optional = len(args) < len(getattr(annotation, "__args__", ()))
+        args = [a for a in get_args(annotation) if a is not type(None)]
+        optional = len(args) < len(get_args(annotation))
         if origin is dict:
             base = "record"
         elif origin is list:
@@ -193,6 +257,9 @@ __all__ = [
     "CONTRACT_VERSION",
     "ColumnSpec",
     "ColumnsFile",
+    "CorrelationCell",
+    "CorrelationsFile",
+    "GroupSummary",
     "Header",
     "build_header",
     "contract_shape",

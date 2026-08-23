@@ -1,0 +1,3703 @@
+{
+  "header": {
+    "contract_version": 1,
+    "generated_at": "2026-08-23T17:50:32.709390Z",
+    "source_gameweek": 38,
+    "scoring_config": "scoring_2026_27.yaml",
+    "model_git_sha": "a72bee53e4e14050e62563892588efb4024a2733",
+    "normalization_basis": "player_season_pooled_min45_per_fixture",
+    "rows": 455
+  },
+  "basis": "player_season_pooled_min45_per_fixture",
+  "min_n_cell": 30,
+  "seasons": [
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "metrics": [
+    "xg_per90",
+    "xa_per90",
+    "xgi_per90",
+    "goals_per90",
+    "assists_per90",
+    "bonus_per90",
+    "xgc_per90",
+    "goals_conceded_per90",
+    "saves_per90",
+    "defensive_contribution_per90",
+    "bps_per90",
+    "tackles_per90",
+    "recoveries_per90",
+    "cbi_per90"
+  ],
+  "groups": [
+    {
+      "key": "all",
+      "n_player_seasons": 649,
+      "mixed_position": true
+    },
+    {
+      "key": "GK",
+      "n_player_seasons": 61,
+      "mixed_position": false
+    },
+    {
+      "key": "DEF",
+      "n_player_seasons": 240,
+      "mixed_position": false
+    },
+    {
+      "key": "MID",
+      "n_player_seasons": 284,
+      "mixed_position": false
+    },
+    {
+      "key": "FWD",
+      "n_player_seasons": 64,
+      "mixed_position": false
+    }
+  ],
+  "cells": [
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "xa_per90",
+      "rho": 0.5720313841463522,
+      "n": 649,
+      "p_value": 1.1336891974854867e-57
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "xgi_per90",
+      "rho": 0.9295171357719759,
+      "n": 649,
+      "p_value": 1.6811985414940564e-282
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "goals_per90",
+      "rho": 0.8861436761522716,
+      "n": 649,
+      "p_value": 2.682947983323415e-218
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "assists_per90",
+      "rho": 0.5843742294263148,
+      "n": 649,
+      "p_value": 1.0779161017237504e-60
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "bonus_per90",
+      "rho": 0.5418506025794075,
+      "n": 649,
+      "p_value": 8.478728762625537e-51
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "xgc_per90",
+      "rho": -0.15920004970447343,
+      "n": 649,
+      "p_value": 0.000046234586741345354
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.18480374607674266,
+      "n": 649,
+      "p_value": 2.1395813065742565e-6
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "saves_per90",
+      "rho": -0.503635000941417,
+      "n": 649,
+      "p_value": 4.892196284629139e-43
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.046852293320984895,
+      "n": 219,
+      "p_value": 0.4903441065241787
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "bps_per90",
+      "rho": 0.40912101413893703,
+      "n": 649,
+      "p_value": 1.398789763203211e-27
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "tackles_per90",
+      "rho": -0.09133614548491485,
+      "n": 219,
+      "p_value": 0.17806626575857654
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "recoveries_per90",
+      "rho": -0.4618473081554842,
+      "n": 219,
+      "p_value": 5.712112606283446e-13
+    },
+    {
+      "group": "all",
+      "a": "xg_per90",
+      "b": "cbi_per90",
+      "rho": -0.3617795818067674,
+      "n": 219,
+      "p_value": 3.567585844659058e-8
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "xgi_per90",
+      "rho": 0.7962667833161577,
+      "n": 649,
+      "p_value": 2.3192548775651766e-143
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "goals_per90",
+      "rho": 0.5394341105256348,
+      "n": 649,
+      "p_value": 2.8117155286569217e-50
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "assists_per90",
+      "rho": 0.7971909066984135,
+      "n": 649,
+      "p_value": 6.286140128239181e-144
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "bonus_per90",
+      "rho": 0.42752944026143647,
+      "n": 649,
+      "p_value": 3.1902855007280505e-30
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "xgc_per90",
+      "rho": -0.20426954571255576,
+      "n": 649,
+      "p_value": 1.5269530321188634e-7
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.22668861444301258,
+      "n": 649,
+      "p_value": 5.218159714688598e-9
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "saves_per90",
+      "rho": -0.5033206512194545,
+      "n": 649,
+      "p_value": 5.614930408077771e-43
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.15276683146117084,
+      "n": 219,
+      "p_value": 0.023753495216471993
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "bps_per90",
+      "rho": 0.452216678072955,
+      "n": 649,
+      "p_value": 4.960451185340317e-34
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "tackles_per90",
+      "rho": 0.3253334948208298,
+      "n": 219,
+      "p_value": 8.588993653602132e-7
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "recoveries_per90",
+      "rho": 0.02906997834104451,
+      "n": 219,
+      "p_value": 0.6687786074398766
+    },
+    {
+      "group": "all",
+      "a": "xa_per90",
+      "b": "cbi_per90",
+      "rho": -0.27601284065088966,
+      "n": 219,
+      "p_value": 0.00003443083031947093
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "goals_per90",
+      "rho": 0.8486704501018706,
+      "n": 649,
+      "p_value": 3.9966814155900315e-181
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "assists_per90",
+      "rho": 0.738170370067706,
+      "n": 649,
+      "p_value": 1.0630613361620152e-112
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "bonus_per90",
+      "rho": 0.6004525598819657,
+      "n": 649,
+      "p_value": 7.880833234465236e-65
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "xgc_per90",
+      "rho": -0.20174930527617282,
+      "n": 649,
+      "p_value": 2.1817974220307538e-7
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.23020768042640652,
+      "n": 649,
+      "p_value": 2.970597631146554e-9
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "saves_per90",
+      "rho": -0.5047975571652605,
+      "n": 649,
+      "p_value": 2.9353126057211073e-43
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.06841639855756253,
+      "n": 219,
+      "p_value": 0.3135228676840065
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "bps_per90",
+      "rho": 0.4955412386250262,
+      "n": 649,
+      "p_value": 1.6240230850428907e-41
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "tackles_per90",
+      "rho": -0.000934009247597818,
+      "n": 219,
+      "p_value": 0.9890350364787965
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "recoveries_per90",
+      "rho": -0.3302459015459118,
+      "n": 219,
+      "p_value": 5.726423503698709e-7
+    },
+    {
+      "group": "all",
+      "a": "xgi_per90",
+      "b": "cbi_per90",
+      "rho": -0.4456721305110253,
+      "n": 219,
+      "p_value": 4.3933082843000124e-12
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "assists_per90",
+      "rho": 0.5436455985524314,
+      "n": 649,
+      "p_value": 3.4581802935100023e-51
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "bonus_per90",
+      "rho": 0.6640011537301477,
+      "n": 649,
+      "p_value": 9.700132498989487e-84
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "xgc_per90",
+      "rho": -0.14725354169851768,
+      "n": 649,
+      "p_value": 0.00016677327906640727
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.18194708786676694,
+      "n": 649,
+      "p_value": 3.0824403837313617e-6
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "saves_per90",
+      "rho": -0.4172216751978592,
+      "n": 649,
+      "p_value": 1.0076383873428166e-28
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.07151297949255937,
+      "n": 219,
+      "p_value": 0.29207131359117244
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "bps_per90",
+      "rho": 0.5049752402799627,
+      "n": 649,
+      "p_value": 2.714388060230137e-43
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "tackles_per90",
+      "rho": -0.07474885730675762,
+      "n": 219,
+      "p_value": 0.2707255734805436
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "recoveries_per90",
+      "rho": -0.3912011049260192,
+      "n": 219,
+      "p_value": 2.0121850513096067e-9
+    },
+    {
+      "group": "all",
+      "a": "goals_per90",
+      "b": "cbi_per90",
+      "rho": -0.3895165002597181,
+      "n": 219,
+      "p_value": 2.3908734723547156e-9
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "bonus_per90",
+      "rho": 0.47754236185357646,
+      "n": 649,
+      "p_value": 2.823371059155338e-38
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "xgc_per90",
+      "rho": -0.18579403957807697,
+      "n": 649,
+      "p_value": 1.8827238570071973e-6
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.20188922339026188,
+      "n": 649,
+      "p_value": 2.1392488939683583e-7
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "saves_per90",
+      "rho": -0.407317624705283,
+      "n": 649,
+      "p_value": 2.488051279920707e-27
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.12693367010397316,
+      "n": 219,
+      "p_value": 0.06075294410766252
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "bps_per90",
+      "rho": 0.48106282683638885,
+      "n": 649,
+      "p_value": 6.793237125235605e-39
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "tackles_per90",
+      "rho": 0.22013170788824035,
+      "n": 219,
+      "p_value": 0.0010405452338893245
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "recoveries_per90",
+      "rho": -0.06146827764021254,
+      "n": 219,
+      "p_value": 0.36530748348345754
+    },
+    {
+      "group": "all",
+      "a": "assists_per90",
+      "b": "cbi_per90",
+      "rho": -0.22288241830353578,
+      "n": 219,
+      "p_value": 0.000895794920864666
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "xgc_per90",
+      "rho": -0.30701624023216045,
+      "n": 649,
+      "p_value": 1.240958770473555e-15
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.32321422595738075,
+      "n": 649,
+      "p_value": 3.0171580555778865e-17
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "saves_per90",
+      "rho": -0.07271353102788582,
+      "n": 649,
+      "p_value": 0.06412753213101041
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.0816529633785868,
+      "n": 219,
+      "p_value": 0.22880264656717852
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "bps_per90",
+      "rho": 0.7179233495666081,
+      "n": 649,
+      "p_value": 7.196277364335878e-104
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "tackles_per90",
+      "rho": -0.09417201878551286,
+      "n": 219,
+      "p_value": 0.16491446654730657
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "recoveries_per90",
+      "rho": -0.07846683587979016,
+      "n": 219,
+      "p_value": 0.24754146769759366
+    },
+    {
+      "group": "all",
+      "a": "bonus_per90",
+      "b": "cbi_per90",
+      "rho": -0.2974988539849311,
+      "n": 219,
+      "p_value": 7.491590629968277e-6
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "goals_conceded_per90",
+      "rho": 0.8516831020846647,
+      "n": 649,
+      "p_value": 1.0087292639076813e-183
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "saves_per90",
+      "rho": 0.03628959855359321,
+      "n": 649,
+      "p_value": 0.35599848457094674
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.07753125783085908,
+      "n": 219,
+      "p_value": 0.25324112106702157
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "bps_per90",
+      "rho": -0.371057010468187,
+      "n": 649,
+      "p_value": 1.2911974468498354e-22
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "tackles_per90",
+      "rho": 0.06853163631825393,
+      "n": 219,
+      "p_value": 0.3127065667270952
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "recoveries_per90",
+      "rho": 0.02669004992745096,
+      "n": 219,
+      "p_value": 0.6944773374122213
+    },
+    {
+      "group": "all",
+      "a": "xgc_per90",
+      "b": "cbi_per90",
+      "rho": 0.18372959201160785,
+      "n": 219,
+      "p_value": 0.006398284582447498
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "saves_per90",
+      "rho": 0.03719263700700117,
+      "n": 649,
+      "p_value": 0.3441480754872803
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.13976660476750197,
+      "n": 219,
+      "p_value": 0.03876478601858712
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "bps_per90",
+      "rho": -0.4147601169698277,
+      "n": 649,
+      "p_value": 2.2582379170160176e-28
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "tackles_per90",
+      "rho": 0.10172808701134078,
+      "n": 219,
+      "p_value": 0.13342832698576435
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "recoveries_per90",
+      "rho": 0.07295350947522478,
+      "n": 219,
+      "p_value": 0.28243389133289665
+    },
+    {
+      "group": "all",
+      "a": "goals_conceded_per90",
+      "b": "cbi_per90",
+      "rho": 0.18302643270832394,
+      "n": 219,
+      "p_value": 0.006607106846255505
+    },
+    {
+      "group": "all",
+      "a": "saves_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.49838612318715664,
+      "n": 219,
+      "p_value": 3.759301190227759e-15
+    },
+    {
+      "group": "all",
+      "a": "saves_per90",
+      "b": "bps_per90",
+      "rho": -0.058339164044104594,
+      "n": 649,
+      "p_value": 0.13764512780874094
+    },
+    {
+      "group": "all",
+      "a": "saves_per90",
+      "b": "tackles_per90",
+      "rho": -0.4983213400164688,
+      "n": 219,
+      "p_value": 3.794980531274307e-15
+    },
+    {
+      "group": "all",
+      "a": "saves_per90",
+      "b": "recoveries_per90",
+      "rho": 0.49536403003730783,
+      "n": 219,
+      "p_value": 5.828577323473557e-15
+    },
+    {
+      "group": "all",
+      "a": "saves_per90",
+      "b": "cbi_per90",
+      "rho": -0.37689240408550534,
+      "n": 219,
+      "p_value": 8.442685491608587e-9
+    },
+    {
+      "group": "all",
+      "a": "defensive_contribution_per90",
+      "b": "bps_per90",
+      "rho": 0.13850533181021468,
+      "n": 219,
+      "p_value": 0.04057544899205209
+    },
+    {
+      "group": "all",
+      "a": "defensive_contribution_per90",
+      "b": "tackles_per90",
+      "rho": 0.6639373427655321,
+      "n": 219,
+      "p_value": 3.3003589658292566e-29
+    },
+    {
+      "group": "all",
+      "a": "defensive_contribution_per90",
+      "b": "recoveries_per90",
+      "rho": 0.14336225051224513,
+      "n": 219,
+      "p_value": 0.03397304861259269
+    },
+    {
+      "group": "all",
+      "a": "defensive_contribution_per90",
+      "b": "cbi_per90",
+      "rho": 0.6108271031836675,
+      "n": 219,
+      "p_value": 8.695609585042851e-24
+    },
+    {
+      "group": "all",
+      "a": "bps_per90",
+      "b": "tackles_per90",
+      "rho": 0.08041896122819964,
+      "n": 219,
+      "p_value": 0.2359376414331139
+    },
+    {
+      "group": "all",
+      "a": "bps_per90",
+      "b": "recoveries_per90",
+      "rho": 0.12755721091777394,
+      "n": 219,
+      "p_value": 0.0594869569459108
+    },
+    {
+      "group": "all",
+      "a": "bps_per90",
+      "b": "cbi_per90",
+      "rho": -0.3314931392598855,
+      "n": 219,
+      "p_value": 5.160488779952119e-7
+    },
+    {
+      "group": "all",
+      "a": "tackles_per90",
+      "b": "recoveries_per90",
+      "rho": 0.20292770149623246,
+      "n": 219,
+      "p_value": 0.0025501494040495597
+    },
+    {
+      "group": "all",
+      "a": "tackles_per90",
+      "b": "cbi_per90",
+      "rho": 0.42033452919590975,
+      "n": 219,
+      "p_value": 8.708684671740663e-11
+    },
+    {
+      "group": "all",
+      "a": "recoveries_per90",
+      "b": "cbi_per90",
+      "rho": -0.18653558330572279,
+      "n": 219,
+      "p_value": 0.005622471436100895
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "xa_per90",
+      "rho": -0.14334655508588004,
+      "n": 61,
+      "p_value": 0.27041194686081016
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "xgi_per90",
+      "rho": 0.16512583865992927,
+      "n": 61,
+      "p_value": 0.2034639890702722
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "goals_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "assists_per90",
+      "rho": 0.09332376740027823,
+      "n": 61,
+      "p_value": 0.47438267600897344
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "bonus_per90",
+      "rho": -0.1036279050299516,
+      "n": 61,
+      "p_value": 0.4267537139285905
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "xgc_per90",
+      "rho": -0.1995402408839984,
+      "n": 61,
+      "p_value": 0.12312990096023302
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.07261170870038577,
+      "n": 61,
+      "p_value": 0.5781301061315796
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "saves_per90",
+      "rho": 0.021026795590731687,
+      "n": 61,
+      "p_value": 0.8722156359997231
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "bps_per90",
+      "rho": -0.15170138539625055,
+      "n": 61,
+      "p_value": 0.2431766344137981
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "tackles_per90",
+      "rho": 0.18171994128948213,
+      "n": 20,
+      "p_value": 0.44322043574325676
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "recoveries_per90",
+      "rho": 0.3381787390082559,
+      "n": 20,
+      "p_value": 0.1447371604873936
+    },
+    {
+      "group": "GK",
+      "a": "xg_per90",
+      "b": "cbi_per90",
+      "rho": 0.05967860100145692,
+      "n": 20,
+      "p_value": 0.8026428952892553
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "xgi_per90",
+      "rho": 0.9257615812191186,
+      "n": 61,
+      "p_value": 1.3375688774320229e-26
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "goals_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "assists_per90",
+      "rho": 0.12085874269380646,
+      "n": 61,
+      "p_value": 0.353503014716535
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "bonus_per90",
+      "rho": 0.22355710762289274,
+      "n": 61,
+      "p_value": 0.08328978004221009
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "xgc_per90",
+      "rho": -0.23342123653446636,
+      "n": 61,
+      "p_value": 0.07022415493748528
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.31400628619998894,
+      "n": 61,
+      "p_value": 0.01372381352875177
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "saves_per90",
+      "rho": -0.1610205459061041,
+      "n": 61,
+      "p_value": 0.2150857781183707
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "bps_per90",
+      "rho": 0.026972289013201624,
+      "n": 61,
+      "p_value": 0.8365255706516053
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "tackles_per90",
+      "rho": -0.06128298349004723,
+      "n": 20,
+      "p_value": 0.7974414683481055
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "recoveries_per90",
+      "rho": 0.003773611773764385,
+      "n": 20,
+      "p_value": 0.9874023869516879
+    },
+    {
+      "group": "GK",
+      "a": "xa_per90",
+      "b": "cbi_per90",
+      "rho": -0.08981196021559237,
+      "n": 20,
+      "p_value": 0.7065068190851851
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "goals_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "assists_per90",
+      "rho": 0.21429258063481194,
+      "n": 61,
+      "p_value": 0.09724065810856253
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "bonus_per90",
+      "rho": 0.175344349952826,
+      "n": 61,
+      "p_value": 0.1764873515698121
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "xgc_per90",
+      "rho": -0.30584548967612585,
+      "n": 61,
+      "p_value": 0.016527223236542377
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.32838335517946615,
+      "n": 61,
+      "p_value": 0.009772394085305808
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "saves_per90",
+      "rho": -0.12393283518680147,
+      "n": 61,
+      "p_value": 0.34130143789392187
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "bps_per90",
+      "rho": 0.011794076639054931,
+      "n": 61,
+      "p_value": 0.9281186458615565
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "tackles_per90",
+      "rho": 0.05655836373165669,
+      "n": 20,
+      "p_value": 0.8127814737299177
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "recoveries_per90",
+      "rho": 0.2259038706452301,
+      "n": 20,
+      "p_value": 0.33822402961387144
+    },
+    {
+      "group": "GK",
+      "a": "xgi_per90",
+      "b": "cbi_per90",
+      "rho": -0.04367474832474449,
+      "n": 20,
+      "p_value": 0.8549318446168432
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "assists_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "bonus_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "xgc_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "goals_conceded_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "bps_per90",
+      "rho": null,
+      "n": 61,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "tackles_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "recoveries_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_per90",
+      "b": "cbi_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "bonus_per90",
+      "rho": 0.06698036673632536,
+      "n": 61,
+      "p_value": 0.6080300349715857
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "xgc_per90",
+      "rho": -0.09207752141313942,
+      "n": 61,
+      "p_value": 0.48032977541780897
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.00047624143454725123,
+      "n": 61,
+      "p_value": 0.9970936215380232
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "saves_per90",
+      "rho": 0.1420610743889629,
+      "n": 61,
+      "p_value": 0.2747764210964764
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "bps_per90",
+      "rho": -0.06502951139935002,
+      "n": 61,
+      "p_value": 0.6185425395480912
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "tackles_per90",
+      "rho": -0.06004030503886919,
+      "n": 20,
+      "p_value": 0.801469540504907
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "recoveries_per90",
+      "rho": 0.18283798338028748,
+      "n": 20,
+      "p_value": 0.44037199912866287
+    },
+    {
+      "group": "GK",
+      "a": "assists_per90",
+      "b": "cbi_per90",
+      "rho": -0.1118538251267641,
+      "n": 20,
+      "p_value": 0.6387163430902527
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "xgc_per90",
+      "rho": -0.08332562103661764,
+      "n": 61,
+      "p_value": 0.523185917639768
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.2636729081637213,
+      "n": 61,
+      "p_value": 0.04004955615451333
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "saves_per90",
+      "rho": -0.03015998959091722,
+      "n": 61,
+      "p_value": 0.8175196439218507
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "bps_per90",
+      "rho": 0.44222607445108114,
+      "n": 61,
+      "p_value": 0.0003592904040589393
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "tackles_per90",
+      "rho": -0.01679565979607436,
+      "n": 20,
+      "p_value": 0.9439703410419581
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "recoveries_per90",
+      "rho": 0.3392252966484153,
+      "n": 20,
+      "p_value": 0.14341902544407303
+    },
+    {
+      "group": "GK",
+      "a": "bonus_per90",
+      "b": "cbi_per90",
+      "rho": -0.19781874283488518,
+      "n": 20,
+      "p_value": 0.4031452518757296
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "goals_conceded_per90",
+      "rho": 0.8787698529036566,
+      "n": 61,
+      "p_value": 1.3016887207872919e-20
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "saves_per90",
+      "rho": 0.7436111001588536,
+      "n": 61,
+      "p_value": 6.653286152014082e-12
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "bps_per90",
+      "rho": 0.07466948704389212,
+      "n": 61,
+      "p_value": 0.5673749441947485
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "tackles_per90",
+      "rho": 0.13660421166899647,
+      "n": 20,
+      "p_value": 0.5657787102965441
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "recoveries_per90",
+      "rho": -0.16691729323308271,
+      "n": 20,
+      "p_value": 0.48182491843154696
+    },
+    {
+      "group": "GK",
+      "a": "xgc_per90",
+      "b": "cbi_per90",
+      "rho": 0.42105263157894735,
+      "n": 20,
+      "p_value": 0.06448807512897058
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "saves_per90",
+      "rho": 0.6594034291957688,
+      "n": 61,
+      "p_value": 7.52268946697487e-9
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "bps_per90",
+      "rho": -0.07528459831538006,
+      "n": 61,
+      "p_value": 0.5641782373510592
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "tackles_per90",
+      "rho": 0.27626103141998176,
+      "n": 20,
+      "p_value": 0.23837994508751126
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "recoveries_per90",
+      "rho": 0.010526315789473684,
+      "n": 20,
+      "p_value": 0.9648685868195142
+    },
+    {
+      "group": "GK",
+      "a": "goals_conceded_per90",
+      "b": "cbi_per90",
+      "rho": 0.45714285714285713,
+      "n": 20,
+      "p_value": 0.042718510627876995
+    },
+    {
+      "group": "GK",
+      "a": "saves_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "saves_per90",
+      "b": "bps_per90",
+      "rho": 0.21885535241669918,
+      "n": 61,
+      "p_value": 0.09015820216815466
+    },
+    {
+      "group": "GK",
+      "a": "saves_per90",
+      "b": "tackles_per90",
+      "rho": -0.07936781013170746,
+      "n": 20,
+      "p_value": 0.7394254751478107
+    },
+    {
+      "group": "GK",
+      "a": "saves_per90",
+      "b": "recoveries_per90",
+      "rho": 0.11729323308270678,
+      "n": 20,
+      "p_value": 0.6223789817630216
+    },
+    {
+      "group": "GK",
+      "a": "saves_per90",
+      "b": "cbi_per90",
+      "rho": 0.18195488721804512,
+      "n": 20,
+      "p_value": 0.4426210667757493
+    },
+    {
+      "group": "GK",
+      "a": "defensive_contribution_per90",
+      "b": "bps_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "defensive_contribution_per90",
+      "b": "tackles_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "defensive_contribution_per90",
+      "b": "recoveries_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "defensive_contribution_per90",
+      "b": "cbi_per90",
+      "rho": null,
+      "n": 20,
+      "p_value": null
+    },
+    {
+      "group": "GK",
+      "a": "bps_per90",
+      "b": "tackles_per90",
+      "rho": -0.22894560614915613,
+      "n": 20,
+      "p_value": 0.3315842498444893
+    },
+    {
+      "group": "GK",
+      "a": "bps_per90",
+      "b": "recoveries_per90",
+      "rho": 0.32932330827067674,
+      "n": 20,
+      "p_value": 0.15623105162611595
+    },
+    {
+      "group": "GK",
+      "a": "bps_per90",
+      "b": "cbi_per90",
+      "rho": -0.4992481203007519,
+      "n": 20,
+      "p_value": 0.025021864609018007
+    },
+    {
+      "group": "GK",
+      "a": "tackles_per90",
+      "b": "recoveries_per90",
+      "rho": 0.22970875816965333,
+      "n": 20,
+      "p_value": 0.3299305420847981
+    },
+    {
+      "group": "GK",
+      "a": "tackles_per90",
+      "b": "cbi_per90",
+      "rho": -0.09081509043916527,
+      "n": 20,
+      "p_value": 0.7033702873175327
+    },
+    {
+      "group": "GK",
+      "a": "recoveries_per90",
+      "b": "cbi_per90",
+      "rho": 0.04060150375939849,
+      "n": 20,
+      "p_value": 0.8650468790077727
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "xa_per90",
+      "rho": -0.0391387003246584,
+      "n": 240,
+      "p_value": 0.5462427477510958
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "xgi_per90",
+      "rho": 0.5734517960381256,
+      "n": 240,
+      "p_value": 2.2021437237564293e-22
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "goals_per90",
+      "rho": 0.5136299078249607,
+      "n": 240,
+      "p_value": 1.4758223038575916e-17
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "assists_per90",
+      "rho": -0.004075200297235819,
+      "n": 240,
+      "p_value": 0.9499230704552724
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "bonus_per90",
+      "rho": 0.2199194848432341,
+      "n": 240,
+      "p_value": 0.0006007079334080318
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "xgc_per90",
+      "rho": -0.17153770030729695,
+      "n": 240,
+      "p_value": 0.007736768391760916
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.1928246118963236,
+      "n": 240,
+      "p_value": 0.0027012764220513473
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.17070994003112722,
+      "n": 82,
+      "p_value": 0.12517931135160776
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "bps_per90",
+      "rho": 0.2226844216045417,
+      "n": 240,
+      "p_value": 0.0005098194289518958
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "tackles_per90",
+      "rho": -0.12094992435868133,
+      "n": 82,
+      "p_value": 0.2790688161102244
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "recoveries_per90",
+      "rho": -0.1634178992392334,
+      "n": 82,
+      "p_value": 0.14238272512142602
+    },
+    {
+      "group": "DEF",
+      "a": "xg_per90",
+      "b": "cbi_per90",
+      "rho": 0.1512499863954463,
+      "n": 82,
+      "p_value": 0.17496612169982706
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "xgi_per90",
+      "rho": 0.7456761402107674,
+      "n": 240,
+      "p_value": 7.480921189324023e-44
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "goals_per90",
+      "rho": 0.0572290563511292,
+      "n": 240,
+      "p_value": 0.37740721996704707
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "assists_per90",
+      "rho": 0.6356005917592151,
+      "n": 240,
+      "p_value": 1.454509634476639e-28
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "bonus_per90",
+      "rho": 0.39661323910236446,
+      "n": 240,
+      "p_value": 1.822128994695201e-10
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "xgc_per90",
+      "rho": -0.1321680931960624,
+      "n": 240,
+      "p_value": 0.040772821124038884
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.20281350492784117,
+      "n": 240,
+      "p_value": 0.0015860563604091784
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.42921822792525116,
+      "n": 82,
+      "p_value": 0.00005729896925082217
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "bps_per90",
+      "rho": 0.28446848035556166,
+      "n": 240,
+      "p_value": 7.577205698702684e-6
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "tackles_per90",
+      "rho": 0.5513980039398788,
+      "n": 82,
+      "p_value": 7.935189208573879e-8
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "recoveries_per90",
+      "rho": 0.3455012461771204,
+      "n": 82,
+      "p_value": 0.001477206835236464
+    },
+    {
+      "group": "DEF",
+      "a": "xa_per90",
+      "b": "cbi_per90",
+      "rho": -0.5494389482047431,
+      "n": 82,
+      "p_value": 9.010321321147541e-8
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "goals_per90",
+      "rho": 0.35369254943134876,
+      "n": 240,
+      "p_value": 1.7614235130666565e-8
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "assists_per90",
+      "rho": 0.4974610898543404,
+      "n": 240,
+      "p_value": 2.0777816890174632e-16
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "bonus_per90",
+      "rho": 0.46163180288963734,
+      "n": 240,
+      "p_value": 4.5354817332173803e-14
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "xgc_per90",
+      "rho": -0.2167624437924269,
+      "n": 240,
+      "p_value": 0.0007226919076260412
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.2669066593633211,
+      "n": 240,
+      "p_value": 0.000027948743713700207
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.21513697064681492,
+      "n": 82,
+      "p_value": 0.05225411989262378
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "bps_per90",
+      "rho": 0.3668527231375544,
+      "n": 240,
+      "p_value": 4.652683306123977e-9
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "tackles_per90",
+      "rho": 0.3575167880192858,
+      "n": 82,
+      "p_value": 0.0009756520198591662
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "recoveries_per90",
+      "rho": 0.16583406797923403,
+      "n": 82,
+      "p_value": 0.13649571575728703
+    },
+    {
+      "group": "DEF",
+      "a": "xgi_per90",
+      "b": "cbi_per90",
+      "rho": -0.3170078688738695,
+      "n": 82,
+      "p_value": 0.0037102549845353765
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "assists_per90",
+      "rho": 0.04169381753623888,
+      "n": 240,
+      "p_value": 0.5203375287765454
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "bonus_per90",
+      "rho": 0.48409707087515397,
+      "n": 240,
+      "p_value": 1.6677999491377177e-15
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "xgc_per90",
+      "rho": -0.11896241304960171,
+      "n": 240,
+      "p_value": 0.06578661857967916
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.16188283911462872,
+      "n": 240,
+      "p_value": 0.012026305551425419
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.013959146822618715,
+      "n": 82,
+      "p_value": 0.9009424204816017
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "bps_per90",
+      "rho": 0.37770001503498396,
+      "n": 240,
+      "p_value": 1.4830551350852627e-9
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "tackles_per90",
+      "rho": 0.05272840959066832,
+      "n": 82,
+      "p_value": 0.638016842339773
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "recoveries_per90",
+      "rho": -0.061953392514649305,
+      "n": 82,
+      "p_value": 0.5803107919331254
+    },
+    {
+      "group": "DEF",
+      "a": "goals_per90",
+      "b": "cbi_per90",
+      "rho": -0.0403620655750679,
+      "n": 82,
+      "p_value": 0.718824863722724
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "bonus_per90",
+      "rho": 0.3325128580346188,
+      "n": 240,
+      "p_value": 1.3258074333939243e-7
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "xgc_per90",
+      "rho": -0.04950236603821142,
+      "n": 240,
+      "p_value": 0.4452536855522049
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.10346123529572561,
+      "n": 240,
+      "p_value": 0.10987844276674075
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.15257630174356304,
+      "n": 82,
+      "p_value": 0.17117018186843536
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "bps_per90",
+      "rho": 0.26171298121613396,
+      "n": 240,
+      "p_value": 0.000040423063646451034
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "tackles_per90",
+      "rho": 0.2831875548961094,
+      "n": 82,
+      "p_value": 0.00993714711354483
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "recoveries_per90",
+      "rho": 0.19846054589268977,
+      "n": 82,
+      "p_value": 0.07387745591221986
+    },
+    {
+      "group": "DEF",
+      "a": "assists_per90",
+      "b": "cbi_per90",
+      "rho": -0.21731424316738449,
+      "n": 82,
+      "p_value": 0.04986045594433343
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "xgc_per90",
+      "rho": -0.3835400574286764,
+      "n": 240,
+      "p_value": 7.873220189216716e-10
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.4438518606078277,
+      "n": 240,
+      "p_value": 5.244820691314095e-13
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.1399897690913153,
+      "n": 82,
+      "p_value": 0.2097011901948992
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "bps_per90",
+      "rho": 0.6658474050375668,
+      "n": 240,
+      "p_value": 4.088875829549178e-32
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "tackles_per90",
+      "rho": 0.18921095996534748,
+      "n": 82,
+      "p_value": 0.08866354571213748
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "recoveries_per90",
+      "rho": 0.16805085491025712,
+      "n": 82,
+      "p_value": 0.13125834277377058
+    },
+    {
+      "group": "DEF",
+      "a": "bonus_per90",
+      "b": "cbi_per90",
+      "rho": 0.061597239972611254,
+      "n": 82,
+      "p_value": 0.5824935396298816
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "goals_conceded_per90",
+      "rho": 0.8664850372772207,
+      "n": 240,
+      "p_value": 9.22179530336973e-74
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.08982270545597022,
+      "n": 82,
+      "p_value": 0.42225436972989183
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "bps_per90",
+      "rho": -0.41121200020833687,
+      "n": 240,
+      "p_value": 3.29035822121883e-11
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "tackles_per90",
+      "rho": 0.06080691329001643,
+      "n": 82,
+      "p_value": 0.5873505852028371
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "recoveries_per90",
+      "rho": 0.045896322417039434,
+      "n": 82,
+      "p_value": 0.6822135900831452
+    },
+    {
+      "group": "DEF",
+      "a": "xgc_per90",
+      "b": "cbi_per90",
+      "rho": 0.05379784721541995,
+      "n": 82,
+      "p_value": 0.6312065956975859
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.12782838671760213,
+      "n": 82,
+      "p_value": 0.252429941001577
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "bps_per90",
+      "rho": -0.5154796591432885,
+      "n": 240,
+      "p_value": 1.0807157351056412e-17
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "tackles_per90",
+      "rho": 0.0014475245154057968,
+      "n": 82,
+      "p_value": 0.9897022577334269
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "recoveries_per90",
+      "rho": 0.0525571119165007,
+      "n": 82,
+      "p_value": 0.6391104864431454
+    },
+    {
+      "group": "DEF",
+      "a": "goals_conceded_per90",
+      "b": "cbi_per90",
+      "rho": 0.10577812605435293,
+      "n": 82,
+      "p_value": 0.3442436822114494
+    },
+    {
+      "group": "DEF",
+      "a": "saves_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 82,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "saves_per90",
+      "b": "bps_per90",
+      "rho": null,
+      "n": 240,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "saves_per90",
+      "b": "tackles_per90",
+      "rho": null,
+      "n": 82,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "saves_per90",
+      "b": "recoveries_per90",
+      "rho": null,
+      "n": 82,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "saves_per90",
+      "b": "cbi_per90",
+      "rho": null,
+      "n": 82,
+      "p_value": null
+    },
+    {
+      "group": "DEF",
+      "a": "defensive_contribution_per90",
+      "b": "bps_per90",
+      "rho": 0.03703703703703704,
+      "n": 82,
+      "p_value": 0.7411361147788287
+    },
+    {
+      "group": "DEF",
+      "a": "defensive_contribution_per90",
+      "b": "tackles_per90",
+      "rho": -0.2981573992446752,
+      "n": 82,
+      "p_value": 0.006515224724585822
+    },
+    {
+      "group": "DEF",
+      "a": "defensive_contribution_per90",
+      "b": "recoveries_per90",
+      "rho": -0.2861418574025098,
+      "n": 82,
+      "p_value": 0.009158505332506377
+    },
+    {
+      "group": "DEF",
+      "a": "defensive_contribution_per90",
+      "b": "cbi_per90",
+      "rho": 0.957967370838367,
+      "n": 82,
+      "p_value": 3.827311039348179e-45
+    },
+    {
+      "group": "DEF",
+      "a": "bps_per90",
+      "b": "tackles_per90",
+      "rho": 0.028591330090007732,
+      "n": 82,
+      "p_value": 0.7987362883588558
+    },
+    {
+      "group": "DEF",
+      "a": "bps_per90",
+      "b": "recoveries_per90",
+      "rho": 0.09511215594083652,
+      "n": 82,
+      "p_value": 0.39533389207897496
+    },
+    {
+      "group": "DEF",
+      "a": "bps_per90",
+      "b": "cbi_per90",
+      "rho": 0.018273636551626563,
+      "n": 82,
+      "p_value": 0.8705593460935028
+    },
+    {
+      "group": "DEF",
+      "a": "tackles_per90",
+      "b": "recoveries_per90",
+      "rho": 0.3701853484398298,
+      "n": 82,
+      "p_value": 0.0006189380488506517
+    },
+    {
+      "group": "DEF",
+      "a": "tackles_per90",
+      "b": "cbi_per90",
+      "rho": -0.5351160740523069,
+      "n": 82,
+      "p_value": 2.226785956703695e-7
+    },
+    {
+      "group": "DEF",
+      "a": "recoveries_per90",
+      "b": "cbi_per90",
+      "rho": -0.35719027873009657,
+      "n": 82,
+      "p_value": 0.0009869230647843485
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "xa_per90",
+      "rho": 0.507153316027839,
+      "n": 284,
+      "p_value": 5.748420378199353e-20
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "xgi_per90",
+      "rho": 0.9233684420078215,
+      "n": 284,
+      "p_value": 2.9179740873247397e-119
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "goals_per90",
+      "rho": 0.8507511013723816,
+      "n": 284,
+      "p_value": 9.195739442745636e-81
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "assists_per90",
+      "rho": 0.5180819988422329,
+      "n": 284,
+      "p_value": 6.6038959735207444e-21
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "bonus_per90",
+      "rho": 0.6036065289010011,
+      "n": 284,
+      "p_value": 1.404997497631478e-29
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "xgc_per90",
+      "rho": -0.16284906762501736,
+      "n": 284,
+      "p_value": 0.005947481470567842
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.20400511411545283,
+      "n": 284,
+      "p_value": 0.0005416977019139683
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.7012751508145793,
+      "n": 94,
+      "p_value": 3.5191411351964295e-15
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "bps_per90",
+      "rho": 0.3600835064319336,
+      "n": 284,
+      "p_value": 4.04051004364411e-10
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "tackles_per90",
+      "rho": -0.5884405591879492,
+      "n": 94,
+      "p_value": 4.460613679783028e-10
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "recoveries_per90",
+      "rho": -0.5024238702452768,
+      "n": 94,
+      "p_value": 2.471876345303576e-7
+    },
+    {
+      "group": "MID",
+      "a": "xg_per90",
+      "b": "cbi_per90",
+      "rho": -0.6597912076003323,
+      "n": 94,
+      "p_value": 4.746896543483729e-13
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "xgi_per90",
+      "rho": 0.7809286816304185,
+      "n": 284,
+      "p_value": 1.4014102104770087e-59
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "goals_per90",
+      "rho": 0.4541576945740326,
+      "n": 284,
+      "p_value": 7.382802408966921e-16
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "assists_per90",
+      "rho": 0.7711739042592907,
+      "n": 284,
+      "p_value": 3.0433695057440455e-57
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "bonus_per90",
+      "rho": 0.5916523603699543,
+      "n": 284,
+      "p_value": 3.2915836146942833e-28
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "xgc_per90",
+      "rho": -0.3215673434319887,
+      "n": 284,
+      "p_value": 2.9704435475801358e-8
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.3192875024000357,
+      "n": 284,
+      "p_value": 3.762108118363506e-8
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.3991836144926489,
+      "n": 94,
+      "p_value": 0.00006735331295115866
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "bps_per90",
+      "rho": 0.608798036498702,
+      "n": 284,
+      "p_value": 3.424979711975325e-30
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "tackles_per90",
+      "rho": -0.3368348806126503,
+      "n": 94,
+      "p_value": 0.000901442058242421
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "recoveries_per90",
+      "rho": -0.036419463208467284,
+      "n": 94,
+      "p_value": 0.727471481903512
+    },
+    {
+      "group": "MID",
+      "a": "xa_per90",
+      "b": "cbi_per90",
+      "rho": -0.581114763573312,
+      "n": 94,
+      "p_value": 8.215846938427112e-10
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "goals_per90",
+      "rho": 0.7946207649080398,
+      "n": 284,
+      "p_value": 4.5290023912890225e-63
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "assists_per90",
+      "rho": 0.6920923435628888,
+      "n": 284,
+      "p_value": 8.122691528249371e-42
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "bonus_per90",
+      "rho": 0.6780276657533902,
+      "n": 284,
+      "p_value": 1.3883401243498952e-39
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "xgc_per90",
+      "rho": -0.2586268587908332,
+      "n": 284,
+      "p_value": 0.000010121019636520771
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.28706155510077946,
+      "n": 284,
+      "p_value": 8.643163660832737e-7
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.7081096701947043,
+      "n": 94,
+      "p_value": 1.4458243316906696e-15
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "bps_per90",
+      "rho": 0.5127179667179196,
+      "n": 284,
+      "p_value": 1.9287394468924966e-20
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "tackles_per90",
+      "rho": -0.6098833218943033,
+      "n": 94,
+      "p_value": 6.817484803370026e-11
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "recoveries_per90",
+      "rho": -0.3835928186973955,
+      "n": 94,
+      "p_value": 0.00013542283184836241
+    },
+    {
+      "group": "MID",
+      "a": "xgi_per90",
+      "b": "cbi_per90",
+      "rho": -0.7534371274789581,
+      "n": 94,
+      "p_value": 1.931922653634936e-18
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "assists_per90",
+      "rho": 0.459059885648703,
+      "n": 284,
+      "p_value": 3.2912072297924107e-16
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "bonus_per90",
+      "rho": 0.734822115410711,
+      "n": 284,
+      "p_value": 1.830890884204366e-49
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "xgc_per90",
+      "rho": -0.1663341592755686,
+      "n": 284,
+      "p_value": 0.00494870455605244
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.21518158886537223,
+      "n": 284,
+      "p_value": 0.0002589940409320401
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.5931069991697189,
+      "n": 94,
+      "p_value": 2.9988200654722e-10
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "bps_per90",
+      "rho": 0.5002674052718534,
+      "n": 284,
+      "p_value": 2.1605123161790347e-19
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "tackles_per90",
+      "rho": -0.4967897985564829,
+      "n": 94,
+      "p_value": 3.527275441769273e-7
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "recoveries_per90",
+      "rho": -0.45438681759778615,
+      "n": 94,
+      "p_value": 4.218541822523742e-6
+    },
+    {
+      "group": "MID",
+      "a": "goals_per90",
+      "b": "cbi_per90",
+      "rho": -0.5340044120427283,
+      "n": 94,
+      "p_value": 2.978506556580535e-8
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "bonus_per90",
+      "rho": 0.5910733362015981,
+      "n": 284,
+      "p_value": 3.8221662269488704e-28
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "xgc_per90",
+      "rho": -0.3201010752205906,
+      "n": 284,
+      "p_value": 3.4586951871788536e-8
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.31729007388601266,
+      "n": 284,
+      "p_value": 4.619881053018529e-8
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.3074144315501897,
+      "n": 94,
+      "p_value": 0.0025786455010448814
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "bps_per90",
+      "rho": 0.5899643961119704,
+      "n": 284,
+      "p_value": 5.084523334453034e-28
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "tackles_per90",
+      "rho": -0.26064119935616087,
+      "n": 94,
+      "p_value": 0.011173816763837935
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "recoveries_per90",
+      "rho": -0.12144134382907495,
+      "n": 94,
+      "p_value": 0.24362047739480475
+    },
+    {
+      "group": "MID",
+      "a": "assists_per90",
+      "b": "cbi_per90",
+      "rho": -0.3486534814982151,
+      "n": 94,
+      "p_value": 0.0005735560417129089
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "xgc_per90",
+      "rho": -0.3215255599189697,
+      "n": 284,
+      "p_value": 2.983386758268346e-8
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.2834825465714386,
+      "n": 284,
+      "p_value": 1.1963071813490803e-6
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.2074010389414061,
+      "n": 94,
+      "p_value": 0.044878731868326006
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "bps_per90",
+      "rho": 0.7722872787711899,
+      "n": 284,
+      "p_value": 1.6693300710757635e-57
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "tackles_per90",
+      "rho": -0.19179556835536654,
+      "n": 94,
+      "p_value": 0.0640432012774931
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "recoveries_per90",
+      "rho": -0.08866941689928858,
+      "n": 94,
+      "p_value": 0.39540567167557505
+    },
+    {
+      "group": "MID",
+      "a": "bonus_per90",
+      "b": "cbi_per90",
+      "rho": -0.2754148815788951,
+      "n": 94,
+      "p_value": 0.007216401337394194
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "goals_conceded_per90",
+      "rho": 0.8164251536736441,
+      "n": 284,
+      "p_value": 3.2439817325595756e-69
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.22306108442004116,
+      "n": 94,
+      "p_value": 0.030693204407518646
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "bps_per90",
+      "rho": -0.41804241854324753,
+      "n": 284,
+      "p_value": 1.9325154502245967e-13
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "tackles_per90",
+      "rho": 0.17812375826319402,
+      "n": 94,
+      "p_value": 0.08586378626142244
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "recoveries_per90",
+      "rho": 0.11013979698732074,
+      "n": 94,
+      "p_value": 0.29061370361108796
+    },
+    {
+      "group": "MID",
+      "a": "xgc_per90",
+      "b": "cbi_per90",
+      "rho": 0.2457031391106455,
+      "n": 94,
+      "p_value": 0.016985491909436556
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.2682729472961745,
+      "n": 94,
+      "p_value": 0.008940781705833692
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "bps_per90",
+      "rho": -0.41172977542056527,
+      "n": 284,
+      "p_value": 4.785566077526903e-13
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "tackles_per90",
+      "rho": 0.22317667882816167,
+      "n": 94,
+      "p_value": 0.030604563046165604
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "recoveries_per90",
+      "rho": 0.1912292742838565,
+      "n": 94,
+      "p_value": 0.0648475304382115
+    },
+    {
+      "group": "MID",
+      "a": "goals_conceded_per90",
+      "b": "cbi_per90",
+      "rho": 0.20661777986489901,
+      "n": 94,
+      "p_value": 0.04571165207534896
+    },
+    {
+      "group": "MID",
+      "a": "saves_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 94,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "saves_per90",
+      "b": "bps_per90",
+      "rho": null,
+      "n": 284,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "saves_per90",
+      "b": "tackles_per90",
+      "rho": null,
+      "n": 94,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "saves_per90",
+      "b": "recoveries_per90",
+      "rho": null,
+      "n": 94,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "saves_per90",
+      "b": "cbi_per90",
+      "rho": null,
+      "n": 94,
+      "p_value": null
+    },
+    {
+      "group": "MID",
+      "a": "defensive_contribution_per90",
+      "b": "bps_per90",
+      "rho": 0.06036195499042733,
+      "n": 94,
+      "p_value": 0.5633128131941081
+    },
+    {
+      "group": "MID",
+      "a": "defensive_contribution_per90",
+      "b": "tackles_per90",
+      "rho": 0.8817613697937361,
+      "n": 94,
+      "p_value": 8.894133799302412e-32
+    },
+    {
+      "group": "MID",
+      "a": "defensive_contribution_per90",
+      "b": "recoveries_per90",
+      "rho": 0.7542029404327565,
+      "n": 94,
+      "p_value": 1.7066395794973867e-18
+    },
+    {
+      "group": "MID",
+      "a": "defensive_contribution_per90",
+      "b": "cbi_per90",
+      "rho": 0.8387024527688473,
+      "n": 94,
+      "p_value": 5.1491444272725026e-26
+    },
+    {
+      "group": "MID",
+      "a": "bps_per90",
+      "b": "tackles_per90",
+      "rho": 0.029700538236462806,
+      "n": 94,
+      "p_value": 0.7762822211774625
+    },
+    {
+      "group": "MID",
+      "a": "bps_per90",
+      "b": "recoveries_per90",
+      "rho": 0.2061120543293718,
+      "n": 94,
+      "p_value": 0.04625621747342784
+    },
+    {
+      "group": "MID",
+      "a": "bps_per90",
+      "b": "cbi_per90",
+      "rho": -0.0869342195571289,
+      "n": 94,
+      "p_value": 0.4047544611479097
+    },
+    {
+      "group": "MID",
+      "a": "tackles_per90",
+      "b": "recoveries_per90",
+      "rho": 0.5875158039229852,
+      "n": 94,
+      "p_value": 4.822182571632808e-10
+    },
+    {
+      "group": "MID",
+      "a": "tackles_per90",
+      "b": "cbi_per90",
+      "rho": 0.6631578947368421,
+      "n": 94,
+      "p_value": 3.2817078888653036e-13
+    },
+    {
+      "group": "MID",
+      "a": "recoveries_per90",
+      "b": "cbi_per90",
+      "rho": 0.3803706245710363,
+      "n": 94,
+      "p_value": 0.00015578135078922115
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "xa_per90",
+      "rho": 0.08054029304029303,
+      "n": 64,
+      "p_value": 0.5269607214918516
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "xgi_per90",
+      "rho": 0.9537545787545788,
+      "n": 64,
+      "p_value": 4.549735629780717e-34
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "goals_per90",
+      "rho": 0.7551282051282051,
+      "n": 64,
+      "p_value": 5.645098340617939e-13
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "assists_per90",
+      "rho": 0.12895249082786117,
+      "n": 64,
+      "p_value": 0.3098507400719147
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "bonus_per90",
+      "rho": 0.4196886446886447,
+      "n": 64,
+      "p_value": 0.0005560125782833184
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "xgc_per90",
+      "rho": -0.4079670329670329,
+      "n": 64,
+      "p_value": 0.0008190380922743001
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.4388278388278388,
+      "n": 64,
+      "p_value": 0.00028642981633531455
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.2618577075098814,
+      "n": 23,
+      "p_value": 0.22743477193630435
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "bps_per90",
+      "rho": 0.48621794871794866,
+      "n": 64,
+      "p_value": 0.00004635954423246156
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "tackles_per90",
+      "rho": -0.3567193675889328,
+      "n": 23,
+      "p_value": 0.09475100941564714
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "recoveries_per90",
+      "rho": -0.30632411067193677,
+      "n": 23,
+      "p_value": 0.15514347085987612
+    },
+    {
+      "group": "FWD",
+      "a": "xg_per90",
+      "b": "cbi_per90",
+      "rho": 0.09881422924901187,
+      "n": 23,
+      "p_value": 0.6537422594768744
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "xgi_per90",
+      "rho": 0.3282967032967033,
+      "n": 64,
+      "p_value": 0.008086115846430814
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "goals_per90",
+      "rho": 0.07417582417582418,
+      "n": 64,
+      "p_value": 0.5602202346091124
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "assists_per90",
+      "rho": 0.4907842047044042,
+      "n": 64,
+      "p_value": 0.00003833774173505058
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "bonus_per90",
+      "rho": 0.24304029304029304,
+      "n": 64,
+      "p_value": 0.05297500567892542
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "xgc_per90",
+      "rho": -0.22756410256410253,
+      "n": 64,
+      "p_value": 0.07053806969012916
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.1260989010989011,
+      "n": 64,
+      "p_value": 0.3207688824248146
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.31324110671936756,
+      "n": 23,
+      "p_value": 0.14555890892421675
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "bps_per90",
+      "rho": 0.3491300366300366,
+      "n": 64,
+      "p_value": 0.004690482573756821
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "tackles_per90",
+      "rho": 0.4041501976284585,
+      "n": 23,
+      "p_value": 0.055791756898203385
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "recoveries_per90",
+      "rho": 0.4673913043478261,
+      "n": 23,
+      "p_value": 0.024527943235192775
+    },
+    {
+      "group": "FWD",
+      "a": "xa_per90",
+      "b": "cbi_per90",
+      "rho": -0.08794466403162056,
+      "n": 23,
+      "p_value": 0.6898770246642618
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "goals_per90",
+      "rho": 0.7445970695970696,
+      "n": 64,
+      "p_value": 1.7511597796088723e-12
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "assists_per90",
+      "rho": 0.2849685193259162,
+      "n": 64,
+      "p_value": 0.022467903358039748
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "bonus_per90",
+      "rho": 0.4880952380952381,
+      "n": 64,
+      "p_value": 0.0000428902122544853
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "xgc_per90",
+      "rho": -0.44459706959706957,
+      "n": 64,
+      "p_value": 0.0002327035720599041
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.44418498168498166,
+      "n": 64,
+      "p_value": 0.000236211080463345
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.16205533596837943,
+      "n": 23,
+      "p_value": 0.46005670154483513
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "bps_per90",
+      "rho": 0.5934065934065934,
+      "n": 64,
+      "p_value": 2.3714744474432768e-7
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "tackles_per90",
+      "rho": -0.26482213438735175,
+      "n": 23,
+      "p_value": 0.22202345504609455
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "recoveries_per90",
+      "rho": -0.16600790513833993,
+      "n": 23,
+      "p_value": 0.4490355491077219
+    },
+    {
+      "group": "FWD",
+      "a": "xgi_per90",
+      "b": "cbi_per90",
+      "rho": 0.12055335968379448,
+      "n": 23,
+      "p_value": 0.5837489207688716
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "assists_per90",
+      "rho": 0.10088151182307463,
+      "n": 64,
+      "p_value": 0.42767748878948975
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "bonus_per90",
+      "rho": 0.7388278388278389,
+      "n": 64,
+      "p_value": 3.1816973478769947e-12
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "xgc_per90",
+      "rho": -0.3232600732600732,
+      "n": 64,
+      "p_value": 0.00917483115863838
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.306547619047619,
+      "n": 64,
+      "p_value": 0.013752030988533207
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.20849802371541504,
+      "n": 23,
+      "p_value": 0.3397253478384783
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "bps_per90",
+      "rho": 0.781547619047619,
+      "n": 64,
+      "p_value": 2.5211228335848298e-14
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "tackles_per90",
+      "rho": -0.21640316205533597,
+      "n": 23,
+      "p_value": 0.3213076984569012
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "recoveries_per90",
+      "rho": -0.25691699604743085,
+      "n": 23,
+      "p_value": 0.23664567701812467
+    },
+    {
+      "group": "FWD",
+      "a": "goals_per90",
+      "b": "cbi_per90",
+      "rho": 0.09288537549407114,
+      "n": 23,
+      "p_value": 0.6733651189007184
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "bonus_per90",
+      "rho": 0.26951345339750604,
+      "n": 64,
+      "p_value": 0.03126867498532024
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "xgc_per90",
+      "rho": -0.08700629707845747,
+      "n": 64,
+      "p_value": 0.49420889449167316
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.04318259902367652,
+      "n": 64,
+      "p_value": 0.7347527593306675
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.04451040753023293,
+      "n": 23,
+      "p_value": 0.8401827580768075
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "bps_per90",
+      "rho": 0.38285060353918093,
+      "n": 64,
+      "p_value": 0.0017942598526314907
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "tackles_per90",
+      "rho": 0.3293770157237237,
+      "n": 23,
+      "p_value": 0.12484811077371716
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "recoveries_per90",
+      "rho": 0.2769536468547827,
+      "n": 23,
+      "p_value": 0.2007724199482409
+    },
+    {
+      "group": "FWD",
+      "a": "assists_per90",
+      "b": "cbi_per90",
+      "rho": -0.27299716618542863,
+      "n": 23,
+      "p_value": 0.2075458865629446
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "xgc_per90",
+      "rho": -0.39326923076923076,
+      "n": 64,
+      "p_value": 0.0013056128098682253
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "goals_conceded_per90",
+      "rho": -0.29606227106227107,
+      "n": 64,
+      "p_value": 0.017532961596240734
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "defensive_contribution_per90",
+      "rho": -0.10869565217391304,
+      "n": 23,
+      "p_value": 0.6215302402954642
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "bps_per90",
+      "rho": 0.8586996336996336,
+      "n": 64,
+      "p_value": 1.168675596240297e-19
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "tackles_per90",
+      "rho": -0.04051383399209486,
+      "n": 23,
+      "p_value": 0.8543766254269087
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "recoveries_per90",
+      "rho": -0.023715415019762844,
+      "n": 23,
+      "p_value": 0.9144659262773596
+    },
+    {
+      "group": "FWD",
+      "a": "bonus_per90",
+      "b": "cbi_per90",
+      "rho": -0.03359683794466403,
+      "n": 23,
+      "p_value": 0.8790434876667227
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "goals_conceded_per90",
+      "rho": 0.8952838827838827,
+      "n": 64,
+      "p_value": 1.8997186674129552e-23
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.18774703557312253,
+      "n": 23,
+      "p_value": 0.39097147296579005
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "bps_per90",
+      "rho": -0.42216117216117216,
+      "n": 64,
+      "p_value": 0.0005114675795216188
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "tackles_per90",
+      "rho": 0.19960474308300394,
+      "n": 23,
+      "p_value": 0.3611775346501458
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "recoveries_per90",
+      "rho": -0.004940711462450593,
+      "n": 23,
+      "p_value": 0.9821500334482793
+    },
+    {
+      "group": "FWD",
+      "a": "xgc_per90",
+      "b": "cbi_per90",
+      "rho": 0.18379446640316208,
+      "n": 23,
+      "p_value": 0.40120109039639673
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "saves_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "defensive_contribution_per90",
+      "rho": 0.32411067193675885,
+      "n": 23,
+      "p_value": 0.1313582779828515
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "bps_per90",
+      "rho": -0.34235347985347986,
+      "n": 64,
+      "p_value": 0.005621828340655438
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "tackles_per90",
+      "rho": 0.2519762845849803,
+      "n": 23,
+      "p_value": 0.24609751665416568
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "recoveries_per90",
+      "rho": 0.22628458498023712,
+      "n": 23,
+      "p_value": 0.2991542475158123
+    },
+    {
+      "group": "FWD",
+      "a": "goals_conceded_per90",
+      "b": "cbi_per90",
+      "rho": 0.14130434782608695,
+      "n": 23,
+      "p_value": 0.5201462786439693
+    },
+    {
+      "group": "FWD",
+      "a": "saves_per90",
+      "b": "defensive_contribution_per90",
+      "rho": null,
+      "n": 23,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "saves_per90",
+      "b": "bps_per90",
+      "rho": null,
+      "n": 64,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "saves_per90",
+      "b": "tackles_per90",
+      "rho": null,
+      "n": 23,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "saves_per90",
+      "b": "recoveries_per90",
+      "rho": null,
+      "n": 23,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "saves_per90",
+      "b": "cbi_per90",
+      "rho": null,
+      "n": 23,
+      "p_value": null
+    },
+    {
+      "group": "FWD",
+      "a": "defensive_contribution_per90",
+      "b": "bps_per90",
+      "rho": 0.09980237154150197,
+      "n": 23,
+      "p_value": 0.6504928119104105
+    },
+    {
+      "group": "FWD",
+      "a": "defensive_contribution_per90",
+      "b": "tackles_per90",
+      "rho": 0.758893280632411,
+      "n": 23,
+      "p_value": 0.00002695768078863082
+    },
+    {
+      "group": "FWD",
+      "a": "defensive_contribution_per90",
+      "b": "recoveries_per90",
+      "rho": 0.8201581027667985,
+      "n": 23,
+      "p_value": 1.6614245902534593e-6
+    },
+    {
+      "group": "FWD",
+      "a": "defensive_contribution_per90",
+      "b": "cbi_per90",
+      "rho": 0.6185770750988142,
+      "n": 23,
+      "p_value": 0.0016530408522373193
+    },
+    {
+      "group": "FWD",
+      "a": "bps_per90",
+      "b": "tackles_per90",
+      "rho": 0.21343873517786563,
+      "n": 23,
+      "p_value": 0.32814217187674366
+    },
+    {
+      "group": "FWD",
+      "a": "bps_per90",
+      "b": "recoveries_per90",
+      "rho": 0.10375494071146245,
+      "n": 23,
+      "p_value": 0.6375569641629661
+    },
+    {
+      "group": "FWD",
+      "a": "bps_per90",
+      "b": "cbi_per90",
+      "rho": 0.09387351778656126,
+      "n": 23,
+      "p_value": 0.6700798788152735
+    },
+    {
+      "group": "FWD",
+      "a": "tackles_per90",
+      "b": "recoveries_per90",
+      "rho": 0.6304347826086957,
+      "n": 23,
+      "p_value": 0.001261077547362152
+    },
+    {
+      "group": "FWD",
+      "a": "tackles_per90",
+      "b": "cbi_per90",
+      "rho": 0.2025691699604743,
+      "n": 23,
+      "p_value": 0.3539411111182541
+    },
+    {
+      "group": "FWD",
+      "a": "recoveries_per90",
+      "b": "cbi_per90",
+      "rho": 0.19268774703557312,
+      "n": 23,
+      "p_value": 0.3783932922497427
+    }
+  ]
+}

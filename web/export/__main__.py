@@ -19,6 +19,7 @@ from pathlib import Path
 
 from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
+from web.export.correlations import build_correlations
 from web.export.normalize import normalization_basis
 from web.export.panel import build_panel, write_panel
 
@@ -59,9 +60,24 @@ def cmd_panel(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_correlations(args: argparse.Namespace) -> None:
+    """The Correlation Lab matrices (§5.4.1). Committed per §5.3.4, so a
+    fresh clone renders the hero surface with no pipeline run — but built
+    from `panel.parquet`, which is not committed, so this runs after
+    `panel` rather than standing alone."""
+    file = build_correlations(panel_path=Path(args.out) / "panel.parquet")
+    path = write_json(file.model_dump_json(indent=2), "correlations.json", Path(args.out))
+    hatched = sum(1 for c in file.cells if c.n < file.min_n_cell)
+    logger.info(
+        "wrote %d cells over %d metrics x %d groups (%d below n=%d) -> %s",
+        len(file.cells), len(file.metrics), len(file.groups), hatched, file.min_n_cell, path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
+    cmd_correlations(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -71,6 +87,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("columns").set_defaults(func=cmd_columns)
     subparsers.add_parser("panel").set_defaults(func=cmd_panel)
+    subparsers.add_parser("correlations").set_defaults(func=cmd_correlations)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

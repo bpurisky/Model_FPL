@@ -41,8 +41,18 @@ correlations:
   # it is not an estimate of anything, and flagging it would spend amber
   # (§5.8.2, reserved for trustworthiness) on a number not in doubt.
   #
-  # Consequence, accepted rather than worked around: with 20 clubs, most
-  # goalkeeper cells will hatch permanently. That is true, so it renders.
+  # Consequence, measured against the built file rather than predicted:
+  # 92 of 455 cells hatch. They are not spread evenly, and the pattern is
+  # the useful part. GK hatches 46 of 91 and FWD hatches 46 of 91; DEF,
+  # MID and the pooled group hatch nothing. Every hatched cell involves
+  # one of the four metrics that exist only from 2025-26 (tackles,
+  # recoveries, CBI, defensive contribution) -- those draw n from a single
+  # season, which is 20 keepers and 23 forwards, while the three-season
+  # metrics give the same positions 61 and 64.
+  #
+  # So hatching here marks a *coverage* gap far more often than a
+  # small-position gap, and it will keep marking it until those four
+  # metrics have a second season behind them. That is true, so it renders.
   min_n_cell: 30
 
 staleness:

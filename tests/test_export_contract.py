@@ -147,9 +147,21 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     zod cannot express."""
     shape = contract_shape()
 
-    assert set(shape) == {"Header", "ColumnSpec", "ColumnsFile"}
+    assert set(shape) == {
+        "Header",
+        "ColumnSpec",
+        "ColumnsFile",
+        "CorrelationCell",
+        "GroupSummary",
+        "CorrelationsFile",
+    }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
     assert shape["ColumnSpec"]["position_relevance"]["type"] == "record"
     assert shape["ColumnSpec"]["available_to_season"]["required"] is False
     assert shape["ColumnsFile"]["columns"]["type"] == "array"
+    # rho and p_value are nullable and n is not: a cell can fail to
+    # produce a correlation and still have to report what it ran over.
+    assert shape["CorrelationCell"]["rho"]["type"] == "float?"
+    assert shape["CorrelationCell"]["n"]["type"] == "int"
+    assert shape["CorrelationsFile"]["cells"]["type"] == "array"
