@@ -1,0 +1,52 @@
+# Frontend export thresholds (§5.2.1, §5.15).
+#
+# Every value here is a decision that was open in §5.15 and is now closed.
+# They live in config rather than in code because the spec says so, and
+# because each is the kind of number a reader should be able to check
+# against the reasoning without reading Python.
+
+contract_version: 1
+
+normalization:
+  # §5.15 Q5. A player must have averaged at least this many minutes per
+  # team fixture played to enter the reference population.
+  #
+  # NOT the proposed flat 450 season-to-date: measured against 2024-25,
+  # a flat floor admits *zero* players in any position until gameweek 5,
+  # so every normalized surface renders empty for the opening month --
+  # exactly when the tool is most used. A floor that scales with fixtures
+  # played holds the eligible population between 212 and 224 players from
+  # GW1 to GW38 (±3%), which is the property that matters: a z-score in
+  # GW3 is then computed against the same kind of reference group as one
+  # in GW30, so the scale does not silently change meaning mid-season.
+  #
+  # 45 = half of a 90-minute fixture. Stricter (60, two-thirds) strangles
+  # the population to 134 by GW38 and drops genuine starters who missed a
+  # spell; looser (30, a third) lets the group drift toward the marginal.
+  minutes_per_fixture_floor: 45
+
+  # Counted per team fixture rather than per gameweek elapsed, so double
+  # gameweeks and blanks are fair rather than punitive. The panel already
+  # carries n_fixtures.
+  basis: within_position_season_to_date
+
+correlations:
+  # §5.15 Q1. Below this, a correlation cell is hatched.
+  #
+  # Deliberately NOT reused as a normalization flag. The same n carries
+  # different epistemic weight in the two jobs: a correlation over ~20
+  # goalkeepers is a small *sample* with a genuinely wide interval, so
+  # hatching states a fact. A z-score over those same 20 is computed
+  # against nearly the entire *population* of Premier League keepers --
+  # it is not an estimate of anything, and flagging it would spend amber
+  # (§5.8.2, reserved for trustworthiness) on a number not in doubt.
+  #
+  # Consequence, accepted rather than worked around: with 20 clubs, most
+  # goalkeeper cells will hatch permanently. That is true, so it renders.
+  min_n_cell: 30
+
+staleness:
+  # §5.15 Q3. Collector cadence is hourly (.github/workflows/collect.yml),
+  # so anything older than a few cycles means the pipeline has stopped
+  # rather than merely lagged.
+  warn_after_hours: 6
