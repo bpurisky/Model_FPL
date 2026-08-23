@@ -1,0 +1,162 @@
+/*
+ * §5.8's design system, authored rather than invented.
+ *
+ * §5.8.8 is explicit that the OKLCH values are the implementation and the
+ * hex in §5.8.2 is documentation of intent. That is not fashion: the
+ * diverging scale is the product's central visual, and sRGB interpolation
+ * between teal and rose passes through a desaturated grey-mud midpoint
+ * that makes near-zero correlations look like rendering artifacts. OKLCH
+ * holds perceived lightness across the ramp, so equal steps in rho read as
+ * equal visual steps.
+ *
+ * The app is dark-only by §5.8.1. There is no light theme and no
+ * `light-dark()`; a measuring instrument has one housing.
+ */
+
+:root {
+  /* --- §5.8.2 palette ------------------------------------------------ */
+  --ground: oklch(0.27 0.02 230); /* #212C33 app background */
+  --panel: oklch(0.32 0.02 230); /* #2C3A43 raised surfaces */
+  --rule: oklch(0.41 0.02 230); /* #3E4F5A hairlines, grid, axes */
+  --paper: oklch(0.93 0.01 220); /* #E6EDF0 primary text */
+  --muted: oklch(0.71 0.02 225); /* #93A5AF secondary text */
+  --rho-neg: oklch(0.66 0.1 195); /* #1F9E9E teal */
+  --rho-pos: oklch(0.56 0.16 10); /* #C4456B rose */
+
+  /*
+   * Amber is reserved exclusively for epistemic warnings — low sample
+   * size, stale export, provisional values, mixed-position cautions. It
+   * never appears decoratively. When the user sees amber, something about
+   * the trustworthiness of a number is being flagged.
+   */
+  --flag: oklch(0.78 0.13 78); /* #E0A83C */
+
+  /* --- §5.8.8 spacing: 4px base, six steps, no arbitrary values ------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+
+  /* --- §5.8.8 type: one ratio each, clamp() throughout --------------- */
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  /* 1.2 minor third for data-dense contexts */
+  --text-xs: clamp(0.69rem, 0.67rem + 0.1vw, 0.75rem);
+  --text-sm: clamp(0.83rem, 0.8rem + 0.12vw, 0.9rem);
+  --text-md: clamp(1rem, 0.96rem + 0.15vw, 1.08rem);
+  /* 1.333 for display */
+  --text-lg: clamp(1.33rem, 1.2rem + 0.5vw, 1.6rem);
+  --text-xl: clamp(1.77rem, 1.5rem + 1vw, 2.37rem);
+
+  /* --- §5.8.8 radius: instruments are crisp -------------------------- */
+  --radius-control: 4px; /* interactive controls only */
+  --radius-data: 0; /* matrix cells, table rows, plot areas */
+
+  /* --- §5.8.8 motion: two durations, one easing, nothing else -------- */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-state: 120ms; /* hover, focus, selection */
+  --dur-reveal: 320ms; /* the §5.8.4 load reveal */
+
+  /* --- §5.8.8 hairlines at one true device pixel --------------------- */
+  --hairline: 1px;
+
+  /* §5.8.5: a single elevation step, and no shadow beyond it. */
+  --elevation: 0 1px 0 oklch(0.2 0.02 230);
+}
+
+/*
+ * sRGB fallback per §5.8.8. Authored as the @supports *negative* so the
+ * OKLCH values above stay the implementation rather than the override.
+ */
+@supports not (color: oklch(0.5 0.1 200)) {
+  :root {
+    --ground: #212c33;
+    --panel: #2c3a43;
+    --rule: #3e4f5a;
+    --paper: #e6edf0;
+    --muted: #93a5af;
+    --rho-neg: #1f9e9e;
+    --rho-pos: #c4456b;
+    --flag: #e0a83c;
+  }
+}
+
+@media (min-resolution: 2dppx) {
+  :root {
+    /* A 1px CSS border reads heavy against dense data on HiDPI and
+     * coarsens the whole matrix. */
+    --hairline: 0.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-state: 0ms;
+    --dur-reveal: 0ms;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * §5.8.3: every numeral in a table, matrix cell or axis uses the data
+ * face. Proportional figures in a stats table are a defect, not a
+ * preference — columns of numbers must align on the decimal.
+ */
+.tabular,
+.data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* §5.8.8: focus is designed, not defaulted. `outline: none` never appears. */
+:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+
+/* §5.8.8: custom scrollbars styled to --rule, thin, never hidden. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+::-webkit-scrollbar {
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}

@@ -277,6 +277,51 @@ export const BoardFile = z.object({
   players: z.array(BoardPlayer),
 });
 
+/**
+ * One rate metric for one player. `z` and `percentile` are null below the
+ * minutes floor — unknown, not average (§5.3.3). The population size is
+ * not here: it belongs to the position group, and lives on the file.
+ */
+export const PlayerMetric = z.object({
+  value: z.number().nullable(),
+  z: z.number().nullable(),
+  percentile: z.number().nullable(),
+});
+
+/** `total` is the sum of `components` by construction. */
+export const PlayerProjection = z.object({
+  components: z.record(z.string(), z.number().nullable()),
+  total: z.number().nullable(),
+  p_blank: z.number().nullable(),
+  p_short: z.number().nullable(),
+  p_full: z.number().nullable(),
+});
+
+export const PlayerRow = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  price: z.number().int().nullable(),
+  selected: z.number().int().nullable(),
+  gameweeks: z.number().int(),
+  actuals: z.record(z.string(), z.number().nullable()),
+  metrics: z.record(z.string(), PlayerMetric),
+  projection: PlayerProjection.nullable(),
+});
+
+export const ProjectionBasis = z.enum(["next_fixture", "fixture_neutral"]);
+
+export const PlayersFile = z.object({
+  header: Header,
+  season: z.string(),
+  gameweek: z.number().int(),
+  projected_gameweek: z.number().int(),
+  projection_basis: ProjectionBasis,
+  population: z.record(z.string(), z.record(z.string(), z.number().int())),
+  players: z.array(PlayerRow),
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -289,6 +334,8 @@ export type FixturesFile = z.infer<typeof FixturesFile>;
 export type GoldenSpearmanFile = z.infer<typeof GoldenSpearmanFile>;
 export type BoardPlayer = z.infer<typeof BoardPlayer>;
 export type BoardFile = z.infer<typeof BoardFile>;
+export type PlayerRow = z.infer<typeof PlayerRow>;
+export type PlayersFile = z.infer<typeof PlayersFile>;
 
 /**
  * The contract version this app understands. §5.12 requires the build to

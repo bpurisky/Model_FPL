@@ -170,6 +170,10 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "BoardBucketAccuracy",
         "BoardPlayer",
         "BoardFile",
+        "PlayerMetric",
+        "PlayerProjection",
+        "PlayerRow",
+        "PlayersFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
@@ -201,6 +205,11 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["PositionWeights"]["weights"]["type"] == "record"
     assert shape["BoardPlayer"]["drivers"]["type"] == "array"
     assert shape["BoardBucketAccuracy"]["lift"]["type"] == "float?"
+    # n lives on the file, not the metric: it is a property of the position
+    # group and repeating it per player would imply otherwise.
+    assert set(shape["PlayerMetric"]) == {"value", "z", "percentile"}
+    assert shape["PlayersFile"]["population"]["type"] == "record"
+    assert shape["PlayerRow"]["projection"]["type"] == "PlayerProjection?"
 
 
 # --- json_safe: what may cross the boundary -------------------------------

@@ -1,0 +1,150 @@
+/*
+ * §5.8.4's hero, §5.8.8's craft rules.
+ *
+ * Density is a feature: matrix cells are capped at 28px because this is a
+ * tool for repeated expert use, and generous whitespace here is not
+ * elegance, it is scrolling.
+ */
+
+.wrapper {
+  container-type: inline-size;
+  inline-size: 100%;
+  overflow-x: auto;
+}
+
+.grid {
+  display: grid;
+  /* One label track, then one square track per metric. */
+  grid-template-columns: minmax(9rem, max-content) repeat(var(--n), minmax(2rem, 1.75rem));
+  gap: var(--hairline);
+  background: var(--rule);
+  border: var(--hairline) solid var(--rule);
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.corner {
+  background: var(--ground);
+}
+
+.columnLabel,
+.rowLabel {
+  background: var(--ground);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  display: flex;
+  align-items: center;
+}
+
+.columnLabel {
+  /* Vertical so a sixteen-column matrix stays square without truncating
+   * every label to three characters. */
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  justify-content: flex-end;
+  block-size: 8rem;
+  padding: var(--space-2) var(--space-1);
+}
+
+.rowLabel {
+  justify-content: flex-end;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.cell,
+.diagonal {
+  aspect-ratio: 1;
+  min-block-size: 1.75rem;
+  max-block-size: 28px;
+  border: 0;
+  border-radius: var(--radius-data); /* instruments are crisp */
+  display: grid;
+  place-items: center;
+  font-size: var(--text-xs);
+  transition:
+    filter var(--dur-state) var(--ease),
+    box-shadow var(--dur-state) var(--ease);
+}
+
+.diagonal {
+  /* A metric's correlation with itself is 1 by construction and carries
+   * no n worth reading, so the export omits it and the grid draws a
+   * structural gap rather than a cell that says nothing. */
+  background: var(--ground);
+}
+
+.cell {
+  background: var(--fill);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+}
+
+.cell:hover {
+  filter: brightness(1.15);
+}
+
+.cell:focus-visible {
+  /* The ring has to sit above neighbouring cells or the grid clips it. */
+  position: relative;
+  z-index: 1;
+}
+
+.selected {
+  box-shadow: inset 0 0 0 2px var(--paper);
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * §5.10: "no heat map encodes meaning by colour alone. Cells carry
+ * numeric values; low-n cells are hatched (pattern, not hue)."
+ *
+ * A repeating gradient survives greyscale, deuteranopia and a
+ * screenshot — which is the entire requirement. Amber is *not* used for
+ * the hatch itself: §5.8.2 reserves it for epistemic warnings and this
+ * is one, but painting 108 cells amber would spend the whole flag budget
+ * on a single view. The hatch carries it structurally; the legend says
+ * so in amber once.
+ */
+.hatched {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 3px,
+    var(--rule) 3px 4px
+  );
+  background-color: var(--panel);
+}
+
+@container (max-width: 40rem) {
+  .rowLabel {
+    font-size: var(--text-xs);
+    max-inline-size: 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/*
+ * §5.8.4: "animating in column-by-column on load — one orchestrated
+ * reveal, then stillness." The stagger is per column index, and the whole
+ * thing is disabled under prefers-reduced-motion via the token, which is
+ * why there is no media query here.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    animation: reveal var(--dur-reveal) var(--ease) backwards;
+    animation-delay: calc(var(--reveal-index) * 18ms);
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

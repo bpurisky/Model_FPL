@@ -629,6 +629,52 @@ The board describes the latest gameweek present in the panel — currently 2025-
 
 472 tests pass, 1 skipped.
 
+### `players.json`, and milestone 5A is complete — 2026-08-23 (last)
+
+**All nine export files exist.** §5.13's 5A is done: `web/export/` produces every file in §5.3.2, tested, with the five committed ones committed.
+
+`players.json` was called date-blocked in an earlier entry and that was wrong. The reasoning had been "projections need current-season data", but `board.json` had already solved the same problem: describe the latest gameweek present in the panel and follow it forward. The projection is the same `analytics/projections.py` the scorecard measures, trained on gameweeks strictly before the one it projects — so the numbers on this surface are the numbers whose accuracy `scorecard.json` publishes, and no live API call is involved.
+
+Three things it gets right that the first build got wrong, all found by reading the output rather than the code:
+
+- **Season-to-date actuals were reading the latest gameweek for two columns.** The panel carries `minutes` and `total_points` of its own, for the single gameweek each row describes, so an unprefixed join kept the panel's values for exactly those two and the season's for everything else. Haaland came out as 0 minutes and 0 points beside 27 goals — a row no query would flag and a table would render without complaint. All totals are prefixed now, and a test asserts that anyone with goals also has minutes.
+- **Metrics were taken at gameweek grain.** A per-90 rate is null for a gameweek the player did not feature in, so every player rested in the last round had a card of nulls — the players most worth looking at. Rates are now minutes-weighted season-to-date, reusing `correlations.py:player_season_frame` (which gained an `eligible_only` flag so it can keep every element rather than only the reference population), then normalized within position against a synthetic gameweek so the peer group is "players at this position, this season".
+- **The population size `n` moved off the metric and onto the file.** It is a property of the position group — every forward shares one `n` for xG — so carrying it per player restated the same 64 numbers thirteen thousand times and invited a reader to think two players' z-scores rested on different samples. Same argument as `min_n_cell` in `correlations.json`.
+
+`projection_basis` distinguishes `next_fixture` from `fixture_neutral`: for a completed season there is no gameweek 39 to have a fixture, so difficulty falls back to neutral and the projection stops being about a specific match. It reads `fixture_neutral` today and will read `next_fixture` from the first live gameweek.
+
+The total is computed as the sum of its components rather than by calling `expected_points_from_projection` as well — a headline figure that disagreed with the decomposition panel breaking it down is exactly what that panel exists to expose. A test asserts equality to 1e-9 across all 841 players.
+
+The §5.12.2 schema parser also stopped hardcoding which zod names are enum aliases and now discovers them from the file, so adding a closed-set type to `schema.ts` no longer requires editing the test that guards it.
+
+Size note: `players.json` is 2.4 MB against §5.3.2's ~600 KB estimate — 841 elements rather than ~600, sixteen metrics each with three fields, and `indent=2` for the same diffability every other committed file gets. Gzipped it is a few hundred KB, and it loads on a route rather than on first paint.
+
+**484 tests pass, 1 skipped.** Export file count: nine of nine.
+
+### Milestone 5B — the Correlation Lab exists — 2026-08-23
+
+`web/app/` is a Vite + React 18 + TypeScript-strict app. **39 frontend tests pass, the typecheck is clean, and the production bundle is 64.7 KB gzipped against §5.9's 250 KB budget.**
+
+Dependencies are three: react, react-dom, zod. §5.2 locks "Visx (or D3 primitives directly)", and the hero needed neither — a heat map is a grid of coloured squares, and drawing it as CSS Grid rather than SVG is what makes §5.10's keyboard requirement fall out of the platform instead of out of a roving-tabindex reimplementation over `<rect>`s.
+
+**The committed exports are served from `data/web/v1/`, never copied into `public/`.** A second copy of every number in the repository is a second thing to go stale. A ~30-line Vite plugin serves them from disk in dev and copies the JSON once at build; the parquet files are deliberately excluded, because §5.3.4 does not commit them and §5.14.8 requires the parquet-backed routes to show their empty state rather than an error.
+
+**Two contract tests now guard the boundary from both ends.** `tests/test_schema_ts.py` compares `schema.ts`'s *shape* against `contract.py`. `web/app/src/data/contract.test.ts` parses all seven committed exports through the real zod schemas — a shape test and a real payload can disagree, since a field can be spelled right, typed right, and still arrive null where the schema forbids it. It also asserts null rho survives validation as null: a schema that coerced it to 0 would turn "no correlation is defined here" into "we measured no relationship", and every cell downstream would render the wrong claim confidently.
+
+**Deviation from §5.8.2's v2 orientation rule, recorded per §5.16.** That rule swaps the diverging poles for a metric where low is good, so one scale means "far from the middle" across every heat map. It does not apply to the correlation matrix, and applying it would be a defect: a correlation is symmetric, so orienting a cell by one of its two metrics paints (xGC, xG) and (xG, xGC) in opposing colours for the same rho. The rule is written for heat maps whose cells are metric *values* — Form Matrix and Comparison, milestone 5D — where "high is good" is a property of the cell. Here rho carries its own sign and the legend states what the poles mean. A test asserts the matrix is symmetric.
+
+That was found by a test I had written wrongly: it asserted the orientation rule applied, failed, and the failure turned out to be in the design rather than in the assertion.
+
+**A real accessibility bug the tests caught.** The initial keyboard focus sat at cell (0,0), which is on the diagonal — and the diagonal is not a cell, because a metric's correlation with itself is 1 by construction and the export omits it. So the grid had no keyboard entry point at all. Focus now starts on the first real cell, and arrow keys step *over* the diagonal in the direction of travel rather than stalling on it.
+
+Craft rules from §5.8.8 that are implemented rather than noted: OKLCH tokens with an sRGB `@supports` fallback, `color-mix(in oklch)` for the ramp so equal steps in rho read as equal visual steps, a six-step 4px spacing scale, `clamp()` type at 1.2 for data and 1.333 for display, zero radius on data surfaces and 4px on controls only, 28px matrix cells, hairlines at 0.5px above 2dppx, two motion durations and one easing with the whole reveal disabled under `prefers-reduced-motion`, container queries rather than viewport media queries, designed `:focus-visible` and no `outline: none` anywhere.
+
+Amber appears exactly twice in the view, both times as an epistemic warning per §5.8.2: the §5.7.5 mixed-position caution on the pooled group, and the legend's statement of how many cells are hatched. The hatch itself is a `repeating-linear-gradient` rather than a colour, so §5.10's "no heat map encodes meaning by colour alone" survives greyscale and a screenshot.
+
+Loading is a determinate bar with a real byte count read off the response stream — §5.9 wants the user to know whether they are waiting on 200 KB or 8 MB, and §5.8.8 forbids skeletons because they imply content shape before it is known.
+
+**Known gap for 5C:** the rank scatter draws from `players.json`, which is one season, while the matrix pools three. The scatter says so in its caption rather than implying the two populations match. `src/data/spearman.ts` is not written — the Correlation Lab needs no client-side inference because every matrix it can show is precomputed, and §5.6.1's port is only required once Graph Builder allows arbitrary filters. `golden_spearman.json` is already committed and waiting for it.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
@@ -669,7 +715,7 @@ This section replaces the previous "Before continuing Phase 4" list, three of wh
 **Then, in this order:**
 
 3. ~~`golden_spearman.json`~~, ~~`schema.ts`~~, ~~`timeseries.parquet`~~ — done in the export sprint above.
-4. **`players.json`** — the last date-blocked file. Needs `data/current_season/`: trailing actuals and projections both require per-player match stats, which neither `data/reference/` nor `data/distilled/` carries. Buildable the day after the first `record-actuals`.
+4. ~~`players.json`~~ — done. It was never date-blocked: it describes the latest gameweek in the panel and follows it forward, exactly as `board.json` does.
 5. **Collect `total_players`** — one field from bootstrap-static into the reference tier. It is what turns the panel's `selected` from null into the squad count the registry declares, for the current season and every season after it. Small, and the longer it waits the more gameweeks are permanently missing it (§0.1).
 6. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap, and retrofittable: `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so gw2–gw13 can be computed later and still be point-in-time correct. Best built around gw4–5.
 7. ~~`board.json`~~ — done. Both decisions below were settled by the operator on 2026-08-23 and are recorded in the entry above.

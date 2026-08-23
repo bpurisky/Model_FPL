@@ -1,0 +1,81 @@
+.lab {
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 100%;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sub {
+  margin: var(--space-1) 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  max-inline-size: 62ch;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-block: var(--space-2);
+  border-block: var(--hairline) solid var(--rule);
+}
+
+/* §5.7.5's caution. Amber, because it is an epistemic warning and §5.8.2
+   reserves amber for exactly that. Inline, not a modal, not a dismissible
+   toast — it names the specific distortion at the moment it applies. */
+.caution {
+  margin: 0;
+  color: var(--flag);
+  font-size: var(--text-xs);
+  max-inline-size: 76ch;
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-3);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 24rem;
+  margin-block-start: var(--space-5);
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-3);
+  max-inline-size: 76ch;
+}
+
+.failureHead {
+  margin: 0;
+  color: var(--flag);
+  font-size: var(--text-sm);
+}

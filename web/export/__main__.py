@@ -25,6 +25,7 @@ from web.export.fixtures import build_fixtures
 from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.panel import build_panel, write_panel
+from web.export.players import build_players
 from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
 
@@ -169,6 +170,18 @@ def cmd_board(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_players(args: argparse.Namespace) -> None:
+    """Per-player current state and projection (§5.3.2). Committed per
+    §5.3.4, so a fresh clone renders Comparison and Explorer."""
+    file = build_players(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(file.model_dump_json(indent=2), "players.json", Path(args.out))
+    logger.info(
+        "%s %d players at %s gw%d, projecting gw%d (%s) -> %s",
+        "wrote" if changed else "unchanged:", len(file.players), file.season,
+        file.gameweek, file.projected_gameweek, file.projection_basis, path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -178,6 +191,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_golden(args)
     cmd_timeseries(args)
     cmd_board(args)
+    cmd_players(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -193,6 +207,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("golden").set_defaults(func=cmd_golden)
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("board").set_defaults(func=cmd_board)
+    subparsers.add_parser("players").set_defaults(func=cmd_players)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

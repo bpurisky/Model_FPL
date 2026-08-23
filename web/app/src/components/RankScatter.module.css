@@ -1,0 +1,71 @@
+.panel {
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-data);
+  padding: var(--space-4);
+  box-shadow: var(--elevation);
+  container-type: inline-size;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-block-end: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.against {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.caption {
+  margin: var(--space-1) 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  block-size: 32px;
+  white-space: nowrap;
+}
+
+.plot {
+  inline-size: 100%;
+  max-inline-size: 32rem;
+  block-size: auto;
+}
+
+.axis {
+  stroke: var(--rule);
+  stroke-width: var(--hairline);
+}
+
+.axisLabel {
+  fill: var(--muted);
+  font-family: var(--font-body);
+  font-size: 10px;
+}
+
+.point {
+  fill: var(--rho-pos);
+  fill-opacity: 0.75;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 44ch;
+}

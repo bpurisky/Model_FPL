@@ -27,11 +27,18 @@ SCHEMA_TS = Path("web/app/src/data/schema.ts")
 
 # `export const Name = z.object({ ... });`
 _MODEL = re.compile(r"^export const (\w+) = z\.object\(\{$(.*?)^\}\);$", re.M | re.S)
+# `export const Name = z.enum([...])` — discovered rather than listed, so
+# adding a closed-set alias to schema.ts does not require editing this file.
+_ENUM = re.compile(r"^export const (\w+) = z\.enum\(", re.M)
 # `  field: <zod expression>,`
 _FIELD = re.compile(r"^\s{2}(\w+):\s*(.+?),\s*$", re.M)
 
 
-def _zod_type(expression: str) -> tuple[str, bool]:
+def _enum_aliases(source: str) -> set[str]:
+    return set(_ENUM.findall(source))
+
+
+def _zod_type(expression: str, enums: frozenset[str] = frozenset()) -> tuple[str, bool]:
     """Reduce a zod expression to `contract_shape()`'s vocabulary.
 
     Modifiers count only where they *trail* the expression. Substring
@@ -64,7 +71,7 @@ def _zod_type(expression: str) -> tuple[str, bool]:
         name = "int"
     elif base.startswith("z.number()"):
         name = "float"
-    elif base.startswith("z.enum(") or base in {"Role", "Relevance", "Grain", "Source", "DifficultyBasis"}:
+    elif base.startswith("z.enum(") or base in enums:
         # A closed set of strings — `contract_shape` calls a Literal a union.
         name = "union"
     else:
@@ -75,11 +82,12 @@ def _zod_type(expression: str) -> tuple[str, bool]:
 
 def _parse_schema_ts() -> dict[str, dict[str, dict]]:
     source = SCHEMA_TS.read_text(encoding="utf-8")
+    enums = frozenset(_enum_aliases(source))
     models: dict[str, dict[str, dict]] = {}
     for name, body in _MODEL.findall(source):
         fields = {}
         for field, expression in _FIELD.findall(body):
-            type_name, optional = _zod_type(expression)
+            type_name, optional = _zod_type(expression, enums)
             fields[field] = {"required": not optional, "type": type_name}
         models[name] = fields
     return models
@@ -120,7 +128,7 @@ def test_schema_ts_matches_the_python_contract(parsed):
 
 # Zod-side enums have no pydantic model of their own -- they are Literals
 # inlined into the fields that use them.
-_ENUM_ONLY = {"Role", "Relevance", "Grain", "Source", "Position", "DifficultyBasis"}
+_ENUM_ONLY = frozenset(_enum_aliases(SCHEMA_TS.read_text(encoding="utf-8"))) if SCHEMA_TS.exists() else frozenset()
 
 
 def test_every_python_model_is_mirrored(parsed):

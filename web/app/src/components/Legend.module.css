@@ -1,0 +1,40 @@
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.ramp {
+  display: flex;
+  border: var(--hairline) solid var(--rule);
+}
+
+.stop {
+  inline-size: 1.25rem;
+  block-size: 0.75rem;
+}
+
+.ends {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.hatchKey {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  /* The one amber statement in the view: the hatch means low n, and §5.8.2
+     reserves amber for exactly this kind of flag. */
+  color: var(--flag);
+}
+
+.hatchSwatch {
+  inline-size: 1.25rem;
+  block-size: 0.75rem;
+  border: var(--hairline) solid var(--rule);
+  background-color: var(--panel);
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--rule) 3px 4px);
+}

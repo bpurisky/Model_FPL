@@ -473,6 +473,89 @@ class BoardFile(_Strict):
     players: list[BoardPlayer]
 
 
+class PlayerMetric(_Strict):
+    """One rate metric for one player, with the basis §5.7.4 needs.
+
+    `z` and `percentile` are null for a player below the minutes floor —
+    unknown, not average (§5.3.3).
+
+    The population size lives in `PlayersFile.population` rather than
+    here. It is a property of the position group, not of the player: every
+    forward in the file shares one `n` for xG, so carrying it per player
+    would repeat the same 64 numbers thirteen thousand times and invite
+    the reader to think two players' z-scores rest on different samples.
+    Same argument as `min_n_cell` in `correlations.json` and
+    `mixed_position` in `GroupSummary`.
+    """
+
+    value: float | None
+    z: float | None
+    percentile: float | None
+
+
+class PlayerProjection(_Strict):
+    """The event model's expectation for the projected gameweek.
+
+    `total` is the sum of `components` by construction — the exporter adds
+    them rather than calling a second function, so the headline figure
+    cannot disagree with the decomposition panel that breaks it down.
+
+    The three minutes probabilities are the head §4.2 calls the
+    highest-leverage and most failure-prone component, carried separately
+    rather than folded into the total for exactly that reason.
+    """
+
+    components: dict[str, float | None]
+    total: float | None
+    p_blank: float | None
+    p_short: float | None
+    p_full: float | None
+
+
+class PlayerRow(_Strict):
+    """One element (§5.3.2).
+
+    `price` is in tenths of a million and `selected` is a squad count, both
+    as the archive records them. `selected` is null for current-season rows
+    until the collector captures `total_players` — see
+    `web/export/current.py`, which explains why a percentage must not be
+    written into a count column.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    price: int | None
+    selected: int | None
+    gameweeks: int
+    actuals: dict[str, float | None]
+    metrics: dict[str, PlayerMetric]
+    projection: PlayerProjection | None
+
+
+class PlayersFile(_Strict):
+    """`players.json`.
+
+    `projection_basis` distinguishes a real next-fixture forecast from a
+    fixture-neutral statement about the player. For a completed season
+    there is no next gameweek to have a fixture, so difficulty falls back
+    to neutral and the projection stops being about a specific match —
+    reading one as the other would be reading it wrong.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    projected_gameweek: int
+    projection_basis: Literal["next_fixture", "fixture_neutral"]
+    # position -> metric -> the size of the group every z-score in that
+    # position was computed against (§5.7.4's tooltip needs it, and it is
+    # a group property rather than a player one).
+    population: dict[str, dict[str, int]]
+    players: list[PlayerRow]
+
+
 def build_header(
     *,
     rows: int,
@@ -561,6 +644,7 @@ def contract_shape() -> dict[str, Any]:
         FixtureRow, FixturesFile,
         GoldenSample, GoldenPair, GoldenSpearmanFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
+        PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
     )
     for model in models:
         fields = {}
@@ -627,6 +711,10 @@ __all__ = [
     "GroupSummary",
     "Header",
     "MinutesHead",
+    "PlayerMetric",
+    "PlayerProjection",
+    "PlayerRow",
+    "PlayersFile",
     "PositionSpearman",
     "PositionWeights",
     "ScorecardFile",

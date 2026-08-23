@@ -109,9 +109,14 @@ def season_rate(metric: str) -> tuple[pl.Expr, pl.Expr]:
 
 
 def player_season_frame(
-    panel: pl.DataFrame, metrics: list[str], per_fixture: int
+    panel: pl.DataFrame, metrics: list[str], per_fixture: int, eligible_only: bool = True
 ) -> pl.DataFrame:
-    """One row per (season, element_id), eligible players only.
+    """One row per (season, element_id), eligible players only by default.
+
+    `eligible_only=False` keeps everyone, for callers that must describe
+    every element rather than a reference population — `players.json` has
+    a row per registered player whether or not he has played enough to be
+    normalized against, and drops the z-score rather than the player.
 
     Eligibility is §5.15 Q5's rolling floor, evaluated at the end of the
     player's season: `cum_minutes` and `cum_fixtures` are already
@@ -141,6 +146,8 @@ def player_season_frame(
         [f"_num_{m}" for m in metrics] + [f"_den_{m}" for m in metrics]
     )
 
+    if not eligible_only:
+        return grouped.sort(["season", "element_id"])
     eligible = pl.col("season_minutes") >= minutes_floor(
         pl.col("season_fixtures"), per_fixture
     )
