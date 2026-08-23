@@ -166,6 +166,10 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "GoldenSample",
         "GoldenPair",
         "GoldenSpearmanFile",
+        "PositionWeights",
+        "BoardBucketAccuracy",
+        "BoardPlayer",
+        "BoardFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
@@ -192,6 +196,11 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["GoldenSample"]["rows"]["type"] == "array"
     assert shape["GoldenPair"]["rho"]["type"] == "float?"
     assert shape["GoldenSpearmanFile"]["tolerance"]["type"] == "float"
+    # Weights are a metric->number map, and negative values are meaningful
+    # (§5.4.6), so zod must not model them as unsigned.
+    assert shape["PositionWeights"]["weights"]["type"] == "record"
+    assert shape["BoardPlayer"]["drivers"]["type"] == "array"
+    assert shape["BoardBucketAccuracy"]["lift"]["type"] == "float?"
 
 
 # --- json_safe: what may cross the boundary -------------------------------

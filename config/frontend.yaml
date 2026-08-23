@@ -60,3 +60,87 @@ staleness:
   # so anything older than a few cycles means the pipeline has stopped
   # rather than merely lagged.
   warn_after_hours: 6
+
+board:
+  # §5.4.6 Q7. The composite is a weighted sum of within-position z-scores,
+  # and these are the weights. They live here because the spec says so and
+  # because §5.4.6 requires them rendered on screen -- the user must be
+  # able to read the model's opinion, not just receive its output.
+  #
+  # FITTED, not adopted as written. §5.4.6's illustrative profiles name
+  # three columns that do not exist: `creativity_p90` (FPL discontinued
+  # ICT for 2026-27), `shots_in_box_p90` (in no source this project has),
+  # and `minutes_stability` (renamed `minutes_reliability`, since a player
+  # who plays exactly 45 minutes every week is stable and useless).
+  #
+  # Derivation, over 85k player-gameweeks of the archive:
+  #   magnitude  = |within-position Spearman of the metric's z-score
+  #                 against mean points over the next three gameweeks|
+  #   sign       = the registry's own `higher_is_better`
+  #   included   = only metrics the registry calls primary or secondary
+  #                for that position, with |rho| >= 0.04
+  #   normalised = |weights| sum to 1 within each position
+  #
+  # Two rules there are doing real work. Restricting to primary/secondary
+  # keeps goalkeeper tackles (rho -0.097, pure noise) out. Taking the sign
+  # from the registry rather than from the data drops `saves_per90` for GK
+  # instead of giving it a negative weight: its rho really is -0.076,
+  # because saves proxy a leaky defence, but a board that rewarded a
+  # goalkeeper for making *fewer* saves would not be modelling goalkeeping.
+  #
+  # The headline finding is that `minutes_reliability` is the strongest
+  # single predictor in every position (rho 0.205-0.250), which is §4.2's
+  # "this dominates everything else" showing up again from the other end.
+  position_weights:
+    GK:
+      minutes_reliability: 0.426
+      clean_sheet_prob: 0.198
+      xgc_per90: -0.171
+      goals_conceded_per90: -0.134
+      bonus_per90: 0.071
+    DEF:
+      minutes_reliability: 0.228
+      xgc_per90: -0.110
+      xgi_per90: 0.099
+      xa_per90: 0.095
+      clean_sheet_prob: 0.088
+      bps_per90: 0.086
+      bonus_per90: 0.070
+      goals_conceded_per90: -0.062
+      cbi_per90: 0.059
+      xg_per90: 0.059
+      defensive_contribution_per90: 0.044
+    MID:
+      minutes_reliability: 0.197
+      xgi_per90: 0.178
+      xg_per90: 0.149
+      xa_per90: 0.145
+      bps_per90: 0.079
+      goals_per90: 0.072
+      assists_per90: 0.067
+      bonus_per90: 0.059
+      clean_sheet_prob: 0.054
+    FWD:
+      minutes_reliability: 0.247
+      goals_per90: 0.134
+      xgi_per90: 0.123
+      xg_per90: 0.117
+      xa_per90: 0.104
+      bonus_per90: 0.099
+      bps_per90: 0.094
+      assists_per90: 0.081
+
+  # Gameweeks of the current season a player needs before the momentum
+  # buckets will classify them. Three, because "a consistent rise across
+  # three games" needs three observations to be a rise at all.
+  trend_window: 3
+
+  # §5.4.6's amber flag: a classification resting on less than this is
+  # marked rather than hidden. Same rolling basis as the normalization
+  # floor -- see `normalization.minutes_per_fixture_floor`.
+  min_gameweeks: 3
+
+  # Share of each position placed in the Optimal bucket and, symmetrically,
+  # the size of the ranked shortlist. A quarter is where the measured lift
+  # was estimated (+0.671 forward points for the top quartile).
+  optimal_quantile: 0.75

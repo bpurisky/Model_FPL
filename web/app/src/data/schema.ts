@@ -227,6 +227,56 @@ export const GoldenSpearmanFile = z.object({
   pairs: z.array(GoldenPair),
 });
 
+/**
+ * §5.4.6's weight profile for one position. `weights` is a metric->number
+ * map and the numbers are signed: conceding is bad for a defender, and a
+ * scoring layer that cannot express that is not modelling football.
+ */
+export const PositionWeights = z.object({
+  position: z.string(),
+  weights: z.record(z.string(), z.number()),
+});
+
+/**
+ * What a bucket was actually worth. `lift` is negative for `rising`, and
+ * that is the finding rather than a bug — the surface must not present a
+ * bucket without being able to show this alongside it.
+ */
+export const BoardBucketAccuracy = z.object({
+  bucket: z.string(),
+  n: z.number().int(),
+  comparison: z.string(),
+  forward_points: z.number().nullable(),
+  forward_points_other: z.number().nullable(),
+  lift: z.number().nullable(),
+});
+
+/** One card, or one row of the ranked list — the same record serves both. */
+export const BoardPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  composite: z.number().nullable(),
+  percentile: z.number().nullable(),
+  rank: z.number().int(),
+  bucket: z.string(),
+  drivers: z.array(z.string()),
+  gameweeks_seen: z.number().int(),
+  low_confidence: z.boolean(),
+});
+
+export const BoardFile = z.object({
+  header: Header,
+  season: z.string(),
+  gameweek: z.number().int(),
+  trend_window: z.number().int(),
+  min_gameweeks: z.number().int(),
+  weights: z.array(PositionWeights),
+  bucket_accuracy: z.array(BoardBucketAccuracy),
+  players: z.array(BoardPlayer),
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -237,6 +287,8 @@ export type ScorecardFile = z.infer<typeof ScorecardFile>;
 export type FixtureRow = z.infer<typeof FixtureRow>;
 export type FixturesFile = z.infer<typeof FixturesFile>;
 export type GoldenSpearmanFile = z.infer<typeof GoldenSpearmanFile>;
+export type BoardPlayer = z.infer<typeof BoardPlayer>;
+export type BoardFile = z.infer<typeof BoardFile>;
 
 /**
  * The contract version this app understands. §5.12 requires the build to

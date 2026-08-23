@@ -17,6 +17,7 @@ import json
 import logging
 from pathlib import Path
 
+from web.export.board import build_board
 from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
 from web.export.correlations import build_correlations
@@ -157,6 +158,17 @@ def cmd_timeseries(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_board(args: argparse.Namespace) -> None:
+    """The Model Board (§5.4.6): a ranked list and three buckets over one
+    composite, with each bucket's measured worth attached."""
+    file = build_board(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(file.model_dump_json(indent=2), "board.json", Path(args.out))
+    logger.info(
+        "%s %d players at %s gw%d -> %s",
+        "wrote" if changed else "unchanged:", len(file.players), file.season, file.gameweek, path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -165,6 +177,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_fixtures(args)
     cmd_golden(args)
     cmd_timeseries(args)
+    cmd_board(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -179,6 +192,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
     subparsers.add_parser("golden").set_defaults(func=cmd_golden)
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
+    subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

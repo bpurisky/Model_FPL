@@ -594,6 +594,41 @@ Adding DefCon to the composite as the brief specified helps DEF marginally (-0.0
 
 454 tests pass, 1 skipped.
 
+### `board.json` — both surfaces, and the weights fitted at last — 2026-08-23 (final)
+
+**Eight of the nine export files exist.** Only `players.json` remains, and only until the first `record-actuals`.
+
+**The board ships a ranked list *and* the three buckets**, over one composite, because they answer different questions and only one of them has measurable edge. Two files that could disagree about the same player would have been the worse choice.
+
+**§5.4.6's position weights are fitted, not adopted.** The spec's illustrative profiles name three columns that do not exist — `creativity_p90` (ICT is dead), `shots_in_box_p90` (in no source this project has), `minutes_stability` (renamed). The replacements live in `config/frontend.yaml:board.position_weights`, derived over 85k player-gameweeks:
+
+- magnitude = |within-position Spearman of the metric's z-score against mean points over the next three gameweeks|
+- **sign taken from the registry's `higher_is_better`, not from the data** — `saves_per90` really does correlate *negatively* for GK (rho -0.076, because saves proxy a leaky defence), and a board rewarding a keeper for making fewer saves would not be modelling goalkeeping. It is dropped rather than inverted.
+- restricted to metrics the registry calls primary or secondary for that position, which is what keeps goalkeeper tackles (rho -0.097, pure noise) out
+- normalised so |weights| sum to 1 within position
+
+**The headline from that fit: `minutes_reliability` is the strongest single predictor in every position** (rho 0.205-0.250, roughly double the next metric). That is §4.2's "this dominates everything else" arriving from the opposite direction, and it lands the week after the column was built. `clean_sheet_prob` is second for GK (0.116), so both new model columns earn their place immediately.
+
+**Bucket accuracy, measured on what ships**, each bucket compared inside the pool it is drawn from:
+
+| bucket | n | forward pts | vs | lift |
+| --- | --- | --- | --- | --- |
+| optimal | 6187 | 3.311 vs 2.586 | all classified players | **+0.725** |
+| declining | 3760 | 2.473 vs 2.617 | other non-optimal | **-0.144** |
+| rising | 1775 | 2.516 vs 2.594 | other non-optimal | -0.077 |
+
+The comparison pool matters and getting it wrong was a real bug in the first version: Optimal takes the top quartile, so scoring a momentum bucket against "everyone else" scores it against a pool the good players were already removed from. It read as -0.287 for Rising before the fix and -0.077 after.
+
+**Declining survives; Rising does not.** A flagged declining player really does score less than his non-optimal peers, and for a *warning* that is the right sign. Rising still points the wrong way across every definition tried. The asymmetry is worth keeping on screen rather than averaging away: the model can see a player falling off and cannot see one arriving.
+
+A second real bug found by looking at the output rather than the tests: `rank` and `percentile` were computed over the whole position *across all history*, so the top goalkeeper came out as rank 245. Both are now computed within (season, gw, position), which is what a board means.
+
+`bucket_accuracy` travels inside `board.json` rather than beside it, so a surface cannot render Rising without being able to render what it is worth — which is §5.4.6's own requirement ("if the app is going to classify players as rising, it must report how often rising players subsequently outperformed") turned into a structural guarantee rather than a promise.
+
+The board describes the latest gameweek present in the panel — currently 2025-26 gw38, and it follows the panel to 2026-27 automatically the moment the actuals store holds a gameweek. The file names its own season and gameweek so the surface can say which.
+
+472 tests pass, 1 skipped.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
@@ -637,9 +672,9 @@ This section replaces the previous "Before continuing Phase 4" list, three of wh
 4. **`players.json`** — the last date-blocked file. Needs `data/current_season/`: trailing actuals and projections both require per-player match stats, which neither `data/reference/` nor `data/distilled/` carries. Buildable the day after the first `record-actuals`.
 5. **Collect `total_players`** — one field from bootstrap-static into the reference tier. It is what turns the panel's `selected` from null into the squad count the registry declares, for the current season and every season after it. Small, and the longer it waits the more gameweeks are permanently missing it (§0.1).
 6. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap, and retrofittable: `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so gw2–gw13 can be computed later and still be point-in-time correct. Best built around gw4–5.
-7. **`board.json`** — blocked on the two design decisions below, not on data.
+7. ~~`board.json`~~ — done. Both decisions below were settled by the operator on 2026-08-23 and are recorded in the entry above.
 
-**Two design decisions block `board.json`, and neither is a data problem:**
+**Both decisions below are now settled and implemented — kept for the reasoning, which still constrains the surface:**
 
 **(a) §5.4.6's Rising and Declining buckets have no measurable edge.** The spec asserts Rising "is the bucket with real edge: the model's claim is that the process has improved before the output has." This repo's own measurement contradicts that: trend-slope rho is 0.01–0.02 at every window (3–10) and horizon (1–8), and the divergence definition (high underlying, low recent points) predicts *worse* forward points at rho ~= -0.04 pooled and -0.12 for DEF, because recent points carry role information (penalties, set pieces) that xGI does not see. Metric *level* does carry signal — rho 0.14 to 0.28 pooled, 0.366 for MID.
 

@@ -388,6 +388,91 @@ class GoldenSpearmanFile(_Strict):
     pairs: list[GoldenPair]
 
 
+class PositionWeights(_Strict):
+    """One position's composite profile (§5.4.6).
+
+    Exported so the surface can render a "How this is scored" panel: the
+    user must be able to read the model's opinion, not only receive its
+    output. Negative weights are meaningful and must survive the contract
+    — conceding is bad for a defender, and a scoring layer that cannot
+    express that is not modelling football.
+    """
+
+    position: str
+    weights: dict[str, float]
+
+
+class BoardBucketAccuracy(_Strict):
+    """What a bucket was actually worth, measured (§5.4.6, §5.4.7).
+
+    "If the app is going to classify players as rising, it must report how
+    often rising players subsequently outperformed." This is that report,
+    and it travels with the classification rather than beside it, so a
+    surface cannot show the bucket without being able to show the number.
+
+    `lift` is the bucket's mean forward points minus everyone else's over
+    the same gameweeks. It is negative for `rising`, and that is the
+    finding rather than a bug.
+    """
+
+    bucket: str
+    n: int
+    # Which population `forward_points_other` covers. Optimal takes the
+    # top quartile, so a momentum bucket compared against "everyone else"
+    # would be scored against a pool the good players were already removed
+    # from — it would read as negative however well momentum worked.
+    comparison: str
+    forward_points: float | None
+    forward_points_other: float | None
+    lift: float | None
+
+
+class BoardPlayer(_Strict):
+    """One card, or one row of the ranked list — the same record serves
+    both surfaces (§5.4.6).
+
+    `drivers` names the metrics that moved *this* player's composite,
+    ranked by their contribution rather than by weight, so a card says
+    something about him rather than reciting the profile.
+
+    `low_confidence` is §5.4.6's amber flag. A classification below the
+    gameweek floor still renders, because hiding it would teach the reader
+    the player does not exist, but it renders marked.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    composite: float | None
+    percentile: float | None
+    rank: int
+    bucket: str
+    drivers: list[str]
+    gameweeks_seen: int
+    low_confidence: bool
+
+
+class BoardFile(_Strict):
+    """`board.json`.
+
+    Carries both surfaces over one composite: `players` is ordered by
+    `rank` within position and is the ranked list, while `bucket` on each
+    record is the three-bucket classification. They are one dataset
+    because a player is one player — the alternative was two files that
+    could disagree about him.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    trend_window: int
+    min_gameweeks: int
+    weights: list[PositionWeights]
+    bucket_accuracy: list[BoardBucketAccuracy]
+    players: list[BoardPlayer]
+
+
 def build_header(
     *,
     rows: int,
@@ -475,6 +560,7 @@ def contract_shape() -> dict[str, Any]:
         ComponentError, MinutesHead, ScorecardFile,
         FixtureRow, FixturesFile,
         GoldenSample, GoldenPair, GoldenSpearmanFile,
+        PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
     )
     for model in models:
         fields = {}
@@ -525,6 +611,9 @@ __all__ = [
     "SIGNIFICANT_DIGITS",
     "ColumnSpec",
     "ColumnsFile",
+    "BoardBucketAccuracy",
+    "BoardFile",
+    "BoardPlayer",
     "CalibrationBin",
     "ComponentError",
     "CorrelationCell",
@@ -539,6 +628,7 @@ __all__ = [
     "Header",
     "MinutesHead",
     "PositionSpearman",
+    "PositionWeights",
     "ScorecardFile",
     "ScorecardRow",
     "json_safe",
