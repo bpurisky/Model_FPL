@@ -203,6 +203,17 @@ class Fixture(_LenientModel):
     started: bool | None = None
     team_h_score: int | None = None
     team_a_score: int | None = None
+    # FPL's own fixture difficulty, published per side and fixed for the
+    # season (1 easiest, 5 hardest; 2026-27 uses only 2-5). Present and
+    # non-null on all 380 fixtures as of 2026-08-23 -- it was already in
+    # every /fixtures/ payload and being discarded here. Kept because
+    # §5.3.2's fixtures.json wants it beside analytics/fdr.py's Elo: a
+    # static, season-long rating next to one that moves with form, which
+    # is only a useful contrast if both are recorded from the same run.
+    # Optional under the same rule as the scores above -- nothing reads it
+    # yet, so a missing one shouldn't halt a collector run.
+    team_h_difficulty: int | None = None
+    team_a_difficulty: int | None = None
 
 
 _FixturesAdapter = TypeAdapter(list[Fixture])

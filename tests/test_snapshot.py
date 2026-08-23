@@ -233,3 +233,21 @@ def test_reference_fixtures_record_match_state(tmp_path: Path, bootstrap_payload
     assert row["finished_provisional"] is True
     assert row["finished"] is False
     assert (row["team_h_score"], row["team_a_score"]) == (3, 0)
+
+
+def test_reference_fixtures_carry_fpl_difficulty(tmp_path: Path, bootstrap_payload, fixtures_payload):
+    """§5.3.2's fixtures.json shows FPL's static rating beside fdr.py's
+    Elo. Both have to come off the same reference row, so persisting it
+    here is what makes the comparison possible at all."""
+    import polars as pl
+
+    from collector.schemas import parse_fixtures
+    from collector.snapshot import write_reference
+
+    bootstrap = parse_bootstrap_static(bootstrap_payload, logging.getLogger("test"))
+    fixtures = parse_fixtures(fixtures_payload, logging.getLogger("test"))
+
+    write_reference(tmp_path, bootstrap, fixtures)
+
+    row = pl.read_parquet(tmp_path / "fixtures.parquet").row(0, named=True)
+    assert (row["team_h_difficulty"], row["team_a_difficulty"]) == (2, 4)

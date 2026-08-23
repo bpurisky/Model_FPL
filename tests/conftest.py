@@ -91,6 +91,8 @@ def _base_fixtures_payload() -> list[dict]:
             "started": False,
             "team_h_score": None,
             "team_a_score": None,
+            "team_h_difficulty": 2,
+            "team_a_difficulty": 4,
         }
     ]
 

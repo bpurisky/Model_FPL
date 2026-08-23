@@ -231,6 +231,7 @@ def write_reference(reference_dir: Path, bootstrap: BootstrapStatic, fixtures: l
                     "id", "event", "team_h", "team_a", "kickoff_time",
                     "finished", "finished_provisional", "started",
                     "team_h_score", "team_a_score",
+                    "team_h_difficulty", "team_a_difficulty",
                 }
             )
             for f in fixtures

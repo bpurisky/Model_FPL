@@ -92,3 +92,23 @@ def test_fixture_scores_are_parsed_when_present(fixtures_payload):
     fixtures_payload[0].update({"finished": True, "finished_provisional": True, "team_h_score": 3, "team_a_score": 0})
     fixture = parse_fixtures(fixtures_payload, logging.getLogger("test"))[0]
     assert (fixture.team_h_score, fixture.team_a_score) == (3, 0)
+
+
+def test_fpl_fixture_difficulty_is_parsed(fixtures_payload):
+    """FPL's own per-side difficulty, kept alongside Elo rather than
+    instead of it — see the Fixture field comment."""
+    fixture = parse_fixtures(fixtures_payload, logging.getLogger("test"))[0]
+    assert (fixture.team_h_difficulty, fixture.team_a_difficulty) == (2, 4)
+
+
+def test_absent_fixture_difficulty_does_not_halt_a_run(fixtures_payload):
+    """Optional, not required: nothing depends on it yet, so drift here
+    costs a column rather than a collector run. Contrast
+    test_missing_finished_provisional_is_a_hard_error."""
+    del fixtures_payload[0]["team_h_difficulty"]
+    del fixtures_payload[0]["team_a_difficulty"]
+
+    fixture = parse_fixtures(fixtures_payload, logging.getLogger("test"))[0]
+
+    assert fixture.team_h_difficulty is None
+    assert fixture.team_a_difficulty is None

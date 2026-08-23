@@ -3,11 +3,15 @@ Spearman rank correlation, calibration, and an error decomposition.
 
 No scipy in the locked stack, so Spearman is computed directly: Pearson
 correlation of the ranks, with polars' own (ties-averaged) `.rank()`.
+Its significance (n and a two-sided p-value, §5.3.2) is built from the
+regularized incomplete beta in the same spirit -- see the "significance"
+block below.
 """
 
 from __future__ import annotations
 
 import json
+from math import exp, lgamma, log, log1p
 from pathlib import Path
 
 import polars as pl
@@ -41,6 +45,115 @@ def spearman(x: pl.Series, y: pl.Series) -> float:
     return _pearson(x.rank(), y.rank())
 
 
+# --------------------------------------------------------------------------
+# significance
+#
+# §5.3.2's correlations.json wants rho, n and a p-value side by side: rho
+# alone is unreadable without knowing whether it came from 40 rows or
+# 40,000. There is no scipy in the locked stack, so the Student-t CDF is
+# built here from the regularized incomplete beta -- the exact identity
+#
+#     P(|T_v| >= |t|)  =  I_{v/(v+t^2)}(v/2, 1/2)
+#
+# rather than a normal approximation, which is wrong in exactly the
+# small-n case the p-value is there to flag.
+# --------------------------------------------------------------------------
+
+_BETACF_TINY = 1e-300
+_BETACF_EPS = 3e-16
+_BETACF_MAX_ITER = 300
+
+
+def _log_beta(a: float, b: float) -> float:
+    return lgamma(a) + lgamma(b) - lgamma(a + b)
+
+
+def _betacf(a: float, b: float, x: float) -> float:
+    """Continued fraction for the incomplete beta, by modified Lentz."""
+    qab, qap, qam = a + b, a + 1.0, a - 1.0
+    c = 1.0
+    d = 1.0 - qab * x / qap
+    if abs(d) < _BETACF_TINY:
+        d = _BETACF_TINY
+    d = 1.0 / d
+    h = d
+    for m in range(1, _BETACF_MAX_ITER + 1):
+        m2 = 2 * m
+        # even step
+        num = m * (b - m) * x / ((qam + m2) * (a + m2))
+        d = 1.0 + num * d
+        if abs(d) < _BETACF_TINY:
+            d = _BETACF_TINY
+        c = 1.0 + num / c
+        if abs(c) < _BETACF_TINY:
+            c = _BETACF_TINY
+        d = 1.0 / d
+        h *= d * c
+        # odd step
+        num = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+        d = 1.0 + num * d
+        if abs(d) < _BETACF_TINY:
+            d = _BETACF_TINY
+        c = 1.0 + num / c
+        if abs(c) < _BETACF_TINY:
+            c = _BETACF_TINY
+        d = 1.0 / d
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < _BETACF_EPS:
+            break
+    return h
+
+
+def regularized_incomplete_beta(a: float, b: float, x: float) -> float:
+    """I_x(a, b). Uses the reflection I_x(a,b) = 1 - I_{1-x}(b,a) on the
+    side where the continued fraction converges slowly."""
+    if x <= 0.0:
+        return 0.0
+    if x >= 1.0:
+        return 1.0
+    front = exp(a * log(x) + b * log1p(-x) - _log_beta(a, b))
+    if x < (a + 1.0) / (a + b + 2.0):
+        return front * _betacf(a, b, x) / a
+    return 1.0 - front * _betacf(b, a, 1.0 - x) / b
+
+
+def two_sided_t_p_value(t: float, dof: float) -> float:
+    """P(|T| >= |t|) for Student's t with `dof` degrees of freedom."""
+    if dof <= 0 or t != t:  # no df, or t is NaN
+        return float("nan")
+    if t in (float("inf"), float("-inf")):
+        return 0.0
+    return regularized_incomplete_beta(dof / 2.0, 0.5, dof / (dof + t * t))
+
+
+def spearman_p_value(rho: float, n: int) -> float:
+    """Two-sided p for a Spearman rho over n pairs, via the usual
+    t = rho * sqrt((n-2)/(1-rho^2)) with n-2 degrees of freedom.
+
+    Approximate in the presence of ties, and FPL points are almost
+    nothing but ties -- most players score 0, 1 or 2 in a gameweek. It is
+    reported because §5.3.2 asks for it, and because at these sample
+    sizes it is read as "not a small-sample artefact", not as a
+    hypothesis test. Do not read a difference between two tiny p-values
+    as meaning anything.
+    """
+    if rho != rho or n < 3:
+        return float("nan")
+    denom = 1.0 - rho * rho
+    if denom <= 0.0:  # |rho| == 1: t is infinite
+        return 0.0
+    t = rho * ((n - 2) / denom) ** 0.5
+    return two_sided_t_p_value(t, n - 2)
+
+
+def spearman_with_significance(x: pl.Series, y: pl.Series) -> dict[str, float]:
+    """Spearman rho alongside the n it was computed over and its p-value."""
+    rho = spearman(x, y)
+    n = x.len()
+    return {"rho": rho, "n": n, "p_value": spearman_p_value(rho, n)}
+
+
 def spearman_within_position(df: pl.DataFrame) -> dict[str, float]:
     """Spearman(prediction, total_points) computed separately per position,
     plus an unweighted mean across positions as a single summary figure."""
@@ -51,6 +164,21 @@ def spearman_within_position(df: pl.DataFrame) -> dict[str, float]:
     valid = [v for v in per_position.values() if v == v]  # drop NaN
     per_position["mean"] = sum(valid) / len(valid) if valid else float("nan")
     return per_position
+
+
+def spearman_within_position_significance(df: pl.DataFrame) -> dict[str, dict[str, float]]:
+    """`spearman_within_position` with n and a p-value per position.
+
+    Deliberately carries no "mean" row, unlike its rho-only sibling: the
+    unweighted mean of four correlations is a readable summary, but it is
+    not a statistic any sampling distribution describes, so there is no
+    p-value to put beside it. Reporting one would invent a number.
+    """
+    out: dict[str, dict[str, float]] = {}
+    for position in sorted(df["position"].drop_nulls().unique().to_list()):
+        subset = df.filter(pl.col("position") == position)
+        out[position] = spearman_with_significance(subset["prediction"], subset["total_points"])
+    return out
 
 
 def calibration_curve(df: pl.DataFrame, n_bins: int = 10) -> list[dict]:
@@ -98,6 +226,7 @@ def summarize(df: pl.DataFrame, group_cols: list[str]) -> dict:
             "mae": mae(group),
             "rmse": rmse(group),
             "spearman_within_position": spearman_within_position(group),
+            "spearman_significance": spearman_within_position_significance(group),
             "error_by_event": error_by_event_occurrence(group),
         }
     return summary
