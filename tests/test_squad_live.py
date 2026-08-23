@@ -25,14 +25,17 @@ from datetime import datetime, timezone
 import polars as pl
 import pytest
 
+from backtest.leakage import LeakageError, assert_no_leakage
 from collector.schemas import BootstrapStatic, Element, Event, Team
 from squad.live import (
     FLOAT_STAT_COLUMNS,
     INT_STAT_COLUMNS,
+    SIGNED_STAT_COLUMNS,
     STAT_COLUMNS,
     TRAIN_SCHEMA,
     build_target_roster,
     build_train_df,
+    training_feature_availability,
 )
 
 DEADLINE = datetime(2026, 8, 21, 17, 30, tzinfo=timezone.utc)
@@ -343,3 +346,107 @@ def test_train_df_stat_columns_are_typed_consistently():
     assert not set(INT_STAT_COLUMNS) & set(FLOAT_STAT_COLUMNS)
     assert all(TRAIN_SCHEMA[c] == pl.Int64 for c in INT_STAT_COLUMNS)
     assert all(TRAIN_SCHEMA[c] == pl.Float64 for c in FLOAT_STAT_COLUMNS)
+
+
+# --------------------------------------------------------------------------
+# point-in-time discipline on the live path (§6.5 criterion 3)
+# --------------------------------------------------------------------------
+
+
+def _dated_fixtures(gw1_kickoff: str, gw2_kickoff: str) -> list[dict]:
+    return [
+        {"event": 1, "team_h": 1, "team_a": 7, "finished": True, "finished_provisional": True,
+         "kickoff_time": gw1_kickoff},
+        {"event": 1, "team_h": 2, "team_a": 999, "finished": True, "finished_provisional": True,
+         "kickoff_time": gw1_kickoff},
+        {"event": 2, "team_h": 1, "team_a": 7, "finished": False, "finished_provisional": True,
+         "kickoff_time": gw2_kickoff},
+    ]
+
+
+def test_training_features_are_dated_from_the_end_of_the_match():
+    """A row's stats become knowable when its fixture ends, not when it
+    kicks off."""
+    bootstrap = _bootstrap()
+    train_df = _actuals(_actual(1, gw=1, minutes=90))
+    fixtures = _dated_fixtures("2026-08-15T14:00:00Z", "2026-08-22T14:00:00Z")
+
+    features = training_feature_availability(train_df, bootstrap, fixtures)
+
+    assert len(features) == 1
+    assert features[0].element_id == 1
+    assert features[0].available_at == datetime(2026, 8, 15, 16, 0, tzinfo=timezone.utc)  # 14:00 + 2h
+
+
+def test_no_leakage_when_training_fixtures_finished_before_the_deadline():
+    bootstrap = _bootstrap()
+    train_df = _actuals(_actual(1, gw=1, minutes=90))
+    fixtures = _dated_fixtures("2026-08-15T14:00:00Z", "2026-08-22T14:00:00Z")
+    deadline = datetime(2026, 8, 22, 12, 30, tzinfo=timezone.utc)
+
+    assert_no_leakage(training_feature_availability(train_df, bootstrap, fixtures), deadline)
+
+
+def test_leakage_raises_when_a_rearranged_fixture_was_played_after_the_deadline():
+    """The case the gameweek filter cannot catch. build_train_df filters
+    `gw <= target - 1`, but gameweek *numbering* is not chronology: a
+    postponed gw1 fixture replayed after gw2's deadline sits in a row
+    labelled gw1 while containing a match that had not been played when
+    the gw2 prediction was made."""
+    bootstrap = _bootstrap()
+    train_df = _actuals(_actual(1, gw=1, minutes=90))
+    # element 1 is on team 1, whose "gw1" fixture was rearranged to after the deadline
+    fixtures = _dated_fixtures("2026-08-25T14:00:00Z", "2026-08-22T14:00:00Z")
+    deadline = datetime(2026, 8, 22, 12, 30, tzinfo=timezone.utc)
+
+    with pytest.raises(LeakageError, match=r"train_df\[gw1\]"):
+        assert_no_leakage(training_feature_availability(train_df, bootstrap, fixtures), deadline)
+
+
+def test_training_features_skip_a_fixture_with_no_kickoff_time():
+    """An unscheduled fixture cannot be shown to have been played before
+    any deadline, and carries no stats yet, so it contributes no feature
+    rather than a silently-safe one."""
+    bootstrap = _bootstrap()
+    train_df = _actuals(_actual(1, gw=1, minutes=90))
+    fixtures = [{"event": 1, "team_h": 1, "team_a": 7, "finished": False,
+                 "finished_provisional": False, "kickoff_time": None}]
+
+    assert training_feature_availability(train_df, bootstrap, fixtures) == []
+
+
+def test_train_df_does_not_clamp_a_legitimately_negative_bps():
+    """BPS carries explicit penalties (yellow -3, red -9, own goal -6), so
+    a negative value is real football, not a revision. Verified live
+    2026-08-22: eight players held a negative season BPS after gw1 alone.
+    Flooring it at zero would erase a real signal and fire a misleading
+    "FPL revised this gameweek" warning on every run."""
+    bootstrap = _bootstrap()
+    raw = [{**el, "bps": -3, "total_points": -1} if el["id"] == 1 else el for el in _raw_elements()]
+    bootstrap_raw = {"elements": raw}
+
+    df = build_train_df(bootstrap, bootstrap_raw, _fixtures(team1_finished=True, team2_started=False),
+                        gw=1, actuals=NO_ACTUALS)
+
+    row = df.filter(pl.col("element_id") == 1).row(0, named=True)
+    assert row["bps"] == -3
+    assert row["total_points"] == -1
+
+
+def test_train_df_still_clamps_a_negative_count(caplog):
+    """The clamp is not removed, only narrowed: a negative goal count is
+    still impossible and still indicates a revision."""
+    bootstrap = _bootstrap()
+    bootstrap_raw = {"elements": _raw_elements()}  # element 1: 2 goals cumulative
+    actuals = _actuals(_actual(1, gw=1, minutes=90, goals_scored=3))  # recorded with 3
+
+    with caplog.at_level(logging.WARNING, logger="squad.live"):
+        df = build_train_df(bootstrap, bootstrap_raw, _gw2_fixtures(), gw=2, actuals=actuals)
+
+    row = df.filter((pl.col("gw") == 2) & (pl.col("element_id") == 1)).row(0, named=True)
+    assert row["goals_scored"] == 0
+    assert "clamped" in caplog.text
+
+
+def test_signed_stat_columns_are_a_subset_of_the_integer_stats():
+    assert SIGNED_STAT_COLUMNS <= set(INT_STAT_COLUMNS)

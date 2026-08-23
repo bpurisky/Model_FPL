@@ -24,7 +24,8 @@ from pathlib import Path
 from collector.config import load_config
 from papertrade.actuals import append_actuals, fetch_gw_actuals, fetch_missing_gw_actuals, load_actuals
 from papertrade.evaluate import (
-    evaluate_gw_player_level,
+    collect_freeze_provenance,
+    evaluate_player_level,
     evaluate_squad_level,
     fetch_real_gw_points,
     launch_gate_report,
@@ -43,7 +44,7 @@ async def cmd_freeze(args: argparse.Namespace) -> None:
     if entry_id is None:
         raise SystemExit("no --entry-id given and config/collector.yaml's own_entry_id is unset")
     try:
-        path = await run_freeze(cfg, entry_id, gw=args.gw)
+        path = await run_freeze(cfg, entry_id, gw=args.gw, manual_correction=args.manual_correction)
     except (FileExistsError, FreezeTooEarly) as exc:
         # Expected steady state for a scheduled run, in two flavours, neither
         # a failure: the gameweek is already frozen, or its deadline is still
@@ -86,20 +87,25 @@ async def cmd_evaluate(args: argparse.Namespace) -> None:
     latest_gw = latest_frozen_gw()
     candidate_gws = [gw for gw in evaluated_gws if gw <= (latest_gw or 0)]
 
-    player_eval_by_gw = {}
-    for gw in candidate_gws:
-        try:
-            player_eval_by_gw[gw] = evaluate_gw_player_level(gw, actuals=actuals)
-        except (FileNotFoundError, ValueError) as exc:
-            logger.info("skipping gw%d player-level eval: %s", gw, exc)
+    player_level = evaluate_player_level(candidate_gws, actuals=actuals)
+    player_eval_by_gw = player_level["included"]
 
     real_points_by_gw = await fetch_real_gw_points(cfg, entry_id)
     squad_eval = evaluate_squad_level(real_points_by_gw, actuals=actuals)
     price_eval = run_price_model_for_gate()
-    gate = launch_gate_report(player_eval_by_gw, squad_eval, price_eval=price_eval)
+    freeze_provenance = collect_freeze_provenance(candidate_gws)
+    gate = launch_gate_report(
+        player_eval_by_gw,
+        squad_eval,
+        price_eval=price_eval,
+        excluded_gws=player_level["excluded"],
+        freeze_provenance=freeze_provenance,
+    )
 
     report = {
         "player_level_by_gw": player_eval_by_gw,
+        "player_level_excluded": player_level["excluded"],
+        "player_level_skipped": player_level["skipped"],
         "squad_level": squad_eval,
         "launch_gate": gate,
     }
@@ -108,7 +114,10 @@ async def cmd_evaluate(args: argparse.Namespace) -> None:
 
     print(f"Evaluated {len(player_eval_by_gw)} gameweek(s) at player level: {sorted(player_eval_by_gw)}")
     for gw, ev in sorted(player_eval_by_gw.items()):
-        print(f"  gw{gw}: n={ev['n']} MAE={ev['mae']:.3f} spearman(mean)={ev['spearman_within_position'].get('mean', float('nan')):.3f}")
+        flag = "  [LOOKS DEGENERATE]" if ev["degeneracy"]["is_near_degenerate"] else ""
+        print(f"  gw{gw}: n={ev['n']} MAE={ev['mae']:.3f} spearman(mean)={ev['spearman_within_position'].get('mean', float('nan')):.3f}{flag}")
+    for excluded in player_level["excluded"]:
+        print(f"  gw{excluded['gw']}: EXCLUDED -- {excluded['reason']}")
     print(f"\nSquad level ({squad_eval['n_gameweeks']} gameweek(s)): real={squad_eval['cumulative_real_points']} "
           f"shadow={squad_eval['cumulative_shadow_points']} (shadow - real = {squad_eval['shadow_minus_real']:+d})")
     print(f"  {squad_eval['warning']}")
@@ -126,6 +135,16 @@ def main(argv: list[str] | None = None) -> None:
     freeze_parser.add_argument("--config", default="config/collector.yaml")
     freeze_parser.add_argument("--entry-id", type=int, default=None)
     freeze_parser.add_argument("--gw", type=int, default=None)
+    freeze_parser.add_argument(
+        "--manual-correction",
+        default=None,
+        metavar="REASON",
+        help=(
+            "record that a human intervened in this gameweek's run, and why. Written permanently "
+            "into the freeze file; §6.5 criterion 4 requires 13 consecutive gameweeks without one. "
+            "Omit unless you actually corrected something."
+        ),
+    )
     freeze_parser.set_defaults(func=cmd_freeze)
 
     actuals_parser = subparsers.add_parser("record-actuals")

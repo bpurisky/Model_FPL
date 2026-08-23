@@ -31,7 +31,15 @@ from analytics.scoring import load_scoring_config
 from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import parse_bootstrap_static, parse_entry_picks, parse_fixtures, resolve_next_event
-from squad.live import build_difficulty_table, build_player_pool, build_projections, build_target_roster, build_train_df
+from backtest.leakage import assert_no_leakage
+from squad.live import (
+    build_difficulty_table,
+    build_player_pool,
+    build_projections,
+    build_target_roster,
+    build_train_df,
+    training_feature_availability,
+)
 from squad.optimize import optimize_squad
 from squad.reconstruct import SquadState, reconstruct_squad, squad_state_from_dict, squad_state_to_dict
 from squad.shadow import apply_recommendation
@@ -69,6 +77,45 @@ def latest_frozen_gw(freezes_dir: Path = FREEZES_DIR) -> int | None:
         return None
     gws = [int(p.stem.removeprefix("gw")) for p in freezes_dir.glob("gw*.json")]
     return max(gws) if gws else None
+
+
+def model_git_sha() -> str | None:
+    """The commit the model was at when a freeze was written, or None if
+    that cannot be established (no git, detached checkout, git missing).
+
+    Every number in a freeze has to be traceable to the exact code that
+    produced it. A projection without a sha is a number with no way back
+    to its own definition, which is precisely what §8's "every reported
+    metric must regenerate from committed data" rules out — and Phase 5's
+    export contract restates as non-negotiable for anything it renders.
+
+    Returns None rather than raising: an unavailable sha must not stop a
+    freeze from being written inside its window. A missing sha is recorded
+    as missing, which is honest; a skipped freeze loses the gameweek.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True,
+        )
+    except (subprocess.CalledProcessError, OSError) as exc:
+        logger.warning("could not resolve model_git_sha: %s", exc)
+        return None
+    return result.stdout.strip() or None
+
+
+def git_is_dirty() -> bool | None:
+    """Whether the working tree had uncommitted changes when the freeze
+    was written. Recorded alongside the sha because a dirty tree means the
+    sha does *not* fully describe the code that ran, and a reader
+    comparing a freeze against that commit later would otherwise have no
+    way to know that."""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"], capture_output=True, text=True, check=True,
+        )
+    except (subprocess.CalledProcessError, OSError):
+        return None
+    return bool(result.stdout.strip())
 
 
 def git_commit_times(path: Path) -> list[datetime]:
@@ -167,10 +214,17 @@ async def run_freeze(
     freezes_dir: Path = FREEZES_DIR,
     scoring_config_path: str = "config/scoring_2026_27.yaml",
     hit_cost: int = 4,
+    manual_correction: str | None = None,
 ) -> Path:
     """Freezes gameweek `gw` (defaults to bootstrap-static's resolved next
     event) for the shadow team, advancing it from whatever the previous
     freeze file (or, for gw2, the real gw1 squad) left it in.
+
+    `manual_correction` records, permanently and in the gameweek's own
+    freeze, that a human intervened in this run — §6.5 criterion 4 asks
+    for 13 consecutive gameweeks *without* one. It is a free-text reason
+    rather than a boolean so the record says what was corrected, and it
+    defaults to None, which is the positive claim that nothing was.
     """
     async with FPLClient(**cfg.api.client_kwargs()) as client:
         bootstrap_raw = await client.get_json("/bootstrap-static/")
@@ -210,6 +264,23 @@ async def run_freeze(
     pool_by_id = {p.element_id: p for p in pool}
     target_roster = build_target_roster(bootstrap)
     train_df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=gw - 1)
+
+    # §6.5 criterion 3, on the live path rather than only the historical
+    # walk-forward harness. This raises rather than warns (see
+    # backtest/leakage.py) — a freeze built on a feature that was not
+    # available before its own deadline is not a prediction, and writing
+    # it would put a permanently unusable record into an immutable file.
+    #
+    # Non-retrofittable: it is a claim about what was true *during* the
+    # live period, so it has to run at freeze time or not at all.
+    leakage_features = training_feature_availability(train_df, bootstrap, fixtures_raw)
+    assert_no_leakage(leakage_features, gw_deadline, context=f"live freeze gw{gw}")
+    latest_feature_at = max((f.available_at for f in leakage_features), default=None)
+    logger.info(
+        "leakage check passed for gw%d: %d feature(s), latest available_at=%s, deadline=%s",
+        gw, len(leakage_features), latest_feature_at, gw_deadline,
+    )
+
     difficulty_table = build_difficulty_table(bootstrap, fixtures_raw, horizon)
     scoring_config = load_scoring_config(Path(scoring_config_path))
     projections = build_projections(train_df, target_roster, scoring_config, difficulty_table, horizon)
@@ -225,6 +296,25 @@ async def run_freeze(
         "frozen_at": now.isoformat(),
         "deadline": deadline.isoformat(),
         "horizon": horizon,
+        # Provenance and the two §6.5 criteria that can only be established
+        # at freeze time. All three are non-retrofittable: freezes are
+        # immutable (§6.1), so a field absent here is absent forever for
+        # this gameweek, and every one of these is a claim about what was
+        # true when the prediction was made rather than about the data.
+        "model_git_sha": model_git_sha(),
+        "git_dirty": git_is_dirty(),
+        "leakage_check": {
+            "ran": True,
+            "passed": True,  # assert_no_leakage raises, so reaching here means it passed
+            "n_features": len(leakage_features),
+            "latest_feature_available_at": latest_feature_at.isoformat() if latest_feature_at else None,
+            "deadline": gw_deadline.isoformat(),
+        },
+        # §6.5 criterion 4. Human-declared, because a manual correction is
+        # by definition something a human did outside the pipeline and no
+        # automated check can observe it. `None` is the claim that this
+        # gameweek's squad reconstruction ran untouched.
+        "manual_correction": manual_correction,
         "projections": {str(g): {str(eid): pts for eid, pts in p.items()} for g, p in projections.items()},
         "now_cost_snapshot": now_cost_by_id,
         "shadow_recommendation": {

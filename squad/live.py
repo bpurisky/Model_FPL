@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -42,6 +42,7 @@ from analytics.fdr import compute_elo_ratings, upcoming_team_difficulty
 from analytics.projections import project_points
 from analytics.scoring import load_scoring_config
 from backtest.backfill import RAW_CACHE_DIR, load_match_results, load_teams
+from backtest.leakage import Feature
 from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import (
@@ -113,11 +114,36 @@ FLOAT_STAT_COLUMNS = [
 
 STAT_COLUMNS = INT_STAT_COLUMNS + FLOAT_STAT_COLUMNS
 
+# Stats that can legitimately be negative, and so must never be floored at
+# zero by `_reconstruct_gw`'s revision clamp.
+#
+# BPS carries explicit penalties -- yellow -3, red -9, own goal -6, error
+# leading to a goal -3 -- so a player who came on, got booked and did
+# little else genuinely ends the gameweek below zero. Verified live
+# 2026-08-22: eight players held a negative *season* BPS after gw1 alone.
+# FPL's own scoring does the same to total_points (own goal -2, red -3).
+#
+# Everything else in STAT_COLUMNS is a count or a non-negative rate, where
+# a negative delta cannot be real and does indicate a revision.
+SIGNED_STAT_COLUMNS = frozenset({"bps", "total_points"})
+
 # How far below zero a reconstructed float delta may fall before it counts
 # as a real FPL revision rather than binary-floating-point noise. FPL
 # publishes these to two decimal places, so anything this small is
 # arithmetic, not football. See `_reconstruct_gw`.
 _FLOAT_CLAMP_EPS = 1e-6
+
+# How long after kickoff a fixture's stats are treated as knowable, for
+# the point-in-time assertion in `training_feature_availability`.
+#
+# Direction of error matters here and it is not symmetric. Too *small* a
+# value dates a feature earlier than it really was available, and the
+# leakage check then passes something it should have caught. Too large
+# only risks a false alarm on a fixture that kicked off shortly before a
+# deadline — loud, and reviewable. Two hours is a full match plus
+# half-time and stoppage; provisional bonus lands later still, so this is
+# deliberately at the strict end of "the match is over."
+MATCH_DURATION = timedelta(hours=2)
 
 # The schema of both `build_train_df`'s output and the actuals store it
 # reads (papertrade/actuals.py imports this). One definition rather than
@@ -225,7 +251,7 @@ def _reconstruct_gw(
         stats = {}
         for col in INT_STAT_COLUMNS:
             value = cumulative[col] - already.get(col, 0)
-            if value < 0:
+            if value < 0 and col not in SIGNED_STAT_COLUMNS:
                 # FPL revises finished gameweeks after the fact (the
                 # dubious goals panel, bonus recalculation), so a total
                 # already written to the append-only store can end up
@@ -332,6 +358,71 @@ def build_train_df(
 
     reconstructed = _reconstruct_gw(bootstrap, bootstrap_raw, fixtures_raw, gw, history)
     return pl.concat([history, reconstructed]).sort(["element_id", "gw"])
+
+
+def training_feature_availability(
+    train_df: pl.DataFrame,
+    bootstrap: BootstrapStatic,
+    fixtures_raw: list[dict[str, Any]],
+    match_duration: timedelta = MATCH_DURATION,
+) -> list[Feature]:
+    """One `backtest.leakage.Feature` per (element_id, gw) row of
+    `train_df`, carrying the moment that row's stats first became
+    knowable: the end of that player's team's last fixture in that
+    gameweek.
+
+    Per *player* rather than per gameweek because teams within one
+    gameweek kick off days apart, and a Monday-night fixture is genuinely
+    available later than a Saturday-lunchtime one. Per-player also makes
+    `assert_no_leakage`'s error message name the offending element.
+
+    Why this is worth asserting when `build_train_df` already filters
+    `gw <= target - 1`: that filter is about gameweek *numbering*, and
+    numbering is not chronology. A postponed fixture from gameweek 5 can
+    be replayed after gameweek 6's deadline, at which point a row labelled
+    "gw5" contains a match that had not been played when the prediction
+    was made. The gameweek filter cannot see that; a timestamp can. This
+    is the case the assertion exists for, and it is not hypothetical in a
+    league that rearranges fixtures for cup and European ties.
+
+    A player whose team has no fixture at all in a gameweek gets no
+    Feature — there is nothing to have leaked.
+    """
+    team_id_by_name = {t.name: t.id for t in bootstrap.teams}
+
+    # team id -> gw -> latest kickoff among that team's fixtures that gw.
+    latest_kickoff: dict[tuple[int, int], datetime] = {}
+    for fixture in fixtures_raw:
+        event, kickoff = fixture.get("event"), fixture.get("kickoff_time")
+        if event is None or not kickoff:
+            # An unscheduled fixture (kickoff_time null) cannot be shown to
+            # have been played before any deadline, so it is skipped rather
+            # than assumed safe. It carries no stats yet either, so no row
+            # in train_df depends on it.
+            continue
+        ko = kickoff if isinstance(kickoff, datetime) else datetime.fromisoformat(kickoff.replace("Z", "+00:00"))
+        for team in (fixture["team_h"], fixture["team_a"]):
+            key = (team, event)
+            if key not in latest_kickoff or ko > latest_kickoff[key]:
+                latest_kickoff[key] = ko
+
+    features: list[Feature] = []
+    for row in train_df.select(["element_id", "gw", "team"]).to_dicts():
+        team_id = team_id_by_name.get(row["team"])
+        if team_id is None:
+            continue
+        kickoff = latest_kickoff.get((team_id, row["gw"]))
+        if kickoff is None:
+            continue
+        features.append(
+            Feature(
+                name=f"train_df[gw{row['gw']}]",
+                element_id=row["element_id"],
+                value=None,
+                available_at=kickoff + match_duration,
+            )
+        )
+    return features
 
 
 def build_player_pool(bootstrap: BootstrapStatic) -> list[Player]:

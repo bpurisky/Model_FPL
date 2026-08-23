@@ -4,13 +4,22 @@ by actually running it, not unit-tested here."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 import polars as pl
 import pytest
 
 from analytics.price_model import PriceModelEvaluation
 from papertrade.actuals import _SCHEMA
-from papertrade.evaluate import evaluate_gw_player_level, evaluate_squad_level, launch_gate_report
+from papertrade.evaluate import (
+    collect_freeze_provenance,
+    evaluate_gw_player_level,
+    evaluate_player_level,
+    evaluate_squad_level,
+    freeze_degeneracy,
+    launch_gate_report,
+    projection_degeneracy,
+)
 from papertrade.freeze import write_freeze
 from squad.live import FLOAT_STAT_COLUMNS, INT_STAT_COLUMNS
 from squad.reconstruct import SquadPlayer, SquadState, squad_state_to_dict
@@ -109,3 +118,219 @@ def test_launch_gate_report_price_model_fail_when_hit_rate_at_or_below_half():
     price_eval = PriceModelEvaluation(n=10, n_moves_predicted=6, hit_rate=0.33, ci_low=0.1, ci_high=0.6)
     report = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)
     assert report["criteria"]["price_change_model_reports_hit_rate_with_ci"]["status"] == "FAIL"
+
+
+# --------------------------------------------------------------------------
+# degeneracy guard (§6.5): the automated version of the gw2 judgement
+# --------------------------------------------------------------------------
+
+
+def test_projection_degeneracy_flags_an_all_identical_freeze():
+    """The gw2 shape: every player assigned the same number."""
+    result = projection_degeneracy({str(eid): 0.8 for eid in range(1, 601)})
+
+    assert result["is_degenerate"] is True
+    assert result["n"] == 600
+    assert result["n_distinct"] == 1
+    assert result["variance"] == 0.0
+    assert result["modal_value"] == 0.8
+    assert result["modal_share"] == 1.0
+    assert "identical" in result["reason"]
+
+
+def test_projection_degeneracy_passes_a_freeze_with_real_spread():
+    result = projection_degeneracy({str(eid): float(eid % 9) for eid in range(1, 601)})
+
+    assert result["is_degenerate"] is False
+    assert result["is_near_degenerate"] is False
+    assert result["variance"] > 0
+    assert result["reason"] == ""
+
+
+def test_projection_degeneracy_reports_but_does_not_exclude_a_near_degenerate_freeze():
+    """97% on the pooled prior is the same failure at less than full
+    strength. It is surfaced, not excluded -- there is no evidence behind
+    any particular cutoff, and dropping partial signal is the worse error.
+    """
+    projections = {str(eid): 0.8 for eid in range(1, 583)}
+    projections.update({str(eid): float(eid % 7) + 1.5 for eid in range(583, 601)})
+
+    result = projection_degeneracy(projections)
+
+    assert result["is_degenerate"] is False  # not excluded
+    assert result["is_near_degenerate"] is True  # but flagged
+    assert result["modal_share"] >= 0.95
+
+
+def test_projection_degeneracy_treats_missing_projections_as_missing_not_degenerate():
+    """"No projections recorded" and "projections carrying no signal" are
+    different facts; only the second licenses throwing a gameweek away."""
+    result = projection_degeneracy({})
+
+    assert result["is_missing"] is True
+    assert result["is_degenerate"] is False
+
+
+def test_the_real_gw2_freeze_is_detected_as_degenerate():
+    """Not a synthetic case: papertrade/freezes/gw2.json is a real,
+    immutable freeze holding 0.8 for all 600 players, produced when
+    fixture_is_played gated on the raw `finished` flag. This is the
+    observation the guard exists to have caught automatically."""
+    freeze_path = Path("papertrade/freezes/gw2.json")
+    if not freeze_path.exists():  # pragma: no cover
+        pytest.skip("papertrade/freezes/gw2.json absent")
+
+    result = freeze_degeneracy(2, freezes_dir=freeze_path.parent)
+
+    assert result["is_degenerate"] is True
+    assert result["n_distinct"] == 1
+    assert result["variance"] == 0.0
+
+
+def _degenerate_freeze(gw: int, n: int = 20) -> dict:
+    return {"projections": {str(gw): {str(eid): 0.8 for eid in range(1, n + 1)}}}
+
+
+def _real_freeze(gw: int, n: int = 20) -> dict:
+    return {"projections": {str(gw): {str(eid): float(eid % 5) + 0.5 for eid in range(1, n + 1)}}}
+
+
+def test_evaluate_player_level_excludes_a_degenerate_gameweek(tmp_path):
+    write_freeze(2, _degenerate_freeze(2), freezes_dir=tmp_path)
+    write_freeze(3, _real_freeze(3), freezes_dir=tmp_path)
+    actuals = pl.DataFrame(
+        [_actual_row(gw, eid, "MID", eid % 6) for gw in (2, 3) for eid in range(1, 21)], schema=_SCHEMA
+    )
+
+    result = evaluate_player_level([2, 3], freezes_dir=tmp_path, actuals=actuals)
+
+    assert sorted(result["included"]) == [3]
+    assert [e["gw"] for e in result["excluded"]] == [2]
+    assert result["skipped"] == []
+
+
+def test_evaluate_player_level_separates_skipped_from_excluded(tmp_path):
+    """A gameweek with no freeze at all is skipped, not excluded: nothing
+    was predicted, as opposed to something predicted that said nothing."""
+    write_freeze(2, _degenerate_freeze(2), freezes_dir=tmp_path)
+    actuals = pl.DataFrame([_actual_row(2, eid, "MID", 4) for eid in range(1, 21)], schema=_SCHEMA)
+
+    result = evaluate_player_level([2, 9], freezes_dir=tmp_path, actuals=actuals)
+
+    assert [e["gw"] for e in result["excluded"]] == [2]
+    assert [s["gw"] for s in result["skipped"]] == [9]
+
+
+def test_excluded_gameweeks_do_not_count_toward_the_thirteen(tmp_path):
+    """§6.5's gate counts live evidence. A null observation is not
+    evidence, and must not shrink the denominator silently either."""
+    squad_eval = {"n_gameweeks": 0}
+    excluded = [{"gw": 2, "reason": "all 600 projections are effectively identical"}]
+
+    gate = launch_gate_report({3: {"mae": 1.0}}, squad_eval, excluded_gws=excluded)
+
+    assert gate["gameweeks_evaluated"] == 1  # gw3 only, not gw2
+    assert gate["gameweeks_excluded"] == excluded
+    detail = gate["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["detail"]
+    assert "gw2" in detail and "1/13" in detail
+
+
+def test_evaluate_squad_level_excludes_a_degenerate_gameweek(tmp_path):
+    """The shadow XI and captain for a degenerate gameweek were chosen by
+    optimizing against one identical number, so the realized points
+    measure tie-breaking, not the model."""
+    state = squad_state_to_dict(_squad_state())
+    write_freeze(2, {**_degenerate_freeze(2), "shadow_state_after": state}, freezes_dir=tmp_path)
+    write_freeze(3, {**_real_freeze(3), "shadow_state_after": state}, freezes_dir=tmp_path)
+    actuals = pl.DataFrame(
+        [_actual_row(gw, eid, "MID", 4 if eid != 1 else 10) for gw in (2, 3) for eid in range(1, 16)],
+        schema=_SCHEMA,
+    )
+
+    result = evaluate_squad_level({2: 55, 3: 55}, actuals=actuals, freezes_dir=tmp_path)
+
+    assert [row["gw"] for row in result["per_gw"]] == [3]
+    assert [e["gw"] for e in result["excluded_gameweeks"]] == [2]
+    assert result["n_gameweeks"] == 1
+
+
+# --------------------------------------------------------------------------
+# §6.5 criteria 3 and 4, read off the freezes themselves
+# --------------------------------------------------------------------------
+
+
+def _provenanced_freeze(gw: int, manual_correction=None, leakage=True) -> dict:
+    payload = {**_real_freeze(gw), "model_git_sha": "a1b2c3d", "manual_correction": manual_correction}
+    if leakage:
+        payload["leakage_check"] = {"ran": True, "passed": True, "n_features": 600}
+    return payload
+
+
+def test_collect_freeze_provenance_reads_the_recorded_fields(tmp_path):
+    write_freeze(3, _provenanced_freeze(3), freezes_dir=tmp_path)
+
+    provenance = collect_freeze_provenance([3], freezes_dir=tmp_path)
+
+    assert provenance[0]["leakage_verified"] is True
+    assert provenance[0]["manual_correction"] is None
+    assert provenance[0]["records_manual_correction_field"] is True
+    assert provenance[0]["model_git_sha"] == "a1b2c3d"
+
+
+def test_leakage_criterion_is_not_tracked_for_a_freeze_that_predates_the_check(tmp_path):
+    """gw2 was frozen before the assertion was wired in. It cannot be
+    verified retroactively — the claim is about what was available before
+    a deadline that has already passed."""
+    write_freeze(2, _real_freeze(2), freezes_dir=tmp_path)  # no leakage_check field
+    provenance = collect_freeze_provenance([2], freezes_dir=tmp_path)
+
+    gate = launch_gate_report({}, {"n_gameweeks": 0}, freeze_provenance=provenance)
+
+    criterion = gate["criteria"]["no_leakage_assertion_fired"]
+    assert criterion["status"] == "not tracked"
+    assert "gw2" in criterion["detail"]
+    assert "retroactively" in criterion["detail"]
+
+
+def test_leakage_criterion_reports_all_freezes_verified(tmp_path):
+    write_freeze(3, _provenanced_freeze(3), freezes_dir=tmp_path)
+    provenance = collect_freeze_provenance([3], freezes_dir=tmp_path)
+
+    gate = launch_gate_report({3: {}}, {"n_gameweeks": 1}, freeze_provenance=provenance)
+
+    criterion = gate["criteria"]["no_leakage_assertion_fired"]
+    assert criterion["status"] == "insufficient data"  # 1 of 13 gameweeks
+    assert "ran and passed" in criterion["detail"]
+
+
+def test_manual_correction_criterion_fails_when_a_correction_is_declared(tmp_path):
+    write_freeze(3, _provenanced_freeze(3, manual_correction="rebuilt shadow squad by hand"), freezes_dir=tmp_path)
+    provenance = collect_freeze_provenance([3], freezes_dir=tmp_path)
+
+    gate = launch_gate_report({3: {}}, {"n_gameweeks": 1}, freeze_provenance=provenance)
+
+    criterion = gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]
+    assert criterion["status"] == "FAIL"
+    assert "rebuilt shadow squad by hand" in criterion["detail"]
+
+
+def test_manual_correction_criterion_untracked_for_a_freeze_without_the_field(tmp_path):
+    """A freeze predating the field makes no claim either way, and is not
+    assumed clean."""
+    write_freeze(2, _real_freeze(2), freezes_dir=tmp_path)
+    provenance = collect_freeze_provenance([2], freezes_dir=tmp_path)
+
+    gate = launch_gate_report({}, {"n_gameweeks": 1}, freeze_provenance=provenance)
+
+    criterion = gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]
+    assert criterion["status"] == "not tracked"
+    assert "immutable" in criterion["detail"]
+
+
+def test_gate_never_fabricates_a_pass_from_absent_provenance():
+    """No freezes at all must not read as "nothing went wrong"."""
+    gate = launch_gate_report({}, {"n_gameweeks": 0}, freeze_provenance=[])
+
+    assert gate["criteria"]["no_leakage_assertion_fired"]["status"] == "insufficient data"
+    assert gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]["status"] == "insufficient data"
+    assert gate["ready_to_launch"] is False
