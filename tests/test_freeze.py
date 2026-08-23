@@ -8,18 +8,25 @@ already-tested pieces.
 
 from __future__ import annotations
 
+import os
+import subprocess
+
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 
 from papertrade.freeze import (
     FREEZE_WINDOW_HOURS,
+    FREEZES_DIR,
     HIT_ELIGIBILITY_GWS,
     FreezeTooEarly,
     assert_before_deadline,
     assert_immutable_in_git,
     assert_within_freeze_window,
     bootstrap_shadow_state,
+    git_commit_times,
+    _git_log_entries,
     latest_frozen_gw,
     load_freeze,
     transfer_cap,
@@ -199,3 +206,103 @@ def test_hit_eligibility_threshold_is_the_models_own_window():
     from analytics.projections import DEFAULT_WINDOW
 
     assert HIT_ELIGIBILITY_GWS == DEFAULT_WINDOW
+
+
+# --- §6.1's acceptance test, over the real freezes ------------------------
+#
+# "A test asserts no frozen file is modified after its gameweek deadline."
+# Until now `assert_immutable_in_git` was only ever handed synthetic lists,
+# and every other freeze test wrote into `tmp_path` -- so the guard existed
+# and nothing pointed it at `papertrade/freezes/`. These two do.
+
+
+def _committed_freezes() -> list[tuple[int, Path, list[datetime]]]:
+    """Every real freeze that has actually been committed.
+
+    An uncommitted file is skipped rather than failed: immutability is a
+    claim about git history, and a freeze written locally and not yet
+    committed has not made that claim yet. `write_freeze`'s refusal to
+    overwrite is what guards it in the meantime.
+    """
+    if not FREEZES_DIR.exists():
+        return []
+    found = []
+    for path in sorted(FREEZES_DIR.glob("gw*.json")):
+        gw = int(path.stem.removeprefix("gw"))
+        times = git_commit_times(path)
+        if times:
+            found.append((gw, path, times))
+    return found
+
+
+def test_every_committed_freeze_is_immutable_in_git():
+    """The real §6.1 guarantee, asserted against real history rather than
+    against a constructed list."""
+    freezes = _committed_freezes()
+    if not freezes:
+        pytest.skip("no committed freezes yet -- the first lands in gw2's window")
+
+    for gw, path, times in freezes:
+        deadline = datetime.fromisoformat(load_freeze(gw)["deadline"])
+        assert_immutable_in_git(times, deadline)  # must not raise
+
+
+def test_the_retired_gw2_freeze_does_not_count_against_its_successor():
+    """The premature gw2 freeze was retired to tests/fixtures on
+    2026-08-23, which leaves two commits on `papertrade/freezes/gw2.json`
+    before a real freeze is ever written there.
+
+    Counting them would fail the immutability assertion for the one reason
+    it is not meant to catch -- nothing edited, a known-degenerate file
+    removed -- and would make the guard argue for keeping bad data. This
+    pins the behaviour so a future change to `git_commit_times` cannot
+    quietly reintroduce it.
+    """
+    path = FREEZES_DIR / "gw2.json"
+    if len(_git_log_entries(path)) < 2:  # pragma: no cover - pre-retirement
+        pytest.skip("this repo has no retired freeze at that path")
+
+    assert _git_log_entries(path, "--diff-filter=D"), "the retirement should read as a deletion"
+    assert git_commit_times(path) == [], "history before the retirement must not count"
+
+
+def test_commit_times_survive_a_retirement_and_refreeze_in_the_same_second(tmp_path):
+    """Commit timestamps cannot order commits: `%cI` has one-second
+    resolution, so a retirement and the freeze that replaces it can share
+    one. An earlier version of `git_commit_times` filtered by time and
+    discarded the new freeze along with the old, reporting a committed
+    file as having no commits at all. Walking the log by commit identity
+    is what makes this correct.
+    """
+    freezes, retired = tmp_path / "papertrade" / "freezes", tmp_path / "tests" / "fixtures"
+    freezes.mkdir(parents=True)
+    retired.mkdir(parents=True)
+
+    def git(*args):
+        subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True)
+
+    git("init", "-q")
+    git("config", "user.email", "t@t")
+    git("config", "user.name", "t")
+
+    target = freezes / "gw2.json"
+    target.write_text('{"gameweek": 2}', encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-qm", "premature freeze")
+    git("mv", str(target), str(retired / "gw2.json"))
+    git("commit", "-qm", "retire it")
+    target.write_text('{"gameweek": 2, "real": true}', encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-qm", "papertrade: weekly freeze/actuals")
+
+    cwd = os.getcwd()
+    os.chdir(tmp_path)
+    try:
+        relative = Path("papertrade/freezes/gw2.json")
+        assert len(_git_log_entries(relative)) == 3, "the path really does carry three commits"
+        times = git_commit_times(relative)
+    finally:
+        os.chdir(cwd)
+
+    assert len(times) == 1, "only the freeze that currently lives there counts"
+    assert_immutable_in_git(times, times[0] + timedelta(hours=1))  # must not raise

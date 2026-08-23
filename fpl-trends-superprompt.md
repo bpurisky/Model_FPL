@@ -420,6 +420,8 @@ Everything below this line is not part of the original spec — it's a running r
 
 ### Status as of 2026-08-22: Phases 0-3 complete and pushed, Phase 4 infrastructure built, automated, and pushed (13-gameweek process just starting)
 
+> **This entry is historical.** Later entries supersede parts of it — see "Phase 4 live, and Phase 5A started — 2026-08-23" below, and start from **"What to do next — as of 2026-08-23"** at the end of this log if you are picking the work back up.
+
 - **Phase 0 (collector)** — done, tested, deployed. `.github/workflows/collect.yml` runs hourly on GitHub Actions (repo: `bpurisky/Model_FPL`, pushed and confirmed running — workflow permissions were set to "Read and write" so it can commit snapshots back to `main`).
 - **Phase 1 (backtest harness)** — done. Three seasons (2023-24, 2024-25, 2025-26) backfilled from `vaastav/Fantasy-Premier-League` into committed `data/historical/*.parquet`. Leakage framework, three baselines, walk-forward harness, report metrics all in place and tested.
 - **Phase 2 (event model + scoring)** — done. Config-driven scoring (`analytics/scoring.py` + `config/scoring_{2024_25,2025_26,2026_27}.yaml`), self-contained Elo-based FDR (`analytics/fdr.py`), and a statistical event model (`analytics/features.py`, `analytics/projections.py`) that beats all three Phase 1 baselines on pooled MAE and beats fixture-adjusted trailing mean on within-position Spearman rank correlation — both §4.4 acceptance criteria, verified against real data via `uv run python -m analytics evaluate`.
@@ -499,6 +501,34 @@ Fixed with `papertrade/freeze.py:assert_within_freeze_window` (+ `FREEZE_WINDOW_
 
 217 tests pass (`uv run pytest`), up from 204. The 13 new ones cover the provisional-finish regression in `build_train_df`, `fixture_is_played`'s four cases, `finished_provisional` being a hard error when absent, the reference tier persisting match state, and the four freeze-window boundaries.
 
+### Phase 4 live, and Phase 5A started — 2026-08-23
+
+**Three of the items the previous entry left open are now closed. Read this before acting on anything in "Before continuing Phase 4" above — that list is superseded by "What to do next" at the bottom of this log.**
+
+**A silent gameweek loss, found five days before it would have fired.** `papertrade/freezes/gw2.json` was not an immutable record, it was a stale artifact: `deadline: 2026-08-28T17:30Z` against `frozen_at: 2026-08-21T21:03Z`, written seven days early and three hours after gw1 kicked off, which is the whole explanation for its 600 identical `0.8` projections. Leaving it would have cost gw2 behind a green build — `run_freeze` targets `resolve_next_event` (gw2 until that deadline passes, *not* "next unfrozen gw"), `write_freeze` raises `FileExistsError`, and `cmd_freeze` treats that as expected steady state and exits 0. The Aug 28 run would have done the full computation, discarded it, committed nothing, and passed. `git mv`'d to `tests/fixtures/degenerate_freeze/gw2.json` so the degeneracy guard keeps its only real-data test. `papertrade/freezes/` is empty on origin, so Aug 28 writes a real freeze. Committed `5e63ab1`.
+
+**The transfer cap.** `run_freeze` never passed `max_transfers`, though the ILP constraint existed and was tested. Measured live via the first-ever end-to-end `squad recommend`: uncapped gave **11 transfers, −40 points of hits, Haaland and B.Fernandes benched**; `--max-transfers 1` gave 1 transfer, no hits, both starting — same data, same code, one constraint. Freezes now cap at the free allowance while the model has fewer than `DEFAULT_WINDOW` gameweeks of history, with a test asserting `HIT_ELIGIBILITY_GWS == DEFAULT_WINDOW` so the two move together. `transfer_cap` is recorded in the payload whether or not it bound — otherwise a capped hold and a chosen hold are the same squad on disk. Committed `272555b`.
+
+**The papertrade workflow was verified running.** Dispatched 2026-08-23T17:12:56Z, all steps green in 12 s. More usefully, the Actions history shows the 2-hourly cron has been firing since `ea47247` — **14 runs, all successful**. It has never produced a commit, which is correct: gw1 is unfinished so `record-actuals` no-ops, and the gw2 window opens Aug 28, so `freeze` refuses. The commit step's `bash -e` + `if [ -d ]` guards ran for real with both paths absent. Push credentials are proven transitively — `collect.yml` uses an identical `actions/checkout@v4` + bare `git push` with no `permissions:` block and commits hourly, so the default `GITHUB_TOKEN` carries `contents: write`.
+
+**§6.1's acceptance test was never actually running.** "A test asserts no frozen file is modified after its gameweek deadline" — `assert_immutable_in_git` existed but was only ever handed synthetic lists, and every freeze test wrote into `tmp_path`. Nothing pointed it at `papertrade/freezes/`. Now wired, in `tests/test_freeze.py`, over the real directory, skipping cleanly while it is empty.
+
+Wiring it exposed a trap that would have hit the first real freeze. `git_commit_times` used `--follow`, and the retirement above leaves **two** commits on `papertrade/freezes/gw2.json` before a real freeze is ever written there — `--follow` traces content across the rename, so both the old and new paths report the same history. Friday's freeze would have made it three, and the guard rejects anything above one. The rule is now **exactly one commit since the path's most recent deletion**, which lets a premature freeze be retired without the guard arguing for keeping known-degenerate data.
+
+The first attempt at that fix filtered by commit *time* and was wrong: `%cI` has one-second resolution, so a retirement and a prompt re-freeze share a timestamp. Constructing that exact sequence showed it discarding the new freeze along with the old and reporting a committed file as having no commits at all. It now walks the log by commit identity. Both the sequence and the same-second case are regression-tested.
+
+**Phase 5A (frontend export layer) is five of nine files done.** `web/export/` now has `contract.py`, `columns.py`, `normalize.py`, `panel.py`, `correlations.py`, `scorecard.py`, `fixtures.py`, and a CLI (`python -m web.export {columns|panel|correlations|scorecard|fixtures|all}`). Shipped: `columns.json` (33 entries, committed), `panel.parquet` (84,999 × 75, gitignored), `correlations.json` (455 cells), `scorecard.json` (460 rows), `fixtures.json` (380 fixtures). Remaining: `golden_spearman.json`, `timeseries.parquet`, `players.json`, `board.json`.
+
+Two backend gaps were closed to unblock it: FPL fixture difficulty now persists through the collector (verified live in CI — `data/reference/fixtures.parquet` is 12 columns), and `backtest/report.py` gained Spearman `n` + p-value via a regularized incomplete beta, verified three independent ways. `analytics evaluate` is unchanged at MAE 1.0395 / RMSE 2.1215 / Spearman 0.7202 over 332,140 predictions, and `scorecard.json` reproduces those exact figures — a test pins them.
+
+Three findings from that work worth carrying forward:
+
+- **`spearman_with_significance` reports `n` as `x.len()`**, which counts nulls it has already ignored — polars ranks only non-nulls. A *perfect* rank correlation over 5 complete pairs comes back as ρ=0.23 over n=10 with p=0.52. `web/export/correlations.py:complete_pairs` filters pairwise before every call. The hazard is still live for any future caller that does not.
+- **`contract_shape()` could not see PEP 604 unions.** It read `__origin__` directly, which `float | None` does not have, so every nullable field in the export contract was described to the §5.12.2 agreement test as a bare `"union"` — `schema.ts` could have gotten all their inner types wrong and passed. Now uses `get_origin`/`get_args`.
+- **FPL reassigns team ids every season** — id 3 is Bournemouth in 2023-24 and 2026-27 but Burnley in 2025-26. `web/export/fixtures.py` resolves every match to a club *name* before rating it, and pushes historical fixture ids into negative space so they cannot collide with the current season's in `build_fdr_comparison`'s join. `analytics/fdr.py:build_fdr_comparison` is now called in production for the first time; Elo runs over 1,148 matches (1,140 seeded from the archive, 8 from gw1) and agrees with FPL's static rating at ρ=0.52 over 760 sides — close enough to be credible, far enough to be worth computing.
+
+384 tests pass, 1 skipped (the real-freeze immutability check, until the first freeze lands), up from 259 at the start of 2026-08-23.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
@@ -512,10 +542,43 @@ Fixed with `papertrade/freeze.py:assert_within_freeze_window` (+ `FREEZE_WINDOW_
 9. **2023-24 reuses `config/scoring_2024_25.yaml`** — no scoring rule differs between the two seasons, and §1.2's file layout doesn't call for a separate 2023-24 file.
 10. **`GOALS_CONCEDED_SHRINKAGE = 0.7`** in `analytics/projections.py` — not arbitrary tuning. An ablation showed the goals-conceded penalty term, at full weight, pulled within-position Spearman below the baseline it needs to beat (concentrated in DEF) despite improving MAE; at zero weight the reverse. 0.6-0.85 is a wide, robust plateau clearing both bars; 0.7 is the middle of it. If Phase 3+ work touches `projections.py`, don't "clean up" this constant without rerunning `uv run python -m analytics evaluate` to confirm both bars still clear.
 
-### Before continuing Phase 4
+11. **§6.1's immutability rule is "exactly one commit *since the path's most recent deletion*"**, not the literal "exactly one commit" (`papertrade/freeze.py:git_commit_times`). A premature freeze must be retirable — gw2's was written seven days early and had to go — and a rule counting a retirement against its replacement would force known-degenerate data to be kept in order to stay green. The guarantee the rule actually protects is unchanged: the file that currently sits at that path was written once, before its deadline, and never edited.
+12. **`assert_immutable_in_git` runs over the real `papertrade/freezes/` directory** in `tests/test_freeze.py`, and skips while that directory is empty. An uncommitted freeze is skipped rather than failed — immutability is a claim about git history, and `write_freeze`'s refusal to overwrite is what guards a file before it is committed.
 
-- **This session had no git push access** (no credential helper, no `gh` CLI, in either Bash or PowerShell) — commits landed on `origin/main` anyway, most likely because the user pushed manually in the background. Don't assume a fresh session has push access either; verify with `git fetch` + compare against `HEAD` before relying on it, and fall back to asking the user to push if `git push` fails the same way.
-- **The weekly loop is now automated** (`.github/workflows/papertrade.yml`, daily) — check it's actually running (Actions tab / commit history for `"papertrade: weekly freeze/actuals ..."` commits) rather than assuming it silently is. If it's been disabled or failing, `papertrade/freezes/`'s highest `gw{N}.json` and `data/current_season/2026-27.parquet`'s `gw` column show exactly how far it's gotten.
-- **Three §6.5 launch-gate gaps remain, by explicit user choice, not oversight**: live baseline comparison (criteria 1-2), live leakage tracking (criterion 3), manual-correction tracking (criterion 4). The price-model gap (criterion 5) was fixed this same session — don't assume the other three are done too because that one now is.
-- `squad/live.py:build_train_df`'s cumulative-stats shortcut (documented in its own module docstring) stops being valid once gw2 exists — check whether it's been swapped for true per-gameweek splits before trusting projections beyond gw1's single-datapoint case. `papertrade/actuals.py` already fetches true per-gw splits via `/event/{gw}/live/`; reusing that same source for `build_train_df` (instead of bootstrap-static's cumulative totals) is the natural fix once it's needed.
-- `analytics/price_model.py`'s rise/fall thresholds (`DEFAULT_RISE_THRESHOLD`/`DEFAULT_FALL_THRESHOLD` = ±0.5) are unfitted placeholders, said so in the module docstring — once `papertrade/evaluate.py`'s launch gate has accumulated enough real predicted-move observations to mean something, revisit them rather than assuming they were ever tuned.
+### What to do next — as of 2026-08-23
+
+This section replaces the previous "Before continuing Phase 4" list, three of whose four items are now done. Ordered; the first two are dated.
+
+**Still true, and the reason to check rather than assume:**
+
+- **No git push access from a Claude Code session here** (no credential helper, no `gh`, in either shell). Commits have landed on `origin/main` anyway because the user pushes manually. Verify with `git fetch origin main` and compare against `FETCH_HEAD` — *not* `origin/main`, which a bare fetch does not necessarily update.
+- **`analytics/price_model.py`'s ±0.5 rise/fall thresholds are unfitted placeholders**, said so in the module docstring. Revisit once the launch gate has accumulated enough real predicted-move observations to mean anything.
+
+**Superseded — do not redo these:**
+
+- ~~`build_train_df`'s cumulative-stats shortcut stops being valid once gw2 exists~~ — fixed 2026-08-22. It reads per-gameweek splits from `data/current_season/` and recovers only the most recent gameweek by subtraction. There is no Sept 4 cliff.
+- ~~The gw2 exclusion is not implemented~~ — superseded twice over: the degenerate freeze was retired to `tests/fixtures/`, and `DEGENERATE_FREEZE_POLICY` + `excluded_gws` exist in `papertrade/evaluate.py`.
+- ~~Three §6.5 gaps remain~~ — criteria 3 and 4 are wired via `freeze_provenance` (`_leakage_criterion`, `_manual_correction_criterion`). Only criteria 1–2 remain.
+- ~~Check the papertrade workflow is actually running~~ — verified 2026-08-23: 14 runs, all green, cron firing every two hours since `ea47247`.
+
+**Dated, nothing to do but watch:**
+
+1. **Tue/Wed 2026-08-25** — gw1's event-level `finished` flips, the next scheduled run performs the first-ever `record-actuals`, and `data/current_season/2026-27.parquet` is created. This unblocks `players.json`, `board.json`, and the panel's current-season append.
+2. **Fri 2026-08-28, 11:30–17:30Z** — the first real freeze. The transfer cap (`272555b`) is on origin and will compute `n_train_gws=1`, capping at 1 transfer with no hits. The immutability guard now permits it despite the retired gw2 in that path's history.
+
+**Then, in this order:**
+
+3. **`golden_spearman.json`** — historical, unblocked, and small: §5.6.1 wants ≥50 metric pairs and `correlations.json` already holds 455. It is a hard CI dependency for milestone 5C (frontend §5.14.2), so landing it early costs nothing and removes a blocker.
+4. **`web/app/src/data/schema.ts`** — the zod half of frontend §5.12.2. Writable now against `contract_shape()`, which is already tested and now describes nullable fields correctly. It is the natural bridge into 5B.
+5. **`timeseries.parquet`** — 51 distilled shards are committed; unblocked today.
+6. **`players.json`** — once Tuesday's actuals land.
+7. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap. **Not urgent, and this is checkable rather than hopeful:** `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so baseline predictions for gw2–gw13 can be computed at any later date and still be point-in-time correct. Nothing is lost by waiting. Best built around gw4–5, when there is enough live data to test it against. Contrast criteria 3 and 4, which genuinely needed instrumentation before the gameweeks accumulated — and already have it.
+8. **`board.json`** — blocked on Tuesday's data *and* on the decision below.
+
+**The decision that should be made before milestone 5B, not at 5E:**
+
+The Model Board's Rising/Declining buckets have **no measurable edge**. Measured over the panel: trend-slope ρ is 0.01–0.02 at every window (3–10) and horizon (1–8); the divergence definition (high underlying, low recent points) predicts *worse* forward points at ρ ≈ −0.04 pooled and −0.12 for DEF, because recent points carry role information (penalties, set pieces) that xGI does not see. Metric *level* does carry signal — ρ 0.14→0.28 pooled, 0.366 for MID.
+
+Frontend §5.4.6 requires the board to publish its own hit rate, §5.4.7 gives that a permanent panel, and §5.14.14 forbids shipping placeholder data — so "build it and see" is not available. The options are: drop the buckets and keep the board as a level-based ranking, ship them with the measured null result displayed, or defer the board entirely. It blocks `board.py`, the board-accuracy panel, and "Explain this" — and §5.13 forbids shipping 5E without that bridge. Settle it before the design system is built around a surface that may not exist.
+
+**On Phase 5 and the §6.5 launch gate.** §6.5 says "proceed to Phase 5 only if all hold", and the gate needs gw1–13 — roughly late November. Phase 5A is being built now regardless, and that is not a contradiction: 5A is explicitly "no UI", and frontend §5.1.3 and §5.13 both plan for Phase 3/4 surfaces to stay stubbed *throughout* the frontend build. **The gate blocks launch, not building.** §0.6 says the same thing in the operating principles: nothing user-facing ships before the paper trade passes. Do not read §6.5 as a reason to stop 5A/5B work, and do not read 5A/5B progress as the gate having been met.

@@ -162,14 +162,65 @@ def git_is_dirty() -> bool | None:
     return bool(result.stdout.strip())
 
 
-def git_commit_times(path: Path) -> list[datetime]:
-    """UTC commit timestamps that have ever touched `path`, oldest first."""
+def _git_log_entries(path: Path, *extra: str) -> list[tuple[str, datetime]]:
+    """(sha, commit time) for `path`, newest first — git log's own order.
+
+    `--no-renames` so a rename's delete side is reported against this path
+    as a plain deletion rather than being paired away as an R — the
+    counting below depends on seeing it, and rename detection is a
+    user-configurable default (`diff.renames`) this must not be at the
+    mercy of.
+
+    The sha is carried because commit *times* cannot order commits.
+    `%cI` has one-second resolution, and a retirement followed promptly by
+    a re-freeze lands both in the same second — verified by constructing
+    exactly that sequence, where filtering on time discarded the new
+    freeze along with the old one and reported a committed file as having
+    no commits at all.
+    """
     result = subprocess.run(
-        ["git", "log", "--follow", "--format=%cI", "--", str(path)],
+        ["git", "log", "--no-renames", "--format=%H %cI", *extra, "--", str(path)],
         capture_output=True, text=True, check=True,
     )
-    lines = [line for line in result.stdout.splitlines() if line.strip()]
-    return sorted(datetime.fromisoformat(line) for line in lines)
+    entries = []
+    for line in result.stdout.splitlines():
+        if not line.strip():
+            continue
+        sha, _, iso = line.partition(" ")
+        entries.append((sha, datetime.fromisoformat(iso)))
+    return entries
+
+
+def git_commit_times(path: Path) -> list[datetime]:
+    """UTC commit times for the file *currently* at `path`, oldest first.
+
+    Two deliberate departures from "every commit that ever touched this
+    path", and both come from a real event in this repo's history rather
+    than from a hypothetical.
+
+    **`--follow` is gone.** It traces content across renames, which answers
+    "where did this data come from" — a different question from "was the
+    file at this path written once and never edited", which is the only
+    one §6.1 asks.
+
+    **Commits at or before the path's most recent deletion are excluded.**
+    `papertrade/freezes/gw2.json` was written seven days early, outside
+    its window, and retired to `tests/fixtures/degenerate_freeze/` on
+    2026-08-23. That retirement is a deletion of this path, so the path
+    already carries two commits before its real freeze has been written at
+    all. Counting them would fail the immutability assertion for the one
+    reason it is not meant to catch: nothing was edited, a bad file was
+    removed. Retiring a premature freeze is exactly the corrective action
+    §6.1 should permit, and refusing to allow it would make the guard
+    argue for keeping known-degenerate data.
+    """
+    deleted = {sha for sha, _ in _git_log_entries(path, "--diff-filter=D")}
+    current: list[datetime] = []
+    for sha, when in _git_log_entries(path):  # newest first
+        if sha in deleted:
+            break  # everything from here back belongs to a previous file
+        current.append(when)
+    return sorted(current)
 
 
 def assert_immutable_in_git(commit_times: list[datetime], deadline: datetime) -> None:
