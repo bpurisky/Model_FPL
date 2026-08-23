@@ -31,6 +31,11 @@ from pydantic import BaseModel, ConfigDict
 
 CONTRACT_VERSION = 1
 
+# See `json_safe`. Enough to preserve every real distinction in these
+# exports, few enough to absorb parallel-reduction jitter in the last bits
+# of a double.
+SIGNIFICANT_DIGITS = 12
+
 Role = Literal["quantitative", "categorical", "ordinal", "temporal"]
 Relevance = Literal["primary", "secondary", "context", "none"]
 Grain = Literal["player", "player_gameweek", "fixture", "metric_pair", "model_gameweek"]
@@ -424,11 +429,32 @@ def json_safe(value: float | None) -> float | None:
 
     Lives here rather than in any one exporter because it is a property of
     the contract boundary: this is what may cross it.
+
+    Values are also rounded to `SIGNIFICANT_DIGITS`, which is about
+    reproducibility rather than tidiness. Polars aggregates groups in
+    parallel, so floating-point summation order varies between runs:
+    `scorecard.json`'s calibration means were observed differing in their
+    last one to three digits across two builds of identical committed
+    data. That makes a published number irreproducible — §5.3.1 wants
+    every figure traceable to the code that produced it, which is empty if
+    the same code produces a different figure — and it defeats the
+    unchanged-file check in `__main__.write_json`, so a rebuild would
+    commit noise forever.
+
+    Significant digits, not decimal places. A p-value here can legitimately
+    be 2.9e-119, and rounding that to twelve decimals would publish zero —
+    a claim of certainty rather than a very small number. Twelve
+    significant digits discards the last few bits of a double, which is
+    where the non-determinism lives, and is four orders of magnitude finer
+    than the tightest tolerance anything downstream asks for (§5.6.1's
+    1e-9 on |rho| <= 1).
     """
     if value is None:
         return None
     value = float(value)
-    return value if math.isfinite(value) else None
+    if not math.isfinite(value):
+        return None
+    return float(f"{value:.{SIGNIFICANT_DIGITS}g}")
 
 
 def contract_shape() -> dict[str, Any]:
@@ -496,6 +522,7 @@ def _type_name(annotation: Any) -> str:
 
 __all__ = [
     "CONTRACT_VERSION",
+    "SIGNIFICANT_DIGITS",
     "ColumnSpec",
     "ColumnsFile",
     "CalibrationBin",

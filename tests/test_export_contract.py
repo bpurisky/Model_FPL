@@ -192,3 +192,54 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["GoldenSample"]["rows"]["type"] == "array"
     assert shape["GoldenPair"]["rho"]["type"] == "float?"
     assert shape["GoldenSpearmanFile"]["tolerance"]["type"] == "float"
+
+
+# --- json_safe: what may cross the boundary -------------------------------
+
+
+def test_json_safe_nulls_nan_and_infinity():
+    """NaN serializes to a bare `NaN` token that `JSON.parse` rejects, and
+    it is not a measurement anyway — `report.py` returns it for degenerate
+    input, which is §5.3.3's null."""
+    from web.export.contract import json_safe
+
+    assert json_safe(float("nan")) is None
+    assert json_safe(float("inf")) is None
+    assert json_safe(float("-inf")) is None
+    assert json_safe(None) is None
+
+
+def test_json_safe_absorbs_parallel_reduction_jitter():
+    """The reason rounding is here at all. Polars aggregates groups in
+    parallel, so summation order varies between runs: two builds of
+    identical committed data produced calibration means differing in their
+    last digits. A published number that changes when nothing changed is
+    not traceable to the code that produced it."""
+    from web.export.contract import json_safe
+
+    observed_a, observed_b = 1.878969028177423, 1.8789690281774227
+
+    assert observed_a != observed_b
+    assert json_safe(observed_a) == json_safe(observed_b)
+
+
+def test_json_safe_keeps_significant_digits_not_decimal_places():
+    """A p-value here is legitimately 2.9e-119. Rounding to twelve decimal
+    places would publish 0.0 — a claim of certainty rather than a very
+    small number."""
+    from web.export.contract import json_safe
+
+    tiny = 2.9234567890123456e-119
+
+    assert json_safe(tiny) == pytest.approx(2.92345678901e-119, rel=1e-11)
+    assert json_safe(tiny) != 0.0
+
+
+def test_json_safe_stays_far_inside_the_spearman_tolerance():
+    """§5.6.1 fails CI at 1e-9 disagreement on |rho| <= 1; the rounding
+    must not eat into that budget."""
+    from web.export.contract import SIGNIFICANT_DIGITS, json_safe
+
+    assert SIGNIFICANT_DIGITS == 12
+    for value in (0.9999999999999, -0.123456789012345, 0.5):
+        assert abs(json_safe(value) - value) < 1e-9

@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T20:57:14.837718Z",
+    "generated_at": "2026-08-23T21:30:09.325727Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "7b2d06c581b8b308b1ba60492e9e56dd18e2787a",
+    "model_git_sha": "94e99fe9b798ec643c5d9e51d2251f174fcee229",
     "normalization_basis": "player_season_pooled_min45_per_fixture",
     "rows": 455
   },
@@ -2684,651 +2684,651 @@
       "a": "xg_per90",
       "b": "xa_per90",
       "n": 32,
-      "rho": 0.4738337477512217
+      "rho": 0.473833747751
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.913756763071505
+      "rho": 0.913756763072
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.9086415443224858
+      "rho": 0.908641544322
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.4738676276913099
+      "rho": 0.473867627691
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.5655084104993988
+      "rho": 0.565508410499
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.17615250738449675
+      "rho": -0.176152507384
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.2289432692229307
+      "rho": -0.228943269223
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.41928773802274316
+      "rho": -0.419287738023
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.2242424242424242
+      "rho": 0.224242424242
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4311245550138776
+      "rho": 0.431124555014
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.1636363636363636
+      "rho": 0.163636363636
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.018181818181818177
+      "rho": -0.0181818181818
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.45454545454545453
+      "rho": -0.454545454545
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.7529325513196482
+      "rho": 0.75293255132
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.46823435528586066
+      "rho": 0.468234355286
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.8557807812203335
+      "rho": 0.85578078122
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.523652400444644
+      "rho": 0.523652400445
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.2532991202346041
+      "rho": -0.253299120235
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.14186217008797655
+      "rho": -0.141862170088
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.41968602983225883
+      "rho": -0.419686029832
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.11515151515151514
+      "rho": 0.115151515152
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4923020527859237
+      "rho": 0.492302052786
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.0303030303030303
+      "rho": 0.030303030303
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.24848484848484845
+      "rho": 0.248484848485
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.6727272727272726
+      "rho": -0.672727272727
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.8358442295142108
+      "rho": 0.835844229514
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.7123866156076699
+      "rho": 0.712386615608
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.6288962652398912
+      "rho": 0.62889626524
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.2346041055718475
+      "rho": -0.234604105572
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.218475073313783
+      "rho": -0.218475073314
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.41968602983225883
+      "rho": -0.419686029832
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.07878787878787878
+      "rho": 0.0787878787879
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.49486803519061584
+      "rho": 0.494868035191
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.04242424242424242
+      "rho": 0.0424242424242
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.11515151515151514
+      "rho": 0.115151515152
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.6606060606060605
+      "rho": -0.660606060606
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.45393631769258774
+      "rho": 0.453936317693
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.5202062927608914
+      "rho": 0.520206292761
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.17701094842963516
+      "rho": -0.17701094843
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.17554197790324813
+      "rho": -0.175541977903
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.3780178647195063
+      "rho": -0.37801786472
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.24848484848484845
+      "rho": 0.248484848485
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4315100921261853
+      "rho": 0.431510092126
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.07878787878787878
+      "rho": 0.0787878787879
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.13939393939393938
+      "rho": 0.139393939394
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.49090909090909085
+      "rho": -0.490909090909
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.359717510455495
+      "rho": 0.359717510455
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.1960209246035004
+      "rho": -0.196020924604
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.134042372203142
+      "rho": -0.134042372203
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.4054601636886963
+      "rho": -0.405460163689
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.15197638592001614
+      "rho": 0.15197638592
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4400843957421899
+      "rho": 0.440084395742
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.12766016417281356
+      "rho": 0.127660164173
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.2674784392192284
+      "rho": 0.267478439219
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.5957474328064634
+      "rho": -0.595747432806
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.232489931289849
+      "rho": -0.23248993129
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.21708839010030062
+      "rho": -0.2170883901
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.13455848820505564
+      "rho": -0.134558488205
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.32121212121212117
+      "rho": 0.321212121212
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.5713238374599128
+      "rho": 0.57132383746
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2363636363636363
+      "rho": 0.236363636364
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.3454545454545454
+      "rho": 0.345454545455
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.1636363636363636
+      "rho": -0.163636363636
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": 0.8881964809384164
+      "rho": 0.888196480938
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": 0.1978332690052167
+      "rho": 0.197833269005
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.04242424242424242
+      "rho": 0.0424242424242
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.469941348973607
+      "rho": -0.469941348974
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.0909090909090909
+      "rho": 0.0909090909091
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.11515151515151514
+      "rho": -0.115151515152
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.4666666666666666
+      "rho": 0.466666666667
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": 0.3384564756711765
+      "rho": 0.338456475671
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.07878787878787878
+      "rho": -0.0787878787879
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.4142228739002933
+      "rho": -0.4142228739
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.26060606060606056
+      "rho": -0.260606060606
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.39393939393939387
+      "rho": 0.393939393939
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.00606060606060606
+      "rho": 0.00606060606061
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.5222329678670935
+      "rho": -0.522232967867
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.12053417714225122
+      "rho": -0.120534177142
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.5222329678670935
+      "rho": -0.522232967867
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.5222329678670935
+      "rho": 0.522232967867
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.05802588531856595
+      "rho": 0.0580258853186
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
       "n": 10,
-      "rho": 0.39393939393939387
+      "rho": 0.393939393939
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.8666666666666666
+      "rho": 0.866666666667
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.0303030303030303
+      "rho": 0.030303030303
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.5151515151515151
+      "rho": 0.515151515152
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.18787878787878787
+      "rho": 0.187878787879
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.3454545454545454
+      "rho": 0.345454545455
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.3575757575757575
+      "rho": -0.357575757576
     },
     {
       "group": "all",
       "a": "tackles_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.19999999999999996
+      "rho": -0.2
     },
     {
       "group": "all",
       "a": "tackles_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.6727272727272726
+      "rho": 0.672727272727
     },
     {
       "group": "all",
       "a": "recoveries_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.26060606060606056
+      "rho": -0.260606060606
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xa_per90",
       "n": 32,
-      "rho": -0.11788706520658375
+      "rho": -0.117887065207
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.07641024354872214
+      "rho": 0.0764102435487
     },
     {
       "group": "GK",
@@ -3342,35 +3342,35 @@
       "a": "xg_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": -0.08288326104343575
+      "rho": -0.0828832610434
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": -0.006334153147482572
+      "rho": -0.00633415314748
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.1698833148852744
+      "rho": -0.169883314885
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.1478697131326104
+      "rho": -0.147869713133
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.010481232794978368
+      "rho": -0.010481232795
     },
     {
       "group": "GK",
@@ -3384,7 +3384,7 @@
       "a": "xg_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.2908542100606497
+      "rho": -0.290854210061
     },
     {
       "group": "GK",
@@ -3412,7 +3412,7 @@
       "a": "xa_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.9705392050981461
+      "rho": 0.970539205098
     },
     {
       "group": "GK",
@@ -3426,35 +3426,35 @@
       "a": "xa_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.2542706734924334
+      "rho": 0.254270673492
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": -0.07068563752633086
+      "rho": -0.0706856375263
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.19476968701653638
+      "rho": -0.194769687017
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.1862525077453907
+      "rho": -0.186252507745
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.08807938542469669
+      "rho": -0.0880793854247
     },
     {
       "group": "GK",
@@ -3468,28 +3468,28 @@
       "a": "xa_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.01676825120009916
+      "rho": 0.0167682512001
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.0214068279273068
+      "rho": -0.0214068279273
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.37690143708164003
+      "rho": 0.376901437082
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.08510677611520905
+      "rho": 0.0851067761152
     },
     {
       "group": "GK",
@@ -3503,35 +3503,35 @@
       "a": "xgi_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.24848815701175248
+      "rho": 0.248488157012
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": -0.054567994370051956
+      "rho": -0.0545679943701
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.2347990182409911
+      "rho": -0.234799018241
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.21845632881253907
+      "rho": -0.218456328813
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.0700342440593223
+      "rho": -0.0700342440593
     },
     {
       "group": "GK",
@@ -3545,28 +3545,28 @@
       "a": "xgi_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.03649152716775215
+      "rho": -0.0364915271678
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.0214068279273068
+      "rho": -0.0214068279273
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.37690143708164003
+      "rho": 0.376901437082
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.08510677611520905
+      "rho": 0.0851067761152
     },
     {
       "group": "GK",
@@ -3643,28 +3643,28 @@
       "a": "assists_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.03769405685785659
+      "rho": 0.0376940568579
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.06812052075178761
+      "rho": -0.0681205207518
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.06705192806445642
+      "rho": -0.0670519280645
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": 0.23189964511246847
+      "rho": 0.231899645112
     },
     {
       "group": "GK",
@@ -3678,7 +3678,7 @@
       "a": "assists_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.14058915984943401
+      "rho": -0.140589159849
     },
     {
       "group": "GK",
@@ -3706,21 +3706,21 @@
       "a": "bonus_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.056650474229399186
+      "rho": -0.0566504742294
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.22978177150192558
+      "rho": -0.229781771502
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": -0.05848382290996228
+      "rho": -0.05848382291
     },
     {
       "group": "GK",
@@ -3734,42 +3734,42 @@
       "a": "bonus_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.3932532919807808
+      "rho": 0.393253291981
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.45122790065613705
+      "rho": 0.451227900656
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.33333333333333326
+      "rho": 0.333333333333
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.00606060606060606
+      "rho": -0.00606060606061
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": 0.9115409639759636
+      "rho": 0.911540963976
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": 0.8339442815249267
+      "rho": 0.833944281525
     },
     {
       "group": "GK",
@@ -3783,35 +3783,35 @@
       "a": "xgc_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.11107038123167155
+      "rho": 0.111070381232
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.29268836799317
+      "rho": 0.292688367993
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.018181818181818177
+      "rho": 0.0181818181818
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.7575757575757575
+      "rho": 0.757575757576
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
       "n": 32,
-      "rho": 0.7824732168643229
+      "rho": 0.782473216864
     },
     {
       "group": "GK",
@@ -3825,28 +3825,28 @@
       "a": "goals_conceded_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.0113667618194911
+      "rho": 0.0113667618195
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.4085441803237998
+      "rho": 0.408544180324
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.13939393939393938
+      "rho": -0.139393939394
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.6242424242424242
+      "rho": 0.624242424242
     },
     {
       "group": "GK",
@@ -3860,28 +3860,28 @@
       "a": "saves_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.16788856304985336
+      "rho": 0.16788856305
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.04268372033233729
+      "rho": -0.0426837203323
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.06666666666666667
+      "rho": -0.0666666666667
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.6727272727272726
+      "rho": 0.672727272727
     },
     {
       "group": "GK",
@@ -3916,91 +3916,91 @@
       "a": "bps_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.42683720332337294
+      "rho": -0.426837203323
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.29696969696969694
+      "rho": 0.29696969697
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.39393939393939387
+      "rho": -0.393939393939
     },
     {
       "group": "GK",
       "a": "tackles_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.06707441766510147
+      "rho": 0.0670744176651
     },
     {
       "group": "GK",
       "a": "tackles_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.03048837166595521
+      "rho": 0.030488371666
     },
     {
       "group": "GK",
       "a": "recoveries_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.3454545454545454
+      "rho": 0.345454545455
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xa_per90",
       "n": 32,
-      "rho": 0.17888563049853373
+      "rho": 0.178885630499
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.5458211143695014
+      "rho": 0.54582111437
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.32515230973962006
+      "rho": 0.32515230974
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.17402255844679151
+      "rho": 0.174022558447
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.24892310616872693
+      "rho": 0.248923106169
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.42961876832844575
+      "rho": -0.429618768328
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.5190615835777126
+      "rho": -0.519061583578
     },
     {
       "group": "DEF",
@@ -4014,77 +4014,77 @@
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.39393939393939387
+      "rho": 0.393939393939
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4607771260997067
+      "rho": 0.4607771261
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.612121212121212
+      "rho": -0.612121212121
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.8303030303030301
+      "rho": -0.830303030303
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.43030303030303024
+      "rho": 0.430303030303
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.8405425219941349
+      "rho": 0.840542521994
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.21236335742009532
+      "rho": 0.21236335742
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.6581216755805934
+      "rho": 0.658121675581
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.647786640059117
+      "rho": 0.647786640059
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.10447214076246335
+      "rho": -0.104472140762
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.24633431085043986
+      "rho": -0.24633431085
     },
     {
       "group": "DEF",
@@ -4098,70 +4098,70 @@
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.1515151515151515
+      "rho": -0.151515151515
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4629765395894428
+      "rho": 0.462976539589
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.7333333333333333
+      "rho": 0.733333333333
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.2848484848484848
+      "rho": 0.284848484848
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.43030303030303024
+      "rho": -0.430303030303
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.3011427802854638
+      "rho": 0.301142780285
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.5829290407009102
+      "rho": 0.582929040701
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.6498029538793351
+      "rho": 0.649802953879
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.4035923753665689
+      "rho": -0.403592375367
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.49596774193548393
+      "rho": -0.495967741935
     },
     {
       "group": "DEF",
@@ -4175,63 +4175,63 @@
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.07878787878787878
+      "rho": 0.0787878787879
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.5663489736070381
+      "rho": 0.566348973607
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2242424242424242
+      "rho": 0.224242424242
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.12727272727272726
+      "rho": -0.127272727273
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.0909090909090909
+      "rho": -0.0909090909091
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.06898506898506897
+      "rho": 0.0689850689851
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.5419391629574322
+      "rho": 0.541939162957
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.1924484763999812
+      "rho": -0.1924484764
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.3258967912730823
+      "rho": -0.325896791273
     },
     {
       "group": "DEF",
@@ -4245,56 +4245,56 @@
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.3575757575757575
+      "rho": 0.357575757576
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.3869442770169835
+      "rho": 0.386944277017
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.2727272727272727
+      "rho": -0.272727272727
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.5636363636363636
+      "rho": -0.563636363636
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.3090909090909091
+      "rho": 0.309090909091
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.5535727530947633
+      "rho": 0.553572753095
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.018239797569824138
+      "rho": -0.0182397975698
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.08822106171527186
+      "rho": -0.0882210617153
     },
     {
       "group": "DEF",
@@ -4308,49 +4308,49 @@
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.2857156055296304
+      "rho": -0.28571560553
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.4893104878680374
+      "rho": 0.489310487868
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2857156055296304
+      "rho": 0.28571560553
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.7355657078528781
+      "rho": 0.735565707853
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.16413449679361744
+      "rho": -0.164134496794
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.28485015241988343
+      "rho": -0.28485015242
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.4259921198351409
+      "rho": -0.425992119835
     },
     {
       "group": "DEF",
@@ -4364,42 +4364,42 @@
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.2363636363636363
+      "rho": 0.236363636364
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.6936119541549799
+      "rho": 0.693611954155
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.3575757575757575
+      "rho": 0.357575757576
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.04242424242424242
+      "rho": -0.0424242424242
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.06666666666666667
+      "rho": 0.0666666666667
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": 0.872434017595308
+      "rho": 0.872434017595
     },
     {
       "group": "DEF",
@@ -4413,35 +4413,35 @@
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.5636363636363636
+      "rho": -0.563636363636
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.36107038123167157
+      "rho": -0.361070381232
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.3818181818181818
+      "rho": 0.381818181818
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.7939393939393938
+      "rho": 0.793939393939
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.45454545454545453
+      "rho": -0.454545454545
     },
     {
       "group": "DEF",
@@ -4455,35 +4455,35 @@
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.17575757575757575
+      "rho": 0.175757575758
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.4714076246334311
+      "rho": -0.471407624633
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.12727272727272726
+      "rho": -0.127272727273
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.36969696969696964
+      "rho": 0.369696969697
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.33333333333333326
+      "rho": 0.333333333333
     },
     {
       "group": "DEF",
@@ -4525,119 +4525,119 @@
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
       "n": 10,
-      "rho": 0.43030303030303024
+      "rho": 0.430303030303
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.33333333333333326
+      "rho": -0.333333333333
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.5878787878787879
+      "rho": -0.587878787879
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.8909090909090908
+      "rho": 0.890909090909
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2242424242424242
+      "rho": 0.224242424242
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.0909090909090909
+      "rho": -0.0909090909091
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.2727272727272727
+      "rho": 0.272727272727
     },
     {
       "group": "DEF",
       "a": "tackles_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.49090909090909085
+      "rho": 0.490909090909
     },
     {
       "group": "DEF",
       "a": "tackles_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.6727272727272726
+      "rho": -0.672727272727
     },
     {
       "group": "DEF",
       "a": "recoveries_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.5151515151515151
+      "rho": -0.515151515152
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xa_per90",
       "n": 32,
-      "rho": 0.7159090909090909
+      "rho": 0.715909090909
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.9494134897360703
+      "rho": 0.949413489736
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.9294890448691722
+      "rho": 0.929489044869
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.6295142177269776
+      "rho": 0.629514217727
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.7155425219941349
+      "rho": 0.715542521994
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.2716275659824047
+      "rho": -0.271627565982
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.31619466726145357
+      "rho": -0.316194667261
     },
     {
       "group": "MID",
@@ -4651,77 +4651,77 @@
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.8181818181818181
+      "rho": -0.818181818182
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.5854105571847508
+      "rho": 0.585410557185
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.7818181818181817
+      "rho": -0.781818181818
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.5878787878787879
+      "rho": -0.587878787879
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.8181818181818181
+      "rho": -0.818181818182
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.874266862170088
+      "rho": 0.87426686217
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.6235207420675297
+      "rho": 0.623520742068
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.7450045954695506
+      "rho": 0.74500459547
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.6528592375366569
+      "rho": 0.652859237537
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.25733137829912023
+      "rho": -0.257331378299
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.27916781347199643
+      "rho": -0.279167813472
     },
     {
       "group": "MID",
@@ -4735,70 +4735,70 @@
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.26060606060606056
+      "rho": -0.260606060606
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.7584310850439882
+      "rho": 0.758431085044
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.17575757575757575
+      "rho": -0.175757575758
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.0303030303030303
+      "rho": -0.030303030303
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.5757575757575757
+      "rho": -0.575757575758
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.8528130939867895
+      "rho": 0.852813093987
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.7171402503634059
+      "rho": 0.717140250363
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.7320381231671554
+      "rho": 0.732038123167
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.3086510263929619
+      "rho": -0.308651026393
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.36770232030520333
+      "rho": -0.367702320305
     },
     {
       "group": "MID",
@@ -4819,56 +4819,56 @@
       "a": "xgi_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.7027126099706744
+      "rho": 0.702712609971
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.5272727272727272
+      "rho": -0.527272727273
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.3090909090909091
+      "rho": -0.309090909091
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.8181818181818181
+      "rho": -0.818181818182
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.5894280011143174
+      "rho": 0.589428001114
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.7623465044564961
+      "rho": 0.762346504456
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.1561100294943476
+      "rho": -0.156110029494
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.17901889609229937
+      "rho": -0.179018896092
     },
     {
       "group": "MID",
@@ -4882,56 +4882,56 @@
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": -0.6848484848484847
+      "rho": -0.684848484848
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.5538320481000883
+      "rho": 0.5538320481
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": -0.612121212121212
+      "rho": -0.612121212121
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.45454545454545453
+      "rho": -0.454545454545
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.709090909090909
+      "rho": -0.709090909091
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.6553620641741248
+      "rho": 0.655362064174
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.26269477984937645
+      "rho": -0.262694779849
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.34668622384177455
+      "rho": -0.346686223842
     },
     {
       "group": "MID",
@@ -4945,49 +4945,49 @@
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.1515151515151515
+      "rho": 0.151515151515
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.6958753554139798
+      "rho": 0.695875355414
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2242424242424242
+      "rho": 0.224242424242
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.2727272727272727
+      "rho": 0.272727272727
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.018181818181818177
+      "rho": -0.0181818181818
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.20674486803519063
+      "rho": -0.206744868035
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.09531665331939469
+      "rho": -0.0953166533194
     },
     {
       "group": "MID",
@@ -5001,42 +5001,42 @@
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.1636363636363636
+      "rho": 0.163636363636
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.7056451612903225
+      "rho": 0.70564516129
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.19999999999999996
+      "rho": 0.2
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.29696969696969694
+      "rho": 0.29696969697
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.04242424242424242
+      "rho": -0.0424242424242
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": 0.8013930929084493
+      "rho": 0.801393092908
     },
     {
       "group": "MID",
@@ -5050,35 +5050,35 @@
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.17575757575757575
+      "rho": 0.175757575758
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.38673020527859236
+      "rho": -0.386730205279
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.2363636363636363
+      "rho": 0.236363636364
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": -0.3090909090909091
+      "rho": -0.309090909091
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.39393939393939387
+      "rho": 0.393939393939
     },
     {
       "group": "MID",
@@ -5092,35 +5092,35 @@
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
       "n": 10,
-      "rho": 0.3575757575757575
+      "rho": 0.357575757576
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.35890385999879776
+      "rho": -0.358903859999
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.49090909090909085
+      "rho": 0.490909090909
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.12727272727272726
+      "rho": 0.127272727273
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.2848484848484848
+      "rho": 0.284848484848
     },
     {
       "group": "MID",
@@ -5162,119 +5162,119 @@
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
       "n": 10,
-      "rho": 0.26060606060606056
+      "rho": 0.260606060606
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.9515151515151513
+      "rho": 0.951515151515
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.8424242424242423
+      "rho": 0.842424242424
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.915151515151515
+      "rho": 0.915151515152
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "tackles_per90",
       "n": 10,
-      "rho": 0.29696969696969694
+      "rho": 0.29696969697
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.41818181818181815
+      "rho": 0.418181818182
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": -0.06666666666666667
+      "rho": -0.0666666666667
     },
     {
       "group": "MID",
       "a": "tackles_per90",
       "b": "recoveries_per90",
       "n": 10,
-      "rho": 0.7212121212121211
+      "rho": 0.721212121212
     },
     {
       "group": "MID",
       "a": "tackles_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.8303030303030301
+      "rho": 0.830303030303
     },
     {
       "group": "MID",
       "a": "recoveries_per90",
       "b": "cbi_per90",
       "n": 10,
-      "rho": 0.6848484848484847
+      "rho": 0.684848484848
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xa_per90",
       "n": 32,
-      "rho": 0.18658357771260994
+      "rho": 0.186583577713
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.9530791788856305
+      "rho": 0.953079178886
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.8218475073313783
+      "rho": 0.821847507331
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.3722848517147897
+      "rho": 0.372284851715
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.533357771260997
+      "rho": 0.533357771261
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.561217008797654
+      "rho": -0.561217008798
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.5476539589442816
+      "rho": -0.547653958944
     },
     {
       "group": "FWD",
@@ -5288,77 +5288,77 @@
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": -0.13636363636363635
+      "rho": -0.136363636364
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.6407624633431085
+      "rho": 0.640762463343
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.14545454545454548
+      "rho": 0.145454545455
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": -0.08181818181818182
+      "rho": -0.0818181818182
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.17272727272727273
+      "rho": -0.172727272727
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "xgi_per90",
       "n": 32,
-      "rho": 0.405791788856305
+      "rho": 0.405791788856
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.20674486803519063
+      "rho": 0.206744868035
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.5401888025620311
+      "rho": 0.540188802562
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.25769794721407624
+      "rho": 0.257697947214
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.468841642228739
+      "rho": -0.468841642229
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.38673020527859236
+      "rho": -0.386730205279
     },
     {
       "group": "FWD",
@@ -5372,70 +5372,70 @@
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": 0.06363636363636363
+      "rho": 0.0636363636364
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.3870967741935484
+      "rho": 0.387096774194
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.38181818181818183
+      "rho": 0.381818181818
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.18181818181818182
+      "rho": 0.181818181818
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.23636363636363636
+      "rho": -0.236363636364
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "goals_per90",
       "n": 32,
-      "rho": 0.8266129032258064
+      "rho": 0.826612903226
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.47658326659697353
+      "rho": 0.476583266597
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.593108504398827
+      "rho": 0.593108504399
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.6198680351906158
+      "rho": -0.619868035191
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.5648826979472141
+      "rho": -0.564882697947
     },
     {
       "group": "FWD",
@@ -5449,63 +5449,63 @@
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": -0.16363636363636364
+      "rho": -0.163636363636
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.7382697947214076
+      "rho": 0.738269794721
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.12727272727272726
+      "rho": 0.127272727273
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": -0.07272727272727274
+      "rho": -0.0727272727273
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.18181818181818182
+      "rho": -0.181818181818
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "assists_per90",
       "n": 32,
-      "rho": 0.2875996712656351
+      "rho": 0.287599671266
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.7903225806451613
+      "rho": 0.790322580645
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.531158357771261
+      "rho": -0.531158357771
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.4864369501466275
+      "rho": -0.486436950147
     },
     {
       "group": "FWD",
@@ -5519,21 +5519,21 @@
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": -0.11818181818181818
+      "rho": -0.118181818182
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.8354105571847508
+      "rho": 0.835410557185
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.24545454545454548
+      "rho": 0.245454545455
     },
     {
       "group": "FWD",
@@ -5547,28 +5547,28 @@
       "a": "goals_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.21818181818181817
+      "rho": -0.218181818182
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "bonus_per90",
       "n": 32,
-      "rho": 0.24800659988680968
+      "rho": 0.248006599887
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.2045642021239317
+      "rho": -0.204564202124
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.0949500508066278
+      "rho": -0.0949500508066
     },
     {
       "group": "FWD",
@@ -5582,49 +5582,49 @@
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": 0.22727272727272727
+      "rho": 0.227272727273
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.42360920350215603
+      "rho": 0.423609203502
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.4727272727272727
+      "rho": 0.472727272727
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.4454545454545455
+      "rho": 0.445454545455
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.35454545454545455
+      "rho": -0.354545454545
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "xgc_per90",
       "n": 32,
-      "rho": -0.5260263929618768
+      "rho": -0.526026392962
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": -0.44831378299120234
+      "rho": -0.448313782991
     },
     {
       "group": "FWD",
@@ -5638,42 +5638,42 @@
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": 0.05454545454545454
+      "rho": 0.0545454545455
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": 0.8500733137829912
+      "rho": 0.850073313783
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.45454545454545453
+      "rho": 0.454545454545
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.07272727272727274
+      "rho": 0.0727272727273
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.22727272727272727
+      "rho": -0.227272727273
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
       "n": 32,
-      "rho": 0.939149560117302
+      "rho": 0.939149560117
     },
     {
       "group": "FWD",
@@ -5687,21 +5687,21 @@
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": -0.06363636363636363
+      "rho": -0.0636363636364
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.6030058651026393
+      "rho": -0.603005865103
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": -0.32727272727272727
+      "rho": -0.327272727273
     },
     {
       "group": "FWD",
@@ -5715,7 +5715,7 @@
       "a": "xgc_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": 0.2545454545454545
+      "rho": 0.254545454545
     },
     {
       "group": "FWD",
@@ -5729,35 +5729,35 @@
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
       "n": 11,
-      "rho": 0.12727272727272726
+      "rho": 0.127272727273
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
       "n": 32,
-      "rho": -0.5150293255131965
+      "rho": -0.515029325513
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": -0.15454545454545454
+      "rho": -0.154545454545
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": -0.009090909090909092
+      "rho": -0.00909090909091
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": 0.23636363636363636
+      "rho": 0.236363636364
     },
     {
       "group": "FWD",
@@ -5799,70 +5799,70 @@
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
       "n": 11,
-      "rho": 0.13636363636363635
+      "rho": 0.136363636364
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.8090909090909091
+      "rho": 0.809090909091
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.6363636363636364
+      "rho": 0.636363636364
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": 0.35454545454545455
+      "rho": 0.354545454545
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "tackles_per90",
       "n": 11,
-      "rho": 0.5272727272727272
+      "rho": 0.527272727273
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.08181818181818182
+      "rho": 0.0818181818182
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.15454545454545454
+      "rho": -0.154545454545
     },
     {
       "group": "FWD",
       "a": "tackles_per90",
       "b": "recoveries_per90",
       "n": 11,
-      "rho": 0.4454545454545455
+      "rho": 0.445454545455
     },
     {
       "group": "FWD",
       "a": "tackles_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": 0.2818181818181818
+      "rho": 0.281818181818
     },
     {
       "group": "FWD",
       "a": "recoveries_per90",
       "b": "cbi_per90",
       "n": 11,
-      "rho": -0.20909090909090908
+      "rho": -0.209090909091
     }
   ]
 }

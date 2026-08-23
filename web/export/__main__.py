@@ -24,6 +24,7 @@ from web.export.fixtures import build_fixtures
 from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.panel import build_panel, write_panel
+from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
 
 logger = logging.getLogger("web.export")
@@ -31,11 +32,39 @@ logger = logging.getLogger("web.export")
 OUT_DIR = Path("data/web/v1")
 
 
-def write_json(payload: str, name: str, out_dir: Path) -> Path:
+# Every header carries these and both move on every run regardless of what
+# the numbers did (§5.3.1). Excluded when deciding whether a file changed.
+_VOLATILE_HEADER = ("generated_at", "model_git_sha")
+
+
+def _body(payload: str) -> str:
+    """A file's content with the volatile header fields removed."""
+    data = json.loads(payload)
+    header = data.get("header")
+    if isinstance(header, dict):
+        data["header"] = {k: v for k, v in header.items() if k not in _VOLATILE_HEADER}
+    return json.dumps(data, sort_keys=True)
+
+
+def write_json(payload: str, name: str, out_dir: Path) -> tuple[Path, bool]:
+    """Write only if the numbers actually changed.
+
+    These files are committed (§5.3.4) and the deploy workflow regenerates
+    them whenever the collector runs. `generated_at` and `model_git_sha`
+    move every single run, so an unconditional write would commit all five
+    files every hour and bury a real change in a year of noise.
+
+    Leaving the older sha in place when the body is unchanged is the more
+    truthful record, not a compromise: §5.3.1 wants every number traceable
+    to the code that produced it, and if the numbers did not move then the
+    earlier commit is the one that produced them.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / name
+    if path.exists() and _body(path.read_text(encoding="utf-8")) == _body(payload):
+        return path, False
     path.write_text(payload, encoding="utf-8")
-    return path
+    return path, True
 
 
 def cmd_columns(args: argparse.Namespace) -> None:
@@ -49,8 +78,8 @@ def cmd_columns(args: argparse.Namespace) -> None:
         ),
         columns=REGISTRY,
     )
-    path = write_json(file.model_dump_json(indent=2), "columns.json", Path(args.out))
-    logger.info("wrote %d column entries -> %s", len(REGISTRY), path)
+    path, changed = write_json(file.model_dump_json(indent=2), "columns.json", Path(args.out))
+    logger.info("%s %d column entries -> %s", "wrote" if changed else "unchanged:", len(REGISTRY), path)
 
 
 def cmd_panel(args: argparse.Namespace) -> None:
@@ -69,11 +98,11 @@ def cmd_correlations(args: argparse.Namespace) -> None:
     from `panel.parquet`, which is not committed, so this runs after
     `panel` rather than standing alone."""
     file = build_correlations(panel_path=Path(args.out) / "panel.parquet")
-    path = write_json(file.model_dump_json(indent=2), "correlations.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(indent=2), "correlations.json", Path(args.out))
     hatched = sum(1 for c in file.cells if c.n < file.min_n_cell)
     logger.info(
-        "wrote %d cells over %d metrics x %d groups (%d below n=%d) -> %s",
-        len(file.cells), len(file.metrics), len(file.groups), hatched, file.min_n_cell, path,
+        "%s %d cells over %d metrics x %d groups (%d below n=%d) -> %s",
+        "wrote" if changed else "unchanged:", len(file.cells), len(file.metrics), len(file.groups), hatched, file.min_n_cell, path,
     )
 
 
@@ -84,10 +113,10 @@ def cmd_scorecard(args: argparse.Namespace) -> None:
     `data/historical/`, which is committed, so this one stands alone.
     """
     file = build_scorecard()
-    path = write_json(file.model_dump_json(indent=2), "scorecard.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(indent=2), "scorecard.json", Path(args.out))
     logger.info(
-        "wrote %d rows over %d models x %d seasons -> %s",
-        len(file.rows), len(file.models), len(file.seasons), path,
+        "%s %d rows over %d models x %d seasons -> %s",
+        "wrote" if changed else "unchanged:", len(file.rows), len(file.models), len(file.seasons), path,
     )
 
 
@@ -95,11 +124,11 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
     """Elo difficulty beside FPL's static rating (§4.3). Committed per
     §5.3.4, and independent of `panel.parquet`."""
     file = build_fixtures()
-    path = write_json(file.model_dump_json(indent=2), "fixtures.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(indent=2), "fixtures.json", Path(args.out))
     played = sum(1 for f in file.fixtures if f.played)
     logger.info(
-        "wrote %d fixtures (%d played) from %d elo matches seeded by %s -> %s",
-        len(file.fixtures), played, file.elo_matches, file.elo_seeded_from or "nothing", path,
+        "%s %d fixtures (%d played) from %d elo matches seeded by %s -> %s",
+        "wrote" if changed else "unchanged:", len(file.fixtures), played, file.elo_matches, file.elo_seeded_from or "nothing", path,
     )
 
 
@@ -108,11 +137,23 @@ def cmd_golden(args: argparse.Namespace) -> None:
     self-contained: it embeds the values its answers were computed over,
     because the TypeScript side cannot read the gitignored panel."""
     file = build_golden_spearman(panel_path=Path(args.out) / "panel.parquet")
-    path = write_json(file.model_dump_json(indent=2), "golden_spearman.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(indent=2), "golden_spearman.json", Path(args.out))
     computable = sum(1 for p in file.pairs if p.rho is not None)
     logger.info(
-        "wrote %d golden pairs (%d computable) over %d samples -> %s",
-        len(file.pairs), computable, len(file.samples), path,
+        "%s %d golden pairs (%d computable) over %d samples -> %s",
+        "wrote" if changed else "unchanged:", len(file.pairs), computable, len(file.samples), path,
+    )
+
+
+def cmd_timeseries(args: argparse.Namespace) -> None:
+    """Per-player market history (§5.4.8). A build artifact like the
+    panel, and gitignored for the same reason."""
+    df = build_timeseries()
+    path = write_timeseries(df, Path(args.out))
+    size_mb = path.stat().st_size / 1_048_576
+    logger.info(
+        "wrote timeseries: %d rows x %d cols over %d snapshot(s), %.2f MB -> %s",
+        df.height, df.width, df["snapshot_ts"].n_unique(), size_mb, path,
     )
 
 
@@ -123,6 +164,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_scorecard(args)
     cmd_fixtures(args)
     cmd_golden(args)
+    cmd_timeseries(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -136,6 +178,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("scorecard").set_defaults(func=cmd_scorecard)
     subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
     subparsers.add_parser("golden").set_defaults(func=cmd_golden)
+    subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

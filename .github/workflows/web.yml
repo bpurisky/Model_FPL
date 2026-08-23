@@ -1,0 +1,72 @@
+name: web
+
+# §5.12. The committed exports (§5.3.4) are what let a fresh clone render
+# Correlation Lab, Comparison, Explorer, Model Board and Scorecard with no
+# pipeline run — but only while they are current, and until now nothing
+# regenerated them. `fixtures.json` already drifted once inside a single
+# day as gameweek 1's matches were played and Elo moved with them.
+on:
+  # After the collector, not on a clock of its own: every input that moves
+  # hourly (fixtures, prices, ownership) moves because the collector moved
+  # it, so its completion is the real signal that there is anything new to
+  # export.
+  workflow_run:
+    workflows: ["collect"]
+    types: [completed]
+  push:
+    branches: [main]
+    # Code changes that cannot change the numbers should not rebuild them.
+    paths:
+      - "web/export/**"
+      - "analytics/**"
+      - "backtest/**"
+      - "config/frontend.yaml"
+      - "data/historical/**"
+      - ".github/workflows/web.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: web
+  cancel-in-progress: false
+
+jobs:
+  export:
+    # A failed collector run has nothing new to say, and re-exporting on it
+    # would republish the same numbers under a fresh timestamp.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+
+      # The suite is the contract check. §5.12 wants the build to fail
+      # loudly rather than degrade silently, and the export tests are what
+      # catch a registry that no longer matches the panel or a schema.ts
+      # that has drifted from contract.py — both of which would otherwise
+      # publish a well-formed file the app reads wrongly.
+      - run: uv run pytest tests/test_export_columns.py tests/test_export_contract.py tests/test_schema_ts.py -q
+
+      - run: uv run python -m web.export all
+
+      # panel.parquet and timeseries.parquet are build artifacts (§5.3.4).
+      # Published for the routes that need them rather than committed —
+      # they are gitignored, so the `git add` below cannot pick them up.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-parquet
+          path: data/web/v1/*.parquet
+          retention-days: 14
+
+      - name: Commit the exports that changed
+        run: |
+          git config user.name "fpl-trends-web"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/web/v1
+          # `web.export` rewrites a file only when its numbers change
+          # (see __main__.write_json), so a no-op run stages nothing and
+          # this commits nothing rather than churning five files an hour.
+          git diff --staged --quiet || git commit -m "web/export: refresh $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

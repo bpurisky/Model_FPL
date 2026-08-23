@@ -529,6 +529,30 @@ Three findings from that work worth carrying forward:
 
 384 tests pass, 1 skipped (the real-freeze immutability check, until the first freeze lands), up from 259 at the start of 2026-08-23.
 
+### Phase 5A export sprint — 2026-08-23 (later)
+
+**Seven of the nine export files exist.** Added this pass: `golden_spearman.json`, `timeseries.parquet`, the current-season panel append, `web/app/src/data/schema.ts`, and `.github/workflows/web.yml`. Remaining: `players.json` (date-blocked) and `board.json` (design-blocked) — see "What to do next".
+
+**A silent failure that would have fired on Tuesday.** `papertrade/actuals.py`'s store is `squad/live.py`'s train schema — it carries all seventeen per-90 source columns and none of the panel's fixture context, because `/event/{gw}/live/` does not serve it. Appending it to the panel raises nothing: `diagonal_relaxed` fills the gaps with null, which is honest for most of them. **It is not honest for `n_fixtures`**, which `normalize.with_season_to_date` cumulative-sums and `eligible_mask` compares against — a null propagates through both, every 2026-27 player falls out of the reference population, and the entire current season carries null z-scores, null percentiles and null `n`. A panel that looks complete, builds green, and has no normalized values for the only season anyone is playing.
+
+`web/export/current.py` derives what the store cannot carry, from committed data: `n_fixtures`/`opponent_team`/`was_home`/`kickoff_time` from `data/reference/fixtures.parquet` (a double takes the first fixture, matching the archive — verified against 2023-24 gw7's Burnley rows), and `value` as the price in force at that gameweek's deadline, recovered from the delta-only distilled tier. `build_panel` now loads and enriches it automatically, because the alternative is a manual step nobody remembers on the morning the first gameweek is recorded. Both the bug and the fix are regression-tested against a synthetic store and the real reference data.
+
+`selected` stays **null** for current-season rows, and that is a real gap rather than a choice: the panel's `selected` is a squad *count* (0–9.5M across the archive) and distilled records `selected_by_percent`. Converting needs bootstrap-static's `total_players`, which nothing collects. A percentage written into a column the registry declares as a count would render confidently and wrongly on every chart touching it. **Fixing it properly is a one-field collector change** and is worth doing.
+
+**The export was not reproducible, and that is now fixed.** Two builds of identical committed data produced different `scorecard.json` calibration means — differing in the last one to three digits, because polars aggregates groups in parallel and floating-point summation order varies. That makes a published number untraceable to the code that produced it (§5.3.1) and would have made the deploy workflow commit noise forever. `contract.json_safe` now rounds to twelve **significant** digits (not decimal places — a p-value here is legitimately 2.9e-119, and twelve decimals would publish it as certainty). Four orders of magnitude finer than §5.6.1's 1e-9 tolerance.
+
+`web/export/__main__.write_json` also became idempotent: it rewrites a file only when the body changes, ignoring `generated_at` and `model_git_sha`. Leaving the older sha when nothing moved is the more truthful record — if the numbers did not change, the earlier commit is the one that produced them. Verified: a full rebuild now reports all five committed files unchanged.
+
+**`golden_spearman.json`** — 455 pairs, 385 with a computed rho, well past §5.6.1's floor of 50. Self-contained by necessity: `spearman.ts` needs inputs to compute from and cannot read the gitignored panel, and §5.14.8 requires a fresh clone to work, so every value the goldens were computed over is embedded. The subtle part is that **rho is computed from the rounded values in the file**, not the full-precision ones behind them — the TS reads six decimals, so a rho derived from seventeen would disagree in the tenth decimal and 1e-9 would fail for reasons unrelated to the port. Ties and nulls are deliberately left in the sample; they are where a reimplementation breaks.
+
+**`web/app/src/data/schema.ts`** — the zod mirror, hand-written per §5.3.1, with `tests/test_schema_ts.py` parsing it and comparing against `contract_shape()`. It runs in the Python suite because the boundary needs guarding from today and the TS toolchain arrives at 5B. Verified to fail on a single dropped `.nullable()`. Generating the mirror was permitted and deliberately not done — a generated mirror agrees by construction and catches nothing.
+
+**`.github/workflows/web.yml`** — §5.12, and it was missing entirely: nothing regenerated the committed exports, and `fixtures.json` had already drifted inside one day as gameweek 1's matches were played. Triggers on collector completion (the only thing that moves the hourly inputs), on pushes that touch code able to change the numbers, and manually. Runs the contract tests before exporting, publishes the parquets as artifacts, and commits only what changed.
+
+Also closed §5.14.4's missing half: a test that every column in the built panel has a `columns.json` entry, with `cum_minutes`/`cum_fixtures` named as deliberately internal. §5.11.1 calls this the most likely silent breakage in the whole system; only the registry-to-panel direction was covered before.
+
+435 tests pass, 1 skipped.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
@@ -568,12 +592,25 @@ This section replaces the previous "Before continuing Phase 4" list, three of wh
 
 **Then, in this order:**
 
-3. **`golden_spearman.json`** — historical, unblocked, and small: §5.6.1 wants ≥50 metric pairs and `correlations.json` already holds 455. It is a hard CI dependency for milestone 5C (frontend §5.14.2), so landing it early costs nothing and removes a blocker.
-4. **`web/app/src/data/schema.ts`** — the zod half of frontend §5.12.2. Writable now against `contract_shape()`, which is already tested and now describes nullable fields correctly. It is the natural bridge into 5B.
-5. **`timeseries.parquet`** — 51 distilled shards are committed; unblocked today.
-6. **`players.json`** — once Tuesday's actuals land.
-7. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap. **Not urgent, and this is checkable rather than hopeful:** `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so baseline predictions for gw2–gw13 can be computed at any later date and still be point-in-time correct. Nothing is lost by waiting. Best built around gw4–5, when there is enough live data to test it against. Contrast criteria 3 and 4, which genuinely needed instrumentation before the gameweeks accumulated — and already have it.
-8. **`board.json`** — blocked on Tuesday's data *and* on the decision below.
+3. ~~`golden_spearman.json`~~, ~~`schema.ts`~~, ~~`timeseries.parquet`~~ — done in the export sprint above.
+4. **`players.json`** — the last date-blocked file. Needs `data/current_season/`: trailing actuals and projections both require per-player match stats, which neither `data/reference/` nor `data/distilled/` carries. Buildable the day after the first `record-actuals`.
+5. **Collect `total_players`** — one field from bootstrap-static into the reference tier. It is what turns the panel's `selected` from null into the squad count the registry declares, for the current season and every season after it. Small, and the longer it waits the more gameweeks are permanently missing it (§0.1).
+6. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap, and retrofittable: `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so gw2–gw13 can be computed later and still be point-in-time correct. Best built around gw4–5.
+7. **`board.json`** — blocked on the two design decisions below, not on data.
+
+**Two design decisions block `board.json`, and neither is a data problem:**
+
+**(a) §5.4.6's Rising and Declining buckets have no measurable edge.** The spec asserts Rising "is the bucket with real edge: the model's claim is that the process has improved before the output has." This repo's own measurement contradicts that: trend-slope rho is 0.01–0.02 at every window (3–10) and horizon (1–8), and the divergence definition (high underlying, low recent points) predicts *worse* forward points at rho ~= -0.04 pooled and -0.12 for DEF, because recent points carry role information (penalties, set pieces) that xGI does not see. Metric *level* does carry signal — rho 0.14 to 0.28 pooled, 0.366 for MID.
+
+§5.4.6 requires the board to publish its own hit rate, §5.4.7 gives that a permanent panel, and §5.14.14 forbids shipping placeholder data, so "build it and see" is not available. The options are: keep the board as a level-based ranking and drop the slope buckets; ship all three buckets with the measured null result displayed on the accuracy panel; or defer the board. It also blocks "Explain this", and §5.13 forbids shipping 5E without that bridge.
+
+**(b) Two of the sixteen matrix metrics do not exist yet, and both appear in §5.4.6's weight profiles.** `clean_sheet_prob` and `minutes_reliability` are registered in `columns.py` as `source: "model"` and are not computed, so `correlations.json` covers fourteen metrics rather than sixteen and the GK/DEF weight profiles reference columns that are absent.
+
+`minutes_reliability` is cheap — it is `analytics/features.py:minutes_distribution`'s existing `p_full`, reused rather than redefined, inheriting its published Brier score (0.1007 over 83,035). The only open question is whether the panel's trailing window includes the row's own gameweek (descriptive) or stops before it (point-in-time).
+
+`clean_sheet_prob` is **not** cheap and should not be improvised: it needs a team-level Poisson (P(0 goals) from a trailing expected-goals-conceded rate) plus decisions about the window, the home/away adjustment, and whether fixture difficulty enters. That is new modelling, and §5.4.6's own weights make it a load-bearing input for two positions.
+
+Note also that §5.4.6's illustrative profiles name `creativity_p90` (ICT, dead from 2026-27) and `shots_in_box_p90` (exists in no source this project has). Both are already excluded from the registry with reasons; the profiles need rewriting against metrics that exist regardless of how (a) is decided. §5.15 Q7 already says the weights are "to be tuned against backtest rather than adopted as written".
 
 **The decision that should be made before milestone 5B, not at 5E:**
 

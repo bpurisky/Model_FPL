@@ -26,6 +26,7 @@ from web.export.columns import (
     companion_keys,
     per90_expr,
 )
+from web.export.current import load_current_season
 from web.export.normalize import normalize
 
 logger = logging.getLogger("web.export.panel")
@@ -100,16 +101,23 @@ def build_panel(
     seasons: list[str] | None = None,
     historical_dir: Path = HISTORICAL_DIR,
     current: pl.DataFrame | None = None,
+    include_current: bool = True,
 ) -> pl.DataFrame:
-    """The full tidy panel across `seasons`, plus `current` if supplied.
+    """The full tidy panel across `seasons`, plus the current season.
 
-    `current` is the 2026-27 frame once `data/current_season/` exists; it
-    is passed in rather than read here so this module has no opinion about
-    whether the store is populated yet.
+    `current` is still injectable for tests. When it is not supplied and
+    `include_current` is set, the store is loaded and enriched by
+    `web/export/current.py` — automatically, because the alternative is a
+    manual step nobody remembers on the morning the first gameweek is
+    recorded, and a panel silently missing the only season anyone is
+    playing looks exactly like a complete one.
     """
     seasons = seasons if seasons is not None else available_seasons(historical_dir)
     frames = [pl.read_parquet(historical_dir / f"{s}.parquet") for s in seasons]
+    if current is None and include_current:
+        current = load_current_season()
     if current is not None and current.height:
+        logger.info("appending %d current-season row(s) to the panel", current.height)
         frames.append(current)
     if not frames:
         raise ValueError("no seasons to build a panel from")

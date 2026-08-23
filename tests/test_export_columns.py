@@ -15,6 +15,7 @@ import polars as pl
 import pytest
 
 from web.export.columns import (
+    normalizable_keys,
     DEFENSIVE_ACTIONS_FROM,
     ICT_UNTIL,
     MATRIX_METRICS,
@@ -204,3 +205,53 @@ def test_committed_columns_json_matches_the_registry():
     current = [json.loads(c.model_dump_json()) for c in REGISTRY]
 
     assert committed == current, "data/web/v1/columns.json is stale -- regenerate it"
+
+
+# --- §5.14.4's other direction ---------------------------------------------
+
+
+# The two cumulative columns `normalize.with_season_to_date` adds. They are
+# the *basis* of the minutes floor rather than a metric anyone charts, and
+# §5.7.4's tooltip states the floor rather than plotting these — so they
+# are internal to the panel and deliberately unregistered. Named here so
+# adding a third internal column has to be a decision.
+_INTERNAL_PANEL_COLUMNS = {"cum_minutes", "cum_fixtures"}
+
+
+def _exported_panel() -> pl.DataFrame:
+    """The built panel, not the raw archive `_panel()` reads.
+
+    The two are different frames and this test needs the exported one:
+    the archive carries raw stat columns that the export deliberately
+    drops in favour of the per-90 rates derived from them.
+    """
+    from web.export.panel import build_panel
+
+    return build_panel()
+
+
+def test_every_panel_column_is_accounted_for_by_the_registry():
+    """§5.14.4, and §5.11.1 calls it the most likely silent breakage in
+    the whole system.
+
+    The other direction was already covered: every registry entry maps to
+    a real column. This is the half that catches a column arriving in the
+    panel with no definition, no `higher_is_better` and no
+    `position_relevance` — which the builder would still offer, the mark
+    inference would still type, and every tooltip would render blank.
+    """
+    registry = by_key()
+    companions = {c for key in normalizable_keys() for c in companion_keys(key)}
+
+    unaccounted = set(_exported_panel().columns) - set(registry) - companions - _INTERNAL_PANEL_COLUMNS
+
+    assert not unaccounted, (
+        f"panel columns with no columns.json entry: {sorted(unaccounted)} — "
+        "add a registry entry or declare it internal"
+    )
+
+
+def test_the_internal_columns_really_are_in_the_panel():
+    """Otherwise the allowance above would quietly widen to cover columns
+    that no longer exist, and stop protecting anything."""
+    assert _INTERNAL_PANEL_COLUMNS <= set(_exported_panel().columns)
