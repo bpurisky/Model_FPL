@@ -20,8 +20,10 @@ from pathlib import Path
 from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
 from web.export.correlations import build_correlations
+from web.export.fixtures import build_fixtures
 from web.export.normalize import normalization_basis
 from web.export.panel import build_panel, write_panel
+from web.export.scorecard import build_scorecard
 
 logger = logging.getLogger("web.export")
 
@@ -74,10 +76,38 @@ def cmd_correlations(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_scorecard(args: argparse.Namespace) -> None:
+    """The backtest report made legible (§5.4.7). Committed per §5.3.4.
+
+    Independent of `panel.parquet`: it rebuilds the walk-forward from
+    `data/historical/`, which is committed, so this one stands alone.
+    """
+    file = build_scorecard()
+    path = write_json(file.model_dump_json(indent=2), "scorecard.json", Path(args.out))
+    logger.info(
+        "wrote %d rows over %d models x %d seasons -> %s",
+        len(file.rows), len(file.models), len(file.seasons), path,
+    )
+
+
+def cmd_fixtures(args: argparse.Namespace) -> None:
+    """Elo difficulty beside FPL's static rating (§4.3). Committed per
+    §5.3.4, and independent of `panel.parquet`."""
+    file = build_fixtures()
+    path = write_json(file.model_dump_json(indent=2), "fixtures.json", Path(args.out))
+    played = sum(1 for f in file.fixtures if f.played)
+    logger.info(
+        "wrote %d fixtures (%d played) from %d elo matches seeded by %s -> %s",
+        len(file.fixtures), played, file.elo_matches, file.elo_seeded_from or "nothing", path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
     cmd_correlations(args)
+    cmd_scorecard(args)
+    cmd_fixtures(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -88,6 +118,8 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("columns").set_defaults(func=cmd_columns)
     subparsers.add_parser("panel").set_defaults(func=cmd_panel)
     subparsers.add_parser("correlations").set_defaults(func=cmd_correlations)
+    subparsers.add_parser("scorecard").set_defaults(func=cmd_scorecard)
+    subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

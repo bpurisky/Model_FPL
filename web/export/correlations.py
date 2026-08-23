@@ -46,7 +46,6 @@ than a labelled one.
 from __future__ import annotations
 
 import logging
-import math
 from itertools import combinations
 from pathlib import Path
 
@@ -59,6 +58,7 @@ from web.export.contract import (
     CorrelationsFile,
     GroupSummary,
     build_header,
+    json_safe,
 )
 from web.export.normalize import load_frontend_config, minutes_floor
 
@@ -69,21 +69,6 @@ PANEL_PATH = Path("data/web/v1/panel.parquet")
 # "all" first: it is the union, and the UI renders the filter in this order.
 POSITIONS = ["GK", "DEF", "MID", "FWD"]
 GROUPS = ["all", *POSITIONS]
-
-
-def _finite(value: float | None) -> float | None:
-    """NaN and infinity are not JSON, and `float('nan')` serializes to a
-    bare `NaN` token that `JSON.parse` rejects outright.
-
-    They are also not the same claim as a number. `spearman` returns NaN
-    for a degenerate input -- fewer than two pairs, or a metric with no
-    spread -- and that means "no correlation is defined here", which is
-    §5.3.3's null, not a zero.
-    """
-    if value is None:
-        return None
-    value = float(value)
-    return value if math.isfinite(value) else None
 
 
 def complete_pairs(x: pl.Series, y: pl.Series) -> tuple[pl.Series, pl.Series]:
@@ -181,9 +166,9 @@ def correlate_group(df: pl.DataFrame, metrics: list[str], group: str) -> list[di
                 "group": group,
                 "a": a,
                 "b": b,
-                "rho": _finite(stats["rho"]),
+                "rho": json_safe(stats["rho"]),
                 "n": int(stats["n"]),
-                "p_value": _finite(stats["p_value"]),
+                "p_value": json_safe(stats["p_value"]),
             }
         )
     return cells

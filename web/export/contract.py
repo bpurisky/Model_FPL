@@ -23,6 +23,7 @@ truthful without re-deriving it in TypeScript, which §5.6 forbids.
 
 from __future__ import annotations
 
+import math
 from datetime import datetime, timezone
 from typing import Any, Literal, get_args, get_origin
 
@@ -170,6 +171,167 @@ class CorrelationsFile(_Strict):
     cells: list[CorrelationCell]
 
 
+class PositionSpearman(_Strict):
+    """Within-position rank correlation for one model, one slice.
+
+    Carried per position rather than as a single pooled figure because
+    pooling positions is the §5.7.1 distortion in its original form: a
+    model that only knows forwards outscore defenders would post a
+    flattering pooled rho while ranking nobody correctly inside their own
+    group, which is the only ranking an FPL manager ever acts on.
+    """
+
+    position: str
+    rho: float | None
+    n: int
+    p_value: float | None
+
+
+class ScorecardRow(_Strict):
+    """One model over one slice of the walk-forward results (§5.3.2).
+
+    `season` and `gw` are both nullable and the nulls are structural, not
+    missing data: `gw: null` is the season rollup and `season: null` is
+    the pooled-everything row. The UI reads the grain it wants by
+    filtering rather than by re-aggregating, which §5.6 forbids it doing
+    anyway.
+
+    `spearman_mean` is the unweighted mean across positions and carries no
+    p-value on purpose — `report.spearman_within_position_significance`
+    declines to invent one, because no sampling distribution describes the
+    mean of four correlations.
+    """
+
+    model: str
+    season: str | None
+    gw: int | None
+    n: int
+    mae: float | None
+    rmse: float | None
+    spearman_mean: float | None
+    spearman_by_position: list[PositionSpearman]
+
+
+class CalibrationBin(_Strict):
+    """One decile of predicted points against what actually happened.
+
+    §5.4.7 wants the diagonal drawn: a well-calibrated model tracks it,
+    and systematic departure is bias the pooled MAE hides.
+    """
+
+    model: str
+    bin: int
+    n: int
+    mean_prediction: float | None
+    mean_actual: float | None
+
+
+class EventErrorBucket(_Strict):
+    """Phase 1's error decomposition — MAE split by what kind of event
+    occurred. Kept for the scalar baselines, which have no per-component
+    prediction to compare against; the event model additionally gets the
+    true decomposition below."""
+
+    model: str
+    bucket: str
+    n: int
+    mae: float | None
+
+
+class ComponentError(_Strict):
+    """The event model's true per-component decomposition: predicted point
+    contribution against the realized one, per scoring bucket."""
+
+    component: str
+    mae: float | None
+
+
+class MinutesHead(_Strict):
+    """§4.4 evaluates the minutes head separately, on the grounds that
+    §4.2 calls it the highest-leverage and most failure-prone component.
+    Folding it into a pooled MAE would hide exactly the thing worth
+    watching."""
+
+    brier_blank: float | None
+    brier_short: float | None
+    brier_full: float | None
+    mae_expected_minutes: float | None
+    n: int
+
+
+class ScorecardFile(_Strict):
+    """`scorecard.json`.
+
+    `component_decomposition` and `minutes_head` cover the event model
+    alone — they compare predicted components against realized ones, and
+    the three scalar baselines predict a single number with no components
+    to decompose. `event_model` names which model that is rather than
+    leaving the reader to infer it.
+    """
+
+    header: Header
+    models: list[str]
+    seasons: list[str]
+    event_model: str
+    rows: list[ScorecardRow]
+    calibration: list[CalibrationBin]
+    error_by_event: list[EventErrorBucket]
+    component_decomposition: list[ComponentError]
+    minutes_head: MinutesHead
+
+
+class FixtureRow(_Strict):
+    """One fixture, with both difficulty ratings (§5.3.2, §4.3).
+
+    `difficulty_basis` is the field that keeps the two Elo figures from
+    being read as one number. A played fixture reports the rating each
+    club carried *into* it, which is what the model actually knew; an
+    unplayed one reports the rating they hold today. Both are useful and
+    they answer different questions, so the row says which it is rather
+    than leaving a planning surface to assume.
+
+    FPL's own ratings are integers 1-5 and fixed for the season; ours is
+    continuous on the same scale so the two can share an axis.
+    """
+
+    fixture: int
+    gw: int | None
+    team_h: str
+    team_a: str
+    kickoff_time: datetime | None
+    played: bool
+    team_h_difficulty: int | None
+    team_a_difficulty: int | None
+    custom_difficulty_home: float | None
+    custom_difficulty_away: float | None
+    difficulty_basis: Literal["pre_match", "current_elo"]
+
+
+class FixturesFile(_Strict):
+    """`fixtures.json`.
+
+    `elo_matches` and `elo_seeded_from` are provenance, not decoration.
+    Elo computed over eight matches and Elo computed over three seasons
+    produce the same-looking number on the same 1-5 scale, and only these
+    two fields distinguish them — `data/historical/raw/` is a restorable
+    cache rather than committed data, so a build that could not seed
+    produces a rating that means much less. The UI must be able to say so.
+    """
+
+    header: Header
+    season: str
+    elo_matches: int
+    elo_seeded_from: list[str]
+    # Clubs with no match history in the archive, whose Elo is therefore
+    # the initial rating rather than a measured one. That initial value is
+    # the league mean, so an unseeded club is rated exactly average — which
+    # systematically flatters newly promoted sides, and does it without
+    # anything looking wrong. Named here so the UI can mark those fixtures
+    # instead of rendering an assumption as a measurement.
+    unseeded_teams: list[str]
+    fixtures: list[FixtureRow]
+
+
 def build_header(
     *,
     rows: int,
@@ -198,6 +360,26 @@ def build_header(
     )
 
 
+def json_safe(value: float | None) -> float | None:
+    """NaN and infinity, turned into the null they actually mean.
+
+    Two separate reasons, and either alone would be enough. `float('nan')`
+    serializes to a bare `NaN` token that `JSON.parse` rejects, so one
+    degenerate cell takes down the whole surface rather than rendering as
+    not-applicable. And NaN is not a measurement: the statistics in
+    `backtest/report.py` return it for a degenerate input — an empty
+    group, a series with no spread, fewer than three pairs — which is
+    §5.3.3's null, never a zero.
+
+    Lives here rather than in any one exporter because it is a property of
+    the contract boundary: this is what may cross it.
+    """
+    if value is None:
+        return None
+    value = float(value)
+    return value if math.isfinite(value) else None
+
+
 def contract_shape() -> dict[str, Any]:
     """A structural description of every model in this module, for the
     §5.12.2 test that asserts `schema.ts` agrees.
@@ -209,7 +391,14 @@ def contract_shape() -> dict[str, Any]:
     than a guard.
     """
     shape: dict[str, Any] = {}
-    for model in (Header, ColumnSpec, ColumnsFile, CorrelationCell, GroupSummary, CorrelationsFile):
+    models = (
+        Header, ColumnSpec, ColumnsFile,
+        CorrelationCell, GroupSummary, CorrelationsFile,
+        PositionSpearman, ScorecardRow, CalibrationBin, EventErrorBucket,
+        ComponentError, MinutesHead, ScorecardFile,
+        FixtureRow, FixturesFile,
+    )
+    for model in models:
         fields = {}
         for name, field in model.model_fields.items():
             fields[name] = {
@@ -257,10 +446,20 @@ __all__ = [
     "CONTRACT_VERSION",
     "ColumnSpec",
     "ColumnsFile",
+    "CalibrationBin",
+    "ComponentError",
     "CorrelationCell",
     "CorrelationsFile",
+    "EventErrorBucket",
+    "FixtureRow",
+    "FixturesFile",
     "GroupSummary",
     "Header",
+    "MinutesHead",
+    "PositionSpearman",
+    "ScorecardFile",
+    "ScorecardRow",
+    "json_safe",
     "build_header",
     "contract_shape",
 ]

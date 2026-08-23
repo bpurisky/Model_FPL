@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T17:03:20.669364Z",
+    "generated_at": "2026-08-23T18:12:14.729666Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "967a9a7c448426c5279eb3703bcf10ee5a0cc1d0",
+    "model_git_sha": "63c2f878cd8915608e3b008c25096e28794968ad",
     "normalization_basis": "within_position_season_to_date_min45_per_fixture",
     "rows": 33
   },

@@ -154,6 +154,15 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "CorrelationCell",
         "GroupSummary",
         "CorrelationsFile",
+        "PositionSpearman",
+        "ScorecardRow",
+        "CalibrationBin",
+        "EventErrorBucket",
+        "ComponentError",
+        "MinutesHead",
+        "ScorecardFile",
+        "FixtureRow",
+        "FixturesFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
@@ -165,3 +174,12 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["CorrelationCell"]["rho"]["type"] == "float?"
     assert shape["CorrelationCell"]["n"]["type"] == "int"
     assert shape["CorrelationsFile"]["cells"]["type"] == "array"
+    # season and gw are nullable on purpose -- they are how a row declares
+    # which grain it rolls up to, so zod must model them as nullable too.
+    assert shape["ScorecardRow"]["season"]["type"] == "str?"
+    assert shape["ScorecardRow"]["gw"]["type"] == "int?"
+    assert shape["ScorecardRow"]["spearman_by_position"]["type"] == "array"
+    # difficulty_basis is a closed set, not free text -- the two values are
+    # different epistemic claims and zod must reject a third.
+    assert shape["FixtureRow"]["difficulty_basis"]["type"] == "union"
+    assert shape["FixtureRow"]["kickoff_time"]["type"] == "datetime?"
