@@ -20,8 +20,9 @@ output itself (§6.3's explicit instruction), not just this docstring; see
 **Degenerate freezes are excluded, not corrected.** A freeze whose
 projections are identical for every player predicted nothing, so metrics
 computed against it measure nothing — see `DEGENERATE_FREEZE_POLICY` and
-`projection_degeneracy`. This is not hypothetical: `papertrade/freezes/gw2.json`
-holds exactly 0.8 for all 600 players across all three horizon gameweeks,
+`projection_degeneracy`. This is not hypothetical: the gw2 freeze now archived at
+`tests/fixtures/degenerate_freeze/gw2.json` holds exactly 0.8 for all 600
+players across all three horizon gameweeks,
 because `collector/schemas.py:fixture_is_played` gated on the raw
 `finished` flag at the time and every player fell through to the pooled
 prior. That was caught by hand; `projection_degeneracy` is what catches
@@ -78,9 +79,9 @@ SQUAD_LEVEL_VARIANCE_WARNING = (
 )
 
 # A freeze whose projections carry no signal at all: every player assigned
-# the identical number. This is not a hypothetical -- papertrade/freezes/gw2.json
-# projects exactly 0.8 for all 600 players across all three horizon
-# gameweeks, because `fixture_is_played` gated on the raw `finished` flag
+# the identical number. This is not a hypothetical -- the gw2 freeze now
+# archived at tests/fixtures/degenerate_freeze/gw2.json projects exactly 0.8
+# for all 600 players across all three horizon gameweeks, because `fixture_is_played` gated on the raw `finished` flag
 # at the time and every player fell through to the pooled prior.
 #
 # The floor is an epsilon rather than exact zero only to absorb float

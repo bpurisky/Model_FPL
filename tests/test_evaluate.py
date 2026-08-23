@@ -172,15 +172,21 @@ def test_projection_degeneracy_treats_missing_projections_as_missing_not_degener
 
 
 def test_the_real_gw2_freeze_is_detected_as_degenerate():
-    """Not a synthetic case: papertrade/freezes/gw2.json is a real,
-    immutable freeze holding 0.8 for all 600 players, produced when
-    fixture_is_played gated on the raw `finished` flag. This is the
-    observation the guard exists to have caught automatically."""
-    freeze_path = Path("papertrade/freezes/gw2.json")
-    if not freeze_path.exists():  # pragma: no cover
-        pytest.skip("papertrade/freezes/gw2.json absent")
+    """Not a synthetic case: a real freeze holding 0.8 for all 600
+    players, written 2026-08-21T21:03Z -- seven days before its own
+    deadline and three hours after gw1 kicked off, so the model had
+    zero gameweeks of 2026-27 to train on.
 
-    result = freeze_degeneracy(2, freezes_dir=freeze_path.parent)
+    It lived at papertrade/freezes/gw2.json until it was moved here.
+    Leaving it there would have made write_freeze raise FileExistsError
+    inside gw2's real window, which cmd_freeze swallows as expected
+    steady state -- the gameweek would have been lost behind a green
+    build. Archived rather than deleted because it is the observation
+    the guard exists to have caught automatically, and a synthetic
+    fixture cannot corroborate that."""
+    freezes_dir = Path(__file__).parent / "fixtures" / "degenerate_freeze"
+
+    result = freeze_degeneracy(2, freezes_dir=freezes_dir)
 
     assert result["is_degenerate"] is True
     assert result["n_distinct"] == 1

@@ -222,8 +222,9 @@ def fixture_is_played(fixture: Mapping[str, Any]) -> bool:
     Gating "has this team played?" on `finished` alone therefore reads a
     completed match as unplayed for most of a gameweek. That is not a
     hypothetical: `squad/live.py:build_train_df` did exactly this, so every
-    player fell through to the pooled prior and `papertrade/freezes/gw2.json`
-    was frozen with one identical projection (0.8) for all 600 players.
+    player fell through to the pooled prior and the gw2 freeze (archived at
+    `tests/fixtures/degenerate_freeze/gw2.json`) was written with one
+    identical projection (0.8) for all 600 players.
 
     Deliberately NOT the right predicate for "is this gameweek's result
     final" — provisional bonus can still move. `papertrade/actuals.py`

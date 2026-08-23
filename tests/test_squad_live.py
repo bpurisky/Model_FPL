@@ -149,8 +149,9 @@ def test_train_df_includes_a_provisionally_finished_fixture():
     that way for many hours — long enough to cover the whole window in
     which a recommendation or a freeze actually gets made. Gating on
     `finished` alone put every player on the pooled prior for that entire
-    period, which is how papertrade/freezes/gw2.json ended up with one
-    identical projection for all 600 players.
+    period, which is how the freeze now archived at
+    tests/fixtures/degenerate_freeze/gw2.json ended up with one identical
+    projection for all 600 players.
     """
     bootstrap = _bootstrap()
     bootstrap_raw = {"elements": _raw_elements()}
