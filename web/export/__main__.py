@@ -21,6 +21,7 @@ from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
 from web.export.correlations import build_correlations
 from web.export.fixtures import build_fixtures
+from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.panel import build_panel, write_panel
 from web.export.scorecard import build_scorecard
@@ -102,12 +103,26 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_golden(args: argparse.Namespace) -> None:
+    """The Spearman port's CI fixtures (§5.6.1). Committed per §5.3.4, and
+    self-contained: it embeds the values its answers were computed over,
+    because the TypeScript side cannot read the gitignored panel."""
+    file = build_golden_spearman(panel_path=Path(args.out) / "panel.parquet")
+    path = write_json(file.model_dump_json(indent=2), "golden_spearman.json", Path(args.out))
+    computable = sum(1 for p in file.pairs if p.rho is not None)
+    logger.info(
+        "wrote %d golden pairs (%d computable) over %d samples -> %s",
+        len(file.pairs), computable, len(file.samples), path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
     cmd_correlations(args)
     cmd_scorecard(args)
     cmd_fixtures(args)
+    cmd_golden(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -120,6 +135,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("correlations").set_defaults(func=cmd_correlations)
     subparsers.add_parser("scorecard").set_defaults(func=cmd_scorecard)
     subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
+    subparsers.add_parser("golden").set_defaults(func=cmd_golden)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

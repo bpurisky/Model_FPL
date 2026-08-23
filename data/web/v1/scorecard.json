@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T18:12:42.999331Z",
+    "generated_at": "2026-08-23T20:57:14.180577Z",
     "source_gameweek": 38,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "63c2f878cd8915608e3b008c25096e28794968ad",
+    "model_git_sha": "7b2d06c581b8b308b1ba60492e9e56dd18e2787a",
     "normalization_basis": "walk_forward_within_position",
     "rows": 460
   },
@@ -16148,7 +16148,7 @@
       "model": "event_model",
       "bin": 7,
       "n": 8304,
-      "mean_prediction": 1.8789690281774227,
+      "mean_prediction": 1.878969028177423,
       "mean_actual": 2.155828516377649
     },
     {
@@ -16239,14 +16239,14 @@
       "model": "fpl_form_approx",
       "bin": 6,
       "n": 7928,
-      "mean_prediction": 1.0237390109663151,
+      "mean_prediction": 1.0237390109663145,
       "mean_actual": 1.617305751765893
     },
     {
       "model": "fpl_form_approx",
       "bin": 7,
       "n": 8466,
-      "mean_prediction": 1.823711661309628,
+      "mean_prediction": 1.8237116613096285,
       "mean_actual": 2.1366643042759272
     },
     {

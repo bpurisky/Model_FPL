@@ -332,6 +332,57 @@ class FixturesFile(_Strict):
     fixtures: list[FixtureRow]
 
 
+class GoldenSample(_Strict):
+    """The inputs one group's golden pairs were computed over (§5.6.1).
+
+    `rows` is a dense matrix — one list per player-season, one entry per
+    entry in `metrics`, aligned by position — rather than a list of named
+    objects, because every metric shares the same rows and repeating
+    fourteen keys per row would triple the file to say nothing new.
+
+    Nulls are real and load-bearing: four metrics do not exist before
+    2025-26, and a port that ranks a null column rather than dropping the
+    pair reproduces a failure this project has already had.
+    """
+
+    group: str
+    metrics: list[str]
+    rows: list[list[float | None]]
+
+
+class GoldenPair(_Strict):
+    """One metric pair's Python-computed answer, over the sample above.
+
+    `rho` is nullable for the same reason `CorrelationCell.rho` is — a
+    metric with no spread in the sample has no correlation to report — and
+    a port should return the same nothing rather than a zero.
+    """
+
+    group: str
+    a: str
+    b: str
+    n: int
+    rho: float | None
+
+
+class GoldenSpearmanFile(_Strict):
+    """`golden_spearman.json`.
+
+    `tolerance` and `precision` travel in the file so the TypeScript test
+    reads both from the fixture instead of keeping second copies that can
+    drift from it. `precision` is not decoration: the goldens were
+    computed *after* rounding to it, which is the only way a consumer
+    reading these numbers can reproduce these answers to 1e-9.
+    """
+
+    header: Header
+    method: str
+    tolerance: float
+    precision: int
+    samples: list[GoldenSample]
+    pairs: list[GoldenPair]
+
+
 def build_header(
     *,
     rows: int,
@@ -397,6 +448,7 @@ def contract_shape() -> dict[str, Any]:
         PositionSpearman, ScorecardRow, CalibrationBin, EventErrorBucket,
         ComponentError, MinutesHead, ScorecardFile,
         FixtureRow, FixturesFile,
+        GoldenSample, GoldenPair, GoldenSpearmanFile,
     )
     for model in models:
         fields = {}
@@ -453,6 +505,9 @@ __all__ = [
     "EventErrorBucket",
     "FixtureRow",
     "FixturesFile",
+    "GoldenPair",
+    "GoldenSample",
+    "GoldenSpearmanFile",
     "GroupSummary",
     "Header",
     "MinutesHead",
