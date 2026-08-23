@@ -26,6 +26,9 @@ from web.export.columns import (
     companion_keys,
     per90_expr,
 )
+from analytics.clean_sheet import clean_sheet_probability
+from analytics.features import trailing_minutes_reliability
+from analytics.projections import DEFAULT_MINUTES_WINDOW
 from web.export.current import load_current_season
 from web.export.normalize import normalize
 
@@ -97,6 +100,40 @@ def apply_availability(df: pl.DataFrame) -> pl.DataFrame:
     return df.with_columns(exprs) if exprs else df
 
 
+def add_model_columns(df: pl.DataFrame, difficulty: pl.DataFrame | None = None) -> pl.DataFrame:
+    """The two registry entries whose `source` is `"model"` rather than a
+    feed: `minutes_reliability` and `clean_sheet_prob`.
+
+    Both are point-in-time by construction — each describes what was
+    knowable *before* its gameweek — so they can sit in the same row as
+    the realized stats without being a leak, and the backtest that
+    produced their published scores is the same computation.
+
+    `clean_sheet_prob` is a team quantity joined onto every player of that
+    team, because a clean sheet is a team outcome. Attaching it per player
+    would imply eleven different probabilities for one event.
+
+    Difficulty comes from FPL's own published rating, carried in the
+    archive as `opponent_difficulty`, rather than from `analytics/fdr.py`'s
+    Elo. Two reasons and they agree: it measured *better* in the clean
+    sheet model (+4.23% skill against +3.79%), and it is committed data,
+    where the Elo table derives from the gitignored raw cache — so a build
+    here and a build in CI would otherwise produce different numbers for
+    the same commit.
+    """
+    df = trailing_minutes_reliability(df, DEFAULT_MINUTES_WINDOW)
+    if difficulty is None and "opponent_difficulty" in df.columns:
+        difficulty = (
+            df.group_by(["season", "gw", "team"])
+            .agg(pl.col("opponent_difficulty").mean().alias("custom_difficulty"))
+            .drop_nulls("custom_difficulty")
+        )
+    team_probs = clean_sheet_probability(df, difficulty=difficulty).select(
+        "season", "gw", "team", "clean_sheet_prob"
+    )
+    return df.join(team_probs, on=["season", "gw", "team"], how="left")
+
+
 def build_panel(
     seasons: list[str] | None = None,
     historical_dir: Path = HISTORICAL_DIR,
@@ -132,6 +169,7 @@ def build_panel(
     df = pl.concat(frames, how="diagonal_relaxed")
     df = derive_metrics(df)
     df = apply_availability(df)
+    df = add_model_columns(df)
 
     metrics = [k for k in MATRIX_METRICS if k in df.columns]
     df = normalize(df, metrics)

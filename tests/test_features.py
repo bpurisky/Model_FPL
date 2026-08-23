@@ -53,3 +53,77 @@ def test_trailing_feature_end_to_end():
     roster = pl.DataFrame([{"element_id": 1, "position": "FWD", "is_promoted_club": False}])
     result = trailing_feature(train_df, roster, target_gw=4, window=5, value_col="goals_scored")
     assert result["goals_scored_trailing"][0] == pytest.approx(1.0)
+
+
+# --- minutes_reliability (the panel's model column) ------------------------
+
+
+def test_trailing_minutes_reliability_is_point_in_time():
+    """The gameweek being described must not contribute to the rate
+    describing it, or the column would be reporting the future."""
+    from analytics.features import trailing_minutes_reliability
+
+    df = pl.DataFrame({
+        "season": ["2025-26"] * 4,
+        "element_id": [1] * 4,
+        "gw": [1, 2, 3, 4],
+        "minutes": [90, 90, 0, 90],
+    })
+
+    out = trailing_minutes_reliability(df, window=3).sort("gw")
+
+    assert out["minutes_reliability"][0] is None, "nothing precedes the first gameweek"
+    assert out["minutes_reliability"][1] == pytest.approx(1.0)
+    assert out["minutes_reliability"][2] == pytest.approx(1.0), "the blank has not happened yet"
+    assert out["minutes_reliability"][3] == pytest.approx(2 / 3)
+
+
+def test_trailing_minutes_reliability_matches_minutes_distribution():
+    """It is `minutes_distribution`'s `p_full` evaluated for every row at
+    once. Reused rather than redefined, so the exported column inherits
+    that head's published Brier score instead of becoming a second,
+    unvalidated statistic — this is what pins the two together."""
+    from analytics.features import minutes_distribution, trailing_minutes_reliability
+
+    df = pl.DataFrame({
+        "season": ["2025-26"] * 6,
+        "element_id": [7] * 6,
+        "gw": [1, 2, 3, 4, 5, 6],
+        "minutes": [90, 30, 90, 0, 75, 90],
+    })
+
+    vectorized = trailing_minutes_reliability(df, window=3).sort("gw")
+    for target_gw in range(2, 7):
+        reference = minutes_distribution(df, upto_gw=target_gw - 1, window=3)
+        expected = reference.filter(pl.col("element_id") == 7)["p_full"][0]
+        actual = vectorized.filter(pl.col("gw") == target_gw)["minutes_reliability"][0]
+        assert actual == pytest.approx(expected), f"disagreed at gw{target_gw}"
+
+
+def test_a_player_with_no_history_is_null_not_zero():
+    """A player with no history is not a player who never plays (§5.3.3)."""
+    from analytics.features import trailing_minutes_reliability
+
+    df = pl.DataFrame({
+        "season": ["2025-26"], "element_id": [1], "gw": [1], "minutes": [90],
+    })
+
+    assert trailing_minutes_reliability(df, window=3)["minutes_reliability"][0] is None
+
+
+def test_the_season_boundary_resets_the_window():
+    """Partitioned by season as well as player: last May's minutes say
+    nothing about a new campaign, and a window straddling the boundary
+    would carry them in."""
+    from analytics.features import trailing_minutes_reliability
+
+    df = pl.DataFrame({
+        "season": ["2024-25", "2024-25", "2025-26"],
+        "element_id": [1, 1, 1],
+        "gw": [37, 38, 1],
+        "minutes": [90, 90, 90],
+    })
+
+    out = trailing_minutes_reliability(df, window=3).sort(["season", "gw"])
+
+    assert out["minutes_reliability"][2] is None, "the new season starts unknown"

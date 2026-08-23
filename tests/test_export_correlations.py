@@ -14,6 +14,7 @@ import polars as pl
 import pytest
 
 from backtest.report import spearman_with_significance
+from web.export.columns import MATRIX_METRICS
 from web.export.correlations import (
     GROUPS,
     build_correlations,
@@ -248,15 +249,24 @@ def test_only_the_all_group_is_flagged_mixed_position():
     assert [g.key for g in file.groups if g.mixed_position] == ["all"]
 
 
-def test_registered_metrics_missing_from_the_panel_are_omitted_not_nulled():
-    """`clean_sheet_prob` and `minutes_reliability` are registered as
-    `source: "model"` and not yet computed. A null cell for an unwritten
-    model head would dress a build gap as a measurement gap, and §5.3.3's
-    null means the second. The file names what it covers instead."""
+def test_the_matrix_covers_every_registered_metric():
+    """§5.15 Q2's sixteen, all present.
+
+    This test previously asserted the opposite — that `clean_sheet_prob`
+    and `minutes_reliability` were *absent*, because both were registered
+    as `source: "model"` and not computed, and a null cell for an unwritten
+    model head would have dressed a build gap as a measurement gap. Both
+    now exist (`analytics/clean_sheet.py` and
+    `features.trailing_minutes_reliability`), so the guard flips: the file
+    must cover the whole registry, and a metric quietly dropping out of it
+    is the failure now worth catching.
+    """
     file = _real()
 
-    assert "clean_sheet_prob" not in file.metrics
-    assert not [c for c in file.cells if "clean_sheet_prob" in (c.a, c.b)]
+    assert set(file.metrics) == set(MATRIX_METRICS)
+    assert len(file.metrics) == 16
+    for key in ("clean_sheet_prob", "minutes_reliability"):
+        assert [c for c in file.cells if key in (c.a, c.b)], f"{key} has no cells"
 
 
 def test_the_basis_and_threshold_travel_in_the_file():

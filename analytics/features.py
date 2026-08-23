@@ -73,3 +73,32 @@ def trailing_feature(df: pl.DataFrame, target_roster: pl.DataFrame, target_gw: i
     trailing = trailing_mean(df, target_gw - 1, window, value_col).drop("n_games")
     joined = target_roster.join(trailing, on="element_id", how="left")
     return fill_missing_with_pooled_prior(joined, df, target_gw, value_col)
+
+
+def trailing_minutes_reliability(
+    df: pl.DataFrame, window: int, short_threshold: int = 60
+) -> pl.DataFrame:
+    """Per-row point-in-time `p_full`: the share of the previous `window`
+    gameweeks in which this player reached `short_threshold` minutes.
+
+    The same definition as `minutes_distribution`'s `p_full`, evaluated for
+    every row at once instead of for one gameweek at a time — the panel
+    needs it across three seasons and 85,000 rows, and calling the
+    gameweek-at-a-time version in a loop would rebuild the same frame 114
+    times. Reused rather than redefined so the exported column inherits
+    that head's published Brier score (0.1007 over 83,035 predictions)
+    instead of quietly becoming a second, unvalidated statistic.
+
+    `shift(1)` is what keeps it point-in-time (§0.3): the gameweek being
+    described must not contribute to the rate describing it. The first
+    gameweek of a player's season is therefore null — unknown, not zero,
+    since a player with no history is not a player who never plays.
+    """
+    return df.sort(["season", "element_id", "gw"]).with_columns(
+        (pl.col("minutes") >= short_threshold)
+        .cast(pl.Float64)
+        .shift(1)
+        .rolling_mean(window, min_samples=1)
+        .over(["season", "element_id"])
+        .alias("minutes_reliability")
+    )

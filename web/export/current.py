@@ -55,8 +55,8 @@ DISTILLED_DIR = Path("data/distilled")
 
 # The eight columns `papertrade/actuals.py` cannot serve, in panel order.
 DERIVED_CONTEXT = [
-    "season", "name", "opponent_team", "was_home",
-    "kickoff_time", "n_fixtures", "value", "selected",
+    "season", "name", "opponent_team", "was_home", "kickoff_time",
+    "n_fixtures", "value", "selected", "opponent_difficulty",
 ]
 
 
@@ -109,6 +109,11 @@ def fixture_context(reference_dir: Path = REFERENCE_DIR) -> pl.DataFrame:
                 pl.col(other).replace_strict(names, default=None).alias("opponent_team"),
                 pl.lit(home).alias("was_home"),
                 pl.col("kickoff_time"),
+                # FPL publishes difficulty per side; each team's own is the
+                # one for the fixture *it* faces.
+                pl.col("team_h_difficulty" if home else "team_a_difficulty")
+                .cast(pl.Float64)
+                .alias("opponent_difficulty"),
             )
         )
 
@@ -118,6 +123,9 @@ def fixture_context(reference_dir: Path = REFERENCE_DIR) -> pl.DataFrame:
         pl.col("opponent_team").first(),
         pl.col("was_home").first(),
         pl.col("kickoff_time").first(),
+        # Mean across a double, matching backtest/backfill.py's own
+        # aggregation so current-season rows join the archive's scale.
+        pl.col("opponent_difficulty").mean(),
     )
 
 

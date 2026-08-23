@@ -553,6 +553,47 @@ Also closed §5.14.4's missing half: a test that every column in the built panel
 
 435 tests pass, 1 skipped.
 
+### The two model columns, and a second null result on momentum — 2026-08-23 (later still)
+
+**`clean_sheet_prob` is built** (`analytics/clean_sheet.py`), and the sixteen-metric matrix (§5.15 Q2) is complete for the first time — `correlations.json` went from 455 cells over 14 metrics to 600 over 16.
+
+It is a team quantity throughout, because a clean sheet is a team outcome: attaching a per-player probability would imply eleven different answers to one event. FPL's 60-minute credit is a minutes question and `minutes_reliability` already carries it.
+
+Poisson on goals conceded, `P(CS) = exp(-lambda)`. The assumption was checked, not assumed: at the league mean Poisson gives P(0)=0.2243 against an empirical 0.2303. `lambda` is a product of measured ratios — no optimizer, none of which the locked stack provides — and every exponent was chosen by sweeping Brier score over the archive:
+
+    lambda = shrunk trailing xGC x home/away^0.25 x (opponent trailing xG / league)^0.5
+             x (FPL difficulty / 3)^0.5, blended toward head-to-head, x calibration
+
+**Measured: Brier 0.17056 against 0.17727 for the base rate, skill +3.79%**, calibrated across the range (predicted 0.110/0.172/0.219/0.268/0.368 by quintile against actual 0.126/0.181/0.209/0.282/0.355). Real but modest, and it should be read that way — clean sheets are close to a coin weighted by fixture.
+
+Four things worth carrying forward:
+
+- **Shrinkage toward the league mean was the single biggest term**, +0.78% to +2.11% on its own. Early season is when this model is most used and least informed.
+- **Every factor needed damping below exponent 1.** The opponent-attack term at full strength *loses* to the constant base rate (0.17430 against 0.17636); at the square root it gains. Each factor is a ratio of two noisy trailing estimates and the raw ratio over-swings lambda.
+- **Head-to-head is real**, and was the largest addition after shrinkage (+3.96% to +4.35% on the tuning subset). Prior meetings between two clubs carry information neither side's general form does.
+- **FPL's published difficulty beat our own Elo** (+4.23% against +3.79%) *and* it is committed data, where the Elo table derives from the gitignored raw cache. Using Elo would have made a local build and a CI build produce different numbers for the same commit. `web/export/current.py` now carries `opponent_difficulty` through from the reference fixtures so the current season joins the same scale.
+
+**`minutes_reliability` is built** as `features.trailing_minutes_reliability` — `minutes_distribution`'s existing `p_full`, vectorized across the whole panel instead of rebuilt 114 times, so the exported column inherits that head's published Brier (0.1007 over 83,035) rather than becoming a second unvalidated statistic. A test asserts the two agree gameweek by gameweek.
+
+**Momentum has no edge, measured a second time and against a specific brief.** The proposal was: a consistent rise in xG / assists / DefCon / involvements across three games, the model applied through a shorter lens, current season only. Every form of it was tested over 8,753 player-gameweeks, forward outcome = mean points over the next three:
+
+| definition of Rising | n | forward pts | lift |
+| --- | --- | --- | --- |
+| monotone rise over 3 games | 1450 | 3.156 vs 3.248 | **-0.092** |
+| short(3) mean > long(6) mean | 4370 | 3.235 vs 3.230 | +0.005 |
+| short(3) **level**, top quartile | 2188 | 3.736 vs 3.065 | **+0.671** |
+| monotone rise AND top-quartile level | 366 | 3.855 vs 3.206 | +0.650 |
+
+A consistent three-game rise predicts *slightly worse* forward points, and adding it to the level filter makes that filter worse (0.650 against 0.671) while cutting the population six-fold. Declining behaves the same way in reverse: a monotone fall gives +0.061, the wrong direction, while bottom-quartile level gives -0.701.
+
+**And the shorter lens is the wrong direction.** Top-quartile level on a 3-game window lifts +0.682; on 6 games +0.712; on 10 games **+0.842**. Longer is better, so what the level filter measures is quality, not form.
+
+Adding DefCon to the composite as the brief specified helps DEF marginally (-0.034 to +0.065 in 2025-26) and does not change the conclusion. The edge that exists is concentrated in MID (+1.090) and FWD (+0.562); DEF is near zero (+0.087).
+
+**This is now two independent measurements agreeing** — the earlier trend-slope test (rho 0.01-0.02 at every window and horizon) and this one against a different, stronger definition. `board.json` is still not written, and the shape of §5.4.6 remains the open decision.
+
+454 tests pass, 1 skipped.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

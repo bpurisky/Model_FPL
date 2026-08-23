@@ -167,11 +167,16 @@ def test_a_double_gameweek_counts_two_and_takes_the_first_fixture(tmp_path):
             "team_h": [1, 2],
             "team_a": [2, 1],
             "kickoff_time": [kickoff + timedelta(days=2), kickoff],
+            # Alpha faces 2 at home in the first and 5 away in the second,
+            # so the mean is a real average rather than a repeated value.
+            "team_h_difficulty": [2, 3],
+            "team_a_difficulty": [4, 5],
         },
         schema={
             "id": pl.Int64, "event": pl.Int64, "team_h": pl.Int64,
             "team_a": pl.Int64,
             "kickoff_time": pl.Datetime(time_unit="us", time_zone="UTC"),
+            "team_h_difficulty": pl.Int64, "team_a_difficulty": pl.Int64,
         },
     ).write_parquet(reference / "fixtures.parquet")
     pl.DataFrame({"id": [1, 2], "name": ["Alpha", "Beta"]}).write_parquet(
@@ -183,6 +188,9 @@ def test_a_double_gameweek_counts_two_and_takes_the_first_fixture(tmp_path):
     assert context["n_fixtures"].to_list() == [2]
     assert context["kickoff_time"][0] == kickoff, "the earlier fixture wins"
     assert context["was_home"][0] is False, "and its venue comes with it"
+    # FPL publishes difficulty per side; a double averages the two, matching
+    # backtest/backfill.py's own aggregation.
+    assert context["opponent_difficulty"][0] == pytest.approx(3.5)
 
 
 def test_price_uses_the_last_snapshot_at_or_before_the_deadline(tmp_path):
