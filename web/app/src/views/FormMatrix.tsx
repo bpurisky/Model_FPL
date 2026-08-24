@@ -397,7 +397,20 @@ export function FormMatrix() {
           extreme={extreme}
           direction={direction}
           spec={spec}
-          onSelect={(id) => dispatch({ type: "toggleSelect", id })}
+          onSelect={(id) => {
+            /*
+             * §5.4.3: "row click opens that player in Comparison." The
+             * selection is app-level (§5.5.3) so it survives the
+             * navigation, and `toggleSelect` means clicking a player
+             * already on the board removes him rather than opening a
+             * comparison of one — which is what a reader assembling a
+             * shortlist across two surfaces expects.
+             */
+            dispatch({ type: "toggleSelect", id });
+            if (!state.selection.includes(id)) {
+              dispatch({ type: "navigate", view: "compare" });
+            }
+          }}
           selected={state.selection}
         />
       )}
@@ -470,7 +483,7 @@ function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected }:
                   type="button"
                   className={styles.playerButton}
                   onClick={() => onSelect(row.id)}
-                  title={`${row.name} — ${row.team}, ${row.position}. ${row.played} of ${row.cells.size} fixtures played.`}
+                  title={`${row.name} — ${row.team}, ${row.position}. ${row.played} of ${row.cells.size} fixtures played. Opens in Comparison.`}
                 >
                   <span className={styles.playerName}>{row.name}</span>
                   <span className={styles.playerMeta}>
