@@ -22,14 +22,25 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Provenance } from "../components/Provenance";
-import { loadBoard, loadScorecard, type LoadProgress } from "../data/load";
-import type { BoardFile, ScorecardFile, ScorecardRow } from "../data/schema";
+import { loadBoard, loadScorecard, loadShrinkage, type LoadProgress } from "../data/load";
+import type {
+  BoardFile,
+  ScorecardFile,
+  ScorecardRow,
+  ShrinkageFile,
+} from "../data/schema";
+import { ShrinkagePanel } from "./ShrinkagePanel";
 import styles from "./Scorecard.module.css";
 
 type State =
   | { status: "loading"; progress: LoadProgress | null }
   | { status: "error"; error: Error }
-  | { status: "ready"; scorecard: ScorecardFile; board: BoardFile | null };
+  | {
+      status: "ready";
+      scorecard: ScorecardFile;
+      board: BoardFile | null;
+      shrinkage: ShrinkageFile | null;
+    };
 
 const MODEL_LABELS: Record<string, string> = {
   event_model: "Event model",
@@ -59,8 +70,13 @@ export function Scorecard() {
         );
         // The board is a bonus panel here; its absence must not cost the
         // backtest results.
-        const board = await loadBoard().catch(() => null);
-        if (!cancelled) setData({ status: "ready", scorecard, board });
+        // Both are extra panels here; neither absence may cost the
+        // backtest results the surface exists for.
+        const [board, shrinkage] = await Promise.all([
+          loadBoard().catch(() => null),
+          loadShrinkage().catch(() => null),
+        ]);
+        if (!cancelled) setData({ status: "ready", scorecard, board, shrinkage });
       } catch (error) {
         if (!cancelled) setData({ status: "error", error: error as Error });
       }
@@ -83,7 +99,7 @@ export function Scorecard() {
   if (data.status === "loading") return <Loading progress={data.progress} />;
   if (data.status === "error") return <Failed error={data.error} />;
 
-  const { scorecard, board } = data;
+  const { scorecard, board, shrinkage } = data;
   const best = bestBaseline(headline, scorecard.event_model);
   const event = headline.find((row) => row.model === scorecard.event_model);
 
@@ -262,6 +278,8 @@ export function Scorecard() {
           />
         </ul>
       </section>
+
+      {shrinkage && <ShrinkagePanel file={shrinkage} />}
 
       {board && <BoardAccuracy board={board} />}
     </main>

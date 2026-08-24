@@ -453,6 +453,53 @@ class GoldenReductionsFile(_Strict):
     cases: list[ReductionCase]
 
 
+class ShrinkagePoint(_Strict):
+    """One shrinkage value, and what the model scored at it (§5.4.7).
+
+    `beats_mae_bar` and `beats_spearman_bar` are computed here rather than
+    left to the surface. Both are comparisons against a baseline the
+    browser does not hold, and §5.6 wants a verdict the export reached
+    rather than one a view inferred from two numbers.
+    """
+
+    shrinkage: float
+    mae: float | None
+    spearman_mean: float | None
+    spearman_focus: float | None
+    n: int
+    beats_mae_bar: bool
+    # §4.4's stated criterion is "within-position rank correlation",
+    # which the scorecard reports as the unweighted mean across
+    # positions. That is this flag.
+    beats_spearman_bar: bool
+    # The ablation in `analytics/projections.py` frames the same trade on
+    # DEF alone, because that is where the damage is "entirely
+    # concentrated". Both readings are recorded because they disagree,
+    # and which one a reader cares about is not this file's call.
+    beats_focus_bar: bool
+
+
+class ShrinkageFile(_Strict):
+    """`shrinkage.json` — the goals-conceded plateau, measured.
+
+    The baselines travel with the sweep because a plateau is only a
+    plateau relative to something: §4.4's two bars are the best baseline
+    MAE and `fixture_adjusted_trailing_mean`'s within-position Spearman
+    for defenders, and a panel drawing the curve without them would be
+    drawing a shape with no argument attached.
+    """
+
+    header: Header
+    default: float
+    focus_position: str
+    baseline_mae: float | None
+    baseline_mae_model: str
+    baseline_spearman_mean: float | None
+    baseline_spearman_focus: float | None
+    baseline_spearman_model: str
+    points: list[ShrinkagePoint]
+
+
 class PositionWeights(_Strict):
     """One position's composite profile (§5.4.6).
 
@@ -766,6 +813,7 @@ def contract_shape() -> dict[str, Any]:
         FixtureRow, FixturesFile,
         GoldenSample, GoldenPair, GoldenSpearmanFile,
         ReductionCase, GoldenReductionsFile,
+        ShrinkagePoint, ShrinkageFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
         SeasonSummary, ObservationRow, ObservationsFile,
@@ -846,6 +894,8 @@ __all__ = [
     "PositionWeights",
     "ReductionCase",
     "ScorecardFile",
+    "ShrinkageFile",
+    "ShrinkagePoint",
     "ScorecardRow",
     "SeasonSummary",
     "json_safe",

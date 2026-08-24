@@ -1104,6 +1104,91 @@ mid-clause. Prose lays out as prose.
 146 frontend tests pass, 500 Python tests pass. Initial bundle 76.6 KB
 gzipped against §5.9's 250 KB.
 
+### Milestone 5F — Explorer, Scorecard, Trend, deploy, and the plateau on screen — 2026-08-24
+
+All eight §5.4 surfaces render real data. Only the Phase 3/4 entries are
+still stubbed, which is where §5.1.3 wants them.
+
+**Scorecard** renders `backtest/report.py` and nothing else, and says what
+its own margin is worth: the event model beats the best baseline by
+0.0055 MAE, or 0.52%. A model that decomposes into goals, assists, clean
+sheets and minutes earns about half a percent over taking a player's
+recent average, and the copy says so — the value of the decomposition is
+that you can see *where* a projection comes from, not that it is
+dramatically more accurate. Calibration carries the diagonal §5.4.7 asks
+for, and the grain is chosen by filtering the structural nulls rather
+than re-aggregating detail rows.
+
+**Explorer** is a hand-rolled virtualized table over 841 players.
+TanStack was skipped deliberately: what it buys is sorting, filtering and
+virtualization, and here the first two are a `sort` and a `filter` and the
+third is thirty lines. §5.4.5's column groups are *rendered*, which
+matters more than it sounds — without them "minutes" and "goals" each
+appear twice, once as a projection component and once as a season actual,
+in different units and with no way to tell which is which. §5.7.5's
+caution fires on a mixed-position raw sort, verified in the browser.
+
+**Trend Explorer** overlays up to six players with deadline markers where
+the gameweek changes, and names a trap rather than leaving it to be
+found: it reads the current season while the other surfaces still
+describe the last completed one, and FPL reissues element ids at
+rollover, so a carried selection can resolve to a different player.
+
+**Deploy.** `web.yml` gained a build job: contract-version gate, tests,
+Pages build under the repo's base path, parquet artifacts downloaded in
+so panel routes work on the deployed site, and `index.html` copied to
+`404.html` so §5.5's deep links survive a static host. Asset URLs now
+honour `import.meta.env.BASE_URL` — absolute `/data/v1` paths work in dev
+and 404 under a project subpath, which would have deployed a site where
+every surface failed to load.
+
+**§5.4.7's shrinkage plateau is now measured rather than asserted, and
+measuring it corrected the repo's own prose.**
+
+`analytics/projections.py` recorded the ablation's endpoints and claimed
+"0.6-0.85 is a wide, robust plateau clearing both bars with margin". The
+sweep was never kept, so nothing could check it. `web/export/shrinkage.py`
+now re-runs the walk-forward across 0.0-1.0 — which needed
+`project_points` to accept the shrinkage as a parameter, the deliberate
+step `scorecard.py` said belongs on its own. The default is untouched, so
+no published number moved, and a test asserts that.
+
+Both endpoints reproduce the docstring almost exactly: at 1.0, DEF rho
+0.5898 against the baseline's 0.6055 (the comment says 0.590 vs 0.606);
+at 0.0, MAE 1.0624 fails the bar while rho clears. What the sweep adds is
+the middle, and the middle is a **trade, not an optimum** — MAE improves
+monotonically with the weight while DEF rho degrades monotonically, all
+the way across.
+
+Which makes the plateau claim depend entirely on *which* within-position
+Spearman is meant, and the docstring never said:
+
+| reading | clears both bars | is 0.7 inside? |
+| --- | --- | --- |
+| §4.4 as written — mean across positions | 0.50-0.90 | yes |
+| DEF alone — the ablation's own framing | 0.50-0.60 | **no**, by 0.0027 |
+
+0.7 stays. The acceptance criterion is the stated one, and the DEF gap at
+0.7 is 0.003 against a 0.028 MAE gain. But the panel renders **both**
+curves with both bars, because rendering only the flattering one would be
+choosing a measurement to suit a constant — and a test asserts the two
+readings still disagree, so if they ever converge the copy gets rewritten
+rather than silently going stale.
+
+`shrinkage.json` is committed and deliberately **not** in `python -m
+web.export all`: it describes the model rather than the season, so
+nothing about it changes when a gameweek lands, and it costs one
+walk-forward per sweep point.
+
+**The §5.6 guard earned its keep.** It failed on the new code — three
+declarations named "shrinkage" — which is exactly the erosion it was
+written to catch. The fix is a narrow allowlist of four exact identifiers
+that name an exported result rather than a computation, with a test
+proving `function applyShrinkage()` is still caught.
+
+147 frontend tests pass, 508 Python tests pass. Initial bundle 84.3 KB
+gzipped against §5.9's 250 KB.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

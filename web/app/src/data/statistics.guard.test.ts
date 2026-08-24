@@ -50,6 +50,19 @@ function sources(dir: string, out: string[] = []): string[] {
 }
 
 /**
+ * Blank out the exact identifiers that name an exported result rather
+ * than a computation, so the declaration check below does not fire on
+ * code whose only crime is rendering a number Python produced.
+ */
+function stripAllowed(body: string, allowed: Set<string>): string {
+  let out = body;
+  for (const name of allowed) {
+    out = out.replaceAll(name, "__allowed__");
+  }
+  return out;
+}
+
+/**
  * Comments and string literals removed, so the guard reads code rather
  * than prose about code. Deliberately simple — a regex-based stripper
  * mangles a few exotic cases, and every way it is wrong leaves *more*
@@ -129,11 +142,32 @@ describe("§5.6 — the browser does not infer", () => {
       "smoothing",
     ];
 
+    /*
+     * Identifiers that carry a forbidden word and are not a computation.
+     *
+     * Every one of these names a *file the export publishes* or the code
+     * that reads it. `shrinkage.json` is a sweep Python ran — §5.4.7 asks
+     * for it on screen — and the surface renders numbers it did not
+     * derive. Forbidding the word outright would mean the browser could
+     * not display a result it is required to display.
+     *
+     * The carve-out is narrow on purpose: exact names, listed here, each
+     * of which a reviewer can check against the module it lives in. The
+     * `Math.sqrt` and SQL-aggregate checks are untouched, and they are
+     * what would actually catch a shrinkage being *computed* here.
+     */
+    const READS_AN_EXPORT = new Set([
+      "ShrinkageFile",
+      "ShrinkagePoint",
+      "ShrinkagePanel",
+      "loadShrinkage",
+    ]);
+
     const offenders: string[] = [];
 
     for (const file of files) {
       if (file.rel === SPEARMAN) continue;
-      const body = code(file.text);
+      const body = stripAllowed(code(file.text), READS_AN_EXPORT);
       for (const name of FORBIDDEN) {
         const declaration = new RegExp(
           `\\b(?:const|let|var|function|class|interface|type)\\s+\\w*${name}\\w*\\b`,
@@ -242,6 +276,16 @@ describe("the guard itself", () => {
     expect(
       /\b(?:const|let|var|function|class|interface|type)\s+\w*zscore\w*\b/i.test(code(planted)),
     ).toBe(true);
+  });
+
+  it("still catches a shrinkage that is computed rather than read", () => {
+    // The carve-out is exact names, not the word. A function that
+    // actually derives one is still an offender.
+    // Not wrapped in a template literal: `code()` strips those, which is
+    // correct for real source and would blank the whole fixture here.
+    const planted = "function applyShrinkage(x: number) { return x * 0.7; }";
+    const allowed = stripAllowed(code(planted), new Set(["ShrinkageFile", "ShrinkagePanel"]));
+    expect(/\b(?:const|let|var|function)\s+\w*shrinkage\w*\b/i.test(allowed)).toBe(true);
   });
 
   it("does not fire on prose explaining the rule", () => {

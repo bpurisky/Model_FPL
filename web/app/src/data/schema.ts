@@ -259,6 +259,36 @@ export const GoldenReductionsFile = z.object({
 });
 
 /**
+ * One shrinkage value, and what the model scored at it (§5.4.7).
+ *
+ * The two verdict flags are computed in the export, not here: both are
+ * comparisons against a baseline the browser does not hold, and §5.6
+ * wants a verdict the export reached rather than one a view inferred.
+ */
+export const ShrinkagePoint = z.object({
+  shrinkage: z.number(),
+  mae: z.number().nullable(),
+  spearman_mean: z.number().nullable(),
+  spearman_focus: z.number().nullable(),
+  n: z.number().int(),
+  beats_mae_bar: z.boolean(),
+  beats_spearman_bar: z.boolean(),
+  beats_focus_bar: z.boolean(),
+});
+
+export const ShrinkageFile = z.object({
+  header: Header,
+  default: z.number(),
+  focus_position: z.string(),
+  baseline_mae: z.number().nullable(),
+  baseline_mae_model: z.string(),
+  baseline_spearman_mean: z.number().nullable(),
+  baseline_spearman_focus: z.number().nullable(),
+  baseline_spearman_model: z.string(),
+  points: z.array(ShrinkagePoint),
+});
+
+/**
  * §5.4.6's weight profile for one position. `weights` is a metric->number
  * map and the numbers are signed: conceding is bad for a defender, and a
  * scoring layer that cannot express that is not modelling football.
@@ -394,6 +424,8 @@ export type CorrelationCell = z.infer<typeof CorrelationCell>;
 export type CorrelationsFile = z.infer<typeof CorrelationsFile>;
 export type ScorecardRow = z.infer<typeof ScorecardRow>;
 export type ScorecardFile = z.infer<typeof ScorecardFile>;
+export type ShrinkagePoint = z.infer<typeof ShrinkagePoint>;
+export type ShrinkageFile = z.infer<typeof ShrinkageFile>;
 export type FixtureRow = z.infer<typeof FixtureRow>;
 export type FixturesFile = z.infer<typeof FixturesFile>;
 export type GoldenSpearmanFile = z.infer<typeof GoldenSpearmanFile>;

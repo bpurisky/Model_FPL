@@ -30,6 +30,7 @@ from web.export.reductions import build_golden_reductions
 from web.export.players import build_players
 from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
+from web.export.shrinkage import build_shrinkage
 
 logger = logging.getLogger("web.export")
 
@@ -164,6 +165,20 @@ def cmd_reductions(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_shrinkage(args: argparse.Namespace) -> None:
+    """§5.4.7's plateau panel. Committed, and deliberately NOT in `all`:
+    it describes the model rather than the season, so nothing about it
+    changes when a gameweek lands — and it costs one walk-forward per
+    sweep point. Run it when the model changes."""
+    file = build_shrinkage()
+    path, changed = write_json(file.model_dump_json(indent=2), "shrinkage.json", Path(args.out))
+    both = sum(1 for p in file.points if p.beats_mae_bar and p.beats_spearman_bar)
+    logger.info(
+        "%s %d sweep points, %d clearing both bars, default %.2f -> %s",
+        "wrote" if changed else "unchanged:", len(file.points), both, file.default, path,
+    )
+
+
 def cmd_timeseries(args: argparse.Namespace) -> None:
     """Per-player market history (§5.4.8). A build artifact like the
     panel, and gitignored for the same reason."""
@@ -237,6 +252,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
     subparsers.add_parser("golden").set_defaults(func=cmd_golden)
     subparsers.add_parser("reductions").set_defaults(func=cmd_reductions)
+    subparsers.add_parser("shrinkage").set_defaults(func=cmd_shrinkage)
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("players").set_defaults(func=cmd_players)

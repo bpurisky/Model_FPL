@@ -46,6 +46,29 @@ DIFFICULTY_SCALE_STEP = 0.075  # matches backtest.baselines' constant
 # 0.606); at zero weight Spearman comfortably clears the bar but MAE no
 # longer beats the baselines. 0.6-0.85 is a wide, robust plateau clearing
 # both bars with margin; this is the middle of it, not a fitted edge.
+#
+# The sweep behind that sentence is now kept rather than only asserted:
+# `web/export/shrinkage.py` re-runs the walk-forward across 0.0-1.0 and
+# `shrinkage.json` records it. Reading it back sharpens one thing the
+# paragraph above leaves ambiguous -- *which* within-position Spearman.
+# On §4.4's criterion as stated, the unweighted mean across positions,
+# the range clearing both bars is 0.5-0.9, and the 0.6-0.85 claim holds
+# comfortably. On the stricter reading this comment itself uses, DEF
+# alone, it is only 0.5-0.6 -- and 0.7 sits just past it, at DEF rho
+# 0.6028 against the baseline's 0.6055.
+#
+# Both are true of different measurements. 0.7 stays: the acceptance
+# criterion is the stated one, and the DEF gap at 0.7 is 0.003 against a
+# 0.028 MAE gain. But the trade is real, monotone in both directions, and
+# now on screen rather than in this paragraph.
+#
+# Every caller that does not name a shrinkage gets this one, so the
+# published model is exactly the model these numbers were measured on.
+# The parameter exists for one reason: §5.4.7 wants the plateau *on
+# screen* rather than only in this comment, and `web/export/shrinkage.py`
+# re-runs the walk-forward across the range to draw it. A sweep that
+# edited the module constant would be a sweep that changed the model for
+# everyone who imported it mid-run.
 GOALS_CONCEDED_SHRINKAGE = 0.7
 
 # Columns projected as simple trailing means (via analytics.features.trailing_feature,
@@ -131,7 +154,11 @@ def project_event_vectors(
     return df
 
 
-def expected_points_by_component(row: dict[str, Any], config: dict[str, Any]) -> dict[str, float]:
+def expected_points_by_component(
+    row: dict[str, Any],
+    config: dict[str, Any],
+    goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
+) -> dict[str, float]:
     """The projected-event-vector equivalent of
     analytics.scoring.compute_points_by_component: each head's expectation,
     broken out by the same bucket names, so a predicted bucket can be
@@ -167,7 +194,7 @@ def expected_points_by_component(row: dict[str, Any], config: dict[str, Any]) ->
     gc_cfg = config["goals_conceded"]
     if position in gc_cfg["positions"]:
         expected_conceded = row["goals_conceded_trailing"] * adv
-        components["goals_conceded"] = GOALS_CONCEDED_SHRINKAGE * (expected_conceded / gc_cfg["per"]) * gc_cfg["points"]
+        components["goals_conceded"] = goals_conceded_shrinkage * (expected_conceded / gc_cfg["per"]) * gc_cfg["points"]
 
     if position == "GK":
         saves_cfg = config["saves"]
@@ -184,9 +211,13 @@ def expected_points_by_component(row: dict[str, Any], config: dict[str, Any]) ->
     return components
 
 
-def expected_points_from_projection(row: dict[str, Any], config: dict[str, Any]) -> float:
+def expected_points_from_projection(
+    row: dict[str, Any],
+    config: dict[str, Any],
+    goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
+) -> float:
     """The projected total: sum(expected_points_by_component(...).values())."""
-    return sum(expected_points_by_component(row, config).values())
+    return sum(expected_points_by_component(row, config, goals_conceded_shrinkage).values())
 
 
 def project_points(
@@ -197,6 +228,7 @@ def project_points(
     difficulty_table: pl.DataFrame,
     window: int = DEFAULT_WINDOW,
     minutes_window: int = DEFAULT_MINUTES_WINDOW,
+    goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
 ) -> pl.DataFrame:
     """The full model, in the same (train_df, target_roster, target_gw) ->
     DataFrame[element_id, prediction] shape as backtest.baselines' three
@@ -212,5 +244,8 @@ def project_points(
     roster = target_roster.join(gw_difficulty, on="team", how="left").with_columns(pl.col("custom_difficulty").fill_null(3.0))
 
     projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window)
-    predictions = [expected_points_from_projection(row, config) for row in projected.to_dicts()]
+    predictions = [
+        expected_points_from_projection(row, config, goals_conceded_shrinkage)
+        for row in projected.to_dicts()
+    ]
     return pl.DataFrame({"element_id": projected["element_id"], "prediction": predictions})

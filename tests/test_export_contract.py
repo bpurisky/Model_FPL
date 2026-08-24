@@ -168,6 +168,8 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "GoldenSpearmanFile",
         "ReductionCase",
         "GoldenReductionsFile",
+        "ShrinkagePoint",
+        "ShrinkageFile",
         "PositionWeights",
         "BoardBucketAccuracy",
         "BoardPlayer",
@@ -219,6 +221,12 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["ReductionCase"]["q"]["type"] == "float?"
     assert shape["GoldenReductionsFile"]["rows"]["type"] == "array"
     assert shape["GoldenReductionsFile"]["tolerance"]["type"] == "float"
+    # The two §4.4 bars are booleans the export decided, not numbers the
+    # surface compares (§5.6).
+    assert shape["ShrinkagePoint"]["beats_mae_bar"]["type"] == "bool"
+    assert shape["ShrinkagePoint"]["beats_focus_bar"]["type"] == "bool"
+    assert shape["ShrinkagePoint"]["spearman_focus"]["type"] == "float?"
+    assert shape["ShrinkageFile"]["points"]["type"] == "array"
     # Weights are a metric->number map, and negative values are meaningful
     # (§5.4.6), so zod must not model them as unsigned.
     assert shape["PositionWeights"]["weights"]["type"] == "record"

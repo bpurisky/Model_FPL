@@ -22,6 +22,7 @@ import {
   ObservationsFile,
   PlayersFile,
   ScorecardFile,
+  ShrinkageFile,
 } from "./schema";
 
 /**
@@ -144,6 +145,14 @@ export const loadBoard = (onProgress?: (p: LoadProgress) => void) =>
 /** The walk-forward backtest made legible (§5.4.7). Committed. */
 export const loadScorecard = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("scorecard.json", ScorecardFile, onProgress);
+
+/**
+ * §5.4.7's goals-conceded plateau. Committed, and rebuilt only when the
+ * model changes — it describes the model rather than the season, so it is
+ * deliberately outside `python -m web.export all`.
+ */
+export const loadShrinkage = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("shrinkage.json", ShrinkageFile, onProgress);
 
 /**
  * The values behind the matrix (§5.6.1). Fetched only when the reader

@@ -384,3 +384,39 @@
     grid-column: 1 / -1;
   }
 }
+
+/* --- the shrinkage sweep -------------------------------------------- */
+
+.sweeps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+  max-inline-size: 900px;
+}
+
+.sweep {
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.sweepCaption {
+  font-size: var(--text-xs);
+  color: var(--paper);
+  margin-block-end: var(--space-1);
+}
+
+/*
+ * The range clearing both bars. Deliberately not amber: it marks where
+ * the model is fine, and §5.8.2 reserves amber for the opposite.
+ */
+.plateau {
+  fill: var(--panel);
+}
+
+/* Where the shipped constant sits, so a reader can see whether it is
+ * inside the shaded range or beside it. */
+.marker {
+  stroke: var(--paper);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
