@@ -247,6 +247,25 @@ def build_players(
     target_gw = gameweek + 1
 
     projections, fixture_known = project(frame, season, gameweek, target_gw)
+
+    # `model_frame` reads `data/current_season/` itself rather than taking
+    # the injected panel, so the two can disagree about which season is
+    # latest -- and when they do, `project` filters the model frame to a
+    # season it does not carry and returns nothing at all. Every card then
+    # renders em dashes for its whole decomposition, which looks exactly
+    # like a model that had not spoken yet rather than like a build that
+    # read the wrong file.
+    #
+    # It costs nothing to notice, and §5.3.3's whole argument is that a
+    # silent nothing is the expensive kind of wrong.
+    if not projections:
+        raise ValueError(
+            f"no projection for any player at {season} gw{gameweek}. "
+            f"The panel's latest season is {season}, and the model frame carries "
+            f"{sorted(frame['season'].unique().to_list())}. If those disagree, "
+            "`data/current_season/` and `panel.parquet` were built from different data — "
+            "rebuild the panel."
+        )
     metrics = [m for m in MATRIX_METRICS if m in panel.columns]
     population: dict[str, dict[str, int]] = {}
 

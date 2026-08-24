@@ -49,6 +49,7 @@ import { reduce } from "../query/reduce";
 import { facets as loadFacets, select, type PanelFacets } from "../query/panel";
 import { openSession, PanelMissingError, type Session } from "../query/session";
 import styles from "./FormMatrix.module.css";
+import { count, noun } from "../design/text";
 
 type Engine =
   | { status: "opening"; progress: LoadProgress | null }
@@ -387,8 +388,8 @@ export function FormMatrix() {
         {data && (
           <p className={styles.count}>
             {data.rows.length} of <span className="data">{data.total.toLocaleString()}</span>{" "}
-            players, ranked by {readingNormalized ? "mean z-score" : (spec?.label ?? metric)} over
-            the {data.gameweeks.length} gameweeks shown.
+            {noun(data.total, "player")}, ranked by {readingNormalized ? "mean z-score" : (spec?.label ?? metric)} over
+            the {count(data.gameweeks.length, "gameweek")} shown.
           </p>
         )}
       </div>

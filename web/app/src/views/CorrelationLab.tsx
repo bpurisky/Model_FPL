@@ -266,11 +266,27 @@ export function CorrelationLab() {
  * summaries arrive.
  */
 function seasonPlaceholders(correlations: CorrelationsFile) {
+  /*
+   * The current season is marked partial with an unknown count, and the
+   * rest are marked complete.
+   *
+   * The original version marked *everything* complete, which was true of
+   * every season the archive holds and stopped being true the moment the
+   * season being collected joined the list — at which point the hero
+   * surface asserted that a season two gameweeks old had all
+   * thirty-eight, until the reader happened to touch the filter and
+   * trigger the real summaries. A small lie, on the season the reader
+   * cares about most, in the first month of it.
+   *
+   * `gameweeks: 0` is read by `SeasonFilter` as "partial, count not known
+   * yet" rather than rendered as a number.
+   */
+  const current = correlations.header.current_season ?? null;
   return correlations.seasons.map((season) => ({
     season,
-    gameweeks: 38,
+    gameweeks: season === current ? 0 : 38,
     players: 0,
-    partial: false,
+    partial: season === current,
   }));
 }
 

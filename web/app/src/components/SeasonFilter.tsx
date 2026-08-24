@@ -1,4 +1,5 @@
 import type { SeasonSummary } from "../data/schema";
+import { count } from "../design/text";
 import styles from "./SeasonFilter.module.css";
 
 export interface SeasonFilterProps {
@@ -47,8 +48,12 @@ export function SeasonFilter({ seasons, selected, onChange, busy }: SeasonFilter
             className={`${styles.option} ${on ? styles.on : ""}`}
             title={
               season.partial
-                ? `${season.gameweeks} of 38 gameweeks recorded — rates over a part-season are volatile`
-                : `${season.gameweeks} gameweeks, ${season.players} eligible players`
+                ? season.gameweeks > 0
+                  ? `${count(season.gameweeks, "gameweek")} of 38 recorded — rates over a part-season are volatile`
+                  : "Part-season. How much of it has been recorded is not known until the values behind the matrix load."
+                : season.players > 0
+                  ? `${count(season.gameweeks, "gameweek")}, ${count(season.players, "eligible player")}`
+                  : `${count(season.gameweeks, "gameweek")}. The eligible count loads with the values behind the matrix.`
             }
           >
             <input
@@ -59,9 +64,15 @@ export function SeasonFilter({ seasons, selected, onChange, busy }: SeasonFilter
             />
             <span className="data">{season.season}</span>
             {season.partial ? (
-              <span className={styles.partial}>gw{season.gameweeks}</span>
+              // A zero here means "not loaded yet", not "no gameweeks",
+              // and printing `gw0` would be the wrong claim either way.
+              <span className={styles.partial}>
+                {season.gameweeks > 0 ? `gw${season.gameweeks}` : "partial"}
+              </span>
             ) : (
-              <span className={styles.count}>{season.players}</span>
+              // A zero is "not loaded yet" in the placeholder state, and
+              // printing it would claim no player qualified.
+              <span className={styles.count}>{season.players > 0 ? season.players : "—"}</span>
             )}
           </label>
         );

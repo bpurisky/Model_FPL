@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { ColumnSpec, PlayerRow } from "../data/schema";
 import { formatRho } from "../design/scale";
 import styles from "./RankScatter.module.css";
+import { count } from "../design/text";
 
 export interface RankScatterProps {
   a: string;
@@ -145,7 +146,7 @@ export function RankScatter({
           className={styles.plot}
           viewBox={`0 0 ${SIZE} ${SIZE}`}
           role="img"
-          aria-label={`Scatter of ${points.length} players, ${labelA} against ${labelB}`}
+          aria-label={`Scatter of ${count(points.length, "player")}, ${labelA} against ${labelB}`}
         >
           <line x1={PAD} y1={SIZE - PAD} x2={SIZE} y2={SIZE - PAD} className={styles.axis} />
           <line x1={PAD} y1={0} x2={PAD} y2={SIZE - PAD} className={styles.axis} />

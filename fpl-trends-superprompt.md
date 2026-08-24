@@ -1189,6 +1189,89 @@ proving `function applyShrinkage()` is still caught.
 147 frontend tests pass, 508 Python tests pass. Initial bundle 84.3 KB
 gzipped against §5.9's 250 KB.
 
+### Every surface against a season that has barely started — 2026-08-24
+
+The archive holds three complete seasons, so every exporter and every
+surface was built and tested against thirty-eight gameweeks of history —
+and none of them was naturally exercised at the shape they will actually
+meet first: one gameweek, then two, then three. That shape is the only
+one the reader sees during the opening month, which is when the tool is
+most used.
+
+So the season was simulated rather than reasoned about.
+`tests/test_export_early_season.py` builds a synthetic current season from
+the **real** reference data — real element ids, real clubs, real fixtures
+— appends it to the real panel, and runs the whole export chain at 1, 2
+and 3 gameweeks. Fifteen tests, and they assert behaviour rather than
+values: the synthetic stats are invented and mean nothing, but whether
+the pipeline *reaches* the current season and whether the two thresholds
+in `config/frontend.yaml` behave as the surfaces assume are real
+questions.
+
+**The export layer was already right, and that is worth recording.**
+The panel appends the current season from gameweek one; normalization
+produces real z-scores rather than a column of nulls (the minutes floor
+scaling with fixtures played is what earns that, exactly as
+`config/frontend.yaml` argues); `players.json` and `board.json` follow the
+panel forward; `observations.json` marks the season `partial` with its
+real gameweek count; `correlations.json` includes it. Every player
+receives a projection and a minutes distribution from gameweek one, so
+Comparison's decomposition and Explorer's projection columns work on day
+one.
+
+The board behaves exactly as its two thresholds intend: at gameweeks 1
+and 2 every classification is `low_confidence` and only the level-based
+buckets exist; at gameweek 3 the flags clear and `rising` and `declining`
+appear. Both are now asserted.
+
+**What the simulation actually caught:**
+
+**A silent zero-projection path.** `model_frame` reads
+`data/current_season/` itself rather than taking the injected panel, so
+the two can disagree about which season is latest — and when they do,
+`project` filters the model frame to a season it does not carry and
+returns nothing. Every card then renders em dashes for its whole
+decomposition, which looks exactly like a model that had not spoken yet
+rather than like a build that read the wrong file. It now raises with
+both season lists in the message.
+
+**The hero surface asserting the current season was complete.**
+`seasonPlaceholders` marked every season `38 gameweeks, partial: false`
+before `observations.json` loads. That was true of every season the
+archive holds and stopped being true the moment the season being
+collected joined the list — at which point the Correlation Lab would
+claim a two-gameweek season had all thirty-eight, until the reader
+happened to touch the filter. It now reads `current_season` from the
+header and marks that one partial with an unknown count, which
+`SeasonFilter` renders as "partial" rather than `gw0`. The same file also
+stopped printing `0` for an eligible-player count it has not loaded yet.
+
+**Counted nouns.** "over the 1 gameweeks shown", "line 1 marks", "1
+players". Invisible in development against three complete seasons, and
+visible to the only reader on the only week they watch a season begin.
+`design/text.ts` now owns it and seven surfaces use it.
+
+**An empty bucket that read as an empty database.** Before gameweek
+three, `rising` and `declining` do not exist — a slope needs the whole
+trend window. The Model Board said "No player in that combination",
+which reads as a filter mistake. It now says the season is N gameweeks
+old, that a slope needs the window, and that the level-based buckets fill
+in from the first gameweek.
+
+**Left alone deliberately.** The pooled matrix will include the current
+season as soon as it has eligible player-seasons, which drags the
+correlations toward a handful of gameweeks. That is a modelling
+judgement rather than a rendering bug, and the surface already hands the
+reader the two things needed to act on it: the season is marked
+`partial` in amber, and it can be deselected. Also unchanged: the
+projection stays `fixture_neutral` all season, because
+`difficulty_table` derives from panel rows and the next gameweek has
+none yet — the upcoming fixture difficulty *is* knowable from
+`data/reference/fixtures.parquet`, so this is a real improvement
+available later, and `projection_basis` labels it honestly meanwhile.
+
+523 Python tests pass, 147 frontend tests pass.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

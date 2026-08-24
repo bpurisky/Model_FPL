@@ -26,6 +26,7 @@ import { divergingColor } from "../design/scale";
 import { bin, type Plot, type PlotSeries } from "../encoding/data";
 import type { MarkPlan } from "../encoding/mark";
 import styles from "./Chart.module.css";
+import { count } from "../design/text";
 
 /** Above this many series a legend stops being readable and so does the chart. */
 export const MAX_SERIES = 8;
@@ -249,7 +250,7 @@ function Panel(props: PanelProps) {
       className={styles.plot}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label={`${plan.mark} of ${yLabel} against ${xLabel}, ${points.length} marks`}
+      aria-label={`${plan.mark} of ${yLabel} against ${xLabel}, ${count(points.length, "mark")}`}
     >
       <defs>
         <clipPath id={clip}>
@@ -433,7 +434,7 @@ function Histogram({ values, inner }: { values: number[]; inner: { w: number; h:
             className={styles.bar}
           >
             <title>
-              {entry.lo.toFixed(2)} to {entry.hi.toFixed(2)} — {entry.count} players
+              {entry.lo.toFixed(2)} to {entry.hi.toFixed(2)} — {count(entry.count, "player")}
             </title>
           </rect>
         );

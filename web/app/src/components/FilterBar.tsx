@@ -17,6 +17,7 @@
 
 import type { PanelFacets, PanelFilters } from "../query/panel";
 import styles from "./FilterBar.module.css";
+import { count } from "../design/text";
 
 export interface FilterBarProps {
   facets: PanelFacets;
@@ -99,7 +100,7 @@ export function FilterBar({
                 title={
                   empty
                     ? `${season.season} has no completed gameweeks in the panel yet. It fills in as the collector records them.`
-                    : `${season.season} — ${season.gameweeks} gameweek${season.gameweeks === 1 ? "" : "s"}, ${season.rows.toLocaleString()} player-gameweeks.`
+                    : `${season.season} — ${count(season.gameweeks, "gameweek")}, ${count(season.rows, "player-gameweek")}.`
                 }
                 onClick={() => onChange({ seasons: toggle(filters.seasons, season.season) })}
               >

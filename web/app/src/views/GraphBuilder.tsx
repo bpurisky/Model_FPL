@@ -33,6 +33,7 @@ import { AGGREGATES, rolesOf, type Channel } from "../encoding/spec";
 import { facets as loadFacets, grouped, type PanelFacets } from "../query/panel";
 import { openSession, PanelMissingError, type Session } from "../query/session";
 import styles from "./GraphBuilder.module.css";
+import { count } from "../design/text";
 
 type Engine =
   | { status: "opening"; progress: LoadProgress | null }
@@ -355,7 +356,7 @@ export function GraphBuilder() {
                   <span className="data">{inference.plan.mark}</span>
                   {plot && (
                     <span className={styles.markMeta}>
-                      {plot.count.toLocaleString()} marks
+                      {count(plot.count, "mark")}
                       {plot.dropped > 0 && (
                         <>
                           {" · "}

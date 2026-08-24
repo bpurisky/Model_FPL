@@ -42,6 +42,7 @@ import { useApp } from "../app/state";
 import { Provenance } from "../components/Provenance";
 import { loadBoard, loadColumns, type LoadProgress } from "../data/load";
 import type { BoardFile, BoardPlayer, ColumnsFile, ColumnSpec } from "../data/schema";
+import { count, noun } from "../design/text";
 import styles from "./ModelBoard.module.css";
 
 type State =
@@ -206,15 +207,37 @@ export function ModelBoard() {
         </fieldset>
 
         <p className={styles.count}>
-          {visible.length} of <span className="data">{board.players.length}</span> classified
-          players, {board.season} after gameweek <span className="data">{board.gameweek}</span>.
+          {visible.length} of <span className="data">{board.players.length}</span> classified{" "}
+          {noun(board.players.length, "player")}, {board.season} after gameweek{" "}
+          <span className="data">{board.gameweek}</span>.
         </p>
       </div>
 
       {visible.length === 0 ? (
         <p className={styles.empty}>
-          No player in that combination. The board classifies only players with at least{" "}
-          <span className="data">{board.min_gameweeks}</span> gameweeks behind them.
+          {/*
+           * Early in a season this is the *normal* state for two of the
+           * four buckets, not a filter mistake: `rising` and `declining`
+           * are slope calls, and a slope needs the whole trend window
+           * before it exists at all. Saying "no player in that
+           * combination" alone would read as an empty database.
+           */}
+          {(bucket === "rising" || bucket === "declining") &&
+          board.gameweek < board.trend_window ? (
+            <>
+              Nothing is <span className="data">{bucket}</span> yet.{" "}
+              {board.season} is {count(board.gameweek, "gameweek")} old and a slope needs{" "}
+              <span className="data">{board.trend_window}</span> before the model will call one.
+              The <span className="data">optimal</span> and{" "}
+              <span className="data">neutral</span> buckets rank on level rather than slope, so
+              they fill in from the first gameweek.
+            </>
+          ) : (
+            <>
+              No player in that combination. The board classifies only players with at least{" "}
+              {count(board.min_gameweeks, "gameweek")} behind them.
+            </>
+          )}
         </p>
       ) : (
         <ul className={styles.cards}>
@@ -305,7 +328,7 @@ function Card({ player, board, label, onExplain }: CardProps) {
          * a statement about how far a number can be trusted.
          */
         <p className={styles.flag}>
-          {player.gameweeks_seen} gameweek{player.gameweeks_seen === 1 ? "" : "s"} behind this,
+          {count(player.gameweeks_seen, "gameweek")} behind this,
           against a minimum of {board.min_gameweeks}. Treat the classification as provisional.
         </p>
       )}

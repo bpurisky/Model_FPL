@@ -29,6 +29,7 @@ import { loadColumns, type LoadProgress } from "../data/load";
 import type { ColumnsFile } from "../data/schema";
 import { openSeries, SeriesMissingError, type SeriesPoint } from "../query/series";
 import styles from "./TrendExplorer.module.css";
+import { count, noun } from "../design/text";
 
 type State =
   | { status: "loading"; progress: LoadProgress | null }
@@ -172,8 +173,10 @@ export function TrendExplorer() {
         </fieldset>
 
         <p className={styles.count}>
-          <span className="data">{data.rows.length.toLocaleString()}</span> snapshots over{" "}
-          <span className="data">{players.size.toLocaleString()}</span> players
+          <span className="data">{data.rows.length.toLocaleString()}</span>{" "}
+          {noun(data.rows.length, "snapshot")} over{" "}
+          <span className="data">{players.size.toLocaleString()}</span>{" "}
+          {noun(players.size, "player")}
         </p>
       </div>
 
@@ -307,7 +310,7 @@ function Overlay({ rows, ids, players, metric, label, format, onRemove }: Overla
         className={styles.plot}
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`${label} over time for ${lines.length} players`}
+        aria-label={`${label} over time for ${count(lines.length, "player")}`}
       >
         {ticks.map((value) => (
           <g key={value}>
