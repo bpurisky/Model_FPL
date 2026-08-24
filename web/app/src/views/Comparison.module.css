@@ -1,0 +1,445 @@
+.compare {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 1100px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 68ch;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0;
+  max-inline-size: 64ch;
+}
+
+/* --- picker -------------------------------------------------------- */
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-block: var(--hairline) solid var(--rule);
+}
+
+.chosen {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--paper);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.chipMeta {
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 10px;
+}
+
+.swatch {
+  inline-size: 10px;
+  block-size: 10px;
+  flex: none;
+  display: inline-block;
+}
+
+.searchLabel {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.searchText {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.search {
+  flex: 1;
+  min-inline-size: 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.matches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-block-size: 220px;
+  overflow-y: auto;
+  border: var(--hairline) solid var(--rule);
+  max-inline-size: 420px;
+}
+
+.match {
+  inline-size: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font: inherit;
+  font-size: var(--text-xs);
+  text-align: start;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.match:hover {
+  background: var(--panel);
+}
+
+.matchMeta {
+  color: var(--muted);
+  font-family: var(--font-data);
+  white-space: nowrap;
+}
+
+/* --- panels -------------------------------------------------------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-block-end: var(--hairline) solid var(--rule);
+  padding-block-end: var(--space-2);
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.panelSub {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 72ch;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* §5.7.5's caution and §5.4.4's basis note. Amber is for the first only:
+ * the basis note states a fact, the caution flags a distortion. */
+.caution {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+}
+
+.basis {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+}
+
+/* --- totals -------------------------------------------------------- */
+
+.totals {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+}
+
+.totalName {
+  font-size: var(--text-xs);
+}
+
+.totalValue {
+  font-size: var(--text-lg);
+  line-height: 1.1;
+}
+
+.totalUnit {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* --- head bars ----------------------------------------------------- */
+
+.heads {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.headRow {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.headLabel {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-align: end;
+}
+
+.headBars,
+.rateBars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+.headBar,
+.rateBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 46px;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.rateBar {
+  grid-template-columns: minmax(0, 1fr) 46px 132px;
+}
+
+.barTrack {
+  block-size: 10px;
+  background: var(--panel);
+  /* §5.8.8: data surfaces have zero radius. */
+  border-radius: var(--radius-data);
+  overflow: hidden;
+}
+
+.barFill {
+  block-size: 100%;
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.barValue {
+  font-size: 10px;
+  text-align: end;
+  color: var(--paper);
+}
+
+/* --- minutes ------------------------------------------------------- */
+
+.legendRow {
+  display: flex;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.minutes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.minutesRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 84px;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.minutesName {
+  font-size: var(--text-xs);
+  text-align: end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stack {
+  display: flex;
+  block-size: 14px;
+  background: var(--panel);
+}
+
+.stackPart {
+  block-size: 100%;
+}
+
+.minutesValue {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* --- rates --------------------------------------------------------- */
+
+.rates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rateRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.rateLabel {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-align: end;
+}
+
+/* §5.8.2's orientation, stated rather than encoded in hue alone. */
+.lower {
+  color: var(--flag);
+  margin-inline-start: var(--space-1);
+}
+
+.rateBasis {
+  font-size: 9px;
+  color: var(--rule);
+  font-family: var(--font-data);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toggle {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--paper);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.toggle:disabled {
+  color: var(--rule);
+  cursor: not-allowed;
+}
+
+.toggleWhy {
+  font-size: 9px;
+  color: var(--rule);
+}
+
+/* --- states -------------------------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}
+
+@media (max-width: 720px) {
+  .headRow,
+  .rateRow,
+  .minutesRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .headLabel,
+  .rateLabel,
+  .minutesName {
+    text-align: start;
+  }
+}

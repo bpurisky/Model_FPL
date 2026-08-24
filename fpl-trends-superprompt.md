@@ -938,10 +938,44 @@ a screenshot was the thing that caught it.
 gzipped; the Form Matrix is a 4.5 KB route chunk over the shared panel
 reader.
 
-**Still open in 5D:** Player Comparison (§5.4.4) — component
-decomposition bars, the minutes distribution as a stacked bar that is
-never collapsed to a mean, and position-relative bars. `players.json`
-already carries every number it needs.
+### Milestone 5D, second half — Player Comparison — 2026-08-23 (last)
+
+§5.4.4 calls the component decomposition "the most diagnostically useful
+comparison in the app", and it is: four players side by side with each
+projection broken into the heads that produced it. Watkins at 8.20 and
+Raya at 6.00 are two numbers until you can see that one is almost all
+goals and the other is almost all clean sheets.
+
+Reads `players.json` and nothing else, so unlike the Graph Builder and
+the Form Matrix it works on a fresh clone with no pipeline run (§5.14.8)
+— which is why it is not behind the panel reader's split point.
+
+**Two prohibitions, both obeyed.** §5.4.4 requires the minutes
+distribution as P(blank)/P(short)/P(60+) "never collapsed to a mean —
+the model deliberately refuses to produce a mean minutes figure; the UI
+must not reintroduce one". There is no expected-minutes number on the
+panel and no arithmetic that could produce one; Haaland reads 67/0/33
+and Watkins 100/0/0, which are different assets in a way any average
+would hide. And §5.7.3's mixed-position rule: percentile-within-position
+is the default across positions, raw is one click away and never hidden,
+and §5.7.5's caution renders whenever raw rates are shown across
+positions.
+
+**Every percentile states its basis** (§5.7.4), in the model's own
+vocabulary and with the population it was measured against: `pct in FWD,
+n=23`, `pct in DEF, n=82`, `pct in GK, n=20`. The percentiles are read
+from the export — computing one here is what §5.6 forbids — and a player
+below the minutes floor renders "below the minutes floor" rather than a
+bar at zero, because the export declined to place him and that is not the
+same as placing him last.
+
+The radar chart §5.4.4 *permits* is not built. It is permitted rather
+than required, allowed only for same-position normalized rates, and a set
+of aligned percentile bars answers the same question while staying
+readable at four players. An option declined, not a deviation.
+
+**Milestone 5D is complete.** 141 frontend tests, 500 Python tests,
+initial bundle 73.2 KB gzipped against §5.9's 250 KB.
 
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 

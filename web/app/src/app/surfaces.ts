@@ -63,7 +63,7 @@ export const SURFACES: Surface[] = [
     view: "compare",
     label: "Comparison",
     blurb: "Two or more players, decomposed into the components behind the total.",
-    status: "planned",
+    status: "live",
     milestone: "5D",
   },
   {

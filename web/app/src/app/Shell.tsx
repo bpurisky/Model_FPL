@@ -15,6 +15,7 @@
  */
 
 import { lazy, Suspense, useEffect } from "react";
+import { Comparison } from "../views/Comparison";
 import { CorrelationLab } from "../views/CorrelationLab";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
@@ -102,6 +103,7 @@ function Shell() {
             <FormMatrix />
           </Suspense>
         )}
+        {state.view === "compare" && <Comparison />}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
     </div>
