@@ -1,0 +1,363 @@
+.form {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 64ch;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.control select {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+}
+
+.count {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--rule);
+}
+
+/* --- the key ------------------------------------------------------- */
+
+.key {
+  display: flex;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.keyItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.keySwatch {
+  inline-size: 14px;
+  block-size: 14px;
+  display: inline-block;
+  border: var(--hairline) solid var(--rule);
+}
+
+.keySwatch[data-state="value"] {
+  background: var(--rho-pos);
+  border-color: var(--rho-pos);
+}
+
+/*
+ * §5.4.3's three states, and they are distinguished by *structure* rather
+ * than by hue — a dotted centre, an empty well, a corner notch — so they
+ * survive greyscale and colour blindness, which §5.10 requires of every
+ * heat map in the app.
+ */
+.keySwatch[data-state="dnp"] {
+  background:
+    radial-gradient(circle at 50% 50%, var(--muted) 0 1.5px, transparent 1.5px);
+  background-color: var(--panel);
+}
+
+.keySwatch[data-state="blank"] {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0 3px,
+    var(--rule) 3px 4px
+  );
+}
+
+.keySwatch[data-state="double"] {
+  background: var(--panel);
+  position: relative;
+}
+
+.keySwatch[data-state="double"]::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-block-start: 5px solid var(--flag);
+  border-inline-start: 5px solid transparent;
+}
+
+/* --- the grid ------------------------------------------------------ */
+
+.scroll {
+  overflow-x: auto;
+  /* §5.10: wide content scrolls inside its own container; the page body
+   * never scrolls horizontally. */
+  max-inline-size: 100%;
+}
+
+.grid {
+  border-collapse: collapse;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-size: var(--text-xs);
+}
+
+.caption {
+  text-align: start;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  padding-block-end: var(--space-2);
+}
+
+.corner {
+  text-align: start;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--muted);
+  padding: var(--space-1) var(--space-2);
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--ground);
+  z-index: 1;
+  min-inline-size: 170px;
+}
+
+.gwHead,
+.trendHead {
+  font-family: var(--font-data);
+  font-weight: 400;
+  color: var(--muted);
+  padding: var(--space-1) 0;
+  inline-size: 26px;
+  text-align: center;
+}
+
+.trendHead {
+  inline-size: 80px;
+  font-family: var(--font-body);
+  padding-inline-start: var(--space-2);
+}
+
+.row[data-selected] .player {
+  border-inline-start: 2px solid var(--paper);
+}
+
+.player {
+  padding: 0;
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--ground);
+  z-index: 1;
+  text-align: start;
+  font-weight: 400;
+  border-inline-start: 2px solid transparent;
+}
+
+.playerButton {
+  inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  font: inherit;
+  text-align: start;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.playerButton:hover .playerName {
+  text-decoration: underline;
+}
+
+.playerName {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  max-inline-size: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playerMeta {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.cell {
+  inline-size: 26px;
+  block-size: 22px;
+  text-align: center;
+  /* §5.8.8: data surfaces have zero radius. */
+  border-radius: var(--radius-data);
+  border: 1px solid var(--ground);
+  position: relative;
+  padding: 0;
+}
+
+.cellText {
+  font-size: 10px;
+  line-height: 1;
+}
+
+/*
+ * The three states again, on the cells themselves. Never a colour from
+ * the diverging scale — a missing fixture is not a low value, and giving
+ * it one would put it on the same ramp as a bad performance.
+ */
+.cell[data-state="blank"] {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0 3px,
+    var(--rule) 3px 4px
+  );
+  opacity: 0.4;
+}
+
+.cell[data-state="dnp"] {
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.cell[data-state="absent"] {
+  background: var(--panel);
+  color: var(--muted);
+}
+
+/* A double gameweek: a corner notch in amber, because it changes how the
+ * number should be read. */
+.double {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-block-start: 5px solid var(--flag);
+  border-inline-start: 5px solid transparent;
+}
+
+.trend {
+  padding-inline-start: var(--space-2);
+}
+
+.spark {
+  inline-size: 72px;
+  block-size: 18px;
+  display: block;
+}
+
+.sparkBase {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.sparkLine {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+
+.noTrend {
+  color: var(--rule);
+  font-size: var(--text-xs);
+}
+
+/* --- states -------------------------------------------------------- */
+
+.working,
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.failure {
+  margin: 0;
+  color: var(--flag);
+  font-size: var(--text-sm);
+  font-family: var(--font-data);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+  margin-block-start: var(--space-5);
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.absent {
+  margin-block-start: var(--space-4);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+  max-inline-size: 68ch;
+}
+
+.absentHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+  color: var(--paper);
+}
+
+/*
+ * The surface narrowing what the reader asked for. Amber, because it is
+ * about how the numbers on screen should be read rather than about the
+ * schedule (§5.8.2 reserves amber for exactly that).
+ */
+.caution {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+}

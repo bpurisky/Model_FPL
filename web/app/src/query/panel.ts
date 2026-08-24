@@ -329,6 +329,75 @@ function sortGroups(rows: GroupedRow[], groupNames: string[]): GroupedRow[] {
   });
 }
 
+/** Rows that passed the filters, plus the columns to read them from. */
+export interface Selection {
+  /** Panel row indices that survived the filters, in file order. */
+  index: number[];
+  /** The requested columns, keyed by the name the caller asked for. */
+  values: ReadonlyMap<string, PanelColumn>;
+  /** Which requested keys were served by a `_z_pos` companion (§5.7.4). */
+  normalizedKeys: string[];
+}
+
+/**
+ * Filtered rows at panel grain, without grouping.
+ *
+ * `grouped` is the wrong shape for a surface whose cells *are* the rows:
+ * the Form Matrix is one cell per player-gameweek, which is 700 players
+ * by 38 gameweeks and would ask `grouped` for 26,000 groups of one value
+ * each — all the cost of grouping and none of the point.
+ *
+ * Returns indices rather than materialised row objects. The caller walks
+ * them and reads whichever columns it needs, so nothing allocates 26,000
+ * objects to throw most of them away.
+ *
+ * No reduction happens here either. This is `WHERE` and a projection.
+ */
+export async function select(
+  session: Session,
+  query: Omit<GroupedQuery, "groupBy" | "collect"> & { columns: string[] },
+  columns: ReadonlyMap<string, ColumnSpec>,
+): Promise<Selection> {
+  const normalizedKeys: string[] = [];
+
+  // Validated before anything is decoded, so a bad key costs nothing.
+  const requested = query.columns.map((key) => {
+    const spec = columns.get(key);
+    if (!spec) {
+      // Structural panel columns the registry does not describe as
+      // metrics still have to be readable — `cum_minutes` is how the
+      // minutes filter works at all.
+      return { requested: key, actual: checkName(key, columns) };
+    }
+    const resolved = resolveColumn(key, columns, query.normalized);
+    if (resolved.normalized) normalizedKeys.push(key);
+    return { requested: key, actual: checkName(resolved.key, columns) };
+  });
+
+  const needed = [
+    ...new Set([...filterColumns(query.filters), ...requested.map((entry) => entry.actual)]),
+  ];
+
+  const loaded = new Map<string, PanelColumn>();
+  await Promise.all(
+    needed.map(async (name) => {
+      loaded.set(name, await session.column(name));
+    }),
+  );
+
+  const mask = rowMask(query.filters, loaded, session.rows);
+  const index: number[] = [];
+  const limit = query.limit ?? Number.POSITIVE_INFINITY;
+  for (let i = 0; i < session.rows && index.length < limit; i += 1) {
+    if (mask[i]) index.push(i);
+  }
+
+  const values = new Map<string, PanelColumn>();
+  for (const entry of requested) values.set(entry.requested, loaded.get(entry.actual)!);
+
+  return { index, values, normalizedKeys };
+}
+
 /**
  * What the filter bar offers, read from the data rather than hard-coded.
  *

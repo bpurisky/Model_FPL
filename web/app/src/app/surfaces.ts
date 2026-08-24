@@ -56,7 +56,7 @@ export const SURFACES: Surface[] = [
     view: "form",
     label: "Form Matrix",
     blurb: "Player by gameweek, as a heat map. Where a slump becomes visible.",
-    status: "planned",
+    status: "live",
     milestone: "5D",
   },
   {

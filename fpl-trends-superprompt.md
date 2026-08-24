@@ -871,6 +871,78 @@ next thing to look at if the route ever feels slow.
 
 134 frontend tests pass (was 46), 500 Python tests pass, typecheck clean.
 
+### Milestone 5D, first half — the Form Matrix — 2026-08-23 (last)
+
+§5.4.3 called this "the single most useful view for the pedagogical job",
+and it is now a route: every player down the rows, every gameweek across,
+coloured by a selectable metric, with a sparkline per row.
+
+**The cell states are the surface.** §5.4.3 requires blank, zero and
+did-not-play to be three visually distinct states — "a player who played
+90 minutes and scored zero points and a player who was not in the squad
+are not the same fact". `cellState` returns **four**, the fourth being a
+row with minutes and a null metric, which is §5.3.3's unknown and is not
+the same claim as zero either. All four are distinguished by structure
+rather than hue — a dotted centre, a hatched well, a plain panel, a
+coloured cell — so they survive greyscale, which §5.10 requires of every
+heat map here. Seven tests cover the states directly, including the two
+that are easy to get wrong: a real zero is a value, and a negative score
+is a value rather than an absence.
+
+**The colour scale runs to the 95th percentile, not the maximum.** The
+first pass scaled to the extreme, and it made the surface useless: one
+20-point haul saturated the ramp and the 1-to-6 range every other cell
+lives in collapsed into a single muddy purple — which is exactly the
+"slump or hot streak in one glance" the section exists to produce. Cells
+past the percentile clamp at the pole, which is honest because the number
+is printed in the cell regardless. `quantile` is one of §5.6.2's seven
+permitted reductions, so this goes through the same `reduce.ts` the
+golden test covers.
+
+**The surface is single-season by construction, and says so.** FPL
+reissues `element_id` at every rollover, so id 1 in 2023-24 and id 1 in
+2025-26 are two different footballers — and since both seasons number
+their gameweeks 1 to 38, a matrix keyed on the id across seasons would
+draw them as one row whose cells overwrite each other. It would have
+looked completely ordinary and been entirely wrong. The view pins the
+latest season when the filter does not name exactly one, and renders an
+amber note saying which and why rather than narrowing silently.
+
+**`query/select` is new**, beside `grouped`: filtered rows at panel grain
+with no grouping, returning indices rather than materialised objects.
+`grouped` is the wrong shape for a surface whose cells *are* the rows —
+26,000 groups of one value each is all the cost of grouping and none of
+the point. The Explorer at 5F will want the same helper.
+
+**D11, recorded per §5.16.** §5.4.3 asks for position-normalized total
+points as the default colour metric and there is no such column: §5.7.2
+emits `_z_pos` companions only for metrics the registry flags
+`normalizable`, and `columns.py` does not flag the gameweek point total
+— it is a count for one match, not a rate over a season, and there is no
+exported population to score it against. Computing one in the browser is
+what §5.6 forbids. The default is therefore raw `total_points`, the
+toggle still works for every rate metric, and the basis line states which
+is which. Points are also the one metric where raw cross-position
+comparison is legitimate, which is why §5.7.5's caution is scoped to
+`normalizable` columns and correctly stays silent here. The same entry
+covers the sparkline living in its own column rather than appearing on
+hover: a shape that exists only under the pointer cannot be compared
+against the row above, and comparing rows is what this surface is for.
+
+**Also fixed while building it.** A hooks-order crash — the percentile
+`useMemo` sat below the loading early-return, so it ran on some renders
+and not others and React refused the second one. The page went blank, and
+a screenshot was the thing that caught it.
+
+141 frontend tests pass, 500 Python tests pass. Initial bundle 69.7 KB
+gzipped; the Form Matrix is a 4.5 KB route chunk over the shared panel
+reader.
+
+**Still open in 5D:** Player Comparison (§5.4.4) — component
+decomposition bars, the minutes distribution as a stacked bar that is
+never collapsed to a mean, and position-relative bars. `players.json`
+already carries every number it needs.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
