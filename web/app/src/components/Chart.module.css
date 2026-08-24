@@ -1,0 +1,136 @@
+/*
+ * §5.8.5: "Graph Builder, Explorer, and Trend are utilitarian." The
+ * visual budget is spent on the matrices; this is a legible plot area
+ * and nothing more.
+ */
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  inline-size: 24px;
+  block-size: 8px;
+  flex: none;
+}
+
+.facets {
+  display: grid;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+/* Small multiples for the Wrap channel. */
+.facets[data-many] {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.facet {
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.facetName {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin-block-end: var(--space-1);
+  padding-block-end: var(--space-1);
+  border-block-end: var(--hairline) solid var(--rule);
+}
+
+.plot {
+  inline-size: 100%;
+  /*
+   * Capped. The viewBox is 520x340, so an uncapped `inline-size: 100%`
+   * on a wide monitor scales the plot to 1100px across and 720px tall —
+   * a scatter that no longer fits on screen beside its own controls, and
+   * marks blown up to the point of implying a precision they do not
+   * have. The cap keeps the aspect ratio the axes were laid out for.
+   */
+  max-inline-size: 760px;
+  block-size: auto;
+  display: block;
+  /* §5.8.8: data surfaces have zero radius. */
+  border-radius: var(--radius-data);
+}
+
+.axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+
+.tick {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums slashed-zero;
+  fill: var(--muted);
+}
+
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.point {
+  transition: r var(--dur-state) var(--ease);
+}
+
+.point:hover {
+  r: 5;
+}
+
+.bar {
+  fill: var(--rho-neg);
+}
+
+.line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.cellValue {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums slashed-zero;
+  fill: var(--paper);
+  pointer-events: none;
+}
+
+.empty,
+.refusal {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0;
+  padding: var(--space-5) 0;
+  max-inline-size: 60ch;
+}

@@ -26,6 +26,7 @@ from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.observations import build_observations
 from web.export.panel import build_panel, write_panel
+from web.export.reductions import build_golden_reductions
 from web.export.players import build_players
 from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
@@ -148,6 +149,21 @@ def cmd_golden(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_reductions(args: argparse.Namespace) -> None:
+    """The §5.6.2 reductions' CI fixtures (§5.11.2). Committed and
+    self-contained for the same reason `golden` is — and drawn from
+    seasons predating the 2025-26 defensive metrics, so the empty-set
+    rule is covered by real absence rather than a constructed blank."""
+    file = build_golden_reductions(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(file.model_dump_json(indent=2), "golden_reductions.json", Path(args.out))
+    absent = len({c.column for c in file.cases if c.n == 0})
+    logger.info(
+        "%s %d reduction cases over %d columns x %d rows (%d absent) -> %s",
+        "wrote" if changed else "unchanged:", len(file.cases), len(file.columns),
+        len(file.rows), absent, path,
+    )
+
+
 def cmd_timeseries(args: argparse.Namespace) -> None:
     """Per-player market history (§5.4.8). A build artifact like the
     panel, and gitignored for the same reason."""
@@ -202,6 +218,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_scorecard(args)
     cmd_fixtures(args)
     cmd_golden(args)
+    cmd_reductions(args)
     cmd_timeseries(args)
     cmd_board(args)
     cmd_players(args)
@@ -219,6 +236,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("scorecard").set_defaults(func=cmd_scorecard)
     subparsers.add_parser("fixtures").set_defaults(func=cmd_fixtures)
     subparsers.add_parser("golden").set_defaults(func=cmd_golden)
+    subparsers.add_parser("reductions").set_defaults(func=cmd_reductions)
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("players").set_defaults(func=cmd_players)

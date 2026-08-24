@@ -1,0 +1,1228 @@
+{
+  "header": {
+    "contract_version": 1,
+    "generated_at": "2026-08-24T01:10:13.165195Z",
+    "source_gameweek": null,
+    "scoring_config": "scoring_2026_27.yaml",
+    "model_git_sha": "d9343c59a77c8d5b6d7e720f4e24793fc19707c9",
+    "normalization_basis": "player_season_pooled_min45_per_fixture",
+    "rows": 80
+  },
+  "method": "nulls dropped, values sorted ascending; sum added sequentially in that order; quantile and median by linear interpolation (polars, method=linear). Empty set reduces to null for every name except count, which is 0. See web/export/reductions.py and src/query/reduce.ts",
+  "tolerance": 1e-12,
+  "precision": 6,
+  "columns": [
+    "total_points",
+    "minutes",
+    "value",
+    "clean_sheet_prob",
+    "xg_per90",
+    "xgi_per90",
+    "bps_per90",
+    "cbi_per90"
+  ],
+  "rows": [
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.299316,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      44.0,
+      0.441222,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      3.0,
+      90.0,
+      50.0,
+      0.380909,
+      0.0,
+      0.01,
+      8.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.157412,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      50.0,
+      0.204355,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.121002,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      9.0,
+      49.0,
+      0.125651,
+      0.0,
+      0.0,
+      10.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      50.0,
+      0.0425,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.158417,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      55.0,
+      0.303429,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      3.0,
+      67.0,
+      56.0,
+      0.101299,
+      0.107463,
+      0.228358,
+      9.402985,
+      null
+    ],
+    [
+      9.0,
+      90.0,
+      43.0,
+      0.386313,
+      0.55,
+      0.61,
+      27.0,
+      null
+    ],
+    [
+      6.0,
+      74.0,
+      44.0,
+      0.27552,
+      0.0,
+      0.024324,
+      35.27027,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      66.0,
+      0.172897,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.176102,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      1.0,
+      3.0,
+      49.0,
+      0.259672,
+      1.8,
+      1.8,
+      90.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.284074,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      42.0,
+      0.047079,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      90.0,
+      50.0,
+      0.12465,
+      0.02,
+      0.06,
+      11.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      58.0,
+      0.12594,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      39.0,
+      0.091199,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      42.0,
+      0.208179,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      2.0,
+      90.0,
+      53.0,
+      0.067074,
+      0.0,
+      0.0,
+      28.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.056481,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      56.0,
+      0.338495,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      1.0,
+      17.0,
+      53.0,
+      0.008204,
+      0.0,
+      0.052941,
+      10.588235,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      48.0,
+      0.307787,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.083361,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      10.0,
+      80.0,
+      50.0,
+      0.063433,
+      0.09,
+      0.30375,
+      34.875,
+      null
+    ],
+    [
+      2.0,
+      90.0,
+      46.0,
+      0.387894,
+      0.0,
+      0.0,
+      17.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      49.0,
+      0.255036,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.194213,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.219478,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.270304,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      3.0,
+      90.0,
+      69.0,
+      0.322457,
+      0.18,
+      0.29,
+      16.0,
+      null
+    ],
+    [
+      2.0,
+      90.0,
+      50.0,
+      0.133231,
+      0.0,
+      0.0,
+      6.0,
+      null
+    ],
+    [
+      1.0,
+      90.0,
+      53.0,
+      0.282398,
+      0.0,
+      0.01,
+      2.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      43.0,
+      0.224218,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.409883,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.231826,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      4.0,
+      90.0,
+      46.0,
+      0.312586,
+      0.0,
+      0.02,
+      18.0,
+      null
+    ],
+    [
+      0.0,
+      90.0,
+      48.0,
+      0.219972,
+      0.0,
+      0.0,
+      -5.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.532737,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      2.0,
+      66.0,
+      52.0,
+      0.260688,
+      0.627273,
+      0.627273,
+      4.090909,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      48.0,
+      0.546263,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      2.0,
+      81.0,
+      48.0,
+      0.130583,
+      0.0,
+      0.011111,
+      10.0,
+      null
+    ],
+    [
+      0.0,
+      82.0,
+      40.0,
+      0.127757,
+      0.0,
+      0.032927,
+      1.097561,
+      null
+    ],
+    [
+      7.0,
+      90.0,
+      45.0,
+      0.574086,
+      0.0,
+      0.0,
+      16.0,
+      null
+    ],
+    [
+      7.0,
+      80.0,
+      64.0,
+      0.323704,
+      0.0225,
+      0.3825,
+      37.125,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      62.0,
+      0.099262,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      7.0,
+      90.0,
+      44.0,
+      0.328742,
+      0.0,
+      0.01,
+      31.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      57.0,
+      0.187748,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.456358,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      39.0,
+      0.285378,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.182563,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      39.0,
+      0.278439,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      1.0,
+      90.0,
+      48.0,
+      0.114924,
+      0.0,
+      0.13,
+      -3.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      40.0,
+      0.47378,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      42.0,
+      0.11593,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      44.0,
+      0.10751,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      63.0,
+      0.208006,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      90.0,
+      45.0,
+      0.11092,
+      0.17,
+      0.18,
+      -5.0,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.255409,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      0.0,
+      0.0,
+      45.0,
+      0.283431,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "cases": [
+    {
+      "column": "total_points",
+      "fn": "count",
+      "q": null,
+      "value": 64.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "sum",
+      "q": null,
+      "value": 73.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "mean",
+      "q": null,
+      "value": 1.140625,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "median",
+      "q": null,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "min",
+      "q": null,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "max",
+      "q": null,
+      "value": 10.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 1.0,
+      "n": 64
+    },
+    {
+      "column": "total_points",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 3.7,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "count",
+      "q": null,
+      "value": 64.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "sum",
+      "q": null,
+      "value": 1819.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "mean",
+      "q": null,
+      "value": 28.421875,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "median",
+      "q": null,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "min",
+      "q": null,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "max",
+      "q": null,
+      "value": 90.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 0.0,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 80.25,
+      "n": 64
+    },
+    {
+      "column": "minutes",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 90.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "count",
+      "q": null,
+      "value": 64.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "sum",
+      "q": null,
+      "value": 3056.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "mean",
+      "q": null,
+      "value": 47.75,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "median",
+      "q": null,
+      "value": 45.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "min",
+      "q": null,
+      "value": 39.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "max",
+      "q": null,
+      "value": 69.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 40.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 44.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 50.0,
+      "n": 64
+    },
+    {
+      "column": "value",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 56.7,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "count",
+      "q": null,
+      "value": 64.0,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "sum",
+      "q": null,
+      "value": 14.859686,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "mean",
+      "q": null,
+      "value": 0.23218259375,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "median",
+      "q": null,
+      "value": 0.219725,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "min",
+      "q": null,
+      "value": 0.008204,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "max",
+      "q": null,
+      "value": 0.574086,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 0.0857124,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 0.12540075,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 0.3045185,
+      "n": 64
+    },
+    {
+      "column": "clean_sheet_prob",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 0.4032863,
+      "n": 64
+    },
+    {
+      "column": "xg_per90",
+      "fn": "count",
+      "q": null,
+      "value": 24.0,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "sum",
+      "q": null,
+      "value": 3.567236,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "mean",
+      "q": null,
+      "value": 0.148634833333,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "median",
+      "q": null,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "min",
+      "q": null,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "max",
+      "q": null,
+      "value": 1.8,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 0.09436575,
+      "n": 24
+    },
+    {
+      "column": "xg_per90",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 0.439,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "count",
+      "q": null,
+      "value": 24.0,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "sum",
+      "q": null,
+      "value": 4.783184,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "mean",
+      "q": null,
+      "value": 0.199299333333,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "median",
+      "q": null,
+      "value": 0.0286255,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "min",
+      "q": null,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "max",
+      "q": null,
+      "value": 1.8,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": 0.0,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 0.0075,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 0.2437685,
+      "n": 24
+    },
+    {
+      "column": "xgi_per90",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 0.54175,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "count",
+      "q": null,
+      "value": 24.0,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "sum",
+      "q": null,
+      "value": 409.44996,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "mean",
+      "q": null,
+      "value": 17.060415,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "median",
+      "q": null,
+      "value": 10.7941175,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "min",
+      "q": null,
+      "value": -5.0,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "max",
+      "q": null,
+      "value": 90.0,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": -1.7707317,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": 5.52272725,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": 27.25,
+      "n": 24
+    },
+    {
+      "column": "bps_per90",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": 35.151689,
+      "n": 24
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "count",
+      "q": null,
+      "value": 0.0,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "sum",
+      "q": null,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "mean",
+      "q": null,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "median",
+      "q": null,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "min",
+      "q": null,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "max",
+      "q": null,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "quantile",
+      "q": 0.1,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "quantile",
+      "q": 0.25,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "quantile",
+      "q": 0.75,
+      "value": null,
+      "n": 0
+    },
+    {
+      "column": "cbi_per90",
+      "fn": "quantile",
+      "q": 0.9,
+      "value": null,
+      "n": 0
+    }
+  ]
+}

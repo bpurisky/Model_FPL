@@ -166,6 +166,8 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "GoldenSample",
         "GoldenPair",
         "GoldenSpearmanFile",
+        "ReductionCase",
+        "GoldenReductionsFile",
         "PositionWeights",
         "BoardBucketAccuracy",
         "BoardPlayer",
@@ -203,6 +205,16 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert shape["GoldenSample"]["rows"]["type"] == "array"
     assert shape["GoldenPair"]["rho"]["type"] == "float?"
     assert shape["GoldenSpearmanFile"]["tolerance"]["type"] == "float"
+    # The reduction fixture's asymmetry is the rule under test: an empty
+    # set has no mean, no sum and no maximum, but it always has a count.
+    assert shape["ReductionCase"]["value"]["type"] == "float?"
+    assert shape["ReductionCase"]["n"]["type"] == "int"
+    # `q` is populated only for `quantile` -- the parameter is what makes
+    # it the one §5.6.2 name with competing conventions in the wild, so it
+    # travels with the answer rather than being implied by the caller.
+    assert shape["ReductionCase"]["q"]["type"] == "float?"
+    assert shape["GoldenReductionsFile"]["rows"]["type"] == "array"
+    assert shape["GoldenReductionsFile"]["tolerance"]["type"] == "float"
     # Weights are a metric->number map, and negative values are meaningful
     # (§5.4.6), so zod must not model them as unsigned.
     assert shape["PositionWeights"]["weights"]["type"] == "record"

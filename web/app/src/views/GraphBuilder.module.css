@@ -1,0 +1,209 @@
+.builder {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 64ch;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+  min-inline-size: 0;
+}
+
+.side {
+  position: sticky;
+  inset-block-start: 64px;
+  min-inline-size: 0;
+}
+
+.canvas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.markBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-block-end: var(--hairline) solid var(--rule);
+  padding-block-end: var(--space-2);
+}
+
+.markName {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--paper);
+}
+
+.markMeta {
+  color: var(--muted);
+  margin-inline-start: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+/*
+ * §5.3.3: a value that is absent is not a value that is zero, and the
+ * count of what was dropped is part of the finding rather than a
+ * footnote. Amber because it bears on how much of the data the reader is
+ * actually looking at.
+ */
+.dropped {
+  color: var(--flag);
+}
+
+.aggregate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.aggregate select {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+}
+
+/* §5.7.5's caution. Amber, one line, dismissible per session. */
+.caution {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 88ch;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dismiss {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-2);
+  cursor: pointer;
+  margin-inline-start: auto;
+}
+
+.dismiss:hover {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+/*
+ * The refusal message when the four channels name no valid mark. Not
+ * styled as an error — it is guidance, and the reader has not done
+ * anything wrong by being mid-way through building something.
+ */
+.guidance {
+  margin: 0;
+  padding: var(--space-5) 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 60ch;
+  border-block-start: var(--hairline) solid var(--rule);
+}
+
+.working {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.failure {
+  margin: 0;
+  color: var(--flag);
+  font-size: var(--text-sm);
+  font-family: var(--font-data);
+}
+
+.provenance {
+  margin: 0;
+  color: var(--rule);
+  font-size: var(--text-xs);
+  max-inline-size: 88ch;
+  line-height: 1.5;
+}
+
+/* --- loading and empty states -------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+  margin-block-start: var(--space-5);
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.absent {
+  margin-block-start: var(--space-4);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+  max-inline-size: 68ch;
+}
+
+.absentHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+  color: var(--paper);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .side {
+    position: static;
+  }
+}

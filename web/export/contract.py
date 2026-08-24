@@ -388,6 +388,48 @@ class GoldenSpearmanFile(_Strict):
     pairs: list[GoldenPair]
 
 
+class ReductionCase(_Strict):
+    """One reduction applied to one column of the embedded sample (§5.6.2).
+
+    `q` is populated only for `quantile` and is null for the other six —
+    the parameter is what makes `quantile` the single name in §5.6.2's
+    list with competing conventions in the wild, so it travels with the
+    answer rather than being implied by the caller.
+
+    `value` is nullable and `n` is not. That asymmetry is the rule under
+    test: an empty set has no mean, no sum and no maximum, but it always
+    has a count, and it is zero.
+    """
+
+    column: str
+    fn: str
+    q: float | None
+    value: float | None
+    n: int
+
+
+class GoldenReductionsFile(_Strict):
+    """`golden_reductions.json` — §5.11.2's fixture for the §5.6.2 set.
+
+    Self-contained for the same reason `GoldenSpearmanFile` is: the
+    TypeScript side cannot read `panel.parquet`, which §5.3.4 does not
+    commit, and §5.14.8 requires a fresh clone to work with no pipeline
+    run. So the inputs travel with the answers.
+
+    `columns`/`rows` is the same positional matrix convention used by
+    `GoldenSample` and `ObservationRow`, met a third time here rather
+    than invented anew.
+    """
+
+    header: Header
+    method: str
+    tolerance: float
+    precision: int
+    columns: list[str]
+    rows: list[list[float | None]]
+    cases: list[ReductionCase]
+
+
 class PositionWeights(_Strict):
     """One position's composite profile (§5.4.6).
 
@@ -699,6 +741,7 @@ def contract_shape() -> dict[str, Any]:
         ComponentError, MinutesHead, ScorecardFile,
         FixtureRow, FixturesFile,
         GoldenSample, GoldenPair, GoldenSpearmanFile,
+        ReductionCase, GoldenReductionsFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
         SeasonSummary, ObservationRow, ObservationsFile,
@@ -763,6 +806,7 @@ __all__ = [
     "FixtureRow",
     "FixturesFile",
     "GoldenPair",
+    "GoldenReductionsFile",
     "GoldenSample",
     "GoldenSpearmanFile",
     "GroupSummary",
@@ -776,6 +820,7 @@ __all__ = [
     "ObservationsFile",
     "PositionSpearman",
     "PositionWeights",
+    "ReductionCase",
     "ScorecardFile",
     "ScorecardRow",
     "SeasonSummary",

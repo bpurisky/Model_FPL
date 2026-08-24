@@ -228,6 +228,36 @@ export const GoldenSpearmanFile = z.object({
 });
 
 /**
+ * One reduction applied to one column of the embedded sample (§5.6.2).
+ *
+ * `q` is populated only for `quantile` and is null for the other six —
+ * the parameter is what makes `quantile` the single name in §5.6.2's
+ * list with competing conventions in the wild, so it travels with the
+ * answer rather than being implied by the caller.
+ *
+ * `value` is nullable and `n` is not. That asymmetry is the rule under
+ * test: an empty set has no mean, no sum and no maximum, but it always
+ * has a count, and it is zero.
+ */
+export const ReductionCase = z.object({
+  column: z.string(),
+  fn: z.string(),
+  q: z.number().nullable(),
+  value: z.number().nullable(),
+  n: z.number().int(),
+});
+
+export const GoldenReductionsFile = z.object({
+  header: Header,
+  method: z.string(),
+  tolerance: z.number(),
+  precision: z.number().int(),
+  columns: z.array(z.string()),
+  rows: z.array(z.array(z.number().nullable())),
+  cases: z.array(ReductionCase),
+});
+
+/**
  * §5.4.6's weight profile for one position. `weights` is a metric->number
  * map and the numbers are signed: conceding is bad for a defender, and a
  * scoring layer that cannot express that is not modelling football.
@@ -366,6 +396,8 @@ export type ScorecardFile = z.infer<typeof ScorecardFile>;
 export type FixtureRow = z.infer<typeof FixtureRow>;
 export type FixturesFile = z.infer<typeof FixturesFile>;
 export type GoldenSpearmanFile = z.infer<typeof GoldenSpearmanFile>;
+export type ReductionCase = z.infer<typeof ReductionCase>;
+export type GoldenReductionsFile = z.infer<typeof GoldenReductionsFile>;
 export type BoardPlayer = z.infer<typeof BoardPlayer>;
 export type BoardFile = z.infer<typeof BoardFile>;
 export type PlayerRow = z.infer<typeof PlayerRow>;

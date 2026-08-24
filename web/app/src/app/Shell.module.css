@@ -1,0 +1,118 @@
+/*
+ * §5.8.8: only the named spacing steps, zero radius on data surfaces,
+ * hairlines at one device pixel, and the two motion durations.
+ */
+
+.shell {
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border-block-end: var(--hairline) solid var(--rule);
+  position: sticky;
+  inset-block-start: 0;
+  background: var(--ground);
+  z-index: 2;
+  flex-wrap: wrap;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.wordmarkDim {
+  color: var(--muted);
+}
+
+.list {
+  display: flex;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  border-block-end: 2px solid transparent;
+  transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--paper);
+}
+
+.tab[data-active] {
+  color: var(--paper);
+  border-block-end-color: var(--paper);
+}
+
+/*
+ * §5.1.3's disabled entries. Dimmed rather than hidden, and `not-allowed`
+ * rather than a pointer, so the boundary is discoverable without being
+ * clickable.
+ */
+.tab:disabled {
+  color: var(--rule);
+  cursor: not-allowed;
+}
+
+/*
+ * The milestone tag. Deliberately *not* amber — §5.8.2 reserves amber for
+ * epistemic warnings, and "this surface arrives at 5D" is a fact about
+ * the schedule, not about whether a number can be trusted.
+ */
+.badge {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--rule);
+  border: var(--hairline) solid currentColor;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-control);
+}
+
+.tab[data-active] .badge {
+  color: var(--muted);
+}
+
+.body {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.pending {
+  padding: var(--space-6) var(--space-5);
+}
+
+.pendingText {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0;
+  max-inline-size: 60ch;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    gap: var(--space-3);
+  }
+}

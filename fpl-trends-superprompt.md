@@ -723,6 +723,126 @@ eligible counts exactly.
 
 46 frontend tests pass, 484 Python tests pass, bundle 65.6 KB gzipped.
 
+### Milestone 5C — the query layer and the Graph Builder — 2026-08-23 (later)
+
+The user can now ask their own questions. Four drop zones over the panel,
+the mark inferred from the data rather than chosen from a menu, and every
+number on screen traceable to a reduction a golden test covers.
+
+**The app has a shell.** `main.tsx` rendered `CorrelationLab` directly
+until now. There is a nav across all eight §5.4 surfaces plus the two
+Phase 3/4 entries §5.1.3 requires as disabled explanations rather than
+hidden routes. The six Phase 5 surfaces later milestones own carry their
+milestone as a tag and an empty state naming it — a nav that hides them
+misrepresents the shape of the tool, and one that links them to a blank
+page misrepresents its progress.
+
+**URL is state, from the start rather than retrofitted (§5.5).** The full
+encoding, the filter bar, the position filter, the toggle and the player
+selection all round-trip through the query string, and `url.test.ts`
+checks the round trip over generated states rather than checking the
+format. State changes `replaceState`; only navigation pushes — dragging a
+column through four zones should not cost four presses of the back
+button. A URL from a newer build degrades rather than erroring: an
+unknown view falls back to the hero, and an unknown aggregate falls back
+to `mean` rather than putting a name §5.6.2 does not permit into a query.
+
+**Mark inference is the §5.4.2 table and nothing else.** Transcribed row
+for row into `encoding/mark.ts`, and a combination the table does not
+name produces **no mark and a reason** rather than a nearest guess.
+`mark.test.ts` walks the whole 5×5×5×5 cross product: 39 of the 625
+combinations draw something, 586 return prose telling the reader what to
+change. The 39 is asserted, so widening what the builder will draw moves
+a number and the diff has to say why.
+
+**DuckDB groups; TypeScript reduces.** This is the load-bearing decision
+of the milestone and it is not what §5.1.2's layer diagram implies. §5.6.2
+lets the browser reduce on the grounds that its seven operations "cannot
+silently disagree with Python because there is nothing to disagree
+about" — which is only true if there is exactly **one** implementation and
+a golden test holds it against Python. So the SQL in `query/panel.ts`
+filters, groups, and `list(...)`s the values out, and `query/reduce.ts`
+does the arithmetic in plain TypeScript. Writing `avg(x)` in SQL would
+have been shorter and would have left the numbers on screen covered by no
+test that runs in CI. A guard test now forbids an aggregate appearing
+inside any string literal containing `SELECT`.
+
+`golden_reductions.json` is the fixture: 80 cases over 8 columns × 64
+rows, self-contained for the same reason `golden_spearman.json` is — the
+TypeScript cannot read `panel.parquet`, and §5.14.8 requires a fresh clone
+to work. Sampled from **2023-24 and 2024-25 only**, so `cbi_per90` is
+absent from every row rather than merely sparse, which is what puts the
+empty-set rule under test with real absence instead of a constructed
+blank. `quantile` is pinned to linear interpolation and `sum` adds in
+ascending order, both because they are the only places these seven names
+admit a choice at all.
+
+**The silent bug this milestone nearly shipped.** Arrow's
+`Vector.toArray()` hands back the underlying typed array and **ignores the
+validity bitmap**. Measured on one gameweek of `xg_per90`: 309 of 616
+values are null, and `toArray()` returned `2.5465051432e-313` and
+`1.9e-322` for them — uninitialised memory, as Float64, silently. Those
+would not have looked like an error. They would have looked like a player
+with a very small xG, averaged into a mean, and drawn. `normalizeList`
+now iterates the vector, which reads the bitmap and yields real nulls; it
+is slower and it is the only correct option. §5.3.3 arriving from an
+unexpected direction.
+
+**Two chart defects found by looking at the screen rather than the tests.**
+Bars did not start from zero, so a mean xGI of 1.20 drew about ten times
+the bar of 0.39 for a true ratio of three — the truncated-axis lie, in a
+tool §5.0.1 calls a diagnostic instrument. Bar and histogram scales now
+include zero; point and line keep a fitted scale, because they encode by
+position and forcing zero on a rate between 0.4 and 1.2 flattens every
+real difference into the top fifth of the plot. Separately, twenty team
+names on one axis collided into illegibility; long category labels now
+rotate and the plot area sizes itself for them, rather than thinning
+labels the reader is scanning for.
+
+**§5.7.3 and §5.7.5 are both live.** The toggle defaults to raw when a
+single position is filtered and to within-position when it is not, as a
+default rather than a lock — it stays wherever the reader last put it.
+When a `normalizable` metric is plotted in raw units across more than one
+position, §5.7.5's caution appears in amber naming the specific
+distortion. The registry's `normalized_key` is what the toggle reads;
+a column with no companion stays raw however the toggle is set, because
+standardizing one in the browser is exactly what §5.6 forbids.
+
+**Deviations recorded per §5.16:**
+
+**D6. `temporal | quantitative | any` is implemented as "any *categorical*
+colour."** A quantitative colour cannot split a line into series, and the
+alternatives — binning it, or running a gradient along the path — are an
+estimator choice and a decoration respectively. The reason string names
+the fix.
+
+**D7. Rows the §5.4.2 table writes with `—` in the Colour column require
+that zone to be empty.** A drop zone that accepts a column and then does
+nothing with it is worse than one that says why it cannot.
+
+**D8. Series colour samples the diverging ramp rather than a categorical
+palette.** §5.8.2 defines none, and inventing one would spend the visual
+budget §5.8.5 explicitly assigns elsewhere. It is a real if small
+distortion — an ordered ramp on unordered categories implies a sequence
+that is not there — mitigated by colour never being the only encoding:
+every series carries a dash pattern and a legend entry, so the chart
+survives greyscale.
+
+**D9. `golden_reductions.json` is an eleventh export file**, alongside
+`observations.json`'s tenth. §5.2.1's module list names no module for it,
+exactly as it names none for `golden.py`, and it lives beside its sibling
+for the same reason: publishing inputs and answers to check an
+implementation against is a different job from publishing numbers to
+render. §5.11.2 requires it to exist.
+
+**Measured against §5.9.** Initial bundle **69.6 KB gzipped** against the
+250 KB budget, and DuckDB appears in no initial-load chunk — the split
+point is `lazy()` in `Shell.tsx`, above anything that imports `query/`.
+**The engine chunk itself misses its budget and cannot meet it**: see the
+open question below.
+
+127 frontend tests pass (was 46), 500 Python tests pass, typecheck clean.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.
