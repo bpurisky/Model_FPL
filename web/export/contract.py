@@ -31,6 +31,21 @@ from pydantic import BaseModel, ConfigDict
 
 CONTRACT_VERSION = 1
 
+# The season the pipeline is currently collecting, and the single
+# definition of it in this repo -- `web/export/fixtures.py` imports this
+# rather than keeping its own copy.
+#
+# It lives in the lowest-level module because `build_header` stamps it
+# onto every exported file, which is what lets the frontend offer the
+# current season as a filter *before any of its data exists*. The panel
+# can only report the seasons it carries; a season with no completed
+# gameweeks is invisible to it, and invisible is the wrong answer for the
+# one season the reader actually cares about.
+#
+# Rolls over once a year, alongside `config/scoring_{season}.yaml` and
+# `SCORING_CONFIG` in `web/export/players.py`.
+CURRENT_SEASON = "2026-27"
+
 # See `json_safe`. Enough to preserve every real distinction in these
 # exports, few enough to absorb parallel-reduction jitter in the last bits
 # of a double.
@@ -64,6 +79,14 @@ class Header(_Strict):
     model_git_sha: str | None
     normalization_basis: str
     rows: int
+
+    # --- added after 5D, contract_version unchanged ---------------------
+    # Optional with a default, so a file written before this field existed
+    # still validates rather than failing the §5.12 version check for a
+    # reason that has nothing to do with the numbers in it. Nothing that
+    # was already in the contract changed meaning, which is the test for
+    # whether the version has to move.
+    current_season: str | None = None
 
 
 class ColumnSpec(_Strict):
@@ -679,6 +702,7 @@ def build_header(
         model_git_sha=model_git_sha(),
         normalization_basis=normalization_basis,
         rows=rows,
+        current_season=CURRENT_SEASON,
     )
 
 
@@ -825,6 +849,7 @@ __all__ = [
     "ScorecardRow",
     "SeasonSummary",
     "json_safe",
+    "CURRENT_SEASON",
     "build_header",
     "contract_shape",
 ]

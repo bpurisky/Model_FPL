@@ -37,6 +37,7 @@ export const Header = z.object({
   model_git_sha: z.string().nullable(),
   normalization_basis: z.string(),
   rows: z.number().int(),
+  current_season: z.string().nullable().optional(),
 });
 
 export const Role = z.enum(["quantitative", "categorical", "ordinal", "temporal"]);

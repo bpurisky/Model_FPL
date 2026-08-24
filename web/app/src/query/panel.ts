@@ -405,8 +405,29 @@ export async function select(
  * promotion and relegation, and a gameweek range in the source would be
  * wrong every week.
  */
+/**
+ * One season the filter bar can offer, and what is actually behind it.
+ *
+ * `rows: 0` is a real and expected state, not a bug. The panel can only
+ * report the seasons it carries, and the season everyone actually cares
+ * about is the one that has barely started — invisible to the panel until
+ * its first gameweek is recorded. So the current season is unioned in
+ * from the export header (§5.3.1's `current_season`) whether or not it has
+ * data, and the count travels with it so the UI can say "no gameweeks
+ * yet" rather than offering a chip that silently draws nothing.
+ */
+export interface SeasonFacet {
+  season: string;
+  /** Panel rows carried for this season. Zero is an answer. */
+  rows: number;
+  /** Distinct gameweeks with at least one row. */
+  gameweeks: number;
+  /** Whether this is the season the pipeline is currently collecting. */
+  current: boolean;
+}
+
 export interface PanelFacets {
-  seasons: string[];
+  seasons: SeasonFacet[];
   teams: string[];
   positions: string[];
   gwMin: number;
@@ -416,7 +437,10 @@ export interface PanelFacets {
   rows: number;
 }
 
-export async function facets(session: Session): Promise<PanelFacets> {
+export async function facets(
+  session: Session,
+  currentSeason?: string | null,
+): Promise<PanelFacets> {
   const [season, team, position, gw, value] = await Promise.all([
     session.column("season"),
     session.column("team"),
@@ -446,7 +470,7 @@ export async function facets(session: Session): Promise<PanelFacets> {
   const [priceMin, priceMax] = numericExtent(value);
 
   return {
-    seasons: distinct(season),
+    seasons: seasonFacets(season, gw, currentSeason ?? null),
     teams: distinct(team),
     /*
      * Pitch order, not alphabetical. Sorted output gives DEF, FWD, GK,
@@ -461,6 +485,54 @@ export async function facets(session: Session): Promise<PanelFacets> {
     priceMax,
     rows: session.rows,
   };
+}
+
+/**
+ * Seasons in chronological order, each with what the panel holds for it,
+ * and the current season present whether or not that is anything.
+ *
+ * FPL season labels sort lexically in chronological order ("2023-24" <
+ * "2026-27"), which is why a plain sort is correct here and will stay
+ * correct until the year 10000.
+ */
+function seasonFacets(
+  season: PanelColumn,
+  gw: PanelColumn,
+  currentSeason: string | null,
+): SeasonFacet[] {
+  const gameweeks = new Map<string, Set<number>>();
+  const rows = new Map<string, number>();
+
+  for (let i = 0; i < season.length; i += 1) {
+    const value = season[i];
+    if (value === null) continue;
+    const key = String(value);
+    rows.set(key, (rows.get(key) ?? 0) + 1);
+
+    const week = gw[i];
+    if (typeof week === "number") {
+      let weeks = gameweeks.get(key);
+      if (!weeks) {
+        weeks = new Set();
+        gameweeks.set(key, weeks);
+      }
+      weeks.add(week);
+    }
+  }
+
+  // The union: a current season with no completed gameweek yet is still a
+  // season the reader may want to select, and saying so is more useful
+  // than pretending it does not exist.
+  if (currentSeason && !rows.has(currentSeason)) rows.set(currentSeason, 0);
+
+  return [...rows.keys()]
+    .sort()
+    .map((name) => ({
+      season: name,
+      rows: rows.get(name) ?? 0,
+      gameweeks: gameweeks.get(name)?.size ?? 0,
+      current: name === currentSeason,
+    }));
 }
 
 const PITCH_ORDER = ["GK", "DEF", "MID", "FWD"];

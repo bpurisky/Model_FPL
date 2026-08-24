@@ -977,6 +977,67 @@ readable at four players. An option declined, not a deviation.
 **Milestone 5D is complete.** 141 frontend tests, 500 Python tests,
 initial bundle 73.2 KB gzipped against §5.9's 250 KB.
 
+### Future-proofing: 2026-27 is a filter option before its data exists — 2026-08-23
+
+The season everyone actually cares about is the one that has barely
+started, and the panel could not offer it. `facets()` derived the season
+list from `SELECT DISTINCT season` over `panel.parquet`, so **2026-27 was
+invisible until its first gameweek was recorded** — a filter that is
+wrong about the only question anyone is asking in August.
+
+**`current_season` is now stamped on every export header.** It is the
+lowest-cost place to put it: `Header` travels on all eleven files, and
+`columns.json` is already loaded by every panel-backed surface, so the
+frontend learns the live season without one extra byte or one extra
+request. Optional with a default, so a file written before the field
+existed still validates rather than failing §5.12's version check for a
+reason having nothing to do with its numbers — and nothing already in the
+contract changed meaning, which is the test for whether the version has
+to move. It does not.
+
+`CURRENT_SEASON` moved to `contract.py` and `fixtures.py` now imports it,
+so there is one definition rather than two. It rolls over once a year
+beside `config/scoring_{season}.yaml`.
+
+**`facets()` returns `SeasonFacet[]` rather than `string[]`** — season,
+row count, gameweek count, and whether it is the live one — and unions
+the header's current season in whether or not the panel carries any of
+it. `rows: 0` is a real answer, not an absence.
+
+**What the surfaces do with it:**
+
+The chip renders in amber marked `no data yet` (§5.8.2 reserves amber for
+statements about how far a number can be trusted, and a coverage gap is
+exactly that). Deliberately **not** disabled: a disabled chip cannot be
+selected, so the reader could not reach the explanation and would be left
+guessing whether the season exists at all.
+
+The Form Matrix prefers the current season **once it has recorded
+something**, falling back to the most recent season that has data.
+Opening on an empty grid in August would be honest and useless. Selecting
+the empty season renders no grid at all — §5.14.14 forbids mocked data in
+any state, and a grid of blanks reads as players who did not play — just
+the sentence *"nothing here is missing, it has not happened"* and a
+one-click "Show 2025-26 instead".
+
+The Graph Builder keeps "all seasons" as its default, deliberately: the
+season is not its axis, and defaulting it would cut the data behind every
+opening chart from 85,000 rows to a few hundred. It gains the same
+explanation for a zero-mark plot, which previously rendered `0 marks`
+followed by blank space.
+
+The Correlation Lab needed nothing: it reads `observations.json`, whose
+`SeasonSummary.partial` flag already handles a season with a fraction of
+its gameweeks, and 2026-27 joins that list the moment it has eligible
+player-seasons.
+
+Nothing is fabricated anywhere. The row counts are measured, the empty
+state says the season has not happened rather than that it has no
+players, and every number that appears when the data lands will be a
+number the pipeline produced.
+
+145 frontend tests pass, 500 Python tests pass.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

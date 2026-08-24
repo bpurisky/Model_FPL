@@ -181,6 +181,10 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "ObservationsFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
+    # Optional because a file written before the field existed must still
+    # validate. It is what lets the frontend offer the current season as a
+    # filter before any of its data exists (§5.4.2).
+    assert shape["Header"]["current_season"] == {"required": False, "type": "str?"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
     assert shape["ColumnSpec"]["position_relevance"]["type"] == "record"
     assert shape["ColumnSpec"]["available_to_season"]["required"] is False

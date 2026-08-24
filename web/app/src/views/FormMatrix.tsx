@@ -96,7 +96,14 @@ export function FormMatrix() {
         const session = await openSession((progress) =>
           cancelled ? undefined : setEngine({ status: "opening", progress }),
         );
-        const panelFacets = await loadFacets(session);
+        /*
+         * §5.3.1's `current_season`, stamped on every export header. The
+         * panel can only report the seasons it *carries*, and the season
+         * the reader cares about most is the one that has barely started
+         * — so the filter learns it from the header instead and offers it
+         * whether or not any of its gameweeks have landed.
+         */
+        const panelFacets = await loadFacets(session, columns.header.current_season ?? null);
         if (!cancelled) setEngine({ status: "ready", session, facets: panelFacets, columns });
       } catch (error) {
         if (cancelled) return;
@@ -144,11 +151,29 @@ export function FormMatrix() {
    * The columns are gameweeks of a season anyway, so the honest reading
    * of "no season filtered" is the latest one rather than all of them.
    */
-  const season =
-    state.filters.seasons.length === 1
-      ? state.filters.seasons[0]!
-      : (allSeasons[allSeasons.length - 1] ?? null);
-  const seasonOverridden = state.filters.seasons.length !== 1 && season !== null;
+  /*
+   * Which season to show when the filter does not name exactly one.
+   *
+   * The current season first — it is the one the reader came for — but
+   * only once it has recorded something. Opening on an empty grid in
+   * August would be honest and useless. Until then it falls back to the
+   * most recent season that has data, and the note below says so, so the
+   * fallback is never mistaken for the current season being empty of
+   * *players* rather than empty of *gameweeks*.
+   */
+  const populated = allSeasons.filter((entry) => entry.rows > 0);
+  const preferred =
+    allSeasons.find((entry) => entry.current && entry.rows > 0) ??
+    populated[populated.length - 1] ??
+    null;
+
+  const picked = state.filters.seasons.length === 1 ? state.filters.seasons[0]! : null;
+  const season = picked ?? preferred?.season ?? null;
+  const seasonFacet = allSeasons.find((entry) => entry.season === season) ?? null;
+  const seasonOverridden = picked === null && season !== null;
+  // The reader asked for a season the panel has no rows for. Almost always
+  // the current one, before its first gameweek lands.
+  const seasonEmpty = seasonFacet !== null && seasonFacet.rows === 0;
 
   useEffect(() => {
     if (!session || columnIndex.size === 0) return;
@@ -364,7 +389,33 @@ export function FormMatrix() {
         )}
       </div>
 
-      {seasonOverridden && (
+      {seasonEmpty && (
+        /*
+         * §5.14.14 forbids mocked data in any state, including empty
+         * ones. So this says what is absent and when it arrives, and
+         * renders no grid at all rather than a grid of blanks that could
+         * be mistaken for players who did not play.
+         */
+        <p className={styles.caution} role="note">
+          <span className="data">{season}</span> has no completed gameweeks in the panel yet.
+          The collector records each one after it finishes, and this grid fills in a column at
+          a time as they land — nothing here is missing, it has not happened.
+          {preferred && (
+            <>
+              {" "}
+              <button
+                type="button"
+                className={styles.inlineAction}
+                onClick={() => dispatch({ type: "filters", filters: { seasons: [preferred.season] } })}
+              >
+                Show {preferred.season} instead
+              </button>
+            </>
+          )}
+        </p>
+      )}
+
+      {seasonOverridden && !seasonEmpty && (
         /*
          * Never silently. The reader set a filter (or set none) and this
          * surface is showing something narrower than they asked for, so
@@ -384,13 +435,15 @@ export function FormMatrix() {
         </p>
       )}
 
-      {working && !data && <p className={styles.working}>Reading the panel…</p>}
+      {working && !data && !seasonEmpty && (
+        <p className={styles.working}>Reading the panel…</p>
+      )}
 
-      {data && data.rows.length === 0 && (
+      {data && data.rows.length === 0 && !seasonEmpty && (
         <p className={styles.empty}>No player survives the current filters.</p>
       )}
 
-      {data && data.rows.length > 0 && (
+      {data && data.rows.length > 0 && !seasonEmpty && (
         <Grid
           rows={data.rows}
           gameweeks={data.gameweeks}

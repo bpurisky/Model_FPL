@@ -361,3 +361,21 @@
   font-size: var(--text-sm);
   max-inline-size: 92ch;
 }
+
+/* An action offered inside a note, so the fix is where the problem is. */
+.inlineAction {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--paper);
+  background: transparent;
+  border: var(--hairline) solid var(--flag);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.inlineAction:hover {
+  background: var(--flag);
+  color: var(--ground);
+}

@@ -353,7 +353,7 @@ describe("the group cap", () => {
 describe("facets", () => {
   it("reads the filter bar's options from the data", async () => {
     const result = await facets(panel(SAMPLE));
-    expect(result.seasons).toEqual(["2024-25", "2025-26"]);
+    expect(result.seasons.map((entry) => entry.season)).toEqual(["2024-25", "2025-26"]);
     expect(result.teams).toEqual(["Arsenal", "Liverpool"]);
     expect(result.gwMin).toBe(1);
     expect(result.gwMax).toBe(3);
@@ -367,6 +367,55 @@ describe("facets", () => {
       panel({ ...SAMPLE, position: ["FWD", "GK", "MID", "DEF", "GK"] }),
     );
     expect(result.positions).toEqual(["GK", "DEF", "MID", "FWD"]);
+  });
+
+  it("counts rows and gameweeks behind each season", async () => {
+    const result = await facets(panel(SAMPLE));
+    expect(result.seasons).toEqual([
+      { season: "2024-25", rows: 2, gameweeks: 2, current: false },
+      { season: "2025-26", rows: 3, gameweeks: 3, current: false },
+    ]);
+  });
+
+  it("offers the current season even when the panel carries none of it", async () => {
+    /*
+     * The whole point of taking `current_season` from the export header
+     * rather than from the data: the season the reader cares about most
+     * is the one that has barely started, and the panel cannot report a
+     * season it has no rows for. `rows: 0` is the honest answer, not an
+     * absence.
+     */
+    const result = await facets(panel(SAMPLE), "2026-27");
+    const current = result.seasons.find((entry) => entry.season === "2026-27");
+    expect(current).toEqual({ season: "2026-27", rows: 0, gameweeks: 0, current: true });
+    // Chronological, and FPL labels sort lexically in that order.
+    expect(result.seasons.map((entry) => entry.season)).toEqual([
+      "2024-25",
+      "2025-26",
+      "2026-27",
+    ]);
+  });
+
+  it("does not duplicate the current season once its data arrives", async () => {
+    const withCurrent = {
+      ...SAMPLE,
+      season: ["2024-25", "2024-25", "2026-27", "2026-27", "2026-27"],
+    };
+    const result = await facets(panel(withCurrent), "2026-27");
+    expect(result.seasons.map((entry) => entry.season)).toEqual(["2024-25", "2026-27"]);
+    expect(result.seasons.find((entry) => entry.season === "2026-27")).toEqual({
+      season: "2026-27",
+      rows: 3,
+      gameweeks: 3,
+      current: true,
+    });
+  });
+
+  it("marks no season current when the header does not name one", async () => {
+    // An export written before the field existed. The filter should still
+    // work, just without knowing which season is live.
+    const result = await facets(panel(SAMPLE));
+    expect(result.seasons.every((entry) => !entry.current)).toBe(true);
   });
 
   it("sorts an unfamiliar position last rather than first", async () => {

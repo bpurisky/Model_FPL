@@ -1,12 +1,13 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T23:58:41.566337Z",
+    "generated_at": "2026-08-24T02:35:35.815725Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "31825762ade0d08a0df0a086678e57553ae17a2f",
+    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
     "normalization_basis": "player_season_pooled_min45_per_fixture",
-    "rows": 649
+    "rows": 649,
+    "current_season": "2026-27"
   },
   "basis": "player_season_pooled_min45_per_fixture",
   "seasons": [

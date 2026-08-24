@@ -1,12 +1,13 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-24T01:10:13.165195Z",
+    "generated_at": "2026-08-24T02:35:34.933852Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "d9343c59a77c8d5b6d7e720f4e24793fc19707c9",
+    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
     "normalization_basis": "player_season_pooled_min45_per_fixture",
-    "rows": 80
+    "rows": 80,
+    "current_season": "2026-27"
   },
   "method": "nulls dropped, values sorted ascending; sum added sequentially in that order; quantile and median by linear interpolation (polars, method=linear). Empty set reduces to null for every name except count, which is 0. See web/export/reductions.py and src/query/reduce.ts",
   "tolerance": 1e-12,

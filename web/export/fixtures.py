@@ -53,11 +53,16 @@ import polars as pl
 from analytics.fdr import EloRatings, build_fdr_comparison, compute_elo_ratings, custom_difficulty
 from backtest.backfill import RAW_CACHE_DIR, load_match_results, load_teams
 from collector.schemas import fixture_is_played
-from web.export.contract import FixtureRow, FixturesFile, build_header, json_safe
+from web.export.contract import (
+    CURRENT_SEASON,
+    FixtureRow,
+    FixturesFile,
+    build_header,
+    json_safe,
+)
 
 logger = logging.getLogger("web.export.fixtures")
 
-CURRENT_SEASON = "2026-27"
 REFERENCE_DIR = Path("data/reference")
 
 # Historical fixture ids are pushed into the negative space, one block per

@@ -1,12 +1,13 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T21:30:09.144919Z",
+    "generated_at": "2026-08-24T02:35:34.631656Z",
     "source_gameweek": 38,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "94e99fe9b798ec643c5d9e51d2251f174fcee229",
+    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
     "normalization_basis": "elo_pre_match_with_carry_forward",
-    "rows": 380
+    "rows": 380,
+    "current_season": "2026-27"
   },
   "season": "2026-27",
   "elo_matches": 1149,

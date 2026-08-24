@@ -104,3 +104,32 @@
   max-inline-size: 34ch;
   line-height: 1.35;
 }
+
+/*
+ * A season the panel carries no rows for — almost always the current one,
+ * before its first gameweek is recorded. Amber because §5.8.2 reserves it
+ * for statements about how far a number can be trusted, and "no gameweeks
+ * yet" is a coverage fact of exactly that kind.
+ */
+.chip[data-empty] {
+  border-color: var(--flag);
+  color: var(--flag);
+}
+
+.chip[data-empty][data-on] {
+  background: var(--flag);
+  border-color: var(--flag);
+  color: var(--ground);
+}
+
+/* The current season stays legible when selected, whichever state it is in. */
+.chip[data-current] {
+  font-weight: 600;
+}
+
+.chipFlag {
+  margin-inline-start: var(--space-1);
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}

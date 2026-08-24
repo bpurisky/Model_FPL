@@ -57,7 +57,14 @@ export function GraphBuilder() {
         const session = await openSession((progress) =>
           cancelled ? undefined : setEngine({ status: "opening", progress }),
         );
-        const panelFacets = await loadFacets(session);
+        /*
+         * §5.3.1's `current_season`, stamped on every export header. The
+         * panel can only report the seasons it *carries*, and the season
+         * the reader cares about most is the one that has barely started
+         * — so the filter learns it from the header instead and offers it
+         * whether or not any of its gameweeks have landed.
+         */
+        const panelFacets = await loadFacets(session, columns.header.current_season ?? null);
         if (!cancelled) setEngine({ status: "ready", session, facets: panelFacets, columns });
       } catch (error) {
         if (cancelled) return;
@@ -171,6 +178,20 @@ export function GraphBuilder() {
     }
     return null;
   }, [normalized, onePosition, state.encoding, columnIndex]);
+
+  /*
+   * Seasons the reader has selected that the panel carries no rows for.
+   * Almost always the current one, before its first gameweek lands — and
+   * the difference between "your filters excluded everything" and "this
+   * season has not started yet" is the whole difference between a bug and
+   * a fact.
+   */
+  const emptySeasons =
+    engine.status === "ready"
+      ? state.filters.seasons.filter(
+          (name) => engine.facets.seasons.find((entry) => entry.season === name)?.rows === 0,
+        )
+      : [];
 
   if (engine.status === "opening") return <Opening progress={engine.progress} />;
   if (engine.status === "absent") return <PanelAbsent />;
@@ -299,7 +320,25 @@ export function GraphBuilder() {
                 </p>
               )}
 
-              {plot && (
+              {plot && plot.count === 0 && (
+                <p className={styles.guidance} role="note">
+                  {emptySeasons.length > 0 ? (
+                    <>
+                      <span className="data">{emptySeasons.join(", ")}</span> has no completed
+                      gameweeks in the panel yet. The collector records each one after it
+                      finishes, so this fills in as the season goes — nothing here is missing,
+                      it has not happened.
+                    </>
+                  ) : (
+                    <>
+                      No rows survive the current filters. Widen the gameweek range, the price
+                      band, or the minutes floor.
+                    </>
+                  )}
+                </p>
+              )}
+
+              {plot && plot.count > 0 && (
                 <Chart
                   plot={plot}
                   plan={inference.plan}

@@ -71,18 +71,46 @@ export function FilterBar({
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Season</legend>
         <div className={styles.chips}>
-          {facets.seasons.map((season) => (
-            <button
-              key={season}
-              type="button"
-              className={styles.chip}
-              data-on={filters.seasons.includes(season) || undefined}
-              aria-pressed={filters.seasons.includes(season)}
-              onClick={() => onChange({ seasons: toggle(filters.seasons, season) })}
-            >
-              {season}
-            </button>
-          ))}
+          {facets.seasons.map((season) => {
+            /*
+             * The current season is offered whether or not it has data
+             * yet — it is the one the reader cares about most, and a
+             * filter that hides it until September is a filter that is
+             * wrong about the only question anyone is asking in August.
+             *
+             * `empty` earns amber rather than a disabled chip. §5.8.2
+             * reserves amber for statements about how far a number can be
+             * trusted, and "this season has recorded no gameweeks yet" is
+             * exactly that. Disabling it would be worse: the reader could
+             * not select it to see the explanation, and would be left
+             * guessing whether the season exists at all.
+             */
+            const empty = season.rows === 0;
+            const on = filters.seasons.includes(season.season);
+            return (
+              <button
+                key={season.season}
+                type="button"
+                className={styles.chip}
+                data-on={on || undefined}
+                data-empty={empty || undefined}
+                data-current={season.current || undefined}
+                aria-pressed={on}
+                title={
+                  empty
+                    ? `${season.season} has no completed gameweeks in the panel yet. It fills in as the collector records them.`
+                    : `${season.season} — ${season.gameweeks} gameweek${season.gameweeks === 1 ? "" : "s"}, ${season.rows.toLocaleString()} player-gameweeks.`
+                }
+                onClick={() => onChange({ seasons: toggle(filters.seasons, season.season) })}
+              >
+                {season.season}
+                {empty && <span className={styles.chipFlag}>no data yet</span>}
+                {!empty && season.current && (
+                  <span className={styles.chipFlag}>gw{season.gameweeks}</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </fieldset>
 

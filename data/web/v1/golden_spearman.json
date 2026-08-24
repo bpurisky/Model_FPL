@@ -1,12 +1,13 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-23T22:21:09.539397Z",
+    "generated_at": "2026-08-24T02:35:34.862018Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "b4ab698c05448835b576e0c2b696dcc7934c5d36",
+    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
     "normalization_basis": "player_season_pooled_min45_per_fixture",
-    "rows": 600
+    "rows": 600,
+    "current_season": "2026-27"
   },
   "method": "pearson over ties-averaged ranks, complete pairs only; see backtest/report.py:spearman",
   "tolerance": 1e-9,
