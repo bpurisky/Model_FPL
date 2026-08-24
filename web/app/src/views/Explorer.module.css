@@ -1,0 +1,319 @@
+/*
+ * §5.4.5: "Deliberately plain. It is a workbench; the visual budget is
+ * spent elsewhere (§5.8.5)." So: hairlines, tabular figures, and nothing
+ * that competes with the matrices.
+ */
+
+.explorer {
+  padding: var(--space-4) var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  block-size: calc(100dvh - 108px);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 68ch;
+}
+
+/* --- controls ------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.searchLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.searchText {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.search {
+  font: inherit;
+  font-size: var(--text-xs);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  inline-size: 180px;
+}
+
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.legend {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chip {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--paper);
+}
+
+.chip[data-on] {
+  color: var(--ground);
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.count {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--rule);
+  margin-inline-start: auto;
+}
+
+/* §5.7.5's caution — the highest-value copy in the app. */
+.caution {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 100%;
+  line-height: 1.55;
+}
+
+.dismiss {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-2);
+  cursor: pointer;
+  float: inline-end;
+  margin-inline-start: var(--space-3);
+}
+
+.dismiss:hover {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+/* --- the table ------------------------------------------------------ */
+
+.viewport {
+  flex: 1;
+  min-block-size: 240px;
+  overflow: auto;
+  border: var(--hairline) solid var(--rule);
+}
+
+.table {
+  border-collapse: collapse;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-size: var(--text-xs);
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.th {
+  position: sticky;
+  inset-block-start: 0;
+  background: var(--ground);
+  z-index: 1;
+  padding: 0;
+  text-align: start;
+  font-weight: 400;
+  border-block-end: var(--hairline) solid var(--rule);
+  white-space: nowrap;
+}
+
+.th[data-numeric] {
+  text-align: end;
+}
+
+.th[data-active] {
+  color: var(--paper);
+}
+
+.sortButton {
+  inline-size: 100%;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  text-align: inherit;
+  white-space: nowrap;
+}
+
+.th[data-active] .sortButton {
+  color: var(--paper);
+}
+
+.sortButton:hover {
+  color: var(--paper);
+}
+
+.sortMark {
+  margin-inline-start: var(--space-1);
+  font-size: 9px;
+}
+
+.row {
+  cursor: pointer;
+  block-size: 26px;
+}
+
+.row:hover {
+  background: var(--panel);
+}
+
+/* Selection carries to Comparison (§5.5.3), marked structurally. */
+.row[data-selected] {
+  background: var(--panel);
+  box-shadow: inset 2px 0 0 var(--paper);
+}
+
+.td {
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+  border-block-end: var(--hairline) solid color-mix(in oklch, var(--rule) 40%, transparent);
+}
+
+.td[data-numeric] {
+  text-align: end;
+}
+
+/* §5.3.3: absent is not zero, and it does not look like a number. */
+.null {
+  color: var(--rule);
+}
+
+.footnote {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--rule);
+  max-inline-size: 110ch;
+  line-height: 1.5;
+}
+
+/* --- states --------------------------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}
+
+/* §5.4.5's column groups. Sticky above the column names, which are
+ * themselves sticky — so the two rows travel together. */
+.groupRow {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+}
+
+.groupTh {
+  position: sticky;
+  inset-block-start: 0;
+  background: var(--ground);
+  color: var(--rule);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  text-align: start;
+  padding: var(--space-1) var(--space-2) 0;
+  white-space: nowrap;
+  border-inline-start: var(--hairline) solid var(--rule);
+}
+
+.groupTh:first-child {
+  border-inline-start: none;
+}
+
+/* The column-name row sits below the group row rather than at zero. */
+.th {
+  inset-block-start: 18px;
+}

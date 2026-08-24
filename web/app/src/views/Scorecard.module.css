@@ -1,0 +1,386 @@
+/*
+ * §5.8.5: the visual budget is spent on the matrices and the
+ * decomposition charts. This is the report made legible — tables, bars,
+ * one plot — and nothing here competes with the hero.
+ */
+
+.scorecard {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 1100px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 72ch;
+}
+
+/* --- controls ------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.legend {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.chip {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--paper);
+}
+
+.chip[data-on] {
+  color: var(--ground);
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+/* --- panels --------------------------------------------------------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-block-start: var(--hairline) solid var(--rule);
+  padding-block-start: var(--space-3);
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.panelSub {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 84ch;
+  line-height: 1.5;
+}
+
+.selector {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.selector select {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+}
+
+/*
+ * The honest headline, in amber: it is a statement about how much weight
+ * the numbers above can carry, which is exactly what §5.8.2 reserves
+ * amber for.
+ */
+.finding {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+  line-height: 1.55;
+}
+
+/* --- table ---------------------------------------------------------- */
+
+.tableScroll {
+  overflow-x: auto;
+  max-inline-size: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+  inline-size: 100%;
+}
+
+.table th,
+.table td {
+  padding: var(--space-1) var(--space-3);
+  text-align: end;
+  border-block-end: var(--hairline) solid var(--rule);
+  white-space: nowrap;
+}
+
+.table thead th {
+  color: var(--muted);
+  font-weight: 400;
+  font-family: var(--font-body);
+}
+
+.table td {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.left {
+  text-align: start !important;
+  font-weight: 400;
+}
+
+/* The model under test, marked structurally rather than by colour. */
+.table tr[data-event] th,
+.table tr[data-event] td {
+  color: var(--paper);
+  border-block-end-color: var(--paper);
+}
+
+.better {
+  color: var(--rho-pos);
+}
+
+.worse {
+  color: var(--rho-neg);
+}
+
+.muted {
+  color: var(--rule);
+}
+
+/* --- bars ----------------------------------------------------------- */
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 170px minmax(110px, 1fr) 64px minmax(0, 190px);
+  gap: var(--space-3);
+  align-items: center;
+  font-size: var(--text-xs);
+}
+
+.barLabel {
+  text-align: end;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  position: relative;
+  block-size: 12px;
+  background: var(--panel);
+  border-radius: var(--radius-data);
+  display: block;
+}
+
+.barFill {
+  display: block;
+  block-size: 100%;
+  background: var(--rho-pos);
+}
+
+.barTrack[data-diverging] .barFill {
+  block-size: auto;
+}
+
+.barFill[data-negative] {
+  background: var(--rho-neg);
+}
+
+.barZero {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+  background: var(--rule);
+}
+
+.barValue {
+  text-align: end;
+  font-size: 10px;
+}
+
+.barNote {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--rule);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- calibration plot ----------------------------------------------- */
+
+.plot {
+  inline-size: 100%;
+  max-inline-size: 380px;
+  block-size: auto;
+  display: block;
+}
+
+.axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+/* The line the whole chart is read against. Dashed so it never reads as
+ * data, visible enough to be the reference. */
+.diagonal {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.curve {
+  fill: none;
+  stroke: var(--rho-pos);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.point {
+  fill: var(--rho-pos);
+}
+
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: 10px;
+  fill: var(--muted);
+}
+
+/* --- stats ---------------------------------------------------------- */
+
+.stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: var(--text-lg);
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* --- states --------------------------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}
+
+@media (max-width: 760px) {
+  .barRow {
+    grid-template-columns: minmax(0, 1fr) 64px;
+  }
+
+  .barLabel {
+    text-align: start;
+  }
+
+  .barTrack,
+  .barNote {
+    grid-column: 1 / -1;
+  }
+}

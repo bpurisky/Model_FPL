@@ -48,6 +48,12 @@ function committedExports(): Plugin {
 }
 
 export default defineConfig({
+  /*
+   * GitHub Pages serves a project site under `/<repo>/`, and every asset
+   * and data URL has to agree with that. Set by the deploy workflow;
+   * "/" everywhere else, which is what dev and preview need.
+   */
+  base: process.env.PAGES_BASE ?? "/",
   plugins: [react(), committedExports()],
   build: {
     // §5.9: the initial bundle is budgeted at 250 KB gzipped, and the way

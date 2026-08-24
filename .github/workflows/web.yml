@@ -25,6 +25,13 @@ on:
       - ".github/workflows/web.yml"
   workflow_dispatch: {}
 
+# §5.12 publishes to Pages, which needs these. `contents: write` is for
+# the export commit; the other two are what `deploy-pages` requires.
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 concurrency:
   group: web
   cancel-in-progress: false
@@ -70,3 +77,79 @@ jobs:
           # this commits nothing rather than churning five files an hour.
           git diff --staged --quiet || git commit -m "web/export: refresh $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push
+
+  # §5.12: "run the export, build, and publish to GitHub Pages."
+  build:
+    needs: export
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      # `ref: main` rather than the triggering sha: the export job may
+      # have just committed refreshed numbers, and publishing the build
+      # from before them would deploy a site a commit behind its own data.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/app/package-lock.json
+
+      - run: npm ci
+        working-directory: web/app
+
+      # §5.12: "The build fails loudly on contract version mismatch
+      # between committed data and the app's expected version. No silent
+      # degradation." The app validates this at runtime too (load.ts), but
+      # a site that only reports the mismatch once a reader opens it has
+      # already shipped the mismatch.
+      - name: Check the contract versions agree
+        run: |
+          set -euo pipefail
+          # sed rather than `grep -P`: PCRE is not guaranteed present and
+          # fails outright under a non-UTF-8 locale.
+          app=$(sed -n 's/.*EXPECTED_CONTRACT_VERSION = \([0-9][0-9]*\).*/\1/p' web/app/src/data/schema.ts)
+          for file in data/web/v1/*.json; do
+            data=$(python -c "import json,sys;print(json.load(open(sys.argv[1],encoding='utf-8'))['header'].get('contract_version',''))" "$file")
+            if [ "$data" != "$app" ]; then
+              echo "::error file=$file::contract_version $data, app expects $app"
+              exit 1
+            fi
+          done
+          echo "contract v$app across $(ls data/web/v1/*.json | wc -l) committed files"
+
+      - run: npx vitest run
+        working-directory: web/app
+
+      # §5.12: a project site is served under /<repo>/, and every asset
+      # and data URL has to agree with that.
+      - name: Build
+        working-directory: web/app
+        env:
+          PAGES_BASE: /${{ github.event.repository.name }}/
+        run: npx vite build
+
+      # §5.12: "Parquet artifacts published from the same workflow,
+      # versioned alongside the contract." Without them the Graph Builder,
+      # Form Matrix and Trend Explorer would show their §5.14.8 empty
+      # states on a deployed site that does have the data.
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-parquet
+          path: web/app/dist/data/v1
+
+      # A single-page app behind a static host: any deep link has to serve
+      # index.html rather than 404. §5.5 makes every view a URL, so this is
+      # what keeps a shared link working.
+      - run: cp web/app/dist/index.html web/app/dist/404.html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/app/dist
+      - id: deploy
+        uses: actions/deploy-pages@v4

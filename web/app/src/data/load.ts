@@ -24,7 +24,17 @@ import {
   ScorecardFile,
 } from "./schema";
 
-const BASE = "/data/v1";
+/**
+ * Where the exports live, relative to wherever the app is served from.
+ *
+ * `import.meta.env.BASE_URL` rather than a leading slash, because GitHub
+ * Pages serves a project site under `/<repo>/` and every absolute path
+ * would 404 there while working perfectly in dev. It is "/" locally, so
+ * this is the same string it always was until the moment it is deployed.
+ */
+export const DATA_BASE = `${import.meta.env.BASE_URL}data/v1`.replace(/\/{2,}/g, "/");
+
+const BASE = DATA_BASE;
 
 export class ContractError extends Error {
   constructor(

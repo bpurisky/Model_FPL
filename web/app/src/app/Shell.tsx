@@ -17,7 +17,9 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Comparison } from "../views/Comparison";
 import { CorrelationLab } from "../views/CorrelationLab";
+import { Explorer } from "../views/Explorer";
 import { ModelBoard } from "../views/ModelBoard";
+import { Scorecard } from "../views/Scorecard";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
 import { SURFACES } from "./surfaces";
@@ -25,6 +27,10 @@ import styles from "./Shell.module.css";
 
 const GraphBuilder = lazy(() =>
   import("../views/GraphBuilder").then((module) => ({ default: module.GraphBuilder })),
+);
+
+const TrendExplorer = lazy(() =>
+  import("../views/TrendExplorer").then((module) => ({ default: module.TrendExplorer })),
 );
 
 const FormMatrix = lazy(() =>
@@ -106,6 +112,13 @@ function Shell() {
         )}
         {state.view === "compare" && <Comparison />}
         {state.view === "board" && <ModelBoard />}
+        {state.view === "scorecard" && <Scorecard />}
+        {state.view === "explorer" && <Explorer />}
+        {state.view === "trend" && (
+          <Suspense fallback={<EngineLoading />}>
+            <TrendExplorer />
+          </Suspense>
+        )}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
     </div>

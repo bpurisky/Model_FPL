@@ -24,7 +24,7 @@
  * panel is 83 columns wide and a chart never touches more than about six.
  */
 
-import type { LoadProgress } from "../data/load";
+import { DATA_BASE, type LoadProgress } from "../data/load";
 
 /** Thrown when `panel.parquet` is not on disk — §5.14.8's empty state. */
 export class PanelMissingError extends Error {
@@ -50,7 +50,7 @@ export interface Session {
   close(): Promise<void>;
 }
 
-const PANEL_URL = "/data/v1/panel.parquet";
+const PANEL_URL = `${DATA_BASE}/panel.parquet`;
 
 let pending: Promise<Session> | null = null;
 

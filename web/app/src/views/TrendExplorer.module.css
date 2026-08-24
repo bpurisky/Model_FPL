@@ -1,0 +1,297 @@
+.trend {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 72ch;
+}
+
+.controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-block: var(--hairline) solid var(--rule);
+  padding-block: var(--space-3);
+}
+
+.searchLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.searchText {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.search {
+  font: inherit;
+  font-size: var(--text-xs);
+  background: var(--panel);
+  color: var(--paper);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  inline-size: 180px;
+}
+
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.legend {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chip {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--paper);
+}
+
+.chip[data-on] {
+  color: var(--ground);
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+.count {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--rule);
+  margin-inline-start: auto;
+}
+
+.matches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-block-size: 190px;
+  overflow-y: auto;
+  border: var(--hairline) solid var(--rule);
+  max-inline-size: 380px;
+}
+
+.match {
+  inline-size: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font: inherit;
+  font-size: var(--text-xs);
+  text-align: start;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.match:hover {
+  background: var(--panel);
+}
+
+.matchMeta {
+  color: var(--muted);
+  font-family: var(--font-data);
+}
+
+/* --- the overlay ---------------------------------------------------- */
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.legendRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--paper);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legendMeta {
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 10px;
+}
+
+.swatch {
+  inline-size: 12px;
+  block-size: 3px;
+  display: inline-block;
+}
+
+.remove {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 var(--space-1);
+}
+
+.remove:hover {
+  color: var(--paper);
+}
+
+.plot {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+  border-radius: var(--radius-data);
+}
+
+.axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+
+/* §5.4.8's deadline markers: where the gameweek the snapshot belongs to
+ * changes. Dashed, so they never read as data. */
+.deadline {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0.6;
+}
+
+.line {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.tick {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums slashed-zero;
+  fill: var(--muted);
+}
+
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.footnote,
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  max-inline-size: 92ch;
+  line-height: 1.5;
+}
+
+.empty {
+  font-size: var(--text-sm);
+  padding-block: var(--space-4);
+}
+
+/* --- states --------------------------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+  margin-block-start: var(--space-5);
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.absent {
+  margin-block-start: var(--space-4);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+  max-inline-size: 72ch;
+}
+
+.absentHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+  color: var(--paper);
+}
+
+.note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  color: var(--flag);
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-2);
+  max-inline-size: 78ch;
+  line-height: 1.5;
+}
