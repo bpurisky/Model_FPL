@@ -20,6 +20,7 @@ const FULL: AppUrlState = {
     seasons: ["2024-25", "2025-26"],
     positions: ["MID", "FWD"],
     teams: ["ARS", "LIV"],
+    elements: [430],
     priceMin: 45,
     priceMax: 130,
     minutesFloor: 450,
@@ -95,6 +96,17 @@ describe("the link stays readable", () => {
     expect(search).toContain("y=total_points");
     // `mean` is the default and an empty builder should not carry it.
     expect(search).not.toContain("agg=");
+  });
+
+  it("carries the element filter §5.5.4's bridge sets", () => {
+    // "Explain this" opens the builder with the player pre-filtered, and
+    // that has to survive into the link like everything else.
+    const search = toSearch({
+      ...DEFAULT_STATE,
+      filters: { ...DEFAULT_STATE.filters, elements: [430, 64] },
+    });
+    expect(search).toContain("el=430%2C64");
+    expect(parseUrl(search).filters.elements).toEqual([430, 64]);
   });
 
   it("carries a non-default aggregate once a channel is filled", () => {

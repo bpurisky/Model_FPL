@@ -207,3 +207,31 @@
     position: static;
   }
 }
+
+/*
+ * §5.5.4's caption. Not amber: it explains what the model saw rather than
+ * flagging that a number cannot be trusted, and §5.8.2 reserves amber
+ * strictly for the latter. A plain rule keeps it distinct from the
+ * §5.7.5 caution directly below it, which *is* a trust warning.
+ */
+.caption {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+  background: var(--panel);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+  /*
+   * Deliberately not a flex row. The caption is a sentence with inline
+   * `.data` spans in it, and flex turns every span into a flex item —
+   * which broke it across three lines mid-clause. Prose lays out as
+   * prose; the dismiss button floats out of the flow instead.
+   */
+  line-height: 1.6;
+}
+
+.caption .dismiss {
+  float: inline-end;
+  margin-inline-start: var(--space-3);
+}

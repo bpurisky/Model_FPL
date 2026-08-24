@@ -1038,6 +1038,72 @@ number the pipeline produced.
 
 145 frontend tests pass, 500 Python tests pass.
 
+### Milestone 5E — the Model Board, and the bridge that makes it honest — 2026-08-23
+
+§5.13: "Shipping 5E without the bridge is not permitted." So both landed
+together, and the bridge turned out to cost almost nothing — §5.5 had
+already made every piece of Graph Builder state linkable, so "Explain
+this" is five dispatches and a navigate.
+
+**The board publishes its own hit rate, above the players.** §5.4.7: "A
+prescriptive surface without a published hit rate is exactly the failure
+mode this repo exists to avoid." The measured answer is bad. Two of the
+four buckets have **negative lift**: rising is worth −0.077 forward
+points against the players it was picked out from, declining −0.144, and
+`neutral` — the bucket meaning "no trend the model will call" — beats
+both at +0.146. Only `optimal`, which ranks on level rather than slope,
+earns its place at +0.725.
+
+That panel renders before the cards, with a diverging bar around a true
+zero so a negative lift reads as one, and a plain-prose finding in amber
+telling the reader to read it first. `bucket_accuracy` travels inside
+`board.json` precisely so no surface can render "Rising" without
+rendering what Rising was worth; this is that constraint being honoured
+rather than worked around.
+
+**§5.8.6's walling is structural.** The whole route sits on `--panel`
+behind a 3px left rule with the monospace `model_git_sha` attribution,
+against every other surface's flat `--ground` with no rule. No new
+colours, no badge, no icon set — which is why it survives greyscale and
+a screenshot.
+
+**The bridge, verified end to end.** Clicking "Explain this" on Maxime
+Estève produced
+`?view=graph&norm=1&seasons=2025-26&positions=DEF&el=191&gw=36-38&sel=191&x=gw&y=minutes_reliability`
+— all five §5.5.4 requirements in one link: the player filtered
+(`el=191`), his top driver on the y channel, the gameweek range set to
+the 3-week trend window, normalization on, and a caption reconstructed
+from the same card. The caption states *what the model saw*, and ends by
+pointing at the accuracy panel rather than sounding confident: this
+board has no business asserting more than it measured.
+
+`PanelFilters` gained `elements` for that first requirement. There was no
+other way to honour "the player pre-filtered" — §5.4.2's filter bar has
+no player control, and `selection` is the comparison basket rather than a
+data filter. It is a distinct concept and it round-trips as `el`.
+
+**The reverse path** is a deliberately quiet badge — the bucket name and
+rank, linking back to the card — on the Graph Builder, Comparison, and
+selected Form Matrix rows. Quiet is the honest register: a badge
+announcing "Rising" in colour would be the app leaning on a
+classification its own export measures at −0.077.
+
+**Two bugs the browser caught, not the tests:**
+
+The `norm=1` in the bridge's URL was being **silently overridden** by the
+Graph Builder's own §5.7.3 default. The bridge filters to one position,
+the default for one position is raw, and `toggleTouched ? state : default`
+threw the link's state away. Fixed by treating an explicit `true` as
+always winning — `toSearch` only ever writes `norm=1`, never `norm=0`, so
+a `true` in state is always something someone asked for.
+
+The caption was laid out as a flex row, which turned every inline `.data`
+span into a flex item and broke the sentence across three lines
+mid-clause. Prose lays out as prose.
+
+146 frontend tests pass, 500 Python tests pass. Initial bundle 76.6 KB
+gzipped against §5.9's 250 KB.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

@@ -1,0 +1,36 @@
+/*
+ * Quiet by decision — see the component docstring. A badge that announced
+ * "Rising" in colour would be the app leaning on a classification its own
+ * accuracy panel measures at -0.077 forward points.
+ */
+.badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-1);
+  cursor: pointer;
+  transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+}
+
+.badge:hover {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+/* Optimal is the one bucket with measured positive lift (+0.725), so it
+ * is the one that earns the brighter treatment. */
+.badge[data-bucket="optimal"] {
+  color: var(--paper);
+}
+
+.rank {
+  color: var(--rule);
+}

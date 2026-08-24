@@ -23,6 +23,8 @@ import { DropZones } from "../components/DropZones";
 import { FilterBar } from "../components/FilterBar";
 import { Provenance } from "../components/Provenance";
 import { useApp } from "../app/state";
+import { BucketBadge } from "../components/BucketBadge";
+import { useBoard } from "../data/useBoard";
 import { loadColumns, type LoadProgress } from "../data/load";
 import type { ColumnsFile, ColumnSpec } from "../data/schema";
 import { buildPlot, collectKeysFor, groupKeysFor } from "../encoding/data";
@@ -48,6 +50,13 @@ export function GraphBuilder() {
   const [cautionDismissed, setCautionDismissed] = useState(false);
   /** Whether the reader has overridden §5.7.3's default for this surface. */
   const [toggleTouched, setToggleTouched] = useState(false);
+  const [captionDismissed, setCaptionDismissed] = useState(false);
+  /*
+   * §5.5.4's reverse path and its caption both need the model's own view
+   * of a player. Loaded lazily and failing to `null`, so a missing board
+   * costs a badge rather than the surface.
+   */
+  const board = useBoard();
 
   useEffect(() => {
     let cancelled = false;
@@ -95,7 +104,21 @@ export function GraphBuilder() {
    * default only speaks until they disagree with it.
    */
   const onePosition = state.filters.positions.length === 1;
-  const normalized = toggleTouched ? state.normalized : !onePosition;
+  /*
+   * An explicit `true` always wins over the surface default.
+   *
+   * §5.5.4 requirement 4 says "Explain this" opens with the normalization
+   * toggle set to within-position, and it arrives as `norm=1` in the URL.
+   * A plain `toggleTouched ? … : default` threw that away, because the
+   * bridge also filters to one position and the default for one position
+   * is raw — so the surface silently overrode the state the link carried.
+   *
+   * `toSearch` only ever writes `norm=1`, never `norm=0`, so a `true` in
+   * state is always something someone asked for. A `false` is ambiguous
+   * between "unset" and "turned off", which is what `toggleTouched`
+   * disambiguates.
+   */
+  const normalized = state.normalized || (!toggleTouched && !onePosition);
 
   const normalizedReason = onePosition
     ? normalized
@@ -199,6 +222,16 @@ export function GraphBuilder() {
 
   const label = (key: string | null) => (key ? (columnIndex.get(key)?.label ?? key) : "");
 
+  /*
+   * The single player "Explain this" filtered to, if that is what put us
+   * here. One element and one only — a caption about two players would be
+   * describing a comparison the model never made.
+   */
+  const explained =
+    board && state.filters.elements.length === 1
+      ? (board.players.find((entry) => entry.element_id === state.filters.elements[0]) ?? null)
+      : null;
+
   return (
     <main className={styles.builder}>
       <header className={styles.head}>
@@ -223,6 +256,50 @@ export function GraphBuilder() {
         }}
         normalizedReason={normalizedReason}
       />
+
+      {explained && !captionDismissed && (
+        /*
+         * §5.5.4, requirement 5: "a dismissible caption stating, in one
+         * sentence, what the model saw."
+         *
+         * Reconstructed from `board.json` rather than carried through the
+         * URL. The board is loaded here anyway for the reverse path, so
+         * the sentence costs nothing — and prose in a query string would
+         * make a linked finding unreadable, which is the one thing §5.5
+         * asks the URL not to be.
+         *
+         * It states what the model saw, not that the model was right. The
+         * board's own accuracy panel says two of its four buckets measured
+         * worse than the players they were picked from, and this caption
+         * has no business sounding more confident than that.
+         */
+        <p className={styles.caption} role="note">
+          The model puts <span className="data">{explained.name}</span> in{" "}
+          <span className="data">{explained.bucket}</span>, rank{" "}
+          <span className="data">#{explained.rank}</span> among {explained.position}. What it
+          saw was{" "}
+          {explained.drivers.map((key, index) => (
+            <span key={key}>
+              {index > 0 && index === explained.drivers.length - 1
+                ? " and "
+                : index > 0
+                  ? ", "
+                  : ""}
+              <span className="data">{label(key)}</span>
+            </span>
+          ))}{" "}
+          over the last {board?.trend_window ?? "few"} gameweeks — which is the chart below.
+          Whether that is worth anything is the board&rsquo;s accuracy panel, not this
+          sentence.
+          <button
+            type="button"
+            className={styles.dismiss}
+            onClick={() => setCaptionDismissed(true)}
+          >
+            Dismiss
+          </button>
+        </p>
+      )}
 
       {rawMixedMetric && !cautionDismissed && (
         /*
@@ -270,6 +347,10 @@ export function GraphBuilder() {
           {inference.ok ? (
             <>
               <div className={styles.markBar}>
+                {/* §5.5.4's reverse path, where the player is named. */}
+                {state.filters.elements.length === 1 && (
+                  <BucketBadge board={board} elementId={state.filters.elements[0]!} />
+                )}
                 <p className={styles.markName}>
                   <span className="data">{inference.plan.mark}</span>
                   {plot && (

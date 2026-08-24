@@ -379,3 +379,8 @@
   background: var(--flag);
   color: var(--ground);
 }
+
+.rowBadge {
+  display: block;
+  padding: 0 var(--space-2) var(--space-1);
+}

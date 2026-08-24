@@ -17,6 +17,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Comparison } from "../views/Comparison";
 import { CorrelationLab } from "../views/CorrelationLab";
+import { ModelBoard } from "../views/ModelBoard";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
 import { SURFACES } from "./surfaces";
@@ -104,6 +105,7 @@ function Shell() {
           </Suspense>
         )}
         {state.view === "compare" && <Comparison />}
+        {state.view === "board" && <ModelBoard />}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
     </div>

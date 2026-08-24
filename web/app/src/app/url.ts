@@ -120,6 +120,7 @@ export function parseUrl(search: string): AppUrlState {
       seasons: csv(params.get("seasons")),
       positions: csv(params.get("positions")),
       teams: csv(params.get("teams")),
+      elements: numbers(params.get("el")),
       priceMin,
       priceMax,
       minutesFloor: minutesFloor !== null && Number.isFinite(minutesFloor) ? minutesFloor : null,
@@ -160,6 +161,7 @@ export function toSearch(state: AppUrlState): string {
   if (filters.seasons.length) set("seasons", filters.seasons.join(","));
   if (filters.positions.length) set("positions", filters.positions.join(","));
   if (filters.teams.length) set("teams", filters.teams.join(","));
+  if (filters.elements.length) set("el", filters.elements.join(","));
   set("price", encodeRange(filters.priceMin, filters.priceMax));
   set("gw", encodeRange(filters.gwMin, filters.gwMax));
   if (filters.minutesFloor !== null) set("mins", String(filters.minutesFloor));

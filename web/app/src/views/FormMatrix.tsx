@@ -38,10 +38,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "../app/state";
+import { BucketBadge } from "../components/BucketBadge";
 import { FilterBar } from "../components/FilterBar";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, type LoadProgress } from "../data/load";
-import type { ColumnsFile, ColumnSpec } from "../data/schema";
+import { useBoard } from "../data/useBoard";
+import type { BoardFile, ColumnsFile, ColumnSpec } from "../data/schema";
 import { divergingColor, type Direction } from "../design/scale";
 import { reduce } from "../query/reduce";
 import { facets as loadFacets, select, type PanelFacets } from "../query/panel";
@@ -87,6 +89,8 @@ export function FormMatrix() {
   const [working, setWorking] = useState(false);
   const [failure, setFailure] = useState<Error | null>(null);
   const [toggleTouched, setToggleTouched] = useState(false);
+  /* §5.5.4's reverse path, for rows the reader has selected. */
+  const board = useBoard();
 
   useEffect(() => {
     let cancelled = false;
@@ -450,6 +454,7 @@ export function FormMatrix() {
           extreme={extreme}
           direction={direction}
           spec={spec}
+          board={board}
           onSelect={(id) => {
             /*
              * §5.4.3: "row click opens that player in Comparison." The
@@ -500,9 +505,10 @@ interface GridProps {
   spec: ColumnSpec | undefined;
   onSelect: (id: number) => void;
   selected: number[];
+  board: BoardFile | null;
 }
 
-function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected }: GridProps) {
+function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected, board }: GridProps) {
   return (
     <div className={styles.scroll}>
       <table className={styles.grid}>
@@ -543,6 +549,11 @@ function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected }:
                     {row.team} · {row.position}
                   </span>
                 </button>
+                {selected.includes(row.id) && (
+                  <span className={styles.rowBadge}>
+                    <BucketBadge board={board} elementId={row.id} />
+                  </span>
+                )}
               </th>
 
               {gameweeks.map((gw) => {

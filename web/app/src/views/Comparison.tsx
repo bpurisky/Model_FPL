@@ -35,9 +35,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "../app/state";
+import { BucketBadge } from "../components/BucketBadge";
 import { Provenance } from "../components/Provenance";
+import { useBoard } from "../data/useBoard";
 import { loadColumns, loadPlayers, type LoadProgress } from "../data/load";
-import type { ColumnsFile, ColumnSpec, PlayerRow, PlayersFile } from "../data/schema";
+import type {
+  BoardFile,
+  ColumnsFile,
+  ColumnSpec,
+  PlayerRow,
+  PlayersFile,
+} from "../data/schema";
 import styles from "./Comparison.module.css";
 
 type State =
@@ -80,6 +88,8 @@ export function Comparison() {
   const [data, setData] = useState<State>({ status: "loading", progress: null });
   const [query, setQuery] = useState("");
   const [rawAcrossPositions, setRawAcrossPositions] = useState(false);
+  /* §5.5.4's reverse path: what the model made of each chosen player. */
+  const board = useBoard();
 
   useEffect(() => {
     let cancelled = false;
@@ -202,7 +212,7 @@ export function Comparison() {
             </p>
           )}
 
-          <Decomposition players={chosen} />
+          <Decomposition players={chosen} board={board} />
 
           <Minutes players={chosen} />
 
@@ -301,7 +311,13 @@ function Picker({ query, onQuery, matches, chosen, onToggle, full }: PickerProps
  * correctly and makes the heads impossible to compare across players,
  * which is the entire question — and the totals are printed anyway.
  */
-function Decomposition({ players }: { players: PlayerRow[] }) {
+function Decomposition({
+  players,
+  board,
+}: {
+  players: PlayerRow[];
+  board: BoardFile | null;
+}) {
   const heads = HEAD_ORDER.filter((head) =>
     players.some((player) => {
       const value = player.projection?.components[head];
@@ -348,6 +364,7 @@ function Decomposition({ players }: { players: PlayerRow[] }) {
                 : player.projection.total.toFixed(2)}
             </span>
             <span className={styles.totalUnit}>projected points</span>
+            <BucketBadge board={board} elementId={player.element_id} />
           </div>
         ))}
       </div>

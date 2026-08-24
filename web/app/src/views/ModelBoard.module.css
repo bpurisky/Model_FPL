@@ -1,0 +1,465 @@
+/*
+ * §5.8.6 — walling off the model.
+ *
+ * "Model-authored surfaces sit on `--panel` with a persistent left rule
+ * in `--rule` and a small monospace attribution carrying `model_git_sha`;
+ * user-driven surfaces sit directly on `--ground` with no such rule.
+ *
+ * No new colors, no badge, no icon set. The distinction is structural — a
+ * raised panel with an attribution stripe — which is why it survives
+ * greyscale, low vision, and screenshots, and why it costs nothing from
+ * the §5.8.5 budget."
+ *
+ * So: the whole route is raised and ruled. Every other surface in this
+ * app is flat on `--ground` with no rule, and a reader who has seen two
+ * of them knows what the rule means without being told.
+ */
+
+.board {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--panel);
+  border-inline-start: 3px solid var(--rule);
+  min-block-size: 100%;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 68ch;
+}
+
+/* --- panels --------------------------------------------------------- */
+
+.panel {
+  border: var(--hairline) solid var(--rule);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.panelSub {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 88ch;
+  line-height: 1.5;
+}
+
+.disclosure {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  inline-size: 100%;
+  font: inherit;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  cursor: pointer;
+  padding: 0;
+  text-align: start;
+}
+
+.disclosureMark {
+  font-family: var(--font-data);
+  color: var(--muted);
+  font-size: var(--text-md);
+}
+
+/* --- bucket accuracy ------------------------------------------------ */
+
+.accuracy {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.accuracyRow {
+  display: grid;
+  grid-template-columns: 84px minmax(120px, 260px) 62px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.accuracyName {
+  font-size: var(--text-xs);
+  text-align: end;
+  color: var(--paper);
+}
+
+/* A diverging bar around a true zero, so a negative lift reads as one. */
+.accuracyTrack {
+  position: relative;
+  block-size: 12px;
+  background: var(--ground);
+  border-radius: var(--radius-data);
+}
+
+.accuracyZero {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+  background: var(--rule);
+}
+
+.accuracyFill {
+  position: absolute;
+  inset-block: 2px;
+  background: var(--rho-neg);
+}
+
+.accuracyFill[data-good] {
+  background: var(--rho-pos);
+}
+
+.accuracyValue {
+  font-size: var(--text-xs);
+  text-align: end;
+  color: var(--rho-neg);
+}
+
+.accuracyValue[data-good] {
+  color: var(--rho-pos);
+}
+
+.accuracyBasis {
+  font-size: 10px;
+  font-family: var(--font-data);
+  color: var(--rule);
+}
+
+/*
+ * The finding, stated in prose. Amber, because it is a statement about
+ * how far the classifications below can be trusted — which is exactly
+ * what §5.8.2 reserves amber for.
+ */
+.finding {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  background: var(--ground);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  max-inline-size: 92ch;
+}
+
+/* --- weights -------------------------------------------------------- */
+
+.weights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.profile {
+  min-inline-size: 0;
+}
+
+.profileName {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-1);
+  color: var(--muted);
+}
+
+.weightList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weightRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px 52px;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--text-xs);
+}
+
+.weightName {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weightTrack {
+  block-size: 8px;
+  background: var(--ground);
+  display: block;
+}
+
+.weightFill {
+  display: block;
+  block-size: 100%;
+  background: var(--rho-pos);
+}
+
+/* Conceding is bad for a defender, and the sign has to be visible. */
+.weightFill[data-negative] {
+  background: var(--rho-neg);
+}
+
+.weightValue {
+  font-size: 10px;
+  text-align: end;
+}
+
+/* --- controls ------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.legend {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.chip {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition: color var(--dur-state) var(--ease);
+}
+
+.chip:hover {
+  color: var(--paper);
+}
+
+.chip[data-on] {
+  color: var(--ground);
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+.count {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--rule);
+}
+
+/* --- cards ---------------------------------------------------------- */
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-3);
+}
+
+.card {
+  border: var(--hairline) solid var(--rule);
+  background: var(--ground);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  /* §5.8.8: data surfaces have zero radius. */
+  border-radius: var(--radius-data);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.rank {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--rule);
+  flex: none;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  flex: 1;
+}
+
+.name {
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: 10px;
+  font-family: var(--font-data);
+  color: var(--muted);
+}
+
+/*
+ * The bucket, as a word. Deliberately not a coloured pill: §5.8.6 says
+ * "no new colors, no badge, no icon set", and the honest reading of the
+ * accuracy panel above is that three of these four names should not be
+ * given visual weight they have not earned.
+ */
+.bucket {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border: var(--hairline) solid var(--rule);
+  padding: 0 var(--space-1);
+  flex: none;
+}
+
+.card[data-bucket="optimal"] .bucket {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+.scores {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+}
+
+.scoreValue {
+  font-size: var(--text-md);
+  line-height: 1.1;
+}
+
+.scoreLabel {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.drivers {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--rule);
+}
+
+/* §5.4.6's amber flag, for a classification resting on too little. */
+.flag {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--flag);
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-2);
+}
+
+.explain {
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--paper);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  align-self: flex-start;
+  margin-block-start: auto;
+  transition: border-color var(--dur-state) var(--ease);
+}
+
+.explain:hover {
+  border-color: var(--paper);
+}
+
+/* --- states --------------------------------------------------------- */
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}

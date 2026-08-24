@@ -70,7 +70,7 @@ export const SURFACES: Surface[] = [
     view: "board",
     label: "Model Board",
     blurb: "The model's own ranking within position, and what each bucket was worth.",
-    status: "planned",
+    status: "live",
     milestone: "5E",
   },
   {

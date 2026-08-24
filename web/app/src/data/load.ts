@@ -15,11 +15,13 @@
 
 import { z } from "zod";
 import {
+  BoardFile,
   ColumnsFile,
   CorrelationsFile,
   EXPECTED_CONTRACT_VERSION,
   ObservationsFile,
   PlayersFile,
+  ScorecardFile,
 } from "./schema";
 
 const BASE = "/data/v1";
@@ -119,6 +121,19 @@ export const loadColumns = (onProgress?: (p: LoadProgress) => void) =>
 
 export const loadPlayers = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("players.json", PlayersFile, onProgress);
+
+/**
+ * The model's own ranking (§5.4.6). Committed, so the Model Board works
+ * on a fresh clone — and loaded by the panel surfaces too, for §5.5.4's
+ * reverse path: a player selected there shows the bucket the model put
+ * him in.
+ */
+export const loadBoard = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("board.json", BoardFile, onProgress);
+
+/** The walk-forward backtest made legible (§5.4.7). Committed. */
+export const loadScorecard = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("scorecard.json", ScorecardFile, onProgress);
 
 /**
  * The values behind the matrix (§5.6.1). Fetched only when the reader

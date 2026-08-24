@@ -36,6 +36,16 @@ export interface PanelFilters {
   seasons: string[];
   positions: string[];
   teams: string[];
+  /**
+   * Restrict to these players. Empty means every player.
+   *
+   * Not in §5.4.2's list of filter-bar controls, and it is here because
+   * §5.5.4 requires "Explain this" to open the Graph Builder with **the
+   * player pre-filtered** — there is no other way to honour that. It is a
+   * data filter, distinct from `selection`, which is the set of players
+   * the reader is comparing.
+   */
+  elements: number[];
   /** Tenths of a million, matching the panel's own `value` column. */
   priceMin: number | null;
   priceMax: number | null;
@@ -49,6 +59,7 @@ export const NO_FILTERS: PanelFilters = {
   seasons: [],
   positions: [],
   teams: [],
+  elements: [],
   priceMin: null,
   priceMax: null,
   minutesFloor: null,
@@ -89,7 +100,15 @@ export class QueryError extends Error {
 export const GROUP_LIMIT = 2000;
 
 /** The panel columns the filter bar reads, whatever the encoding asks for. */
-const FILTER_COLUMNS = ["season", "position", "team", "value", "gw", "cum_minutes"] as const;
+const FILTER_COLUMNS = [
+  "season",
+  "position",
+  "team",
+  "value",
+  "gw",
+  "cum_minutes",
+  "element_id",
+] as const;
 
 /**
  * Every name that may be read as a column.
@@ -151,6 +170,7 @@ export function filterColumns(filters: PanelFilters): string[] {
   if (filters.seasons.length) needed.push("season");
   if (filters.positions.length) needed.push("position");
   if (filters.teams.length) needed.push("team");
+  if (filters.elements.length) needed.push("element_id");
   if (filters.priceMin !== null || filters.priceMax !== null) needed.push("value");
   if (filters.gwMin !== null || filters.gwMax !== null) needed.push("gw");
   if (filters.minutesFloor !== null) needed.push("cum_minutes");
@@ -189,6 +209,11 @@ export function rowMask(
   inSet("season", filters.seasons);
   inSet("position", filters.positions);
   inSet("team", filters.teams);
+
+  if (filters.elements.length > 0) {
+    const allowed = new Set(filters.elements);
+    restrict("element_id", (value) => typeof value === "number" && allowed.has(value));
+  }
 
   if (filters.priceMin !== null) {
     const min = bound(filters.priceMin, "priceMin");
