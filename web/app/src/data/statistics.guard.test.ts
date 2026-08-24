@@ -154,6 +154,13 @@ describe("§5.6 — the browser does not infer", () => {
      * collects; `query/reduce.ts` reduces. Moving an aggregate into a
      * query string would produce numbers that render on screen and that
      * `reduce.golden.test.ts` never sees.
+     *
+     * There is no SQL in `src/` at all since §5.16 deviation D10 replaced
+     * DuckDB-WASM with a parquet reader, so this currently scans nothing
+     * — which is exactly why it is kept. The pressure that would bring a
+     * query engine back is the pressure that would bring `avg()` with
+     * it, and a guard that only starts working once the mistake is
+     * available is still a guard.
      */
     const FORBIDDEN_SQL = [
       /\bavg\s*\(/i,

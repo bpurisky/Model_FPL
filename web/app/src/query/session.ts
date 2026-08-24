@@ -1,33 +1,29 @@
 /**
- * The DuckDB-WASM session (§5.2 D4, §5.1.2).
+ * The panel session — a column store over `panel.parquet` (§5.1.2).
  *
- * > "It is a query engine over static files shipped to the browser, not a
- * > service. No SQL written by the app may compute an inferential
- * > statistic (§5.6)."
+ * **This replaces DuckDB-WASM, and the reason is §5.9.** D4 locked the
+ * engine on the argument that "group-by across the panel with multiple
+ * filter predicates is SQL-shaped, and DuckDB's parquet reader removes a
+ * separate decode step". Both halves of that are true. The budget was
+ * still unmeetable: `duckdb-eh.wasm` is 34.8 MB raw, 6.9 MB gzipped and
+ * 4.6 MB brotli, against §5.9's 1.2 MB for the lazy engine chunk, and no
+ * compression closes a 4x gap.
  *
- * What the engine is here for is the work an engine is actually good at:
- * decoding parquet, pushing filter predicates down into it, and grouping
- * 85,000 player-gameweeks. What it is deliberately *not* here for is the
- * reduction itself — that happens in `reduce.ts`, in plain TypeScript,
- * so a single implementation can be held against Python by a golden test
- * that needs no engine to run (§5.11.2). Writing `avg(x)` in SQL would
- * have been shorter and would have left the numbers on screen covered by
- * no test that runs in CI.
+ * What made the swap cheap is that the engine had already stopped doing
+ * the interesting part. §5.6.2 only permits the browser to reduce because
+ * its seven operations have one implementation held against Python by a
+ * golden test — so the reductions live in `reduce.ts`, and SQL was left
+ * doing `WHERE`, `GROUP BY` and `list(...)`. That is the ~80 lines in
+ * `panel.ts`, not a database.
  *
- * **Lazy by construction.** §5.9 budgets the engine at 1.2 MB and says
- * it must appear in no initial-load chunk. Everything here is behind a
- * dynamic `import()`, so the bundler splits it out and the Correlation
- * Lab — the landing surface — never pays for it. Nothing in this module
- * may be imported statically by a view; call `openSession()`.
+ * Recorded as §5.16 deviation D10 against §5.2's locked stack.
  *
- * **Self-hosted, not CDN.** The bundles are resolved through Vite's
- * `?url` imports and served from our own origin. §5.1.1's "zero
- * operational surface" argument is weakened by a runtime dependency on
- * jsdelivr being up, and a static site that stops working when someone
- * else's CDN has a bad day is not static.
+ * What this module owns is decode and cache. `hyparquet` reads column
+ * chunks out of the file; a column is decoded on first use and kept, so
+ * changing one drop zone re-reads one column rather than the file. The
+ * panel is 83 columns wide and a chart never touches more than about six.
  */
 
-import type * as duckdb from "@duckdb/duckdb-wasm";
 import type { LoadProgress } from "../data/load";
 
 /** Thrown when `panel.parquet` is not on disk — §5.14.8's empty state. */
@@ -41,24 +37,26 @@ export class PanelMissingError extends Error {
   }
 }
 
+/** One decoded column. Nulls are preserved and never coerced (§5.3.3). */
+export type PanelColumn = readonly (number | string | boolean | null)[];
+
 export interface Session {
-  /**
-   * Run a named query. Views never call this directly; they call the
-   * helpers in `panel.ts`, which is the only module that writes SQL.
-   */
-  run(sql: string): Promise<Record<string, unknown>[]>;
+  /** Rows in the panel. */
+  readonly rows: number;
+  /** Column names the file actually carries. */
+  readonly names: readonly string[];
+  /** A decoded column, from cache after the first call. */
+  column(key: string): Promise<PanelColumn>;
   close(): Promise<void>;
 }
 
 const PANEL_URL = "/data/v1/panel.parquet";
-const PANEL_TABLE = "panel";
 
 let pending: Promise<Session> | null = null;
 
 /**
- * The engine, the panel, and a registered view over it — created once
- * and shared. A second Graph Builder mount must not pay for a second
- * 3 MB download or a second 1.2 MB engine.
+ * The panel, opened once and shared. A second Graph Builder mount must
+ * not pay for a second download or a second decode.
  */
 export function openSession(onProgress?: (progress: LoadProgress) => void): Promise<Session> {
   pending ??= create(onProgress).catch((error) => {
@@ -72,75 +70,106 @@ export function openSession(onProgress?: (progress: LoadProgress) => void): Prom
 }
 
 async function create(onProgress?: (progress: LoadProgress) => void): Promise<Session> {
-  // The parquet is fetched before the engine so a missing artifact costs
-  // nothing: §5.14.8's empty state is the common case on a fresh clone,
-  // and downloading 1.2 MB of engine to discover there is no data would
-  // be the wrong order to learn it in.
-  const panel = await fetchPanel(onProgress);
+  const bytes = await fetchPanel(onProgress);
 
-  const [duck, bundle] = await Promise.all([
-    import("@duckdb/duckdb-wasm"),
-    resolveBundle(),
-  ]);
+  // Dynamic, so the reader lands in the route chunk rather than the
+  // landing bundle (§5.9). Reader plus codecs is ~72 KB gzipped against
+  // DuckDB's 4.6 MB brotli, and the codecs earn their share back several
+  // times over: they are what lets `panel.py` keep zstd, which is 1.3 MB
+  // less parquet on every cold visit to this route.
+  const [{ parquetMetadataAsync, parquetRead, parquetSchema }, { compressors }] =
+    await Promise.all([import("hyparquet"), import("hyparquet-compressors")]);
 
-  const worker = new Worker(bundle.mainWorker!, { type: "module" });
-  const logger = new duck.VoidLogger();
-  const db = new duck.AsyncDuckDB(logger, worker);
-  await db.instantiate(bundle.mainModule, bundle.pthreadWorker ?? null);
+  const file = {
+    byteLength: bytes.byteLength,
+    slice: (start: number, end?: number) =>
+      bytes.buffer.slice(
+        bytes.byteOffset + start,
+        bytes.byteOffset + (end ?? bytes.byteLength),
+      ) as ArrayBuffer,
+  };
 
-  await db.registerFileBuffer("panel.parquet", panel);
-  const connection = await db.connect();
-  // A view rather than a table: the parquet stays the source of record
-  // and DuckDB reads only the columns a query projects.
-  await connection.query(
-    `CREATE OR REPLACE VIEW ${PANEL_TABLE} AS SELECT * FROM read_parquet('panel.parquet')`,
-  );
+  const metadata = await parquetMetadataAsync(file);
+  const schema = parquetSchema(metadata);
+  const names = schema.children.map((child) => child.element.name);
+  const rows = Number(metadata.num_rows);
+
+  const cache = new Map<string, PanelColumn>();
+  const inflight = new Map<string, Promise<PanelColumn>>();
+
+  async function decode(key: string): Promise<PanelColumn> {
+    if (!names.includes(key)) {
+      throw new Error(`${key} is not a column in panel.parquet`);
+    }
+
+    let values: PanelColumn = [];
+    await parquetRead({
+      file,
+      metadata,
+      compressors,
+      columns: [key],
+      // Rows arrive as arrays in the order `columns` names them, so one
+      // column is one value per row and the transpose is a map.
+      onComplete: (data: unknown[][]) => {
+        values = data.map((row) => normalize(row[0]));
+      },
+    });
+    return values;
+  }
 
   return {
-    async run(sql: string) {
-      const table = await connection.query(sql);
-      return table.toArray().map((row) => row.toJSON() as Record<string, unknown>);
+    rows,
+    names,
+    column(key: string) {
+      const cached = cache.get(key);
+      if (cached) return Promise.resolve(cached);
+
+      // Two channels can ask for the same column in the same render; a
+      // second decode of 85,000 rows is pure waste.
+      const running = inflight.get(key);
+      if (running) return running;
+
+      const task = decode(key).then((values) => {
+        cache.set(key, values);
+        inflight.delete(key);
+        return values;
+      });
+      inflight.set(key, task);
+      return task;
     },
     async close() {
-      await connection.close();
-      await db.terminate();
-      worker.terminate();
+      cache.clear();
+      inflight.clear();
       pending = null;
     },
   };
 }
 
 /**
- * Vite resolves these to URLs on our own origin at build time. The `eh`
- * bundle (exception handling) is preferred and `mvp` is the fallback for
- * browsers without it — `selectBundle` does the feature detection.
+ * Whatever the decoder produced, as something the rest of the app can
+ * compare and reduce.
+ *
+ * BigInt is the case that matters: parquet INT64 arrives as one, and a
+ * BigInt silently fails every arithmetic comparison against a Number.
+ * `null` and `undefined` both mean absent and both stay absent — never
+ * zero (§5.3.3).
  */
-async function resolveBundle(): Promise<duckdb.DuckDBBundle> {
-  const duck = await import("@duckdb/duckdb-wasm");
-  const [mvpModule, mvpWorker, ehModule, ehWorker] = await Promise.all([
-    import("@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url"),
-    import("@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url"),
-    import("@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url"),
-    import("@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url"),
-  ]);
-
-  return duck.selectBundle({
-    mvp: { mainModule: mvpModule.default, mainWorker: mvpWorker.default },
-    eh: { mainModule: ehModule.default, mainWorker: ehWorker.default },
-  });
+function normalize(value: unknown): number | string | boolean | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "bigint") return Number(value);
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" || typeof value === "boolean") return value;
+  if (value instanceof Date) return value.getTime();
+  return String(value);
 }
 
 /**
  * The panel, with real byte counts.
  *
- * Fetched whole and handed to `registerFileBuffer` rather than pointed
- * at over HTTP. DuckDB can range-request a remote parquet and read only
- * the pages it needs, which sounds better — but Vite's dev middleware
- * answers no range requests, so the engine would silently fall back to
- * refetching the whole file per query. Downloading it once, visibly, is
- * both faster and honest about what the user is waiting for, which is
- * what §5.9 asks for: "the user should know whether they are waiting on
- * 200 KB or 8 MB".
+ * §5.9: "the user should know whether they are waiting on 200 KB or
+ * 8 MB", and §5.8.8 forbids skeletons — a shimmer implies content shape
+ * before it is known, which on a data tool is a small lie. So this
+ * reports bytes and the UI renders a determinate bar.
  */
 async function fetchPanel(onProgress?: (progress: LoadProgress) => void): Promise<Uint8Array> {
   const response = await fetch(PANEL_URL);
@@ -152,32 +181,32 @@ async function fetchPanel(onProgress?: (progress: LoadProgress) => void): Promis
   const header = response.headers.get("content-length");
   const total = header ? Number(header) : null;
 
+  let merged: Uint8Array;
   if (!response.body || !onProgress) {
-    return new Uint8Array(await response.arrayBuffer());
-  }
-
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    received += value.length;
-    onProgress({ received, total });
-  }
-
-  const merged = new Uint8Array(received);
-  let offset = 0;
-  for (const chunk of chunks) {
-    merged.set(chunk, offset);
-    offset += chunk.length;
+    merged = new Uint8Array(await response.arrayBuffer());
+  } else {
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let received = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+      onProgress({ received, total });
+    }
+    merged = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+      merged.set(chunk, offset);
+      offset += chunk.length;
+    }
   }
 
   // The dev middleware serves any file in the export directory, so a
   // missing parquet arrives as a 404 above — but a *stale* one that is
-  // not parquet at all would reach DuckDB as a confusing internal error.
-  // PAR1 is the format's magic number at both ends of the file.
+  // not parquet at all would reach the decoder as a confusing internal
+  // error. PAR1 is the format's magic number at both ends of the file.
   if (merged.length < 8 || String.fromCharCode(...merged.slice(0, 4)) !== "PAR1") {
     throw new Error(`${PANEL_URL} is not a parquet file`);
   }

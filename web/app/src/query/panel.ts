@@ -5,28 +5,31 @@
  * > unvalidated payload, and never writes SQL directly — it calls named
  * > helpers in `query/`."
  *
- * So this is the only module in `src/` that composes SQL, and it composes
- * it under two rules that are not negotiable:
+ * There is no SQL left to write. §5.16 deviation D10 replaced DuckDB-WASM
+ * with a parquet reader and this module, because the engine cost 4.6 MB
+ * brotli against §5.9's 1.2 MB budget while doing only `WHERE`,
+ * `GROUP BY` and `list(...)` — the reductions having already moved to
+ * `reduce.ts` so that §5.6.2's seven operations could have one
+ * implementation covered by a golden test. What follows is that `WHERE`
+ * and `GROUP BY`, over decoded columns.
  *
- * **Every identifier is checked against `columns.json` before it reaches
- * a query string.** DuckDB-WASM runs in the user's own browser over a
- * static file, so the stakes are lower than a server — but the app builds
- * SQL out of state that comes back from a URL (§5.5), and a URL is
- * user-supplied input whoever typed it. `column()` below refuses anything
- * the registry does not name, which also catches the ordinary bug of a
- * renamed column reaching the builder as a silent empty result.
+ * Two rules survive the change unchanged, because they were never about
+ * SQL:
  *
- * **No reduction is expressed in SQL.** The queries here group and
- * collect (`list(...)`), and `reduce.ts` does the arithmetic. That is a
- * deliberate cost — moving arrays out of the engine rather than scalars
- * — paid so that §5.6.2's seven operations have one implementation, in
- * TypeScript, covered by `reduce.golden.test.ts` against Python. An
- * `avg()` in a query string here would be a second implementation that
- * no test in CI ever runs.
+ * **Every column name is checked against `columns.json` before it is
+ * used.** The app builds queries out of state that comes back from a URL
+ * (§5.5), and a URL is user-supplied input whoever typed it. There is no
+ * injection surface any more, but the check also catches the ordinary bug
+ * of a renamed column reaching the builder as a silently empty result,
+ * which is the failure it was really there for.
+ *
+ * **No reduction happens here.** This groups and collects; `reduce.ts`
+ * does the arithmetic. A `mean` computed in this file would be a second
+ * implementation that `reduce.golden.test.ts` never runs.
  */
 
 import type { ColumnSpec } from "../data/schema";
-import type { Session } from "./session";
+import type { PanelColumn, Session } from "./session";
 
 /** §5.4.2's global filter bar, as state. Empty arrays mean "no filter". */
 export interface PanelFilters {
@@ -60,7 +63,7 @@ export interface GroupedRow {
 }
 
 export interface GroupedQuery {
-  /** Registry keys to group by. `element_id` implies the player grain. */
+  /** Registry keys to group by. */
   groupBy: string[];
   /** Registry keys to collect. Reduced by the caller, never here. */
   collect: string[];
@@ -85,8 +88,11 @@ export class QueryError extends Error {
 /** The default group cap. Above this, a mark stops being readable. */
 export const GROUP_LIMIT = 2000;
 
+/** The panel columns the filter bar reads, whatever the encoding asks for. */
+const FILTER_COLUMNS = ["season", "position", "team", "value", "gw", "cum_minutes"] as const;
+
 /**
- * Every name that may appear as an identifier in a query.
+ * Every name that may be read as a column.
  *
  * The registry's own keys, **plus the companion columns they declare**.
  * §5.7.2's `{key}_z_pos` columns are deliberately not separate registry
@@ -94,11 +100,10 @@ export const GROUP_LIMIT = 2000;
  * each base column points at its own through `normalized_key`, which
  * `test_normalizable_columns_declare_their_companion_key` enforces. So
  * the allowlist has to be built the same way the export builds them, or
- * the §5.7.3 toggle resolves to a column the query is not allowed to
- * name.
+ * the §5.7.3 toggle resolves to a column the query refuses to name.
  */
-function allowedIdentifiers(columns: ReadonlyMap<string, ColumnSpec>): Set<string> {
-  const allowed = new Set<string>();
+function allowedNames(columns: ReadonlyMap<string, ColumnSpec>): Set<string> {
+  const allowed = new Set<string>(FILTER_COLUMNS);
   for (const spec of columns.values()) {
     allowed.add(spec.key);
     if (spec.normalized_key) allowed.add(spec.normalized_key);
@@ -106,24 +111,11 @@ function allowedIdentifiers(columns: ReadonlyMap<string, ColumnSpec>): Set<strin
   return allowed;
 }
 
-/**
- * A registry-checked, quoted identifier.
- *
- * The allowlist comes from the registry, so a name that is not a real
- * exported column cannot reach a query string — which covers both the
- * injection case and the far likelier one of a stale URL naming a column
- * that was renamed upstream.
- */
-function column(key: string, columns: ReadonlyMap<string, ColumnSpec>): string {
-  if (!allowedIdentifiers(columns).has(key)) {
+function checkName(key: string, columns: ReadonlyMap<string, ColumnSpec>): string {
+  if (!allowedNames(columns).has(key)) {
     throw new QueryError(`${key} is not a column in the registry`);
   }
-  // Belt and braces: the registry is committed data, but a quoted
-  // identifier containing a quote would still be a way out of the quotes.
-  if (!/^[a-z_][a-z0-9_]*$/i.test(key)) {
-    throw new QueryError(`${key} is not a usable SQL identifier`);
-  }
-  return `"${key}"`;
+  return key;
 }
 
 /**
@@ -148,51 +140,93 @@ export function resolveColumn(
   return { key: spec.key, normalized: false };
 }
 
-/** A SQL string literal. Values reaching here come from the URL. */
-function literal(value: string): string {
-  return `'${value.replace(/'/g, "''")}'`;
-}
-
-function integer(value: number, what: string): string {
+function bound(value: number, what: string): number {
   if (!Number.isFinite(value)) throw new QueryError(`${what} is not a number`);
-  return String(Math.trunc(value));
+  return Math.trunc(value);
 }
 
-/** §5.4.2's filter bar, as a WHERE clause. */
-export function wherePredicates(filters: PanelFilters): string[] {
-  const clauses: string[] = [];
+/** Which panel columns a set of filters needs in order to be evaluated. */
+export function filterColumns(filters: PanelFilters): string[] {
+  const needed: string[] = [];
+  if (filters.seasons.length) needed.push("season");
+  if (filters.positions.length) needed.push("position");
+  if (filters.teams.length) needed.push("team");
+  if (filters.priceMin !== null || filters.priceMax !== null) needed.push("value");
+  if (filters.gwMin !== null || filters.gwMax !== null) needed.push("gw");
+  if (filters.minutesFloor !== null) needed.push("cum_minutes");
+  return needed;
+}
 
-  const inList = (col: string, values: string[]) => {
-    if (values.length === 0) return;
-    clauses.push(`"${col}" IN (${values.map(literal).join(", ")})`);
+/**
+ * §5.4.2's filter bar, as a row mask.
+ *
+ * A mask rather than a filtered copy: the panel is 85,000 rows and every
+ * channel reads its own column, so materialising a filtered frame per
+ * query would copy far more than it saves. The mask is computed once and
+ * every column is walked through it.
+ */
+export function rowMask(
+  filters: PanelFilters,
+  values: ReadonlyMap<string, PanelColumn>,
+  rows: number,
+): Uint8Array {
+  const mask = new Uint8Array(rows).fill(1);
+
+  const restrict = (name: string, keep: (value: unknown) => boolean) => {
+    const column = values.get(name);
+    if (!column) throw new QueryError(`${name} was not loaded for the filter`);
+    for (let i = 0; i < rows; i += 1) {
+      if (mask[i] && !keep(column[i])) mask[i] = 0;
+    }
   };
 
-  inList("season", filters.seasons);
-  inList("position", filters.positions);
-  inList("team", filters.teams);
+  const inSet = (name: string, allowed: string[]) => {
+    if (allowed.length === 0) return;
+    const set = new Set(allowed);
+    restrict(name, (value) => value !== null && set.has(String(value)));
+  };
 
-  if (filters.priceMin !== null) clauses.push(`"value" >= ${integer(filters.priceMin, "priceMin")}`);
-  if (filters.priceMax !== null) clauses.push(`"value" <= ${integer(filters.priceMax, "priceMax")}`);
-  if (filters.gwMin !== null) clauses.push(`"gw" >= ${integer(filters.gwMin, "gwMin")}`);
-  if (filters.gwMax !== null) clauses.push(`"gw" <= ${integer(filters.gwMax, "gwMax")}`);
+  inSet("season", filters.seasons);
+  inSet("position", filters.positions);
+  inSet("team", filters.teams);
+
+  if (filters.priceMin !== null) {
+    const min = bound(filters.priceMin, "priceMin");
+    restrict("value", (value) => typeof value === "number" && value >= min);
+  }
+  if (filters.priceMax !== null) {
+    const max = bound(filters.priceMax, "priceMax");
+    restrict("value", (value) => typeof value === "number" && value <= max);
+  }
+  if (filters.gwMin !== null) {
+    const min = bound(filters.gwMin, "gwMin");
+    restrict("gw", (value) => typeof value === "number" && value >= min);
+  }
+  if (filters.gwMax !== null) {
+    const max = bound(filters.gwMax, "gwMax");
+    restrict("gw", (value) => typeof value === "number" && value <= max);
+  }
   if (filters.minutesFloor !== null) {
-    // `cum_minutes` rather than `minutes`: the filter means "players who
-    // have played this much", not "gameweeks in which they played this
-    // much", and the second reading would drop every rotation week from a
-    // regular starter's series and leave a chart of their best days.
-    clauses.push(`"cum_minutes" >= ${integer(filters.minutesFloor, "minutesFloor")}`);
+    const min = bound(filters.minutesFloor, "minutesFloor");
+    /*
+     * `cum_minutes` rather than `minutes`: the filter means "players who
+     * have played this much", not "gameweeks in which they played this
+     * much", and the second reading would drop every rotation week from
+     * a regular starter's series and leave a chart of their best days.
+     */
+    restrict("cum_minutes", (value) => typeof value === "number" && value >= min);
   }
 
-  return clauses;
+  return mask;
 }
 
 /**
  * Group the panel and hand back the values behind each group.
  *
- * `list(...)` rather than an aggregate is the whole point — see the
- * module docstring. The arrays are per-group and the groups are capped,
- * so what crosses the boundary is bounded by the chart's own readability
- * rather than by the panel's 85,000 rows.
+ * Collecting the values rather than reducing them is the whole point —
+ * see the module docstring. The groups are capped, so what crosses into
+ * the view layer is bounded by the chart's own readability rather than by
+ * the panel's row count.
  */
 export async function grouped(
   session: Session,
@@ -206,43 +240,93 @@ export async function grouped(
   const limit = query.limit ?? GROUP_LIMIT;
   const normalizedKeys: string[] = [];
 
-  const keySelect = query.groupBy.map((key) => `${column(key, columns)} AS ${column(key, columns)}`);
-
-  const valueSelect = query.collect.map((key) => {
+  // Validate every name *before* any decoding, so a bad key costs
+  // nothing and fails with the name in the message.
+  const groupNames = query.groupBy.map((key) => checkName(key, columns));
+  const collectNames = query.collect.map((key) => {
     const resolved = resolveColumn(key, columns, query.normalized);
     if (resolved.normalized) normalizedKeys.push(key);
-    // Aliased back to the *requested* key so the caller reads its own
-    // vocabulary and does not have to know whether the toggle was on.
-    return `list(${column(resolved.key, columns)}) AS "${key}"`;
+    return { requested: key, actual: checkName(resolved.key, columns) };
   });
 
-  const where = wherePredicates(query.filters);
-  const sql = [
-    `SELECT ${[...keySelect, ...valueSelect].join(", ")}`,
-    `FROM panel`,
-    where.length > 0 ? `WHERE ${where.join(" AND ")}` : "",
-    `GROUP BY ${query.groupBy.map((key) => column(key, columns)).join(", ")}`,
-    `ORDER BY ${query.groupBy.map((key) => column(key, columns)).join(", ")}`,
-    // One over the cap, so the caller can tell "exactly at the limit"
-    // from "more than we will draw".
-    `LIMIT ${limit + 1}`,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const needed = [
+    ...new Set([
+      ...filterColumns(query.filters),
+      ...groupNames,
+      ...collectNames.map((entry) => entry.actual),
+    ]),
+  ];
 
-  const raw = await session.run(sql);
-  const truncated = raw.length > limit;
-  const rows = (truncated ? raw.slice(0, limit) : raw).map((row) => {
-    const key: GroupedRow["key"] = {};
-    for (const name of query.groupBy) key[name] = normalizeScalar(row[name]);
+  const loaded = new Map<string, PanelColumn>();
+  await Promise.all(
+    needed.map(async (name) => {
+      loaded.set(name, await session.column(name));
+    }),
+  );
 
-    const values: GroupedRow["values"] = {};
-    for (const name of query.collect) values[name] = normalizeList(row[name]);
+  const rows = session.rows;
+  const mask = rowMask(query.filters, loaded, rows);
 
-    return { key, values };
+  const groups = new Map<string, GroupedRow>();
+  let truncated = false;
+
+  for (let i = 0; i < rows; i += 1) {
+    if (!mask[i]) continue;
+
+    // U+001F, a unit separator, so a team called "A|B" cannot collide
+    // with the pair ("A", "B").
+    let signature = "";
+    for (const name of groupNames) {
+      signature += `${String(loaded.get(name)![i] ?? "")}`;
+    }
+
+    let group = groups.get(signature);
+    if (!group) {
+      if (groups.size >= limit) {
+        truncated = true;
+        continue;
+      }
+      const key: GroupedRow["key"] = {};
+      for (const name of groupNames) {
+        const value = loaded.get(name)![i];
+        key[name] = value === null ? null : typeof value === "number" ? value : String(value);
+      }
+      const values: GroupedRow["values"] = {};
+      for (const entry of collectNames) values[entry.requested] = [];
+      group = { key, values };
+      groups.set(signature, group);
+    }
+
+    for (const entry of collectNames) {
+      const value = loaded.get(entry.actual)![i];
+      // Nulls are kept, because `reduce.ts` distinguishes "no rows" from
+      // "rows with no value" and both are real answers (§5.3.3).
+      group.values[entry.requested]!.push(typeof value === "number" ? value : null);
+    }
+  }
+
+  return { rows: sortGroups([...groups.values()], groupNames), truncated, normalizedKeys };
+}
+
+/**
+ * Groups in key order, so a chart's categories do not reshuffle when a
+ * filter changes. Insertion order here is row order, which is stable but
+ * arbitrary; ordering explicitly is what makes the axis reproducible.
+ */
+function sortGroups(rows: GroupedRow[], groupNames: string[]): GroupedRow[] {
+  return rows.sort((left, right) => {
+    for (const name of groupNames) {
+      const a = left.key[name];
+      const b = right.key[name];
+      if (a === b) continue;
+      if (a === null) return -1;
+      if (b === null) return 1;
+      if (typeof a === "number" && typeof b === "number") return a - b;
+      const compared = String(a).localeCompare(String(b), undefined, { numeric: true });
+      if (compared !== 0) return compared;
+    }
+    return 0;
   });
-
-  return { rows, truncated, normalizedKeys };
 }
 
 /**
@@ -264,32 +348,49 @@ export interface PanelFacets {
 }
 
 export async function facets(session: Session): Promise<PanelFacets> {
-  const [seasons, teams, positions, extent] = await Promise.all([
-    session.run(`SELECT DISTINCT "season" AS v FROM panel ORDER BY v`),
-    session.run(`SELECT DISTINCT "team" AS v FROM panel ORDER BY v`),
-    session.run(`SELECT DISTINCT "position" AS v FROM panel ORDER BY v`),
-    session.run(
-      `SELECT min("gw") AS gw_min, max("gw") AS gw_max, ` +
-        `min("value") AS price_min, max("value") AS price_max, count(*) AS rows FROM panel`,
-    ),
+  const [season, team, position, gw, value] = await Promise.all([
+    session.column("season"),
+    session.column("team"),
+    session.column("position"),
+    session.column("gw"),
+    session.column("value"),
   ]);
 
-  const bounds = extent[0] ?? {};
+  const distinct = (column: PanelColumn): string[] => {
+    const seen = new Set<string>();
+    for (const entry of column) if (entry !== null) seen.add(String(entry));
+    return [...seen].sort();
+  };
+
+  const numericExtent = (column: PanelColumn): [number, number] => {
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (const entry of column) {
+      if (typeof entry !== "number") continue;
+      if (entry < lo) lo = entry;
+      if (entry > hi) hi = entry;
+    }
+    return Number.isFinite(lo) ? [lo, hi] : [0, 0];
+  };
+
+  const [gwMin, gwMax] = numericExtent(gw);
+  const [priceMin, priceMax] = numericExtent(value);
+
   return {
-    seasons: seasons.map((row) => String(row["v"])),
-    teams: teams.map((row) => String(row["v"])),
+    seasons: distinct(season),
+    teams: distinct(team),
     /*
-     * Pitch order, not alphabetical. SQL's ORDER BY gives DEF, FWD, GK,
+     * Pitch order, not alphabetical. Sorted output gives DEF, FWD, GK,
      * MID, which is the order of no football thought anyone has ever had
      * — every squad list, every FPL screen and every table in this repo
      * reads goalkeeper outward.
      */
-    positions: positions.map((row) => String(row["v"])).sort(byPitchOrder),
-    gwMin: Number(bounds["gw_min"] ?? 1),
-    gwMax: Number(bounds["gw_max"] ?? 38),
-    priceMin: Number(bounds["price_min"] ?? 0),
-    priceMax: Number(bounds["price_max"] ?? 0),
-    rows: Number(bounds["rows"] ?? 0),
+    positions: distinct(position).sort(byPitchOrder),
+    gwMin,
+    gwMax,
+    priceMin,
+    priceMax,
+    rows: session.rows,
   };
 }
 
@@ -303,61 +404,4 @@ function byPitchOrder(left: string, right: string): number {
     return index === -1 ? PITCH_ORDER.length : index;
   };
   return rank(left) - rank(right) || left.localeCompare(right);
-}
-
-/**
- * Arrow hands back its own wrappers, and BigInt for 64-bit integers.
- * Both have to become plain JS before anything downstream compares them.
- */
-function normalizeScalar(value: unknown): string | number | null {
-  if (value === null || value === undefined) return null;
-  if (typeof value === "bigint") return Number(value);
-  if (typeof value === "number" || typeof value === "string") return value;
-  if (typeof value === "boolean") return String(value);
-  return String(value);
-}
-
-/**
- * An Arrow list column as plain JS, **by iteration and never by
- * `toArray()`**.
- *
- * This is not a style preference and the difference is not subtle.
- * `Vector.toArray()` hands back the underlying typed array and ignores
- * the validity bitmap, so every null slot reads as whatever was in that
- * memory. Measured against `xg_per90` for one gameweek of 2024-25: 309 of
- * 616 values are null, and `toArray()` returned `2.5465051432e-313` and
- * `1.9e-322` for them — uninitialised memory, silently, as Float64.
- *
- * Those would not have looked like an error. They would have looked like
- * a player with a very small xG, reduced into a mean, and drawn. Which is
- * §5.3.3's whole point arriving from an unexpected direction: "a null
- * z-score is 'this player is below the minutes floor'", and there is no
- * number that says that.
- *
- * Iterating the vector reads the bitmap and yields real `null`s. It is
- * slower and it is the only correct option.
- */
-function normalizeList(value: unknown): (number | null)[] {
-  if (value === null || value === undefined) return [];
-
-  const iterable =
-    Array.isArray(value) ? value
-    : typeof (value as { [Symbol.iterator]?: unknown })[Symbol.iterator] === "function"
-      ? (value as Iterable<unknown>)
-      : [];
-
-  const out: (number | null)[] = [];
-  for (const entry of iterable) {
-    if (entry === null || entry === undefined) {
-      out.push(null);
-      continue;
-    }
-    if (typeof entry === "bigint") {
-      out.push(Number(entry));
-      continue;
-    }
-    const asNumber = Number(entry);
-    out.push(Number.isFinite(asNumber) ? asNumber : null);
-  }
-  return out;
 }

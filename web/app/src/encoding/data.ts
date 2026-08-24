@@ -155,9 +155,16 @@ export function buildPlot(
       : [x.value, y.value].filter((entry) => entry !== null).join(" · ");
 
     const point: PlotPoint = {
-      id: PLAYER_KEYS.every((key) => key in row.key)
-        ? String(row.key["element_id"])
-        : `${facetName ?? ""}|${seriesName ?? ""}|${scalar(x.value)}|${scalar(y.value)}`,
+      /*
+       * The whole group key, not `element_id` alone.
+       *
+       * A player who moves club inside the filtered range has two rows
+       * here — the panel carries `team` per gameweek — so an id taken
+       * from the element alone collides, and React quietly drops one of
+       * the two marks. Same for any grouping where one channel repeats.
+       * The key is unique by construction; the id should be the key.
+       */
+      id: Object.values(row.key).map(scalar).join(""),
       label,
       x: x.value,
       y: y.value,

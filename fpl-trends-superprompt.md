@@ -835,13 +835,41 @@ for the same reason: publishing inputs and answers to check an
 implementation against is a different job from publishing numbers to
 render. §5.11.2 requires it to exist.
 
-**Measured against §5.9.** Initial bundle **69.6 KB gzipped** against the
-250 KB budget, and DuckDB appears in no initial-load chunk — the split
-point is `lazy()` in `Shell.tsx`, above anything that imports `query/`.
-**The engine chunk itself misses its budget and cannot meet it**: see the
-open question below.
+**D10. DuckDB-WASM is gone, and §5.2's locked stack is amended.** It was
+built on DuckDB first, and the engine chunk missed §5.9's 1.2 MB budget
+by a factor nothing closes: `duckdb-eh.wasm` is **34.8 MB raw, 6.9 MB
+gzipped, 4.6 MB brotli**, plus a 742 KB worker. §5.1.1 permits revisiting
+an architecture when "a §5.9 budget is proven unmeetable", and this one is.
 
-127 frontend tests pass (was 46), 500 Python tests pass, typecheck clean.
+What made the swap cheap is that the engine had already stopped doing the
+interesting part. §5.6.2 only lets the browser reduce because its seven
+operations have **one** implementation held against Python by a golden
+test — so the reductions were already in `reduce.ts`, and SQL was left
+doing `WHERE`, `GROUP BY` and `list(...)`. That is ~80 lines, not a
+database. `query/session.ts` is now a column store over `hyparquet`, with
+each column decoded on first use and cached; `query/panel.ts` does the
+filtering and grouping over decoded columns.
+
+    query layer, gzipped     DuckDB-WASM   4,600 KB (brotli)
+                             hyparquet + codecs + route chunk   107 KB
+
+Measured after the swap: a cold column decode over 85,000 rows is **16 ms**,
+a cached one 0 ms, a filtered group-by 18 ms, and a group-by over the
+whole panel with no filter 15 ms — against §5.9's 200 ms for an encoding
+change. The panel keeps **zstd** rather than snappy, which is a wire
+decision rather than a disk one: snappy decodes natively and would have
+saved the 55 KB codec bundle, but costs 1.3 MB more parquet on every cold
+visit to the route.
+
+**Measured against §5.9.** Initial bundle **69.6 KB gzipped** against the
+250 KB budget. The lazy query chunk is 107 KB against 1.2 MB, and appears
+in no initial-load chunk — the split point is `lazy()` in `Shell.tsx`,
+above anything that imports `query/`. Cold panel route is 3.1 MB of
+parquet, which still exceeds §5.9's 2.0 s on a real 4G link; that is a
+property of the panel's size rather than of the query layer, and is the
+next thing to look at if the route ever feels slow.
+
+134 frontend tests pass (was 46), 500 Python tests pass, typecheck clean.
 
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 

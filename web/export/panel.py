@@ -190,5 +190,16 @@ def build_panel(
 def write_panel(df: pl.DataFrame, out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "panel.parquet"
+    # Zstd, and the codec is a wire decision rather than a disk one: the
+    # browser reads this file directly (§5.4.2), so the panel route pays
+    # for both the bytes and the decompressor that reads them. Measured,
+    # for one cold visit to Graph Builder:
+    #
+    #     snappy   4.6 MB panel + 17 KB reader   = 4.62 MB
+    #     zstd     3.3 MB panel + 72 KB reader   = 3.37 MB
+    #
+    # `hyparquet` decodes snappy natively and needs `hyparquet-compressors`
+    # for zstd, but that bundle costs a fraction of what the extra 1.3 MB
+    # of parquet does. §5.9 budgets the panel route at 2.0 s cold.
     df.write_parquet(path, compression="zstd")
     return path
