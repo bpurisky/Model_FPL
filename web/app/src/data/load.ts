@@ -19,6 +19,7 @@ import {
   ColumnsFile,
   CorrelationsFile,
   EXPECTED_CONTRACT_VERSION,
+  FixturesFile,
   ObservationsFile,
   PlayersFile,
   ScorecardFile,
@@ -141,6 +142,14 @@ export const loadPlayers = (onProgress?: (p: LoadProgress) => void) =>
  */
 export const loadBoard = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("board.json", BoardFile, onProgress);
+
+/**
+ * The current season's schedule (§4.3). Committed, and the only export
+ * that looks *forward* — every other file describes gameweeks that have
+ * finished. Loaded by the surfaces that annotate a run of fixtures.
+ */
+export const loadFixtures = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("fixtures.json", FixturesFile, onProgress);
 
 /** The walk-forward backtest made legible (§5.4.7). Committed. */
 export const loadScorecard = (onProgress?: (p: LoadProgress) => void) =>

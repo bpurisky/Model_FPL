@@ -53,6 +53,13 @@ export const SURFACES: Surface[] = [
     milestone: "5C",
   },
   {
+    view: "fixtures",
+    label: "Fixtures",
+    blurb: "The season ahead: every club by gameweek, coloured by difficulty.",
+    status: "live",
+    milestone: "5F",
+  },
+  {
     view: "form",
     label: "Form Matrix",
     blurb: "Player by gameweek, as a heat map. Where a slump becomes visible.",

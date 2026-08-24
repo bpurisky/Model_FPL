@@ -384,3 +384,20 @@
   display: block;
   padding: 0 var(--space-2) var(--space-1);
 }
+
+/*
+ * §5.4.3's blank, now split in two because the schedule can tell them
+ * apart. A club with no fixture is a hole in the calendar; a missing row
+ * whose reason is unknown is a hole in what we know. Different facts,
+ * different marks, neither of them a colour from the value scale.
+ */
+.cell[data-state="noFixture"] {
+  background: var(--ground);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  opacity: 0.55;
+}
+
+.keySwatch[data-state="noFixture"] {
+  background: var(--ground);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}

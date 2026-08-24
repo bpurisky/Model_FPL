@@ -28,6 +28,7 @@ import { NO_FILTERS, type PanelFilters } from "../query/panel";
 /** Every surface, including the ones §5.1.3 stubs. */
 export const VIEWS = [
   "correlations",
+  "fixtures",
   "graph",
   "form",
   "compare",

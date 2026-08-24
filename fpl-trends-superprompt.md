@@ -1272,6 +1272,88 @@ available later, and `projection_basis` labels it honestly meanwhile.
 
 523 Python tests pass, 147 frontend tests pass.
 
+### The archive bias, found and corrected — 2026-08-24
+
+The operator's read was right, and the sharpest evidence was sitting in
+the export directory the whole time: **`fixtures.json` was read by
+nothing but a contract test.**
+
+Every surface in the app reads player history. `fixtures.json` is one of
+§5.3.2's own exported files, it carries the whole 2026-27 schedule with
+both difficulty ratings, it is committed, schema'd and contract-tested —
+and no view had ever opened it. A model output (`analytics/fdr.py`'s Elo
+difficulty, built in Phase 2) had no screen at all.
+
+The bias underneath it is structural rather than accidental. The panel,
+`players.json` and `board.json` are all keyed to *the last gameweek the
+panel holds*, which is by construction the last one that finished. The
+Correlation Lab pools player-seasons. The Scorecard is a backtest. Every
+one of the eight surfaces describes gameweeks that are over, and the app
+had no way even to name the week the reader is in.
+
+**D13, recorded per §5.16: a ninth surface.** §5.4 says "Eight", so this
+is a deviation and not a reading of the spec. The Fixture Ticker shows
+every club by gameweek, coloured by difficulty, ranked by the run each
+faces, with blanks and doubles read from the schedule and played fixtures
+dimmed. It stays inside §5.0.2 by ranking *clubs* on a schedule rather
+than suggesting a transfer or naming a captain.
+
+It also matters in a way none of the eight can right now: until the
+collector records the first current-season gameweek, every player-keyed
+surface *necessarily* describes 2025-26. Clubs are known for 2026-27
+today, so this is the one thing in the app that can be about the season
+being played before any of it has been.
+
+**Both difficulty ratings are switchable, and they disagree.** FPL's
+published 1-5 puts Newcastle, Coventry and Everton on the kindest opening
+runs; the Elo rating puts Arsenal, Man City and Man Utd there. The panel
+uses FPL's for the clean-sheet model — measured better, and committed
+data — but that argument is about what to build a projection on, not
+about what a reader may look at. Switching the basis re-ranks the table,
+which is a bug that was caught and fixed mid-build: the first version
+recoloured the cells by Elo while still ranking the rows by FPL, showing
+two opinions in one table under one label.
+
+**Two required spec items were missing, and both were current-season
+features.**
+
+§5.4.5 lists "next-N fixture difficulty" among the Explorer's column
+groups. It did not exist. It does now — the next five fixtures plus the
+mean over them, sortable, which is the column anyone actually sorts by.
+
+§5.4.3 asks the Form Matrix for blank markers. It had only doubles, from
+`n_fixtures`. A blank leaves no row at all, so the panel alone cannot
+tell "the club had no fixture" from "this player was not in the squad" —
+two facts a reader draws opposite conclusions from. With the schedule it
+can, and `cellState` now returns five states rather than four.
+TypeScript caught the two non-exhaustive switches the moment the union
+grew, which is what the discriminated union is for.
+
+**The season guard is the load-bearing safety property.** `fixtures.json`
+describes one season. Applying its schedule to a 2024-25 row would invent
+blanks and doubles that never happened, silently, in a grid that would
+render perfectly. Every helper in `data/fixtures.ts` takes the season
+being displayed and returns nothing when it does not match, so an archive
+season gets no annotations rather than wrong ones — and fourteen tests
+hold that, including one asserting each archive season gets an empty
+schedule.
+
+That guard is why the Explorer's new columns are dark today:
+`players.json` still describes 2025-26 while the schedule describes
+2026-27, and attributing a 2026-27 run to a player through his 2025-26
+club would be quietly wrong for anyone who moved. They light up when the
+panel carries the current season.
+
+**Also corrected: the app was projecting gameweek 39.** `players.json`
+computes `gameweek + 1`, which is right all season and runs off the end
+once the last gameweek is recorded — so Comparison read "projecting 39"
+of a 38-week season. The number is still meaningful (a fixture-neutral
+expectation per appearance); the label was not. It now says the season is
+complete and what the number therefore is.
+
+164 frontend tests pass, 523 Python tests pass. Initial bundle 87.8 KB
+gzipped against §5.9's 250 KB.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

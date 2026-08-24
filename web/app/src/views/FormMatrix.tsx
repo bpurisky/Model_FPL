@@ -43,6 +43,8 @@ import { FilterBar } from "../components/FilterBar";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, type LoadProgress } from "../data/load";
 import { useBoard } from "../data/useBoard";
+import { byTeam, gameweekShape } from "../data/fixtures";
+import { useFixtures } from "../data/fixtures";
 import type { BoardFile, ColumnsFile, ColumnSpec } from "../data/schema";
 import { divergingColor, type Direction } from "../design/scale";
 import { reduce } from "../query/reduce";
@@ -92,6 +94,13 @@ export function FormMatrix() {
   const [toggleTouched, setToggleTouched] = useState(false);
   /* §5.5.4's reverse path, for rows the reader has selected. */
   const board = useBoard();
+  /*
+   * The schedule, so a gameweek with no fixture is distinguishable from a
+   * gameweek the player sat out (§5.4.3). Scoped to the season on screen
+   * by `byTeam`, so the archive is never annotated with a schedule that
+   * belongs to a different year.
+   */
+  const fixtures = useFixtures();
 
   useEffect(() => {
     let cancelled = false;
@@ -179,6 +188,15 @@ export function FormMatrix() {
   // The reader asked for a season the panel has no rows for. Almost always
   // the current one, before its first gameweek lands.
   const seasonEmpty = seasonFacet !== null && seasonFacet.rows === 0;
+
+  const schedule = useMemo(() => byTeam(fixtures, season), [fixtures, season]);
+  /** Which clubs had no fixture in each gameweek on screen. */
+  const blanksByGameweek = useMemo(() => {
+    if (schedule.size === 0 || !data) return new Map<number, Set<string>>();
+    return new Map(
+      data.gameweeks.map((gw) => [gw, gameweekShape(schedule, gw).blank]),
+    );
+  }, [schedule, data]);
 
   useEffect(() => {
     if (!session || columnIndex.size === 0) return;
@@ -456,6 +474,7 @@ export function FormMatrix() {
           direction={direction}
           spec={spec}
           board={board}
+          blanks={blanksByGameweek}
           onSelect={(id) => {
             /*
              * §5.4.3: "row click opens that player in Comparison." The
@@ -489,10 +508,27 @@ export function FormMatrix() {
  *            most often a rate below the eligibility floor.
  * `value`  — a number, including a real zero.
  */
-type CellState = "blank" | "dnp" | "absent" | "value";
+type CellState = "blank" | "noFixture" | "dnp" | "absent" | "value";
 
-export function cellState(cell: Cell | undefined): CellState {
-  if (!cell) return "blank";
+/**
+ * `clubPlayed` is what the schedule says about the club, or `null` when
+ * no schedule covers this season.
+ *
+ * Without it, a missing row is a single "blank" that conflates two
+ * different facts: the club had no fixture at all, and the club played
+ * while this player was not in the squad. §5.4.3 is explicit that states
+ * a reader would draw different conclusions from must not share a cell
+ * treatment, and those two are exactly that — one is the fixture list,
+ * the other is a team sheet.
+ *
+ * When there is no schedule the honest answer is the old one: a row is
+ * missing and we cannot say why.
+ */
+export function cellState(cell: Cell | undefined, clubPlayed: boolean | null = null): CellState {
+  if (!cell) {
+    if (clubPlayed === false) return "noFixture";
+    return "blank";
+  }
   if (cell.minutes === 0) return "dnp";
   if (cell.value === null) return "absent";
   return "value";
@@ -507,9 +543,20 @@ interface GridProps {
   onSelect: (id: number) => void;
   selected: number[];
   board: BoardFile | null;
+  blanks: Map<number, Set<string>>;
 }
 
-function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected, board }: GridProps) {
+function Grid({
+  rows,
+  gameweeks,
+  extreme,
+  direction,
+  spec,
+  onSelect,
+  selected,
+  board,
+  blanks,
+}: GridProps) {
   return (
     <div className={styles.scroll}>
       <table className={styles.grid}>
@@ -559,7 +606,9 @@ function Grid({ rows, gameweeks, extreme, direction, spec, onSelect, selected, b
 
               {gameweeks.map((gw) => {
                 const cell = row.cells.get(gw);
-                const state = cellState(cell);
+                const blanked = blanks.get(gw);
+                const clubPlayed = blanked ? !blanked.has(row.team) : null;
+                const state = cellState(cell, clubPlayed);
                 return (
                   <td
                     key={gw}
@@ -639,6 +688,10 @@ function cellLabel(cell: Cell | undefined, state: CellState, spec: ColumnSpec | 
   switch (state) {
     case "blank":
       return "";
+    case "noFixture":
+      // The club had no fixture. Structurally distinct from a missing row
+      // whose reason is unknown, and from a player who sat one out.
+      return "";
     case "dnp":
       // Not a zero and not an em dash: this player had a fixture and did
       // not appear in it.
@@ -660,7 +713,9 @@ function describe(
   const who = `${row.name}, GW${gw}`;
   switch (state) {
     case "blank":
-      return `${who}: no fixture. ${row.team} did not play, or he was not in the squad.`;
+      return `${who}: no row. Either ${row.team} had no fixture or he was not in the squad — no schedule is loaded for this season, so the two cannot be told apart.`;
+    case "noFixture":
+      return `${who}: ${row.team} had no fixture in gameweek ${gw}. A blank gameweek, not a player who was left out.`;
     case "dnp":
       return `${who}: did not play. ${row.team} had a fixture and he recorded no minutes.`;
     case "absent":
@@ -700,8 +755,12 @@ function Key() {
         no minutes
       </li>
       <li className={styles.keyItem}>
-        <span className={styles.keySwatch} data-state="blank" />
+        <span className={styles.keySwatch} data-state="noFixture" />
         no fixture
+      </li>
+      <li className={styles.keyItem}>
+        <span className={styles.keySwatch} data-state="blank" />
+        not in squad
       </li>
       <li className={styles.keyItem}>
         <span className={styles.keySwatch} data-state="double" />

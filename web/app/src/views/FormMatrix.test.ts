@@ -46,14 +46,41 @@ describe("the four cell states", () => {
     expect(cellState(cell(90, 0))).toBe("value");
   });
 
-  it("distinguishes all four from one another", () => {
+  it("distinguishes all five from one another", () => {
     const states = [
       cellState(undefined),
+      cellState(undefined, false),
       cellState(cell(0, 0)),
       cellState(cell(90, null)),
       cellState(cell(90, 0)),
     ];
-    expect(new Set(states).size).toBe(4);
+    expect(new Set(states).size).toBe(5);
+  });
+
+  it("tells a blank gameweek from a player left out, when a schedule says so", () => {
+    /*
+     * The distinction §5.4.3 asks for and the panel alone cannot make: a
+     * missing row is either the club having no fixture or the player not
+     * being in the squad, and a reader draws opposite conclusions from
+     * the two. Only the schedule knows which.
+     */
+    expect(cellState(undefined, false)).toBe("noFixture");
+    expect(cellState(undefined, true)).toBe("blank");
+  });
+
+  it("falls back to an undifferentiated blank with no schedule", () => {
+    // The archive has no schedule loaded, and inventing one would be
+    // worse than admitting the two cases cannot be separated.
+    expect(cellState(undefined, null)).toBe("blank");
+    expect(cellState(undefined)).toBe("blank");
+  });
+
+  it("never lets the schedule override a row that exists", () => {
+    // A club marked blank while the player has a row is a contradiction
+    // in the data, and the row is the stronger evidence: something was
+    // measured.
+    expect(cellState(cell(90, 3), false)).toBe("value");
+    expect(cellState(cell(0, null), false)).toBe("dnp");
   });
 
   it("never reports a zero-minute row as a value, whatever the metric says", () => {

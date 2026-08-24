@@ -32,6 +32,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "../app/state";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, loadPlayers, type LoadProgress } from "../data/load";
+import { byTeam, nextFixtures, runDifficulty, useFixtures, type TeamFixture } from "../data/fixtures";
 import type { ColumnsFile, PlayerRow, PlayersFile } from "../data/schema";
 import styles from "./Explorer.module.css";
 
@@ -52,7 +53,12 @@ type Source =
   | { kind: "projection" }
   | { kind: "component"; key: string }
   | { kind: "actual"; key: string }
-  | { kind: "metric"; key: string };
+  | { kind: "metric"; key: string }
+  // §5.4.5's "next-N fixture difficulty" group. Read from the schedule
+  // rather than from the player row, because a fixture is a property of
+  // the club and the panel carries no forward-looking column at all.
+  | { kind: "run"; count: number }
+  | { kind: "fixture"; index: number };
 
 interface Column {
   id: string;
@@ -76,6 +82,13 @@ export function Explorer() {
   const [metricsNormalized, setMetricsNormalized] = useState(false);
   const [cautionDismissed, setCautionDismissed] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
+  /*
+   * The schedule, for §5.4.5's fixture columns. `byTeam` returns nothing
+   * unless the season matches the one the file describes, so an archive
+   * season gets no fixture annotations rather than a schedule that
+   * belongs to a different year.
+   */
+  const fixtures = useFixtures();
   const viewport = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -98,10 +111,15 @@ export function Explorer() {
     };
   }, []);
 
+  const schedule = useMemo(
+    () => byTeam(fixtures, data.status === "ready" ? data.players.season : null),
+    [fixtures, data],
+  );
+
   const columns = useMemo<Column[]>(() => {
     if (data.status !== "ready") return [];
-    return buildColumns(data.players, data.columns, metricsNormalized);
-  }, [data, metricsNormalized]);
+    return buildColumns(data.players, data.columns, metricsNormalized, schedule.size > 0);
+  }, [data, metricsNormalized, schedule]);
 
   const rows = useMemo(() => {
     if (data.status !== "ready") return [];
@@ -121,8 +139,8 @@ export function Explorer() {
     if (!column) return filtered;
 
     return [...filtered].sort((left, right) => {
-      const a = valueOf(left, column.source);
-      const b = valueOf(right, column.source);
+      const a = valueOf(left, column.source, schedule);
+      const b = valueOf(right, column.source, schedule);
       /*
        * §5.3.3: a null sorts to the bottom in either direction. It is
        * "the export declined to say", and putting it above a measured
@@ -330,7 +348,7 @@ export function Explorer() {
                 title="Add to or remove from the Comparison selection"
               >
                 {columns.map((column) => {
-                  const value = valueOf(player, column.source);
+                  const value = valueOf(player, column.source, schedule);
                   return (
                     <td
                       key={column.id}
@@ -378,6 +396,7 @@ function buildColumns(
   players: PlayersFile,
   registry: ColumnsFile,
   metricsNormalized: boolean,
+  hasSchedule: boolean,
 ): Column[] {
   const int = (value: number) => value.toFixed(0);
   const two = (value: number) => value.toFixed(2);
@@ -422,6 +441,36 @@ function buildColumns(
     });
   }
 
+  /*
+   * §5.4.5's "next-N fixture difficulty". Only when the schedule covers
+   * the season on screen — an archive season gets no columns rather than
+   * a column of em dashes implying its fixtures were unknowable.
+   *
+   * The mean over the next five is first because it is the column anyone
+   * actually sorts by: "who has the kindest run" is the question, and
+   * sorting ascending answers it.
+   */
+  if (hasSchedule) {
+    columns.push({
+      id: "run5",
+      label: "Next 5",
+      group: "Next fixtures",
+      source: { kind: "run", count: 5 },
+      numeric: true,
+      format: (value: number) => value.toFixed(2),
+    });
+    for (let index = 0; index < 5; index += 1) {
+      columns.push({
+        id: `fixture:${index}`,
+        label: `+${index + 1}`,
+        group: "Next fixtures",
+        source: { kind: "fixture", index },
+        numeric: true,
+        format: int,
+      });
+    }
+  }
+
   // The rate metrics, raw or as position percentiles (§5.4.5's toggle).
   for (const key of Object.keys(players.players[0]?.metrics ?? {})) {
     const spec = registry.columns.find((entry) => entry.key === key);
@@ -450,7 +499,11 @@ function groupSpans(columns: Column[]): { group: string; span: number }[] {
 }
 
 /** One cell's value. `null` means the export declined to say (§5.3.3). */
-function valueOf(player: PlayerRow, source: Source): number | string | null {
+function valueOf(
+  player: PlayerRow,
+  source: Source,
+  schedule: Map<string, TeamFixture[]>,
+): number | string | null {
   switch (source.kind) {
     case "identity":
       return player[source.key];
@@ -468,6 +521,15 @@ function valueOf(player: PlayerRow, source: Source): number | string | null {
       return player.actuals[source.key] ?? null;
     case "metric":
       return player.metrics[source.key]?.value ?? null;
+    case "run":
+      return runDifficulty(schedule, player.team, source.count);
+    case "fixture": {
+      const run = nextFixtures(schedule, player.team, source.index + 1);
+      const entry = run[source.index];
+      // A club with fewer remaining fixtures than the column asks for has
+      // no value here, and that is not a difficulty of zero (§5.3.3).
+      return entry?.difficulty ?? null;
+    }
   }
 }
 

@@ -18,6 +18,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { Comparison } from "../views/Comparison";
 import { CorrelationLab } from "../views/CorrelationLab";
 import { Explorer } from "../views/Explorer";
+import { FixtureTicker } from "../views/FixtureTicker";
 import { ModelBoard } from "../views/ModelBoard";
 import { Scorecard } from "../views/Scorecard";
 import { Planned } from "../views/Planned";
@@ -111,6 +112,7 @@ function Shell() {
           </Suspense>
         )}
         {state.view === "compare" && <Comparison />}
+        {state.view === "fixtures" && <FixtureTicker />}
         {state.view === "board" && <ModelBoard />}
         {state.view === "scorecard" && <Scorecard />}
         {state.view === "explorer" && <Explorer />}

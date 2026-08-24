@@ -164,10 +164,32 @@ export function Comparison() {
         <div>
           <h1 className={styles.title}>Comparison</h1>
           <p className={styles.sub}>
-            Where a projection comes from, head by head. {players.season} gameweek{" "}
-            <span className="data">{players.gameweek}</span>, projecting{" "}
-            <span className="data">{players.projected_gameweek}</span> on a{" "}
-            <span className="data">{players.projection_basis.replace("_", " ")}</span> basis.
+            Where a projection comes from, head by head. {players.season} after gameweek{" "}
+            <span className="data">{players.gameweek}</span>.{" "}
+            {/*
+             * A season is 38 gameweeks, so a 39th is not a week anybody
+             * will play. The export computes `gameweek + 1` from the
+             * panel, which is right all season and runs off the end once
+             * the last one is recorded — and until the collector writes
+             * the first gameweek of the new season, that is exactly the
+             * state the reader is in. The number is still meaningful; the
+             * label was not, so it now says what it actually is.
+             */}
+            {players.projected_gameweek > 38 ? (
+              <>
+                That season is complete, so these are{" "}
+                <span className="data">fixture-neutral</span> expectations per appearance
+                rather than a forecast of a scheduled match. They follow the panel forward the
+                moment a new gameweek is recorded.
+              </>
+            ) : (
+              <>
+                Projecting gameweek{" "}
+                <span className="data">{players.projected_gameweek}</span> on a{" "}
+                <span className="data">{players.projection_basis.replace(/_/g, " ")}</span>{" "}
+                basis.
+              </>
+            )}
           </p>
         </div>
         <Provenance header={players.header} basis={players.header.normalization_basis} />
