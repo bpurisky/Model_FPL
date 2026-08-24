@@ -15,10 +15,11 @@
 
 import { z } from "zod";
 import {
+  ColumnsFile,
   CorrelationsFile,
   EXPECTED_CONTRACT_VERSION,
+  ObservationsFile,
   PlayersFile,
-  ColumnsFile,
 } from "./schema";
 
 const BASE = "/data/v1";
@@ -118,6 +119,14 @@ export const loadColumns = (onProgress?: (p: LoadProgress) => void) =>
 
 export const loadPlayers = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("players.json", PlayersFile, onProgress);
+
+/**
+ * The values behind the matrix (§5.6.1). Fetched only when the reader
+ * changes the season selection — it is several times the size of the
+ * correlations themselves, and most loads never need it.
+ */
+export const loadObservations = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("observations.json", ObservationsFile, onProgress);
 
 /**
  * Whether the export is old enough to say so on screen (§5.6.3).

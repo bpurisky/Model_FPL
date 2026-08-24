@@ -24,6 +24,7 @@ from web.export.correlations import build_correlations
 from web.export.fixtures import build_fixtures
 from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
+from web.export.observations import build_observations
 from web.export.panel import build_panel, write_panel
 from web.export.players import build_players
 from web.export.timeseries import build_timeseries, write_timeseries
@@ -182,6 +183,18 @@ def cmd_players(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_observations(args: argparse.Namespace) -> None:
+    """The values behind the matrix (§5.6.1). Committed, and loaded by the
+    app only when the reader changes the season selection."""
+    file = build_observations(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(file.model_dump_json(indent=2), "observations.json", Path(args.out))
+    logger.info(
+        "%s %d player-seasons over %d metrics (%s) -> %s",
+        "wrote" if changed else "unchanged:", len(file.rows), len(file.metrics),
+        ", ".join(f"{s.season} gw{s.gameweeks}" for s in file.seasons), path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -192,6 +205,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_timeseries(args)
     cmd_board(args)
     cmd_players(args)
+    cmd_observations(args)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -208,6 +222,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("players").set_defaults(func=cmd_players)
+    subparsers.add_parser("observations").set_defaults(func=cmd_observations)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

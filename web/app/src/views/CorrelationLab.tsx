@@ -4,14 +4,22 @@ import { Matrix } from "../components/Matrix";
 import { PositionFilter } from "../components/PositionFilter";
 import { Provenance } from "../components/Provenance";
 import { RankScatter } from "../components/RankScatter";
+import { SeasonFilter } from "../components/SeasonFilter";
 import {
   ContractError,
   loadColumns,
   loadCorrelations,
+  loadObservations,
   loadPlayers,
   type LoadProgress,
 } from "../data/load";
-import type { ColumnsFile, CorrelationsFile, PlayersFile } from "../data/schema";
+import { correlateSelection, groupSizes, isEverySeason } from "../data/matrix";
+import type {
+  ColumnsFile,
+  CorrelationsFile,
+  ObservationsFile,
+  PlayersFile,
+} from "../data/schema";
 import styles from "./CorrelationLab.module.css";
 
 type State =
@@ -37,6 +45,14 @@ export function CorrelationLab() {
   const [state, setState] = useState<State>({ status: "loading", progress: null });
   const [position, setPosition] = useState("MID");
   const [selected, setSelected] = useState<{ a: string; b: string } | null>(null);
+  /*
+   * Null until the reader touches the season filter. `observations.json`
+   * is several times the size of the correlations and most loads never
+   * need it, so it is fetched on first use rather than on first paint.
+   */
+  const [observations, setObservations] = useState<ObservationsFile | null>(null);
+  const [seasons, setSeasons] = useState<ReadonlySet<string> | null>(null);
+  const [loadingSeasons, setLoadingSeasons] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,10 +89,56 @@ export function CorrelationLab() {
     return new Map(state.columns.columns.map((column) => [column.key, column]));
   }, [state]);
 
+  /*
+   * The precomputed matrix is the canonical one and stays canonical: it
+   * carries p-values, it is what the export publishes, and §5.6 wants
+   * client-side inference to be the exception rather than the default. So
+   * a full-season selection hands back to it rather than recomputing the
+   * same numbers slightly differently.
+   */
+  const everySeason =
+    observations === null || seasons === null || isEverySeason(observations.seasons, seasons);
+
   const visible = useMemo(() => {
     if (state.status !== "ready") return [];
-    return state.correlations.cells.filter((cell) => cell.group === position);
-  }, [state, position]);
+    if (everySeason || observations === null || seasons === null) {
+      return state.correlations.cells.filter((cell) => cell.group === position);
+    }
+    return correlateSelection(observations, seasons, position);
+  }, [state, position, observations, seasons, everySeason]);
+
+  /*
+   * The filter's counts follow the selection. Left reading the precomputed
+   * pooled totals they would claim 284 midfielders beside a matrix over
+   * 194.
+   */
+  const filterGroups = useMemo(() => {
+    if (state.status !== "ready") return [];
+    if (everySeason || observations === null || seasons === null) {
+      return state.correlations.groups;
+    }
+    const sizes = groupSizes(observations, seasons);
+    return state.correlations.groups.map((group) => ({
+      ...group,
+      n_player_seasons: sizes.get(group.key) ?? 0,
+    }));
+  }, [state, observations, seasons, everySeason]);
+
+  const changeSeasons = async (next: Set<string>) => {
+    setSelected(null);
+    if (observations) {
+      setSeasons(next);
+      return;
+    }
+    setLoadingSeasons(true);
+    try {
+      const loaded = await loadObservations();
+      setObservations(loaded);
+      setSeasons(next);
+    } finally {
+      setLoadingSeasons(false);
+    }
+  };
 
   if (state.status === "loading") {
     return <LoadingBar progress={state.progress} />;
@@ -112,14 +174,39 @@ export function CorrelationLab() {
 
       <div className={styles.controls}>
         <PositionFilter
-          groups={correlations.groups}
+          groups={filterGroups}
           value={position}
           onChange={(next) => {
             setPosition(next);
             setSelected(null);
           }}
         />
+        <SeasonFilter
+          seasons={observations?.seasons ?? seasonPlaceholders(correlations)}
+          selected={seasons ?? new Set(correlations.seasons)}
+          onChange={changeSeasons}
+          busy={loadingSeasons}
+        />
+      </div>
+
+      <div className={styles.controls}>
         <Legend minN={correlations.min_n_cell} hatchedCount={hatched} />
+        {!everySeason && (
+          /*
+           * §5.6.3: every derived number renders with its provenance. A
+           * client-computed matrix is a different object from the one the
+           * export published, and the difference — no p-value — is not
+           * visible in the cells themselves.
+           */
+          <p className={styles.computed} role="note">
+            Computed in your browser over{" "}
+            <span className="data">{[...(seasons ?? [])].sort().join(", ")}</span> by{" "}
+            <span className="data">spearman.ts</span>, a port of the model&rsquo;s own method
+            checked against {" "}
+            <span className="data">golden_spearman.json</span> in CI. No p-values: significance
+            testing stays in Python.
+          </p>
+        )}
       </div>
 
       {group?.mixed_position && (
@@ -169,6 +256,22 @@ export function CorrelationLab() {
       )}
     </main>
   );
+}
+
+/**
+ * Before `observations.json` has been fetched, the selector still needs
+ * something to render. `correlations.json` names its seasons but not
+ * their coverage, so these are marked complete — which is true of every
+ * season the archive holds, and is corrected the moment the real
+ * summaries arrive.
+ */
+function seasonPlaceholders(correlations: CorrelationsFile) {
+  return correlations.seasons.map((season) => ({
+    season,
+    gameweeks: 38,
+    players: 0,
+    partial: false,
+  }));
 }
 
 /**

@@ -174,6 +174,9 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "PlayerProjection",
         "PlayerRow",
         "PlayersFile",
+        "SeasonSummary",
+        "ObservationRow",
+        "ObservationsFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     assert shape["Header"]["generated_at"]["type"] == "datetime"
@@ -210,6 +213,10 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
     assert set(shape["PlayerMetric"]) == {"value", "z", "percentile"}
     assert shape["PlayersFile"]["population"]["type"] == "record"
     assert shape["PlayerRow"]["projection"]["type"] == "PlayerProjection?"
+    # `values` is a positional array of nullable floats: the nulls are the
+    # part a client-side correlation must drop rather than rank.
+    assert shape["ObservationRow"]["values"]["type"] == "array"
+    assert shape["SeasonSummary"]["partial"]["type"] == "bool"
 
 
 # --- json_safe: what may cross the boundary -------------------------------

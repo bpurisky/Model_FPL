@@ -322,6 +322,40 @@ export const PlayersFile = z.object({
   players: z.array(PlayerRow),
 });
 
+/**
+ * What a season actually covers. `partial` keeps the season selector
+ * honest: a rho over two gameweeks and one over thirty-eight look
+ * identical once they are both a rho.
+ */
+export const SeasonSummary = z.object({
+  season: z.string(),
+  gameweeks: z.number().int(),
+  players: z.number().int(),
+  partial: z.boolean(),
+});
+
+/**
+ * One eligible player-season. `values` is positional, aligned to
+ * `ObservationsFile.metrics` — the same convention `GoldenSample.rows`
+ * uses. Nulls are real and must be dropped pairwise, never ranked.
+ */
+export const ObservationRow = z.object({
+  season: z.string(),
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  values: z.array(z.number().nullable()),
+});
+
+export const ObservationsFile = z.object({
+  header: Header,
+  basis: z.string(),
+  seasons: z.array(SeasonSummary),
+  metrics: z.array(z.string()),
+  rows: z.array(ObservationRow),
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -336,6 +370,9 @@ export type BoardPlayer = z.infer<typeof BoardPlayer>;
 export type BoardFile = z.infer<typeof BoardFile>;
 export type PlayerRow = z.infer<typeof PlayerRow>;
 export type PlayersFile = z.infer<typeof PlayersFile>;
+export type ObservationRow = z.infer<typeof ObservationRow>;
+export type ObservationsFile = z.infer<typeof ObservationsFile>;
+export type SeasonSummary = z.infer<typeof SeasonSummary>;
 
 /**
  * The contract version this app understands. §5.12 requires the build to

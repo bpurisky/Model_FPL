@@ -1,0 +1,63 @@
+.set {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.set[disabled] {
+  opacity: 0.55;
+}
+
+.legend {
+  float: none;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  padding: 0;
+  margin-inline-end: var(--space-2);
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  block-size: 32px;
+  padding-inline: var(--space-3);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+}
+
+.option:hover {
+  color: var(--paper);
+}
+
+.on {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+.box {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  accent-color: var(--paper);
+  margin: 0;
+}
+
+.count {
+  color: var(--muted);
+  font-family: var(--font-data);
+}
+
+/* §5.8.2: amber is reserved for epistemic warnings. A season still being
+   played is exactly that — its rates rest on a handful of matches. */
+.partial {
+  color: var(--flag);
+  font-family: var(--font-data);
+}

@@ -79,3 +79,12 @@
   color: var(--flag);
   font-size: var(--text-sm);
 }
+
+/* The matrix is no longer the one the export published, and the cells
+   cannot say so themselves. §5.6.3 wants that on screen. */
+.computed {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  max-inline-size: 70ch;
+}

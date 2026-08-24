@@ -556,6 +556,62 @@ class PlayersFile(_Strict):
     players: list[PlayerRow]
 
 
+class SeasonSummary(_Strict):
+    """What a season actually covers.
+
+    `partial` is the field that keeps the season selector honest. A
+    correlation over two gameweeks and one over thirty-eight look
+    identical once they are both a rho, and the current season joins this
+    file the moment it has a single recorded gameweek. Offering four
+    seasons that look alike when one of them is two matches old would
+    invite exactly the reading the rest of this contract works to prevent.
+    """
+
+    season: str
+    gameweeks: int
+    players: int
+    partial: bool
+
+
+class ObservationRow(_Strict):
+    """One eligible player-season, with every matrix metric.
+
+    `values` is positional, aligned to `ObservationsFile.metrics` — the
+    same convention `GoldenSample.rows` uses, so a reader meets it once
+    rather than twice. Nulls are real: four metrics do not exist before
+    2025-26, and a client-side correlation must drop the incomplete pair
+    rather than rank a column containing them.
+    """
+
+    season: str
+    element_id: int
+    name: str
+    team: str
+    position: str
+    values: list[float | None]
+
+
+class ObservationsFile(_Strict):
+    """`observations.json` — the values behind the matrix (§5.6.1).
+
+    Exists so the browser can answer a question precomputation cannot:
+    Spearman does not compose, so rho over a chosen subset of seasons
+    cannot be assembled from per-season matrices, and shipping one matrix
+    per subset is 2^n. These rows answer every subset.
+
+    The population is deliberately identical to the one `correlations.py`
+    correlates — same eligibility floor, same minutes-weighted season
+    rates — because the client-side matrix for "all seasons" sits next to
+    the precomputed one and the two must agree.
+    """
+
+    header: Header
+    basis: str
+    seasons: list[SeasonSummary]
+    metrics: list[str]
+    rows: list[ObservationRow]
+
+
 def build_header(
     *,
     rows: int,
@@ -645,6 +701,7 @@ def contract_shape() -> dict[str, Any]:
         GoldenSample, GoldenPair, GoldenSpearmanFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
+        SeasonSummary, ObservationRow, ObservationsFile,
     )
     for model in models:
         fields = {}
@@ -715,10 +772,13 @@ __all__ = [
     "PlayerProjection",
     "PlayerRow",
     "PlayersFile",
+    "ObservationRow",
+    "ObservationsFile",
     "PositionSpearman",
     "PositionWeights",
     "ScorecardFile",
     "ScorecardRow",
+    "SeasonSummary",
     "json_safe",
     "build_header",
     "contract_shape",

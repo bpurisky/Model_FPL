@@ -31,8 +31,12 @@ graphify-out/
 # that need these two show an explanatory empty state when they're absent.
 data/web/v1/*.parquet
 
-# §5.2's frontend. `web/app/dist/` is a build artifact published by the
+# §5.2's frontend. `web/app/dist/
+# tsc's incremental cache -- a build artifact, and it churns on every run.
+web/app/*.tsbuildinfo` is a build artifact published by the
 # deploy workflow (§5.12), not committed -- the same rule the parquet
 # exports follow. node_modules speaks for itself.
 web/app/node_modules/
 web/app/dist/
+# tsc's incremental cache -- a build artifact, and it churns on every run.
+web/app/*.tsbuildinfo

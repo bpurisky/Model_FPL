@@ -675,6 +675,54 @@ Loading is a determinate bar with a real byte count read off the response stream
 
 **Known gap for 5C:** the rank scatter draws from `players.json`, which is one season, while the matrix pools three. The scatter says so in its caption rather than implying the two populations match. `src/data/spearman.ts` is not written — the Correlation Lab needs no client-side inference because every matrix it can show is precomputed, and §5.6.1's port is only required once Graph Builder allows arbitrary filters. `golden_spearman.json` is already committed and waiting for it.
 
+### Season selection, and §5.6.1's exception is now live — 2026-08-23
+
+The reader can choose which seasons the Spearman runs over. That is the
+first feature to need §5.6.1's client-side exception, and it is the reason
+`golden_spearman.json` has been sitting committed since this morning.
+
+**Why it cannot be precomputed.** Spearman does not compose: rho over
+2023-24 and rho over 2024-25 cannot be combined into rho over both.
+Serving subsets from precomputed matrices means one per subset, which is
+2^n — seven for three seasons, thirty-one for five, a thousand for ten.
+
+**`observations.json` — a tenth export file, §5.16 deviation.** 649
+eligible player-seasons, 16 metrics each, 348 KB. It is the exact
+population `correlations.py` correlates, which is what lets the app hand
+back to the precomputed matrix when every season is selected and get the
+same numbers. Separate from `correlations.json` rather than a block inside
+it because that file is the hero's first paint and §5.9 budgets
+time-to-interactive at 2.5s; these rows would roughly quadruple it to
+serve a feature most loads never touch. Loaded lazily, on first use.
+
+**`src/data/spearman.ts`** is the deliberate port, naming `report.py` as
+its source, and `spearman.golden.test.ts` checks it against all 600 golden
+pairs within 1e-9 — §5.6.1's three conditions, met in full.
+
+**No p-values from the browser, deliberately.** §5.6 permits the
+correlation exception and forbids significance testing without one. A
+client-computed cell therefore carries rho and n and nothing else, and the
+surface says so in the register §5.6.3 requires rather than showing the
+precomputed p beside a rho from a different population.
+
+**The current season joins the selector as soon as it has a gameweek**,
+since `build_panel` loads `data/current_season/` and this reads the panel.
+It will arrive with two gameweeks behind it against thirty-eight for the
+archive seasons, and a rate over two matches is mostly noise — so
+`SeasonSummary` carries `gameweeks` and `partial`, and a still-playing
+season renders its gameweek count in amber rather than a player count.
+A rho over two gameweeks and one over thirty-eight are indistinguishable
+once they are both a rho; that flag is the only thing that separates them.
+
+One real inconsistency caught by looking at the rendered page rather than
+the tests: the position filter kept showing the precomputed pooled counts,
+so it claimed 284 midfielders beside a matrix computed over 194. The
+counts now follow the selection — 2025-26 alone reads All 219, GK 20,
+DEF 82, MID 94, FWD 23, which matches the export's own per-season
+eligible counts exactly.
+
+46 frontend tests pass, 484 Python tests pass, bundle 65.6 KB gzipped.
+
 ### Key deviations from the literal spec text (all deliberate, all documented in-code and in README.md — read those docstrings before "fixing" any of these)
 
 1. **Two extra dependencies beyond §1.1's locked stack**: `pyyaml` (parses the mandated `config/*.yaml` files — nothing in the locked list does), `pytz` and `tzdata` (duckdb/polars/Windows zoneinfo needs). All justified at their import sites.

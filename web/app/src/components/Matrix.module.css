@@ -15,12 +15,13 @@
 .grid {
   display: grid;
   /* One label track, then one square track per metric. */
-  grid-template-columns: minmax(9rem, max-content) repeat(var(--n), minmax(2rem, 1.75rem));
+  grid-template-columns: minmax(8rem, max-content) repeat(var(--n), 28px);
   gap: var(--hairline);
   background: var(--rule);
   border: var(--hairline) solid var(--rule);
+  /* Content width only. Stretching to the container would paint the
+     rule colour across empty space to the right of the last column. */
   inline-size: max-content;
-  min-inline-size: 100%;
 }
 
 .corner {
@@ -37,14 +38,28 @@
   align-items: center;
 }
 
+/*
+ * Vertical so a sixteen-column matrix stays square without truncating
+ * every label to three characters.
+ *
+ * The rotation lives on the inner span, not on this box. In a
+ * `vertical-rl` element the block axis is *horizontal*, so `block-size`
+ * here would set the label's width — which silently made every label
+ * 128px wide inside a 28px column, so all sixteen overlapped and only
+ * the last one painted.
+ */
 .columnLabel {
-  /* Vertical so a sixteen-column matrix stays square without truncating
-   * every label to three characters. */
+  block-size: 9rem;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-2) 0;
+  overflow: hidden;
+}
+
+.columnLabel > span {
   writing-mode: vertical-rl;
   rotate: 180deg;
-  justify-content: flex-end;
-  block-size: 8rem;
-  padding: var(--space-2) var(--space-1);
+  white-space: nowrap;
 }
 
 .rowLabel {
@@ -55,14 +70,16 @@
 
 .cell,
 .diagonal {
-  aspect-ratio: 1;
-  min-block-size: 1.75rem;
-  max-block-size: 28px;
+  /* §5.8.8: density is a feature; matrix cells are capped at 28px. */
+  block-size: 28px;
   border: 0;
   border-radius: var(--radius-data); /* instruments are crisp */
   display: grid;
   place-items: center;
-  font-size: var(--text-xs);
+  /* Four glyphs of the data face inside 28px. Fixed rather than fluid:
+     §5.8.8 exempts the data face from the fluid scale precisely because
+     optical size stability matters more than fluidity here. */
+  font-size: 10px;
   transition:
     filter var(--dur-state) var(--ease),
     box-shadow var(--dur-state) var(--ease);

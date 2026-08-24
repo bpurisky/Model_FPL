@@ -80,3 +80,25 @@ export function formatRho(value: number | null): string {
   if (value === null || Number.isNaN(value)) return "—";
   return (value < 0 ? "−" : "+") + Math.abs(value).toFixed(2);
 }
+
+/**
+ * The same number, sized for a 28px cell.
+ *
+ * §5.8.8 caps matrix cells at 28px because density is a feature, and
+ * §5.10 requires every cell to carry its numeric value — so the format
+ * has to fit rather than the cell having to grow. Dropping the leading
+ * zero is the standard convention for a correlation matrix and buys a
+ * whole character.
+ *
+ * The sign is always shown, which keeps every cell four glyphs wide so a
+ * column still aligns on the decimal (§5.8.3). `formatRho` stays the
+ * format for prose and captions, where there is room for the zero.
+ */
+export function formatCell(value: number | null): string {
+  if (value === null || Number.isNaN(value)) return "—";
+  const sign = value < 0 ? "−" : "+";
+  const magnitude = Math.abs(value);
+  // 1.00 would be five glyphs; it only arises on the omitted diagonal,
+  // but rounding to 1.0 keeps the width invariant if it ever appears.
+  return magnitude >= 0.995 ? `${sign}1.0` : sign + magnitude.toFixed(2).slice(1);
+}
