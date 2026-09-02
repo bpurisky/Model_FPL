@@ -1,0 +1,59 @@
+{
+  "header": {
+    "contract_version": 1,
+    "generated_at": "2026-08-25T15:35:26.459125Z",
+    "source_gameweek": null,
+    "scoring_config": "scoring_2026_27.yaml",
+    "model_git_sha": "fdc2141ae9d7268cc12fea929af652c178f5a6d5",
+    "normalization_basis": "raw_points_not_normalized",
+    "rows": 0,
+    "current_season": "2026-27"
+  },
+  "player_level": [],
+  "player_level_excluded": [],
+  "player_level_skipped": [],
+  "squad_level": {
+    "n_gameweeks": 0,
+    "per_gw": [],
+    "excluded_gameweeks": [],
+    "cumulative_real_points": 0,
+    "cumulative_shadow_points": 0,
+    "shadow_minus_real": 0,
+    "warning": "Squad-level comparison is at most 13 observations, dominated by variance (§6.3): a genuinely good model can sit at a bad rank after 13 gameweeks because one captain blanked twice. Treat this as a log, not a verdict -- do not overhaul the model on the basis of these numbers alone."
+  },
+  "launch_gate": {
+    "ready_to_launch": false,
+    "gameweeks_evaluated": 0,
+    "gameweeks_excluded": [],
+    "freeze_provenance": [],
+    "criteria": {
+      "beats_fixture_adjusted_trailing_mean_mae": {
+        "status": "insufficient data",
+        "detail": "0/13 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
+      },
+      "beats_baselines_on_rank_correlation": {
+        "status": "insufficient data",
+        "detail": "0/13 gameweeks evaluated; same live-baseline gap as above."
+      },
+      "no_leakage_assertion_fired": {
+        "status": "insufficient data",
+        "detail": "no freezes on disk to report a leakage check for."
+      },
+      "squad_reconstruction_ran_13_consecutive_gws_without_manual_correction": {
+        "status": "insufficient data",
+        "detail": "0/13 gameweeks have both a freeze and recorded actuals; no freezes to inspect."
+      },
+      "price_change_model_reports_hit_rate_with_ci": {
+        "status": "FAIL",
+        "detail": "hit_rate=0.00 (95% CI [0.00, 0.00]) over 576 predicted move(s) of 609 evaluated -- see analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate carries little weight regardless of which side of 0.5 it lands on."
+      }
+    }
+  },
+  "price_eval": {
+    "n": 609,
+    "n_moves_predicted": 576,
+    "hit_rate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0
+  }
+}

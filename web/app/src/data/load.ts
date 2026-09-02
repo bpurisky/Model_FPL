@@ -21,6 +21,7 @@ import {
   EXPECTED_CONTRACT_VERSION,
   FixturesFile,
   ObservationsFile,
+  PaperTradeFile,
   PlayersFile,
   ScorecardFile,
   ShrinkageFile,
@@ -154,6 +155,16 @@ export const loadFixtures = (onProgress?: (p: LoadProgress) => void) =>
 /** The walk-forward backtest made legible (§5.4.7). Committed. */
 export const loadScorecard = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("scorecard.json", ScorecardFile, onProgress);
+
+/**
+ * §6.3-6.5 made legible (§5.16 D14): what the frozen shadow team actually
+ * scored, and the launch gate's current status. Committed, like
+ * `board.json` — but unlike every other committed file here, one live API
+ * call feeds it, made only by `.github/workflows/papertrade.yml`'s own
+ * schedule, not by `web.export`'s `all`.
+ */
+export const loadPaperTrade = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("papertrade.json", PaperTradeFile, onProgress);
 
 /**
  * §5.4.7's goals-conceded plateau. Committed, and rebuilt only when the

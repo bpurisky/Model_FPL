@@ -417,6 +417,85 @@ export const ObservationsFile = z.object({
   rows: z.array(ObservationRow),
 });
 
+/** `papertrade.json` (§5.16 D14) — §6.3-6.5 made legible. */
+export const PaperTradeGwNote = z.object({
+  gw: z.number().int(),
+  reason: z.string(),
+});
+
+export const PaperTradeSquadLevelGw = z.object({
+  gw: z.number().int(),
+  real_points: z.number().int(),
+  shadow_points: z.number().int(),
+});
+
+export const PaperTradeSquadLevel = z.object({
+  n_gameweeks: z.number().int(),
+  per_gw: z.array(PaperTradeSquadLevelGw),
+  excluded_gameweeks: z.array(PaperTradeGwNote),
+  cumulative_real_points: z.number().int(),
+  cumulative_shadow_points: z.number().int(),
+  shadow_minus_real: z.number().int(),
+  warning: z.string(),
+});
+
+export const PaperTradePlayerLevelGw = z.object({
+  gw: z.number().int(),
+  n: z.number().int(),
+  mae: z.number().nullable(),
+  spearman_mean: z.number().nullable(),
+});
+
+export const PaperTradeLeakageCheck = z.object({
+  ran: z.boolean(),
+  passed: z.boolean(),
+  n_features: z.number().int(),
+  latest_feature_available_at: z.string().datetime().nullable(),
+  deadline: z.string().datetime().nullable(),
+});
+
+/** That gameweek's own frozen sha -- not `PaperTradeFile.header.model_git_sha`,
+ * which is the live model today. */
+export const PaperTradeFreezeProvenance = z.object({
+  gw: z.number().int(),
+  leakage_check: PaperTradeLeakageCheck.nullable(),
+  leakage_verified: z.boolean(),
+  manual_correction: z.string().nullable(),
+  records_manual_correction_field: z.boolean(),
+  model_git_sha: z.string().nullable(),
+});
+
+export const PaperTradeGateCriterion = z.object({
+  status: z.string(),
+  detail: z.string(),
+});
+
+export const PaperTradeLaunchGate = z.object({
+  ready_to_launch: z.boolean(),
+  gameweeks_evaluated: z.number().int(),
+  gameweeks_excluded: z.array(PaperTradeGwNote),
+  freeze_provenance: z.array(PaperTradeFreezeProvenance),
+  criteria: z.record(z.string(), PaperTradeGateCriterion),
+});
+
+export const PaperTradePriceEval = z.object({
+  n: z.number().int(),
+  n_moves_predicted: z.number().int(),
+  hit_rate: z.number().nullable(),
+  ci_low: z.number().nullable(),
+  ci_high: z.number().nullable(),
+});
+
+export const PaperTradeFile = z.object({
+  header: Header,
+  player_level: z.array(PaperTradePlayerLevelGw),
+  player_level_excluded: z.array(PaperTradeGwNote),
+  player_level_skipped: z.array(PaperTradeGwNote),
+  squad_level: PaperTradeSquadLevel,
+  launch_gate: PaperTradeLaunchGate,
+  price_eval: PaperTradePriceEval,
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -438,6 +517,12 @@ export type PlayersFile = z.infer<typeof PlayersFile>;
 export type ObservationRow = z.infer<typeof ObservationRow>;
 export type ObservationsFile = z.infer<typeof ObservationsFile>;
 export type SeasonSummary = z.infer<typeof SeasonSummary>;
+export type PaperTradeFile = z.infer<typeof PaperTradeFile>;
+export type PaperTradeGateCriterion = z.infer<typeof PaperTradeGateCriterion>;
+export type PaperTradeFreezeProvenance = z.infer<typeof PaperTradeFreezeProvenance>;
+export type PaperTradeSquadLevelGw = z.infer<typeof PaperTradeSquadLevelGw>;
+export type PaperTradePlayerLevelGw = z.infer<typeof PaperTradePlayerLevelGw>;
+export type PaperTradeGwNote = z.infer<typeof PaperTradeGwNote>;
 
 /**
  * The contract version this app understands. §5.12 requires the build to

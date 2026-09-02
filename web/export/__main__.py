@@ -13,10 +13,13 @@ rather than pretending to a full contract.
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import logging
 from pathlib import Path
 
+from collector.config import load_config
+from papertrade.evaluate import fetch_real_gw_points
 from web.export.board import build_board
 from web.export.columns import REGISTRY
 from web.export.contract import ColumnsFile, build_header
@@ -26,6 +29,7 @@ from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.observations import build_observations
 from web.export.panel import build_panel, write_panel
+from web.export.papertrade import build_papertrade
 from web.export.reductions import build_golden_reductions
 from web.export.players import build_players
 from web.export.timeseries import build_timeseries, write_timeseries
@@ -226,6 +230,34 @@ def cmd_observations(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_papertrade(args: argparse.Namespace) -> None:
+    """§6.3-6.5 made legible (Paper Trade Results, §5.16 D14). Committed
+    per §5.3.4, like `board`. Deliberately NOT part of `cmd_all`: every
+    other exporter there is a pure local-file transform, while this one
+    makes one live call to `/entry/{id}/history/` — a transient FPL API
+    hiccup shouldn't be able to fail board/players/observations along with
+    it, and this exporter's own cadence is already owned by
+    `.github/workflows/papertrade.yml`'s schedule, which runs it right
+    after `freeze` rather than on `all`'s hourly trigger."""
+
+    async def _fetch(entry_id: int, cfg) -> dict[int, int]:
+        return await fetch_real_gw_points(cfg, entry_id)
+
+    cfg = load_config(Path(args.config))
+    entry_id = args.entry_id or cfg.own_entry_id
+    if entry_id is None:
+        raise SystemExit("no --entry-id given and config/collector.yaml's own_entry_id is unset")
+    real_points_by_gw = asyncio.run(_fetch(entry_id, cfg))
+
+    file = build_papertrade(real_points_by_gw=real_points_by_gw)
+    path, changed = write_json(file.model_dump_json(indent=2), "papertrade.json", Path(args.out))
+    logger.info(
+        "%s squad-level %d gw(s), player-level %d gw(s), gate %s -> %s",
+        "wrote" if changed else "unchanged:", file.squad_level.n_gameweeks,
+        len(file.player_level), "READY" if file.launch_gate.ready_to_launch else "NOT READY", path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -238,6 +270,10 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_board(args)
     cmd_players(args)
     cmd_observations(args)
+    # `shrinkage` and `papertrade` are both deliberately excluded: shrinkage
+    # describes the model rather than the season (see its own module), and
+    # papertrade makes a live API call whose cadence and failure isolation
+    # are already owned by papertrade.yml — see cmd_papertrade's docstring.
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -257,6 +293,11 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("players").set_defaults(func=cmd_players)
     subparsers.add_parser("observations").set_defaults(func=cmd_observations)
+
+    papertrade_parser = subparsers.add_parser("papertrade")
+    papertrade_parser.add_argument("--config", default="config/collector.yaml")
+    papertrade_parser.add_argument("--entry-id", type=int, default=None)
+    papertrade_parser.set_defaults(func=cmd_papertrade)
     subparsers.add_parser("all").set_defaults(func=cmd_all)
     return parser
 

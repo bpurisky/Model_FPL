@@ -181,6 +181,16 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "SeasonSummary",
         "ObservationRow",
         "ObservationsFile",
+        "PaperTradeGwNote",
+        "PaperTradeSquadLevelGw",
+        "PaperTradeSquadLevel",
+        "PaperTradePlayerLevelGw",
+        "PaperTradeLeakageCheck",
+        "PaperTradeFreezeProvenance",
+        "PaperTradeGateCriterion",
+        "PaperTradeLaunchGate",
+        "PaperTradePriceEval",
+        "PaperTradeFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     # Optional because a file written before the field existed must still

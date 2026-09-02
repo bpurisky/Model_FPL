@@ -1,0 +1,228 @@
+/*
+ * Flat, not walled (§5.8.6) -- this page reports what already happened to
+ * an already-frozen squad, and decides nothing, so it sits on `--ground`
+ * like Scorecard rather than on `--panel` with Model Board's left rule.
+ * Most of this file is Scorecard.module.css's report layout, reused.
+ */
+
+.paperTrade {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 1100px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 72ch;
+}
+
+/* --- panels ----------------------------------------------------------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-block-start: var(--hairline) solid var(--rule);
+  padding-block-start: var(--space-3);
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.panelSub {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 84ch;
+  line-height: 1.5;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 76ch;
+  line-height: 1.55;
+}
+
+.note {
+  color: var(--rule);
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+/* --- the gate's own headline -------------------------------------------- */
+
+.readiness {
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+  color: var(--rho-neg);
+  margin: 0;
+}
+
+.readiness[data-ready] {
+  color: var(--rho-pos);
+}
+
+/* --- the five criteria --------------------------------------------------- */
+
+.criteria {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.criterion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--rule);
+}
+
+.criterion[data-tone="pass"] {
+  border-inline-start-color: var(--rho-pos);
+}
+
+.criterion[data-tone="fail"] {
+  border-inline-start-color: var(--rho-neg);
+}
+
+.criterionHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.criterionBadge {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.criterionBadge[data-tone="pass"] {
+  color: var(--rho-pos);
+}
+
+.criterionBadge[data-tone="fail"] {
+  color: var(--rho-neg);
+}
+
+.criterionName {
+  font-size: var(--text-sm);
+}
+
+.criterionDetail {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 84ch;
+  line-height: 1.5;
+}
+
+/* --- table -------------------------------------------------------------- */
+
+.tableScroll {
+  overflow-x: auto;
+  max-inline-size: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+  inline-size: 100%;
+}
+
+.table th,
+.table td {
+  padding: var(--space-1) var(--space-3);
+  text-align: end;
+  border-block-end: var(--hairline) solid var(--rule);
+  white-space: nowrap;
+}
+
+.table thead th {
+  color: var(--muted);
+  font-weight: 400;
+  font-family: var(--font-body);
+}
+
+.table tfoot th,
+.table tfoot td {
+  border-block-end: none;
+  border-block-start: var(--hairline) solid var(--rule);
+  color: var(--paper);
+}
+
+.table td {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.left {
+  text-align: start !important;
+  font-weight: 400;
+}
+
+.better {
+  color: var(--rho-pos);
+}
+
+.worse {
+  color: var(--rho-neg);
+}
+
+.muted {
+  color: var(--rule);
+}
+
+/* --- states --------------------------------------------------------------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 420px;
+}
+
+.track {
+  block-size: 2px;
+  background: var(--rule);
+}
+
+.fill {
+  block-size: 100%;
+  background: var(--paper);
+  transition: inline-size var(--dur-state) var(--ease);
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}

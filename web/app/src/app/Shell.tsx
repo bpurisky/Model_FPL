@@ -20,6 +20,7 @@ import { CorrelationLab } from "../views/CorrelationLab";
 import { Explorer } from "../views/Explorer";
 import { FixtureTicker } from "../views/FixtureTicker";
 import { ModelBoard } from "../views/ModelBoard";
+import { PaperTradeResults } from "../views/PaperTradeResults";
 import { Scorecard } from "../views/Scorecard";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
@@ -121,6 +122,7 @@ function Shell() {
             <TrendExplorer />
           </Suspense>
         )}
+        {state.view === "papertrade" && <PaperTradeResults />}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
     </div>

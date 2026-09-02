@@ -111,9 +111,9 @@ export const SURFACES: Surface[] = [
   {
     view: "papertrade",
     label: "Paper Trade",
-    blurb: "Phase 4 runs a frozen squad forward each gameweek and records what it scored.",
-    status: "out_of_phase",
-    milestone: "Phase 4",
+    blurb: "What the frozen shadow team actually scored, gameweek by gameweek, against the five criteria that gate a real launch.",
+    status: "live",
+    milestone: "5G",
   },
 ];
 

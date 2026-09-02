@@ -36,7 +36,13 @@ jobs:
       # unrecorded until the run *after* the freeze that needed it.
       - run: uv run python -m papertrade record-actuals
       - run: uv run python -m papertrade freeze
-      - name: Commit freezes and actuals
+      # §6.3-6.5 made legible (§5.16 D14) -- runs after freeze so the export
+      # sees this run's own freeze, and its own schedule (this workflow's,
+      # not `web.export all`'s hourly one) is deliberate: see
+      # web/export/__main__.py:cmd_papertrade's docstring.
+      - run: uv run pytest tests/test_export_papertrade.py -q
+      - run: uv run python -m web.export papertrade
+      - name: Commit freezes, actuals, and paper trade results
         run: |
           git config user.name "fpl-trends-papertrade"
           git config user.email "actions@users.noreply.github.com"
@@ -47,5 +53,6 @@ jobs:
           # false, hence the explicit if/fi rather than a one-liner.)
           if [ -d papertrade/freezes ]; then git add papertrade/freezes; fi
           if [ -d data/current_season ]; then git add data/current_season; fi
+          if [ -f data/web/v1/papertrade.json ]; then git add data/web/v1/papertrade.json; fi
           git diff --staged --quiet || git commit -m "papertrade: weekly freeze/actuals $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push

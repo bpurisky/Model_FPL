@@ -724,6 +724,137 @@ class ObservationsFile(_Strict):
     rows: list[ObservationRow]
 
 
+class PaperTradeGwNote(_Strict):
+    """{gw, reason} — the shared shape for every "this gameweek didn't count,
+    and here's why" list in `PaperTradeFile`: player-level excluded/skipped,
+    squad-level excluded, and the launch gate's own excluded list. One model
+    rather than four identical ones."""
+
+    gw: int
+    reason: str
+
+
+class PaperTradeSquadLevelGw(_Strict):
+    gw: int
+    real_points: int
+    shadow_points: int
+
+
+class PaperTradeSquadLevel(_Strict):
+    """§6.3's squad-level comparison: the real entry against the shadow
+    team, gameweek by gameweek. At most 13 observations even at full
+    maturity — `warning` carries §6.3's own instruction that this is a log,
+    not a verdict, and travels with the data rather than living only in a
+    docstring."""
+
+    n_gameweeks: int
+    per_gw: list[PaperTradeSquadLevelGw]
+    excluded_gameweeks: list[PaperTradeGwNote]
+    cumulative_real_points: int
+    cumulative_shadow_points: int
+    shadow_minus_real: int
+    warning: str
+
+
+class PaperTradePlayerLevelGw(_Strict):
+    """One evaluated gameweek's player-level accuracy. Nullable: an empty
+    evaluated slice produces NaN in `evaluate_gw_player_level`, and that
+    must reach the wire as `null` via `json_safe`, never a NaN token."""
+
+    gw: int
+    n: int
+    mae: float | None
+    spearman_mean: float | None
+
+
+class PaperTradeLeakageCheck(_Strict):
+    """Not every freeze that records `ran`/`passed`/`n_features` also
+    records `deadline`/`latest_feature_available_at` — both fields landed
+    slightly after the others, so an older freeze can carry the first
+    three and omit the last two. Both are therefore nullable rather than
+    required, matching `evaluate.py`'s own defensive `.get()` reads of
+    this dict."""
+
+    ran: bool
+    passed: bool
+    n_features: int
+    latest_feature_available_at: datetime | None
+    deadline: datetime | None
+
+
+class PaperTradeFreezeProvenance(_Strict):
+    """One gameweek's own freeze-time record (§6.5 criteria 3-4).
+    `model_git_sha` here is *that gameweek's* sha, from when its freeze was
+    written — not `PaperTradeFile.header.model_git_sha`, which is the live
+    model today. A freeze written before a field existed reports `None`,
+    a different and weaker claim than `False`: §6.5's criteria cannot be
+    verified retroactively against a deadline that has already passed."""
+
+    gw: int
+    leakage_check: PaperTradeLeakageCheck | None
+    leakage_verified: bool
+    manual_correction: str | None
+    records_manual_correction_field: bool
+    model_git_sha: str | None
+
+
+class PaperTradeGateCriterion(_Strict):
+    status: str
+    detail: str
+
+
+class PaperTradeLaunchGate(_Strict):
+    """§6.5's five launch-gate criteria, reported honestly rather than
+    forced — see `papertrade/evaluate.py`'s module docstring for exactly
+    what is and isn't wired up yet."""
+
+    ready_to_launch: bool
+    gameweeks_evaluated: int
+    gameweeks_excluded: list[PaperTradeGwNote]
+    freeze_provenance: list[PaperTradeFreezeProvenance]
+    criteria: dict[str, PaperTradeGateCriterion]
+
+
+class PaperTradePriceEval(_Strict):
+    n: int
+    n_moves_predicted: int
+    hit_rate: float | None
+    ci_low: float | None
+    ci_high: float | None
+
+
+class PaperTradeFile(_Strict):
+    """`papertrade.json` — §6.3-6.5 made legible (§5.16 deviation D14):
+    what the frozen shadow team actually scored against the real entry,
+    gameweek by gameweek, and whether each of §6.5's five launch-gate
+    criteria currently passes.
+
+    This reports what a frozen squad already scored. It decides nothing —
+    no transfer, no captain, no squad — so it stays inside §5.0.2's Job 1/
+    Job 2 boundary the same way Model Board's D1 did for a different
+    Phase 3/4 boundary claim.
+
+    The empty state (no freezes on disk yet) is not an error: every field
+    degrades to an honest zero/empty/"insufficient data" rather than
+    failing to build, because `evaluate_squad_level`/`evaluate_player_level`
+    already treat "no freezes yet" as a normal input, not a missing
+    artifact.
+
+    `header.model_git_sha` is the sha of the code that ran *this export* —
+    the live model today. Each `launch_gate.freeze_provenance[].
+    model_git_sha` is that gameweek's *own* frozen sha instead. Two
+    different claims; a surface must not present them as one number.
+    """
+
+    header: Header
+    player_level: list[PaperTradePlayerLevelGw]
+    player_level_excluded: list[PaperTradeGwNote]
+    player_level_skipped: list[PaperTradeGwNote]
+    squad_level: PaperTradeSquadLevel
+    launch_gate: PaperTradeLaunchGate
+    price_eval: PaperTradePriceEval
+
+
 def build_header(
     *,
     rows: int,
@@ -817,6 +948,9 @@ def contract_shape() -> dict[str, Any]:
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
         SeasonSummary, ObservationRow, ObservationsFile,
+        PaperTradeGwNote, PaperTradeSquadLevelGw, PaperTradeSquadLevel,
+        PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,
+        PaperTradeGateCriterion, PaperTradeLaunchGate, PaperTradePriceEval, PaperTradeFile,
     )
     for model in models:
         fields = {}
@@ -890,6 +1024,16 @@ __all__ = [
     "PlayersFile",
     "ObservationRow",
     "ObservationsFile",
+    "PaperTradeFile",
+    "PaperTradeFreezeProvenance",
+    "PaperTradeGateCriterion",
+    "PaperTradeGwNote",
+    "PaperTradeLaunchGate",
+    "PaperTradeLeakageCheck",
+    "PaperTradePlayerLevelGw",
+    "PaperTradePriceEval",
+    "PaperTradeSquadLevel",
+    "PaperTradeSquadLevelGw",
     "PositionSpearman",
     "PositionWeights",
     "ReductionCase",
