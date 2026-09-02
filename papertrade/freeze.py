@@ -52,8 +52,9 @@ FREEZES_DIR = Path("papertrade/freezes")
 BOOTSTRAP_EVENT = 1  # gw1: the real, pre-model squad the shadow team starts from (§6.2)
 
 # How long before a deadline a gameweek becomes freezable
-# (see assert_within_freeze_window for why this bound exists at all).
-FREEZE_WINDOW_HOURS = 6
+# (see assert_within_freeze_window for why this bound exists at all, and
+# why 6 wasn't enough in practice).
+FREEZE_WINDOW_HOURS = 24
 
 # The optimizer may not pay for transfer hits until the model has at least
 # as many gameweeks of current-season history as its own trailing window.
@@ -268,10 +269,27 @@ def assert_within_freeze_window(
     is what makes the two tracks comparable.
 
     The window is hours rather than minutes because the job needs room to
-    retry: a missed or failed run inside a six-hour window still has later
-    runs to land on, whereas a thirty-minute window turns one flaky
-    GitHub Actions run into a permanently unfrozen gameweek. It also keeps
-    the API calls well clear of §2.2's final-ten-minutes blackout.
+    retry: a missed or failed run inside the window still has later runs to
+    land on, whereas a thirty-minute window turns one flaky GitHub Actions
+    run into a permanently unfrozen gameweek. It also keeps the API calls
+    well clear of §2.2's final-ten-minutes blackout.
+
+    Six hours was the original choice and gw2 2026-27 is the evidence it
+    wasn't enough: `.github/workflows/papertrade.yml`'s two-hourly cron
+    went 2026-08-28T06:00:59Z -> 2026-08-28T20:05:02Z, a 14.1-hour gap,
+    entirely swallowing gw2's 11:30-17:30 UTC window (deadline 17:30) with
+    no run landing inside it. GitHub deprioritizes/drops `schedule`
+    triggers on low-activity repos, so the real inter-run gap is not the
+    cron's nominal cadence -- observed gaps across this workflow's history
+    routinely run 3-14 hours. Once a gameweek's deadline passes with no
+    freeze on disk, `resolve_next_event` has already moved on and
+    `assert_before_deadline` correctly refuses to freeze it late, so a
+    missed window is not a retryable failure -- it is a permanently lost
+    gameweek for §6.5's evaluation. 24 hours gives several retry slots even
+    against the worst observed gaps, at the cost of the shadow team's
+    team-news freshness being at most a day stale rather than freezing
+    right at the deadline -- still nowhere near the week-stale failure mode
+    above.
     """
     opens_at = deadline - timedelta(hours=window_hours)
     if now < opens_at:
