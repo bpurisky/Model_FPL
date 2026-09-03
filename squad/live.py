@@ -182,6 +182,28 @@ class LiveData:
     history_gws: int
 
 
+def live_data_caveat(live: LiveData) -> str:
+    """The early-season data-quality caveat, shared between the CLI report
+    (squad/__main__.py:format_report) and the HTTP service
+    (service/app.py) so the two surfaces reading the same `LiveData` never
+    describe it with two different captions."""
+    return (
+        f"This is trained on {live.history_gws} gameweek(s) of 2026/27 data, "
+        f"through gameweek {live.data_gw}, in which only "
+        f"{live.teams_with_played_data}/{live.teams_total} teams have *played* "
+        "their fixture as of this run -- an in-progress match's stats (e.g. 0 "
+        "minutes because a fixture hasn't kicked off yet, not because of a "
+        "blank) are deliberately excluded, so a team not yet counted here "
+        "contributes nothing to that gameweek and is projected from its "
+        "earlier ones, or from the position-level pooled average if it has "
+        "none. Every projection is otherwise a trailing rate plus custom "
+        "fixture difficulty (Elo carried over from 2025/26) -- not the "
+        "validated model from Phase 2's backtest, which needed several "
+        "seasons of data to clear its baselines. Treat this as a provisional, "
+        "early-season read, not a settled recommendation."
+    )
+
+
 def _team_name(bootstrap: BootstrapStatic, team_id: int) -> str:
     return next(t.name for t in bootstrap.teams if t.id == team_id)
 

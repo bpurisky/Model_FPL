@@ -4,9 +4,14 @@ A Fantasy Premier League analytics platform for the 2026/27 season. Built to
 [`fpl-trends-superprompt.md`](fpl-trends-superprompt.md); this README tracks
 what actually exists against that spec.
 
-**Status: Phase 0 (collector) + Phase 1 (backtest harness) + Phase 2 (event
-model & scoring layer) done.** Phases 3-5 (squad optimizer, paper trade,
-frontend) are not built yet.
+**Status: Phases 0-4 (collector, backtest harness, event model, squad
+integration, paper trade) and Phase 5 (frontend, `web/app/`) are built and
+deployed to GitHub Pages.** Full detail, including every deviation from the
+literal spec text and why, lives in `fpl-trends-superprompt.md`'s progress
+log — this README is a static summary and that file is the current one.
+`service/` (below) is the one piece that isn't a scheduled job or a static
+export: a small backend for the frontend's Squad Optimizer, since that
+surface's ILP solve can't run in the browser or be precomputed.
 
 ## What's here
 
@@ -222,6 +227,48 @@ than pulling in a dependency for one formula.
 - **2023-24 reuses `scoring_2024_25.yaml`.** No scoring rule differs between
   the two seasons, and the repo layout (§1.2) doesn't call for a separate
   2023-24 file.
+
+## Squad Optimizer backend (`service/`)
+
+The frontend's Squad Optimizer view (`web/app/src/views/SquadOptimizer.tsx`)
+takes an arbitrary FPL team ID and solves for the best legal transfer via
+`squad/optimize.py`'s ILP — a live, per-request computation that cannot run
+in the browser (no server, no runtime Python — frontend §5.1.1) and cannot
+be precomputed (the team ID is chosen by the reader, not known at export
+time). `service/app.py` is a thin FastAPI wrapper around the exact same
+path `squad/__main__.py recommend` already exercises — no new logic beyond
+request validation, per-IP rate limiting, and error-to-HTTP-status mapping.
+
+Run locally:
+
+```sh
+uv sync --group service
+uv run uvicorn service.app:app --reload
+# in web/app/: cp .env.example .env.local, then npm run dev
+```
+
+Test:
+
+```sh
+uv run pytest tests/test_service.py
+```
+
+Deploy: `Dockerfile` (repo root) builds the service as a container —
+`python:3.12-slim`, not alpine, because `pulp`'s bundled CBC solver binary
+is a glibc build. `render.yaml` is one working deploy target (Render's free
+tier, zero extra infra); Fly.io or Railway would work identically from the
+same image. After deploying, set `ALLOWED_ORIGINS` (comma-separated) to the
+real frontend origin(s) — it defaults to `*` only so a first deploy
+succeeds with no configuration — and set `VITE_OPTIMIZER_API_URL` in the
+frontend build to the deployed service's URL. With that env var unset, the
+Squad Optimizer view degrades to an explanation rather than a broken form
+or a raw network error (§7.3's rule for the Cloudflare Worker, applied
+here too).
+
+**Not yet built: chip planning.** §7.2's "My team" view also wants a chip
+planner respecting the gameweek 19 wildcard/free-hit expiry.
+`squad/optimize.py` has no chip-strategy logic to expose, so nothing here
+fakes one — a documented gap, not an oversight.
 
 ## Attribution
 

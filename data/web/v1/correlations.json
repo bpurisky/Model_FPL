@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-24T02:35:05.469721Z",
-    "source_gameweek": 38,
+    "generated_at": "2026-09-02T22:39:58.747806Z",
+    "source_gameweek": 2,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
+    "model_git_sha": "abde78adce9ad027b0fdf8348ee6e12b5d564880",
     "normalization_basis": "player_season_pooled_min45_per_fixture",
     "rows": 600,
     "current_season": "2026-27"
@@ -14,7 +14,8 @@
   "seasons": [
     "2023-24",
     "2024-25",
-    "2025-26"
+    "2025-26",
+    "2026-27"
   ],
   "metrics": [
     "xg_per90",
@@ -37,27 +38,27 @@
   "groups": [
     {
       "key": "all",
-      "n_player_seasons": 649,
+      "n_player_seasons": 874,
       "mixed_position": true
     },
     {
       "key": "GK",
-      "n_player_seasons": 61,
+      "n_player_seasons": 83,
       "mixed_position": false
     },
     {
       "key": "DEF",
-      "n_player_seasons": 240,
+      "n_player_seasons": 331,
       "mixed_position": false
     },
     {
       "key": "MID",
-      "n_player_seasons": 284,
+      "n_player_seasons": 376,
       "mixed_position": false
     },
     {
       "key": "FWD",
-      "n_player_seasons": 64,
+      "n_player_seasons": 84,
       "mixed_position": false
     }
   ],
@@ -66,1304 +67,1304 @@
       "group": "all",
       "a": "xg_per90",
       "b": "xa_per90",
-      "rho": 0.572031384146,
-      "n": 649,
-      "p_value": 1.13368919749e-57
+      "rho": 0.522041160053,
+      "n": 874,
+      "p_value": 2.9154293096e-62
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "xgi_per90",
-      "rho": 0.929517135772,
-      "n": 649,
-      "p_value": 1.68119854149e-282
+      "rho": 0.905542802533,
+      "n": 874,
+      "p_value": 0.0
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "goals_per90",
-      "rho": 0.886143676152,
-      "n": 649,
-      "p_value": 2.68294798332e-218
+      "rho": 0.786833641604,
+      "n": 874,
+      "p_value": 5.82618362272e-185
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "assists_per90",
-      "rho": 0.584374229426,
-      "n": 649,
-      "p_value": 1.07791610172e-60
+      "rho": 0.510528816456,
+      "n": 874,
+      "p_value": 3.49475957293e-59
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "bonus_per90",
-      "rho": 0.541850602579,
-      "n": 649,
-      "p_value": 8.47872876263e-51
+      "rho": 0.503440343476,
+      "n": 874,
+      "p_value": 2.40594268844e-57
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "xgc_per90",
-      "rho": -0.159200049704,
-      "n": 649,
-      "p_value": 0.0000462345867413
+      "rho": -0.186833881957,
+      "n": 874,
+      "p_value": 2.62714621234e-8
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.184803746077,
-      "n": 649,
-      "p_value": 2.13958130657e-6
+      "rho": -0.153277131356,
+      "n": 874,
+      "p_value": 5.31774532947e-6
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.163661184875,
-      "n": 649,
-      "p_value": 0.000027945885057
+      "rho": 0.186979700454,
+      "n": 874,
+      "p_value": 2.56135474676e-8
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "saves_per90",
-      "rho": -0.503635000941,
-      "n": 649,
-      "p_value": 4.89219628463e-43
+      "rho": -0.476835022999,
+      "n": 874,
+      "p_value": 8.06711486665e-51
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.046852293321,
-      "n": 219,
-      "p_value": 0.490344106524
+      "rho": 0.0314702345533,
+      "n": 444,
+      "p_value": 0.508347159517
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "bps_per90",
-      "rho": 0.409121014139,
-      "n": 649,
-      "p_value": 1.3987897632e-27
+      "rho": 0.390740549336,
+      "n": 874,
+      "p_value": 2.92450519981e-33
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "tackles_per90",
-      "rho": -0.0913361454849,
-      "n": 219,
-      "p_value": 0.178066265759
+      "rho": 0.0538343945644,
+      "n": 444,
+      "p_value": 0.257641007816
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "recoveries_per90",
-      "rho": -0.461847308155,
-      "n": 219,
-      "p_value": 5.71211260628e-13
+      "rho": -0.285397029529,
+      "n": 444,
+      "p_value": 9.09268429894e-10
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "cbi_per90",
-      "rho": -0.361779581807,
-      "n": 219,
-      "p_value": 3.56758584466e-8
+      "rho": -0.273286961879,
+      "n": 444,
+      "p_value": 4.79637458367e-9
     },
     {
       "group": "all",
       "a": "xg_per90",
       "b": "minutes_reliability",
-      "rho": -0.245816313458,
-      "n": 649,
-      "p_value": 2.18317600007e-10
+      "rho": -0.242329875409,
+      "n": 865,
+      "p_value": 5.01904768411e-13
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "xgi_per90",
-      "rho": 0.796266783316,
-      "n": 649,
-      "p_value": 2.31925487757e-143
+      "rho": 0.778756014339,
+      "n": 874,
+      "p_value": 9.00614374978e-179
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "goals_per90",
-      "rho": 0.539434110526,
-      "n": 649,
-      "p_value": 2.81171552866e-50
+      "rho": 0.455751481018,
+      "n": 874,
+      "p_value": 4.8372050211e-46
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "assists_per90",
-      "rho": 0.797190906698,
-      "n": 649,
-      "p_value": 6.28614012824e-144
+      "rho": 0.670779624633,
+      "n": 874,
+      "p_value": 2.63836007888e-115
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "bonus_per90",
-      "rho": 0.427529440261,
-      "n": 649,
-      "p_value": 3.19028550073e-30
+      "rho": 0.36103052877,
+      "n": 874,
+      "p_value": 2.66978480481e-28
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "xgc_per90",
-      "rho": -0.204269545713,
-      "n": 649,
-      "p_value": 1.52695303212e-7
+      "rho": -0.194911494241,
+      "n": 874,
+      "p_value": 6.25375798939e-9
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.226688614443,
-      "n": 649,
-      "p_value": 5.21815971469e-9
+      "rho": -0.143469174155,
+      "n": 874,
+      "p_value": 0.0000206797165816
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.205477597491,
-      "n": 649,
-      "p_value": 1.2847996318e-7
+      "rho": 0.197597983388,
+      "n": 874,
+      "p_value": 3.82685165012e-9
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "saves_per90",
-      "rho": -0.503320651219,
-      "n": 649,
-      "p_value": 5.61493040808e-43
+      "rho": -0.491404930157,
+      "n": 874,
+      "p_value": 2.53803010315e-54
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.152766831461,
-      "n": 219,
-      "p_value": 0.0237534952165
+      "rho": 0.188774390615,
+      "n": 444,
+      "p_value": 0.0000626625361998
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "bps_per90",
-      "rho": 0.452216678073,
-      "n": 649,
-      "p_value": 4.96045118534e-34
+      "rho": 0.426466345128,
+      "n": 874,
+      "p_value": 6.15426003485e-40
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "tackles_per90",
-      "rho": 0.325333494821,
-      "n": 219,
-      "p_value": 8.5889936536e-7
+      "rho": 0.365547727632,
+      "n": 444,
+      "p_value": 1.74945804533e-15
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "recoveries_per90",
-      "rho": 0.029069978341,
-      "n": 219,
-      "p_value": 0.66877860744
+      "rho": 0.000978505656221,
+      "n": 444,
+      "p_value": 0.983596429023
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "cbi_per90",
-      "rho": -0.276012840651,
-      "n": 219,
-      "p_value": 0.0000344308303195
+      "rho": -0.194736204044,
+      "n": 444,
+      "p_value": 0.0000360565491083
     },
     {
       "group": "all",
       "a": "xa_per90",
       "b": "minutes_reliability",
-      "rho": -0.188214207408,
-      "n": 649,
-      "p_value": 1.37341386919e-6
+      "rho": -0.217947418695,
+      "n": 865,
+      "p_value": 9.24576675348e-11
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "goals_per90",
-      "rho": 0.848670450102,
-      "n": 649,
-      "p_value": 3.99668141559e-181
+      "rho": 0.733734442922,
+      "n": 874,
+      "p_value": 1.58246221002e-148
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "assists_per90",
-      "rho": 0.738170370068,
-      "n": 649,
-      "p_value": 1.06306133616e-112
+      "rho": 0.614454783328,
+      "n": 874,
+      "p_value": 7.41954972921e-92
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "bonus_per90",
-      "rho": 0.600452559882,
-      "n": 649,
-      "p_value": 7.88083323447e-65
+      "rho": 0.512234948704,
+      "n": 874,
+      "p_value": 1.24325594422e-59
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "xgc_per90",
-      "rho": -0.201749305276,
-      "n": 649,
-      "p_value": 2.18179742203e-7
+      "rho": -0.208310611159,
+      "n": 874,
+      "p_value": 5.03820670557e-10
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.230207680426,
-      "n": 649,
-      "p_value": 2.97059763115e-9
+      "rho": -0.172256105199,
+      "n": 874,
+      "p_value": 2.99838763509e-7
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.202792691293,
-      "n": 649,
-      "p_value": 1.88315975321e-7
+      "rho": 0.208018078848,
+      "n": 874,
+      "p_value": 5.33289728963e-10
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "saves_per90",
-      "rho": -0.504797557165,
-      "n": 649,
-      "p_value": 2.93531260572e-43
+      "rho": -0.50192894963,
+      "n": 874,
+      "p_value": 5.85587664167e-57
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.0684163985576,
-      "n": 219,
-      "p_value": 0.313522867684
+      "rho": 0.0432807351708,
+      "n": 444,
+      "p_value": 0.362908359078
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "bps_per90",
-      "rho": 0.495541238625,
-      "n": 649,
-      "p_value": 1.62402308504e-41
+      "rho": 0.478151236621,
+      "n": 874,
+      "p_value": 3.95576338387e-51
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "tackles_per90",
-      "rho": -0.000934009247598,
-      "n": 219,
-      "p_value": 0.989035036479
+      "rho": 0.157800342018,
+      "n": 444,
+      "p_value": 0.000848055334189
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "recoveries_per90",
-      "rho": -0.330245901546,
-      "n": 219,
-      "p_value": 5.7264235037e-7
+      "rho": -0.221340799118,
+      "n": 444,
+      "p_value": 2.48532788417e-6
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "cbi_per90",
-      "rho": -0.445672130511,
-      "n": 219,
-      "p_value": 4.3933082843e-12
+      "rho": -0.341785715943,
+      "n": 444,
+      "p_value": 1.30399907177e-13
     },
     {
       "group": "all",
       "a": "xgi_per90",
       "b": "minutes_reliability",
-      "rho": -0.23747299413,
-      "n": 649,
-      "p_value": 9.01625005378e-10
+      "rho": -0.214842491761,
+      "n": 865,
+      "p_value": 1.72223230348e-10
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "assists_per90",
-      "rho": 0.543645598552,
-      "n": 649,
-      "p_value": 3.45818029351e-51
+      "rho": 0.482576460507,
+      "n": 874,
+      "p_value": 3.52176817848e-52
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "bonus_per90",
-      "rho": 0.66400115373,
-      "n": 649,
-      "p_value": 9.70013249899e-84
+      "rho": 0.686266792326,
+      "n": 874,
+      "p_value": 1.08328530903e-122
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "xgc_per90",
-      "rho": -0.147253541699,
-      "n": 649,
-      "p_value": 0.000166773279066
+      "rho": -0.157953915649,
+      "n": 874,
+      "p_value": 2.69921484027e-6
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.181947087867,
-      "n": 649,
-      "p_value": 3.08244038373e-6
+      "rho": -0.15475728562,
+      "n": 874,
+      "p_value": 4.29985893173e-6
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.156654624645,
-      "n": 649,
-      "p_value": 0.0000612535258235
+      "rho": 0.185889943941,
+      "n": 874,
+      "p_value": 3.09438518159e-8
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "saves_per90",
-      "rho": -0.417221675198,
-      "n": 649,
-      "p_value": 1.00763838734e-28
+      "rho": -0.347157317472,
+      "n": 874,
+      "p_value": 3.71865765211e-26
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.0715129794926,
-      "n": 219,
-      "p_value": 0.292071313591
+      "rho": 0.0365474402537,
+      "n": 444,
+      "p_value": 0.442375427135
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "bps_per90",
-      "rho": 0.50497524028,
-      "n": 649,
-      "p_value": 2.71438806023e-43
+      "rho": 0.471487913436,
+      "n": 874,
+      "p_value": 1.41329545318e-49
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "tackles_per90",
-      "rho": -0.0747488573068,
-      "n": 219,
-      "p_value": 0.270725573481
+      "rho": 0.0977842657264,
+      "n": 444,
+      "p_value": 0.0394394729093
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "recoveries_per90",
-      "rho": -0.391201104926,
-      "n": 219,
-      "p_value": 2.01218505131e-9
+      "rho": -0.174965156545,
+      "n": 444,
+      "p_value": 0.000211416189942
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "cbi_per90",
-      "rho": -0.38951650026,
-      "n": 219,
-      "p_value": 2.39087347235e-9
+      "rho": -0.189924543026,
+      "n": 444,
+      "p_value": 0.000056398965058
     },
     {
       "group": "all",
       "a": "goals_per90",
       "b": "minutes_reliability",
-      "rho": -0.184382273876,
-      "n": 649,
-      "p_value": 2.25880140864e-6
+      "rho": -0.261587476107,
+      "n": 865,
+      "p_value": 5.32712340553e-15
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "bonus_per90",
-      "rho": 0.477542361854,
-      "n": 649,
-      "p_value": 2.82337105916e-38
+      "rho": 0.479003816318,
+      "n": 874,
+      "p_value": 2.48907540573e-51
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "xgc_per90",
-      "rho": -0.185794039578,
-      "n": 649,
-      "p_value": 1.88272385701e-6
+      "rho": -0.168440315439,
+      "n": 874,
+      "p_value": 5.48890337697e-7
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.20188922339,
-      "n": 649,
-      "p_value": 2.13924889397e-7
+      "rho": -0.111005299064,
+      "n": 874,
+      "p_value": 0.00101199204309
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.188618429716,
-      "n": 649,
-      "p_value": 1.3024141996e-6
+      "rho": 0.206736294887,
+      "n": 874,
+      "p_value": 6.83452551561e-10
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "saves_per90",
-      "rho": -0.407317624705,
-      "n": 649,
-      "p_value": 2.48805127992e-27
+      "rho": -0.329337684977,
+      "n": 874,
+      "p_value": 1.4812322245e-23
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.126933670104,
-      "n": 219,
-      "p_value": 0.0607529441077
+      "rho": 0.112042872615,
+      "n": 444,
+      "p_value": 0.0181925755741
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "bps_per90",
-      "rho": 0.481062826836,
-      "n": 649,
-      "p_value": 6.79323712524e-39
+      "rho": 0.403370906775,
+      "n": 874,
+      "p_value": 1.57637217473e-35
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "tackles_per90",
-      "rho": 0.220131707888,
-      "n": 219,
-      "p_value": 0.00104054523389
+      "rho": 0.232443997952,
+      "n": 444,
+      "p_value": 7.3424036123e-7
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "recoveries_per90",
-      "rho": -0.0614682776402,
-      "n": 219,
-      "p_value": 0.365307483483
+      "rho": -0.0273691768136,
+      "n": 444,
+      "p_value": 0.565165248664
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "cbi_per90",
-      "rho": -0.222882418304,
-      "n": 219,
-      "p_value": 0.000895794920865
+      "rho": -0.141503613564,
+      "n": 444,
+      "p_value": 0.00280523924906
     },
     {
       "group": "all",
       "a": "assists_per90",
       "b": "minutes_reliability",
-      "rho": -0.124186058692,
-      "n": 649,
-      "p_value": 0.00152502397093
+      "rho": -0.245719438254,
+      "n": 865,
+      "p_value": 2.31828113937e-13
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "xgc_per90",
-      "rho": -0.307016240232,
-      "n": 649,
-      "p_value": 1.24095877047e-15
+      "rho": -0.293355784117,
+      "n": 874,
+      "p_value": 8.31076969883e-19
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.323214225957,
-      "n": 649,
-      "p_value": 3.01715805558e-17
+      "rho": -0.28192161026,
+      "n": 874,
+      "p_value": 1.96962140286e-17
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.309967510448,
-      "n": 649,
-      "p_value": 6.41204704142e-16
+      "rho": 0.26749462062,
+      "n": 874,
+      "p_value": 8.71053358268e-16
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "saves_per90",
-      "rho": -0.0727135310279,
-      "n": 649,
-      "p_value": 0.064127532131
+      "rho": -0.0720814253909,
+      "n": 874,
+      "p_value": 0.0331137881355
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.0816529633786,
-      "n": 219,
-      "p_value": 0.228802646567
+      "rho": 0.0547127617814,
+      "n": 444,
+      "p_value": 0.24994563957
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "bps_per90",
-      "rho": 0.717923349567,
-      "n": 649,
-      "p_value": 7.19627736434e-104
+      "rho": 0.611328008102,
+      "n": 874,
+      "p_value": 1.08381305229e-90
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "tackles_per90",
-      "rho": -0.0941720187855,
-      "n": 219,
-      "p_value": 0.164914466547
+      "rho": 0.0747775028103,
+      "n": 444,
+      "p_value": 0.11562124074
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "recoveries_per90",
-      "rho": -0.0784668358798,
-      "n": 219,
-      "p_value": 0.247541467698
+      "rho": 0.0361096241047,
+      "n": 444,
+      "p_value": 0.44786472761
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "cbi_per90",
-      "rho": -0.297498853985,
-      "n": 219,
-      "p_value": 7.49159062997e-6
+      "rho": -0.10029717236,
+      "n": 444,
+      "p_value": 0.034620886538
     },
     {
       "group": "all",
       "a": "bonus_per90",
       "b": "minutes_reliability",
-      "rho": 0.0561530830129,
-      "n": 649,
-      "p_value": 0.15303397552
+      "rho": -0.128142439437,
+      "n": 865,
+      "p_value": 0.000157508898823
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
-      "rho": 0.851683102085,
-      "n": 649,
-      "p_value": 1.00872926391e-183
+      "rho": 0.676112063477,
+      "n": 874,
+      "p_value": 8.49575491568e-118
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.839806856481,
-      "n": 649,
-      "p_value": 8.47204441374e-174
+      "rho": -0.611545849499,
+      "n": 874,
+      "p_value": 8.99996552644e-91
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "saves_per90",
-      "rho": 0.0362895985536,
-      "n": 649,
-      "p_value": 0.355998484571
+      "rho": 0.028939285176,
+      "n": 874,
+      "p_value": 0.392827537768
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.0775312578309,
-      "n": 219,
-      "p_value": 0.253241121067
+      "rho": 0.0509279677247,
+      "n": 444,
+      "p_value": 0.284264426052
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "bps_per90",
-      "rho": -0.371057010468,
-      "n": 649,
-      "p_value": 1.29119744685e-22
+      "rho": -0.317809869502,
+      "n": 874,
+      "p_value": 5.80288649578e-22
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "tackles_per90",
-      "rho": 0.0685316363183,
-      "n": 219,
-      "p_value": 0.312706566727
+      "rho": 0.072492219634,
+      "n": 444,
+      "p_value": 0.127207449041
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "recoveries_per90",
-      "rho": 0.0266900499275,
-      "n": 219,
-      "p_value": 0.694477337412
+      "rho": -0.0215897550568,
+      "n": 444,
+      "p_value": 0.650048484466
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "cbi_per90",
-      "rho": 0.183729592012,
-      "n": 219,
-      "p_value": 0.00639828458245
+      "rho": 0.064858547515,
+      "n": 444,
+      "p_value": 0.172492486672
     },
     {
       "group": "all",
       "a": "xgc_per90",
       "b": "minutes_reliability",
-      "rho": -0.0250759931712,
-      "n": 649,
-      "p_value": 0.523674383371
+      "rho": 0.0562683675871,
+      "n": 865,
+      "p_value": 0.0981641604106
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.77226120982,
-      "n": 649,
-      "p_value": 1.37308673891e-129
+      "rho": -0.574265638813,
+      "n": 874,
+      "p_value": 7.97866632324e-78
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
-      "rho": 0.037192637007,
-      "n": 649,
-      "p_value": 0.344148075487
+      "rho": 0.0338381091895,
+      "n": 874,
+      "p_value": 0.317684685312
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.139766604768,
-      "n": 219,
-      "p_value": 0.0387647860186
+      "rho": -0.0221041472853,
+      "n": 444,
+      "p_value": 0.642284495697
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
-      "rho": -0.41476011697,
-      "n": 649,
-      "p_value": 2.25823791702e-28
+      "rho": -0.415883851599,
+      "n": 874,
+      "p_value": 7.11121220056e-38
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
-      "rho": 0.101728087011,
-      "n": 219,
-      "p_value": 0.133428326986
+      "rho": 0.0422406559063,
+      "n": 444,
+      "p_value": 0.374565952965
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
-      "rho": 0.0729535094752,
-      "n": 219,
-      "p_value": 0.282433891333
+      "rho": 0.00089489862809,
+      "n": 444,
+      "p_value": 0.984997836576
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
-      "rho": 0.183026432708,
-      "n": 219,
-      "p_value": 0.00660710684626
+      "rho": 0.0409791595313,
+      "n": 444,
+      "p_value": 0.389011047371
     },
     {
       "group": "all",
       "a": "goals_conceded_per90",
       "b": "minutes_reliability",
-      "rho": -0.0135989265873,
-      "n": 649,
-      "p_value": 0.729502568413
+      "rho": -0.0253391405399,
+      "n": 865,
+      "p_value": 0.456702063416
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "saves_per90",
-      "rho": -0.0197595300077,
-      "n": 649,
-      "p_value": 0.615342477631
+      "rho": -0.0161322724351,
+      "n": 874,
+      "p_value": 0.633878664663
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "defensive_contribution_per90",
-      "rho": -0.0852260937319,
-      "n": 219,
-      "p_value": 0.209007140207
+      "rho": -0.0171428621001,
+      "n": 444,
+      "p_value": 0.718674605899
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "bps_per90",
-      "rho": 0.409268794184,
-      "n": 649,
-      "p_value": 1.33410341661e-27
+      "rho": 0.345753759834,
+      "n": 874,
+      "p_value": 6.04485186076e-26
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "tackles_per90",
-      "rho": -0.104976806899,
-      "n": 219,
-      "p_value": 0.121404048274
+      "rho": -0.0562162121076,
+      "n": 444,
+      "p_value": 0.237148213255
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "recoveries_per90",
-      "rho": 0.0641870508529,
-      "n": 219,
-      "p_value": 0.344444018701
+      "rho": 0.0822335107482,
+      "n": 444,
+      "p_value": 0.0834846919277
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "cbi_per90",
-      "rho": -0.148165708867,
-      "n": 219,
-      "p_value": 0.0283637547849
+      "rho": -0.0639833291641,
+      "n": 444,
+      "p_value": 0.178369891717
     },
     {
       "group": "all",
       "a": "clean_sheet_prob",
       "b": "minutes_reliability",
-      "rho": 0.0405411175472,
-      "n": 649,
-      "p_value": 0.302429522232
+      "rho": -0.0284332281697,
+      "n": 865,
+      "p_value": 0.403601767555
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.498386123187,
-      "n": 219,
-      "p_value": 3.75930119023e-15
+      "rho": -0.503797407904,
+      "n": 444,
+      "p_value": 5.93451532412e-30
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "bps_per90",
-      "rho": -0.0583391640441,
-      "n": 649,
-      "p_value": 0.137645127809
+      "rho": -0.0743503165193,
+      "n": 874,
+      "p_value": 0.0279525318902
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "tackles_per90",
-      "rho": -0.498321340016,
-      "n": 219,
-      "p_value": 3.79498053127e-15
+      "rho": -0.472899771938,
+      "n": 444,
+      "p_value": 4.03233213031e-26
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "recoveries_per90",
-      "rho": 0.495364030037,
-      "n": 219,
-      "p_value": 5.82857732347e-15
+      "rho": 0.470198889748,
+      "n": 444,
+      "p_value": 8.36334545904e-26
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "cbi_per90",
-      "rho": -0.376892404086,
-      "n": 219,
-      "p_value": 8.44268549161e-9
+      "rho": -0.304304308699,
+      "n": 444,
+      "p_value": 5.75411673772e-11
     },
     {
       "group": "all",
       "a": "saves_per90",
       "b": "minutes_reliability",
-      "rho": 0.302457474728,
-      "n": 649,
-      "p_value": 3.39135572273e-15
+      "rho": 0.202227678433,
+      "n": 865,
+      "p_value": 1.95859132623e-9
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
-      "rho": 0.13850533181,
-      "n": 219,
-      "p_value": 0.0405754489921
+      "rho": 0.174177349294,
+      "n": 444,
+      "p_value": 0.000225999671876
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
-      "rho": 0.663937342766,
-      "n": 219,
-      "p_value": 3.30035896583e-29
+      "rho": 0.643941604579,
+      "n": 444,
+      "p_value": 2.32193551878e-53
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
-      "rho": 0.143362250512,
-      "n": 219,
-      "p_value": 0.0339730486126
+      "rho": 0.140793133447,
+      "n": 444,
+      "p_value": 0.0029475529339
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
-      "rho": 0.610827103184,
-      "n": 219,
-      "p_value": 8.69560958504e-24
+      "rho": 0.575608610477,
+      "n": 444,
+      "p_value": 1.54667387783e-40
     },
     {
       "group": "all",
       "a": "defensive_contribution_per90",
       "b": "minutes_reliability",
-      "rho": -0.0981710886391,
-      "n": 219,
-      "p_value": 0.147621162088
+      "rho": -0.10562155757,
+      "n": 435,
+      "p_value": 0.0276131968978
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "tackles_per90",
-      "rho": 0.0804189612282,
-      "n": 219,
-      "p_value": 0.235937641433
+      "rho": 0.175326507366,
+      "n": 444,
+      "p_value": 0.000205025986077
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "recoveries_per90",
-      "rho": 0.127557210918,
-      "n": 219,
-      "p_value": 0.0594869569459
+      "rho": 0.138927334751,
+      "n": 444,
+      "p_value": 0.00335308715313
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "cbi_per90",
-      "rho": -0.33149313926,
-      "n": 219,
-      "p_value": 5.16048877995e-7
+      "rho": -0.237804933021,
+      "n": 444,
+      "p_value": 3.98564493508e-7
     },
     {
       "group": "all",
       "a": "bps_per90",
       "b": "minutes_reliability",
-      "rho": 0.016247952452,
-      "n": 649,
-      "p_value": 0.679494013002
+      "rho": 0.0202634119464,
+      "n": 865,
+      "p_value": 0.551733759257
     },
     {
       "group": "all",
       "a": "tackles_per90",
       "b": "recoveries_per90",
-      "rho": 0.202927701496,
-      "n": 219,
-      "p_value": 0.00255014940405
+      "rho": 0.0651210568828,
+      "n": 444,
+      "p_value": 0.170758099198
     },
     {
       "group": "all",
       "a": "tackles_per90",
       "b": "cbi_per90",
-      "rho": 0.420334529196,
-      "n": 219,
-      "p_value": 8.70868467174e-11
+      "rho": 0.267395084007,
+      "n": 444,
+      "p_value": 1.0464762967e-8
     },
     {
       "group": "all",
       "a": "tackles_per90",
       "b": "minutes_reliability",
-      "rho": -0.191340633891,
-      "n": 219,
-      "p_value": 0.00448763771049
+      "rho": -0.159135948102,
+      "n": 435,
+      "p_value": 0.000866147276702
     },
     {
       "group": "all",
       "a": "recoveries_per90",
       "b": "cbi_per90",
-      "rho": -0.186535583306,
-      "n": 219,
-      "p_value": 0.0056224714361
+      "rho": -0.153364734646,
+      "n": 444,
+      "p_value": 0.00118825918399
     },
     {
       "group": "all",
       "a": "recoveries_per90",
       "b": "minutes_reliability",
-      "rho": 0.154852614552,
-      "n": 219,
-      "p_value": 0.0218860405192
+      "rho": -0.0139015814019,
+      "n": 435,
+      "p_value": 0.772489416162
     },
     {
       "group": "all",
       "a": "cbi_per90",
       "b": "minutes_reliability",
-      "rho": 0.0478761046127,
-      "n": 219,
-      "p_value": 0.480902749971
+      "rho": 0.0447189193199,
+      "n": 435,
+      "p_value": 0.35212837529
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xa_per90",
-      "rho": -0.143346555086,
-      "n": 61,
-      "p_value": 0.270411946861
+      "rho": -0.0790916611425,
+      "n": 83,
+      "p_value": 0.477241583171
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xgi_per90",
-      "rho": 0.16512583866,
-      "n": 61,
-      "p_value": 0.20346398907
+      "rho": 0.148982477526,
+      "n": 83,
+      "p_value": 0.178875299998
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "goals_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "assists_per90",
-      "rho": 0.0933237674003,
-      "n": 61,
-      "p_value": 0.474382676009
+      "rho": 0.114670256022,
+      "n": 83,
+      "p_value": 0.301949391031
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "bonus_per90",
-      "rho": -0.10362790503,
-      "n": 61,
-      "p_value": 0.426753713929
+      "rho": 0.00837060074518,
+      "n": 83,
+      "p_value": 0.9401315107
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "xgc_per90",
-      "rho": -0.199540240884,
-      "n": 61,
-      "p_value": 0.12312990096
+      "rho": -0.16240165524,
+      "n": 83,
+      "p_value": 0.142411895529
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.0726117087004,
-      "n": 61,
-      "p_value": 0.578130106132
+      "rho": -0.0617158348136,
+      "n": 83,
+      "p_value": 0.579401073349
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.228398783501,
-      "n": 61,
-      "p_value": 0.0766554455168
+      "rho": 0.185995980452,
+      "n": 83,
+      "p_value": 0.0922724413275
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "saves_per90",
-      "rho": 0.0210267955907,
-      "n": 61,
-      "p_value": 0.872215636
+      "rho": 0.0234364811532,
+      "n": 83,
+      "p_value": 0.833427876803
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "bps_per90",
-      "rho": -0.151701385396,
-      "n": 61,
-      "p_value": 0.243176634414
+      "rho": -0.0765618618668,
+      "n": 83,
+      "p_value": 0.491487871327
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "tackles_per90",
-      "rho": 0.181719941289,
-      "n": 20,
-      "p_value": 0.443220435743
+      "rho": 0.238091840561,
+      "n": 42,
+      "p_value": 0.128919818186
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "recoveries_per90",
-      "rho": 0.338178739008,
-      "n": 20,
-      "p_value": 0.144737160487
+      "rho": 0.14825154982,
+      "n": 42,
+      "p_value": 0.348770642879
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "cbi_per90",
-      "rho": 0.0596786010015,
-      "n": 20,
-      "p_value": 0.802642895289
+      "rho": -0.00646964184356,
+      "n": 42,
+      "p_value": 0.967564460799
     },
     {
       "group": "GK",
       "a": "xg_per90",
       "b": "minutes_reliability",
-      "rho": -0.0974738180364,
-      "n": 61,
-      "p_value": 0.454865860984
+      "rho": -0.110062153772,
+      "n": 81,
+      "p_value": 0.328005601202
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "xgi_per90",
-      "rho": 0.925761581219,
-      "n": 61,
-      "p_value": 1.33756887743e-26
+      "rho": 0.955632681792,
+      "n": 83,
+      "p_value": 9.30602565865e-45
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "goals_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "assists_per90",
-      "rho": 0.120858742694,
-      "n": 61,
-      "p_value": 0.353503014717
+      "rho": 0.130879236768,
+      "n": 83,
+      "p_value": 0.238253083066
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "bonus_per90",
-      "rho": 0.223557107623,
-      "n": 61,
-      "p_value": 0.0832897800422
+      "rho": 0.169380370296,
+      "n": 83,
+      "p_value": 0.125816337283
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "xgc_per90",
-      "rho": -0.233421236534,
-      "n": 61,
-      "p_value": 0.0702241549375
+      "rho": -0.226684203006,
+      "n": 83,
+      "p_value": 0.0393239925065
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.3140062862,
-      "n": 61,
-      "p_value": 0.0137238135288
+      "rho": -0.1158066135,
+      "n": 83,
+      "p_value": 0.297151843312
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.271754499612,
-      "n": 61,
-      "p_value": 0.0341234705375
+      "rho": 0.222381851419,
+      "n": 83,
+      "p_value": 0.0433162595568
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "saves_per90",
-      "rho": -0.161020545906,
-      "n": 61,
-      "p_value": 0.215085778118
+      "rho": 0.0150394520556,
+      "n": 83,
+      "p_value": 0.892654885973
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "bps_per90",
-      "rho": 0.0269722890132,
-      "n": 61,
-      "p_value": 0.836525570652
+      "rho": 0.0654936709026,
+      "n": 83,
+      "p_value": 0.556358536545
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "tackles_per90",
-      "rho": -0.06128298349,
-      "n": 20,
-      "p_value": 0.797441468348
+      "rho": 0.205158460606,
+      "n": 42,
+      "p_value": 0.192448896922
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "recoveries_per90",
-      "rho": 0.00377361177376,
-      "n": 20,
-      "p_value": 0.987402386952
+      "rho": 0.109420827738,
+      "n": 42,
+      "p_value": 0.490317994273
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "cbi_per90",
-      "rho": -0.0898119602156,
-      "n": 20,
-      "p_value": 0.706506819085
+      "rho": -0.141749382871,
+      "n": 42,
+      "p_value": 0.370546069145
     },
     {
       "group": "GK",
       "a": "xa_per90",
       "b": "minutes_reliability",
-      "rho": 0.184015531562,
-      "n": 61,
-      "p_value": 0.155715481875
+      "rho": 0.00355756261373,
+      "n": 81,
+      "p_value": 0.974854439993
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "goals_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "assists_per90",
-      "rho": 0.214292580635,
-      "n": 61,
-      "p_value": 0.0972406581086
+      "rho": 0.205431411184,
+      "n": 83,
+      "p_value": 0.0624467728307
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "bonus_per90",
-      "rho": 0.175344349953,
-      "n": 61,
-      "p_value": 0.17648735157
+      "rho": 0.153300225701,
+      "n": 83,
+      "p_value": 0.166467333507
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "xgc_per90",
-      "rho": -0.305845489676,
-      "n": 61,
-      "p_value": 0.0165272232365
+      "rho": -0.267599916755,
+      "n": 83,
+      "p_value": 0.0144547146145
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.328383355179,
-      "n": 61,
-      "p_value": 0.00977239408531
+      "rho": -0.125060080708,
+      "n": 83,
+      "p_value": 0.25995320159
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.339786814303,
-      "n": 61,
-      "p_value": 0.00738117859726
+      "rho": 0.261455133588,
+      "n": 83,
+      "p_value": 0.0169617932349
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "saves_per90",
-      "rho": -0.123932835187,
-      "n": 61,
-      "p_value": 0.341301437894
+      "rho": 0.037048183537,
+      "n": 83,
+      "p_value": 0.739496327856
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "bps_per90",
-      "rho": 0.0117940766391,
-      "n": 61,
-      "p_value": 0.928118645862
+      "rho": 0.0627323358605,
+      "n": 83,
+      "p_value": 0.573157975681
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "tackles_per90",
-      "rho": 0.0565583637317,
-      "n": 20,
-      "p_value": 0.81278147373
+      "rho": 0.282302502329,
+      "n": 42,
+      "p_value": 0.0700854516068
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "recoveries_per90",
-      "rho": 0.225903870645,
-      "n": 20,
-      "p_value": 0.338224029614
+      "rho": 0.166651668287,
+      "n": 42,
+      "p_value": 0.291502573231
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "cbi_per90",
-      "rho": -0.0436747483247,
-      "n": 20,
-      "p_value": 0.854931844617
+      "rho": -0.139830058481,
+      "n": 42,
+      "p_value": 0.377125675062
     },
     {
       "group": "GK",
       "a": "xgi_per90",
       "b": "minutes_reliability",
-      "rho": 0.119930821476,
-      "n": 61,
-      "p_value": 0.357238222637
+      "rho": -0.0413063907561,
+      "n": 81,
+      "p_value": 0.714263829609
     },
     {
       "group": "GK",
       "a": "goals_per90",
       "b": "assists_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1371,7 +1372,7 @@
       "a": "goals_per90",
       "b": "bonus_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1379,7 +1380,7 @@
       "a": "goals_per90",
       "b": "xgc_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1387,7 +1388,7 @@
       "a": "goals_per90",
       "b": "goals_conceded_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1395,7 +1396,7 @@
       "a": "goals_per90",
       "b": "clean_sheet_prob",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1403,7 +1404,7 @@
       "a": "goals_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1411,7 +1412,7 @@
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1419,7 +1420,7 @@
       "a": "goals_per90",
       "b": "bps_per90",
       "rho": null,
-      "n": 61,
+      "n": 83,
       "p_value": null
     },
     {
@@ -1427,7 +1428,7 @@
       "a": "goals_per90",
       "b": "tackles_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1435,7 +1436,7 @@
       "a": "goals_per90",
       "b": "recoveries_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1443,7 +1444,7 @@
       "a": "goals_per90",
       "b": "cbi_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1451,423 +1452,423 @@
       "a": "goals_per90",
       "b": "minutes_reliability",
       "rho": null,
-      "n": 61,
+      "n": 81,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "bonus_per90",
-      "rho": 0.0669803667363,
-      "n": 61,
-      "p_value": 0.608030034972
+      "rho": 0.198491620266,
+      "n": 83,
+      "p_value": 0.072040126901
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "xgc_per90",
-      "rho": -0.0920775214131,
-      "n": 61,
-      "p_value": 0.480329775418
+      "rho": -0.0937934502269,
+      "n": 83,
+      "p_value": 0.399004010413
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.000476241434547,
-      "n": 61,
-      "p_value": 0.997093621538
+      "rho": -0.0205036122087,
+      "n": 83,
+      "p_value": 0.854026621476
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.196383791016,
-      "n": 61,
-      "p_value": 0.129294724955
+      "rho": 0.190950148943,
+      "n": 83,
+      "p_value": 0.0837723244368
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "saves_per90",
-      "rho": 0.142061074389,
-      "n": 61,
-      "p_value": 0.274776421096
+      "rho": 0.122095259696,
+      "n": 83,
+      "p_value": 0.271510231207
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "bps_per90",
-      "rho": -0.0650295113994,
-      "n": 61,
-      "p_value": 0.618542539548
+      "rho": 0.00710419086046,
+      "n": 83,
+      "p_value": 0.949176064932
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "tackles_per90",
-      "rho": -0.0600403050389,
-      "n": 20,
-      "p_value": 0.801469540505
+      "rho": 0.15646182234,
+      "n": 42,
+      "p_value": 0.322418982742
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "recoveries_per90",
-      "rho": 0.18283798338,
-      "n": 20,
-      "p_value": 0.440371999129
+      "rho": 0.061118719637,
+      "n": 42,
+      "p_value": 0.700607300574
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "cbi_per90",
-      "rho": -0.111853825127,
-      "n": 20,
-      "p_value": 0.63871634309
+      "rho": -0.147932243221,
+      "n": 42,
+      "p_value": 0.349821351989
     },
     {
       "group": "GK",
       "a": "assists_per90",
       "b": "minutes_reliability",
-      "rho": -0.0614572539093,
-      "n": 61,
-      "p_value": 0.637989554167
+      "rho": -0.147064740744,
+      "n": 81,
+      "p_value": 0.190146149715
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "xgc_per90",
-      "rho": -0.0833256210366,
-      "n": 61,
-      "p_value": 0.52318591764
+      "rho": -0.150439172844,
+      "n": 83,
+      "p_value": 0.174615919133
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.263672908164,
-      "n": 61,
-      "p_value": 0.0400495561545
+      "rho": -0.28800992723,
+      "n": 83,
+      "p_value": 0.00828327948758
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.0411207047642,
-      "n": 61,
-      "p_value": 0.753025950194
+      "rho": 0.168735542668,
+      "n": 83,
+      "p_value": 0.127284770641
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "saves_per90",
-      "rho": -0.0301599895909,
-      "n": 61,
-      "p_value": 0.817519643922
+      "rho": 0.11991843884,
+      "n": 83,
+      "p_value": 0.280212235167
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "bps_per90",
-      "rho": 0.442226074451,
-      "n": 61,
-      "p_value": 0.000359290404059
+      "rho": 0.46957853463,
+      "n": 83,
+      "p_value": 7.52016164342e-6
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "tackles_per90",
-      "rho": -0.0167956597961,
-      "n": 20,
-      "p_value": 0.943970341042
+      "rho": 0.536741612251,
+      "n": 42,
+      "p_value": 0.000247868047855
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "recoveries_per90",
-      "rho": 0.339225296648,
-      "n": 20,
-      "p_value": 0.143419025444
+      "rho": 0.207074847252,
+      "n": 42,
+      "p_value": 0.188236640332
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "cbi_per90",
-      "rho": -0.197818742835,
-      "n": 20,
-      "p_value": 0.403145251876
+      "rho": -0.411766799157,
+      "n": 42,
+      "p_value": 0.00674097041678
     },
     {
       "group": "GK",
       "a": "bonus_per90",
       "b": "minutes_reliability",
-      "rho": -0.0636263037045,
-      "n": 61,
-      "p_value": 0.626151431283
+      "rho": -0.242342427807,
+      "n": 81,
+      "p_value": 0.0292732954555
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
-      "rho": 0.878769852904,
-      "n": 61,
-      "p_value": 1.30168872079e-20
+      "rho": 0.721783079179,
+      "n": 83,
+      "p_value": 1.37379672594e-14
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.876467477525,
-      "n": 61,
-      "p_value": 2.19242180759e-20
+      "rho": -0.600877377104,
+      "n": 83,
+      "p_value": 1.9057143434e-9
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "saves_per90",
-      "rho": 0.743611100159,
-      "n": 61,
-      "p_value": 6.65328615201e-12
+      "rho": 0.625616705476,
+      "n": 83,
+      "p_value": 2.55744223886e-10
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "bps_per90",
-      "rho": 0.0746694870439,
-      "n": 61,
-      "p_value": 0.567374944195
+      "rho": -0.0383600174353,
+      "n": 83,
+      "p_value": 0.730618341289
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "tackles_per90",
-      "rho": 0.136604211669,
-      "n": 20,
-      "p_value": 0.565778710297
+      "rho": -0.109740833575,
+      "n": 42,
+      "p_value": 0.489042350723
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "recoveries_per90",
-      "rho": -0.166917293233,
-      "n": 20,
-      "p_value": 0.481824918432
+      "rho": 0.0188090341898,
+      "n": 42,
+      "p_value": 0.905886877815
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "cbi_per90",
-      "rho": 0.421052631579,
-      "n": 20,
-      "p_value": 0.064488075129
+      "rho": 0.554077708381,
+      "n": 42,
+      "p_value": 0.000140717068745
     },
     {
       "group": "GK",
       "a": "xgc_per90",
       "b": "minutes_reliability",
-      "rho": 0.0409816406697,
-      "n": 61,
-      "p_value": 0.753834794545
+      "rho": 0.124208777904,
+      "n": 81,
+      "p_value": 0.269251144197
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.801872202078,
-      "n": 61,
-      "p_value": 8.13666083348e-15
+      "rho": -0.582333395668,
+      "n": 83,
+      "p_value": 7.70349589483e-9
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
-      "rho": 0.659403429196,
-      "n": 61,
-      "p_value": 7.52268946697e-9
+      "rho": 0.404100387027,
+      "n": 83,
+      "p_value": 0.000151486191801
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
-      "rho": -0.0752845983154,
-      "n": 61,
-      "p_value": 0.564178237351
+      "rho": -0.382019009127,
+      "n": 83,
+      "p_value": 0.000365591918508
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
-      "rho": 0.27626103142,
-      "n": 20,
-      "p_value": 0.238379945088
+      "rho": -0.0267219979328,
+      "n": 42,
+      "p_value": 0.866597491091
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
-      "rho": 0.0105263157895,
-      "n": 20,
-      "p_value": 0.96486858682
+      "rho": 0.0107662462741,
+      "n": 42,
+      "p_value": 0.946048742485
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
-      "rho": 0.457142857143,
-      "n": 20,
-      "p_value": 0.0427185106279
+      "rho": 0.387432979914,
+      "n": 42,
+      "p_value": 0.0112464016077
     },
     {
       "group": "GK",
       "a": "goals_conceded_per90",
       "b": "minutes_reliability",
-      "rho": 0.02294968295,
-      "n": 61,
-      "p_value": 0.860641452781
+      "rho": -0.0156560423667,
+      "n": 81,
+      "p_value": 0.889669195922
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "saves_per90",
-      "rho": -0.673382778784,
-      "n": 61,
-      "p_value": 2.74422207291e-9
+      "rho": -0.468435756687,
+      "n": 83,
+      "p_value": 7.96818507073e-6
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "bps_per90",
-      "rho": -0.0393442622951,
-      "n": 61,
-      "p_value": 0.763377924122
+      "rho": 0.0845914474769,
+      "n": 83,
+      "p_value": 0.447050539324
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "tackles_per90",
-      "rho": -0.207577349575,
-      "n": 20,
-      "p_value": 0.379855797219
+      "rho": 0.103558251401,
+      "n": 42,
+      "p_value": 0.513989320903
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "recoveries_per90",
-      "rho": 0.190977443609,
-      "n": 20,
-      "p_value": 0.419926972203
+      "rho": -0.103044320928,
+      "n": 42,
+      "p_value": 0.516091322354
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "cbi_per90",
-      "rho": -0.251127819549,
-      "n": 20,
-      "p_value": 0.285521710634
+      "rho": -0.319231436331,
+      "n": 42,
+      "p_value": 0.0393331262497
     },
     {
       "group": "GK",
       "a": "clean_sheet_prob",
       "b": "minutes_reliability",
-      "rho": -0.0254312948029,
-      "n": 61,
-      "p_value": 0.84574755021
+      "rho": 0.00706820784757,
+      "n": 81,
+      "p_value": 0.950064405301
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "bps_per90",
-      "rho": 0.218855352417,
-      "n": 61,
-      "p_value": 0.0901582021682
+      "rho": 0.305043383716,
+      "n": 83,
+      "p_value": 0.00504580092547
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "tackles_per90",
-      "rho": -0.0793678101317,
-      "n": 20,
-      "p_value": 0.739425475148
+      "rho": -0.0198317256204,
+      "n": 42,
+      "p_value": 0.900794516622
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "recoveries_per90",
-      "rho": 0.117293233083,
-      "n": 20,
-      "p_value": 0.622378981763
+      "rho": 0.136396904276,
+      "n": 42,
+      "p_value": 0.38906622377
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "cbi_per90",
-      "rho": 0.181954887218,
-      "n": 20,
-      "p_value": 0.442621066776
+      "rho": 0.206088089848,
+      "n": 42,
+      "p_value": 0.190397306337
     },
     {
       "group": "GK",
       "a": "saves_per90",
       "b": "minutes_reliability",
-      "rho": -0.094653182985,
-      "n": 61,
-      "p_value": 0.468082392131
+      "rho": -0.11713913507,
+      "n": 81,
+      "p_value": 0.297663628631
     },
     {
       "group": "GK",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1875,7 +1876,7 @@
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1883,7 +1884,7 @@
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1891,7 +1892,7 @@
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
       "rho": null,
-      "n": 20,
+      "n": 42,
       "p_value": null
     },
     {
@@ -1899,887 +1900,887 @@
       "a": "defensive_contribution_per90",
       "b": "minutes_reliability",
       "rho": null,
-      "n": 20,
+      "n": 40,
       "p_value": null
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "tackles_per90",
-      "rho": -0.228945606149,
-      "n": 20,
-      "p_value": 0.331584249844
+      "rho": 0.10473446035,
+      "n": 42,
+      "p_value": 0.509194743327
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "recoveries_per90",
-      "rho": 0.329323308271,
-      "n": 20,
-      "p_value": 0.156231051626
+      "rho": 0.253638776261,
+      "n": 42,
+      "p_value": 0.105062935362
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "cbi_per90",
-      "rho": -0.499248120301,
-      "n": 20,
-      "p_value": 0.025021864609
+      "rho": -0.329253153433,
+      "n": 42,
+      "p_value": 0.0332397494049
     },
     {
       "group": "GK",
       "a": "bps_per90",
       "b": "minutes_reliability",
-      "rho": -0.0572069147424,
-      "n": 61,
-      "p_value": 0.661447257146
+      "rho": -0.0708034776212,
+      "n": 81,
+      "p_value": 0.529927972135
     },
     {
       "group": "GK",
       "a": "tackles_per90",
       "b": "recoveries_per90",
-      "rho": 0.22970875817,
-      "n": 20,
-      "p_value": 0.329930542085
+      "rho": 0.0213121557056,
+      "n": 42,
+      "p_value": 0.893429909844
     },
     {
       "group": "GK",
       "a": "tackles_per90",
       "b": "cbi_per90",
-      "rho": -0.0908150904392,
-      "n": 20,
-      "p_value": 0.703370287318
+      "rho": -0.186263966987,
+      "n": 42,
+      "p_value": 0.237575208453
     },
     {
       "group": "GK",
       "a": "tackles_per90",
       "b": "minutes_reliability",
-      "rho": -0.0860108395112,
-      "n": 20,
-      "p_value": 0.718432958574
+      "rho": -0.308219621675,
+      "n": 40,
+      "p_value": 0.0529979837223
     },
     {
       "group": "GK",
       "a": "recoveries_per90",
       "b": "cbi_per90",
-      "rho": 0.0406015037594,
-      "n": 20,
-      "p_value": 0.865046879008
+      "rho": -0.104254735294,
+      "n": 42,
+      "p_value": 0.511147520195
     },
     {
       "group": "GK",
       "a": "recoveries_per90",
       "b": "minutes_reliability",
-      "rho": -0.391049715619,
-      "n": 20,
-      "p_value": 0.088216124277
+      "rho": -0.187953919862,
+      "n": 40,
+      "p_value": 0.245472316732
     },
     {
       "group": "GK",
       "a": "cbi_per90",
       "b": "minutes_reliability",
-      "rho": 0.0334296973591,
-      "n": 20,
-      "p_value": 0.888727756997
+      "rho": 0.115284903645,
+      "n": 40,
+      "p_value": 0.478713998753
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xa_per90",
-      "rho": -0.0391387003247,
-      "n": 240,
-      "p_value": 0.546242747751
+      "rho": 0.097100475886,
+      "n": 331,
+      "p_value": 0.0777191863105
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xgi_per90",
-      "rho": 0.573451796038,
-      "n": 240,
-      "p_value": 2.20214372376e-22
+      "rho": 0.643876396251,
+      "n": 331,
+      "p_value": 3.81221822832e-40
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "goals_per90",
-      "rho": 0.513629907825,
-      "n": 240,
-      "p_value": 1.47582230386e-17
+      "rho": 0.523892282829,
+      "n": 331,
+      "p_value": 9.97364986136e-25
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "assists_per90",
-      "rho": -0.00407520029724,
-      "n": 240,
-      "p_value": 0.949923070455
+      "rho": 0.151226390491,
+      "n": 331,
+      "p_value": 0.00583724113423
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "bonus_per90",
-      "rho": 0.219919484843,
-      "n": 240,
-      "p_value": 0.000600707933408
+      "rho": 0.322856587373,
+      "n": 331,
+      "p_value": 1.81632449301e-9
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "xgc_per90",
-      "rho": -0.171537700307,
-      "n": 240,
-      "p_value": 0.00773676839176
+      "rho": -0.220813699674,
+      "n": 331,
+      "p_value": 0.0000507196968574
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.192824611896,
-      "n": 240,
-      "p_value": 0.00270127642205
+      "rho": -0.166463062879,
+      "n": 331,
+      "p_value": 0.00237917883421
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.242158718033,
-      "n": 240,
-      "p_value": 0.000151583380219
+      "rho": 0.24602685355,
+      "n": 331,
+      "p_value": 5.92817587271e-6
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.170709940031,
-      "n": 82,
-      "p_value": 0.125179311352
+      "rho": -0.0159059082086,
+      "n": 173,
+      "p_value": 0.835458517492
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "bps_per90",
-      "rho": 0.222684421605,
-      "n": 240,
-      "p_value": 0.000509819428952
+      "rho": 0.223588788325,
+      "n": 331,
+      "p_value": 0.000040513238222
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "tackles_per90",
-      "rho": -0.120949924359,
-      "n": 82,
-      "p_value": 0.27906881611
+      "rho": -0.0559433739996,
+      "n": 173,
+      "p_value": 0.464743360934
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "recoveries_per90",
-      "rho": -0.163417899239,
-      "n": 82,
-      "p_value": 0.142382725121
+      "rho": 0.018394736194,
+      "n": 173,
+      "p_value": 0.810166446949
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "cbi_per90",
-      "rho": 0.151249986395,
-      "n": 82,
-      "p_value": 0.1749661217
+      "rho": -0.0196381564837,
+      "n": 173,
+      "p_value": 0.797601998996
     },
     {
       "group": "DEF",
       "a": "xg_per90",
       "b": "minutes_reliability",
-      "rho": 0.00657942712276,
-      "n": 240,
-      "p_value": 0.91923532436
+      "rho": -0.0922882140073,
+      "n": 328,
+      "p_value": 0.095198183634
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "xgi_per90",
-      "rho": 0.745676140211,
-      "n": 240,
-      "p_value": 7.48092118932e-44
+      "rho": 0.75603428265,
+      "n": 331,
+      "p_value": 1.60235073818e-62
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "goals_per90",
-      "rho": 0.0572290563511,
-      "n": 240,
-      "p_value": 0.377407219967
+      "rho": 0.119748660166,
+      "n": 331,
+      "p_value": 0.0293883335583
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "assists_per90",
-      "rho": 0.635600591759,
-      "n": 240,
-      "p_value": 1.45450963448e-28
+      "rho": 0.54027353469,
+      "n": 331,
+      "p_value": 1.77127903532e-26
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "bonus_per90",
-      "rho": 0.396613239102,
-      "n": 240,
-      "p_value": 1.8221289947e-10
+      "rho": 0.288071950785,
+      "n": 331,
+      "p_value": 9.5706932307e-8
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "xgc_per90",
-      "rho": -0.132168093196,
-      "n": 240,
-      "p_value": 0.040772821124
+      "rho": -0.161840000287,
+      "n": 331,
+      "p_value": 0.00314934903996
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.202813504928,
-      "n": 240,
-      "p_value": 0.00158605636041
+      "rho": -0.113644489021,
+      "n": 331,
+      "p_value": 0.0387852835807
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.132763589646,
-      "n": 240,
-      "p_value": 0.0398661778379
+      "rho": 0.137759711163,
+      "n": 331,
+      "p_value": 0.012113885977
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.429218227925,
-      "n": 82,
-      "p_value": 0.0000572989692508
+      "rho": -0.36634342204,
+      "n": 173,
+      "p_value": 7.15944928653e-7
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "bps_per90",
-      "rho": 0.284468480356,
-      "n": 240,
-      "p_value": 7.5772056987e-6
+      "rho": 0.233961404751,
+      "n": 331,
+      "p_value": 0.0000170580558867
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "tackles_per90",
-      "rho": 0.55139800394,
-      "n": 82,
-      "p_value": 7.93518920857e-8
+      "rho": 0.255347447318,
+      "n": 173,
+      "p_value": 0.000697375654322
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "recoveries_per90",
-      "rho": 0.345501246177,
-      "n": 82,
-      "p_value": 0.00147720683524
+      "rho": 0.260406548932,
+      "n": 173,
+      "p_value": 0.00053982203264
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "cbi_per90",
-      "rho": -0.549438948205,
-      "n": 82,
-      "p_value": 9.01032132115e-8
+      "rho": -0.452227613236,
+      "n": 173,
+      "p_value": 4.21166038766e-10
     },
     {
       "group": "DEF",
       "a": "xa_per90",
       "b": "minutes_reliability",
-      "rho": -0.0559767832567,
-      "n": 240,
-      "p_value": 0.387951505932
+      "rho": -0.12231015479,
+      "n": 328,
+      "p_value": 0.02676027115
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "goals_per90",
-      "rho": 0.353692549431,
-      "n": 240,
-      "p_value": 1.76142351307e-8
+      "rho": 0.367225119313,
+      "n": 331,
+      "p_value": 5.26279691185e-12
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "assists_per90",
-      "rho": 0.497461089854,
-      "n": 240,
-      "p_value": 2.07778168902e-16
+      "rho": 0.423805774953,
+      "n": 331,
+      "p_value": 7.34983451402e-16
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "bonus_per90",
-      "rho": 0.46163180289,
-      "n": 240,
-      "p_value": 4.53548173322e-14
+      "rho": 0.379301825487,
+      "n": 331,
+      "p_value": 9.10613951619e-13
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "xgc_per90",
-      "rho": -0.216762443792,
-      "n": 240,
-      "p_value": 0.000722691907626
+      "rho": -0.252357148017,
+      "n": 331,
+      "p_value": 3.3301127334e-6
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.266906659363,
-      "n": 240,
-      "p_value": 0.0000279487437137
+      "rho": -0.204539430949,
+      "n": 331,
+      "p_value": 0.000179048115027
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.245837601347,
-      "n": 240,
-      "p_value": 0.000119167152627
+      "rho": 0.251215727963,
+      "n": 331,
+      "p_value": 3.69926246088e-6
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.215136970647,
-      "n": 82,
-      "p_value": 0.0522541198926
+      "rho": -0.226634355417,
+      "n": 173,
+      "p_value": 0.00271389255163
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "bps_per90",
-      "rho": 0.366852723138,
-      "n": 240,
-      "p_value": 4.65268330612e-9
+      "rho": 0.321932016151,
+      "n": 331,
+      "p_value": 2.03191099186e-9
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "tackles_per90",
-      "rho": 0.357516788019,
-      "n": 82,
-      "p_value": 0.000975652019859
+      "rho": 0.135854868269,
+      "n": 173,
+      "p_value": 0.0747150457653
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "recoveries_per90",
-      "rho": 0.165834067979,
-      "n": 82,
-      "p_value": 0.136495715757
+      "rho": 0.211642531413,
+      "n": 173,
+      "p_value": 0.00518550271698
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "cbi_per90",
-      "rho": -0.317007868874,
-      "n": 82,
-      "p_value": 0.00371025498454
+      "rho": -0.283875136422,
+      "n": 173,
+      "p_value": 0.000153776972175
     },
     {
       "group": "DEF",
       "a": "xgi_per90",
       "b": "minutes_reliability",
-      "rho": -0.0534722777482,
-      "n": 240,
-      "p_value": 0.409567919801
+      "rho": -0.0850366644654,
+      "n": 328,
+      "p_value": 0.124296948619
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "assists_per90",
-      "rho": 0.0416938175362,
-      "n": 240,
-      "p_value": 0.520337528777
+      "rho": 0.243652411871,
+      "n": 331,
+      "p_value": 7.33072676873e-6
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "bonus_per90",
-      "rho": 0.484097070875,
-      "n": 240,
-      "p_value": 1.66779994914e-15
+      "rho": 0.57474210052,
+      "n": 331,
+      "p_value": 1.718656791e-30
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "xgc_per90",
-      "rho": -0.11896241305,
-      "n": 240,
-      "p_value": 0.0657866185797
+      "rho": -0.133360191155,
+      "n": 331,
+      "p_value": 0.0151843563256
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.161882839115,
-      "n": 240,
-      "p_value": 0.0120263055514
+      "rho": -0.187714074209,
+      "n": 331,
+      "p_value": 0.000597375441298
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.217573043762,
-      "n": 240,
-      "p_value": 0.000689359289897
+      "rho": 0.253444858665,
+      "n": 331,
+      "p_value": 3.01125438653e-6
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.0139591468226,
-      "n": 82,
-      "p_value": 0.900942420482
+      "rho": 0.0210892108064,
+      "n": 173,
+      "p_value": 0.783005125563
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "bps_per90",
-      "rho": 0.377700015035,
-      "n": 240,
-      "p_value": 1.48305513509e-9
+      "rho": 0.371500066289,
+      "n": 331,
+      "p_value": 2.85191646299e-12
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "tackles_per90",
-      "rho": 0.0527284095907,
-      "n": 82,
-      "p_value": 0.63801684234
+      "rho": 0.140787249517,
+      "n": 173,
+      "p_value": 0.0646666417799
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "recoveries_per90",
-      "rho": -0.0619533925146,
-      "n": 82,
-      "p_value": 0.580310791933
+      "rho": 0.0958194181204,
+      "n": 173,
+      "p_value": 0.209820705117
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "cbi_per90",
-      "rho": -0.0403620655751,
-      "n": 82,
-      "p_value": 0.718824863723
+      "rho": -0.0103557585741,
+      "n": 173,
+      "p_value": 0.892434054808
     },
     {
       "group": "DEF",
       "a": "goals_per90",
       "b": "minutes_reliability",
-      "rho": 0.0480826828906,
-      "n": 240,
-      "p_value": 0.458430512366
+      "rho": -0.196661509814,
+      "n": 328,
+      "p_value": 0.000339478986977
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "bonus_per90",
-      "rho": 0.332512858035,
-      "n": 240,
-      "p_value": 1.32580743339e-7
+      "rho": 0.43281099277,
+      "n": 331,
+      "p_value": 1.52228085465e-16
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "xgc_per90",
-      "rho": -0.0495023660382,
-      "n": 240,
-      "p_value": 0.445253685552
+      "rho": -0.126528322885,
+      "n": 331,
+      "p_value": 0.0213050791585
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.103461235296,
-      "n": 240,
-      "p_value": 0.109878442767
+      "rho": -0.112559188404,
+      "n": 331,
+      "p_value": 0.0406977585537
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.0445685158821,
-      "n": 240,
-      "p_value": 0.491963454222
+      "rho": 0.124598146577,
+      "n": 331,
+      "p_value": 0.0233822514803
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.152576301744,
-      "n": 82,
-      "p_value": 0.171170181868
+      "rho": -0.0607889656103,
+      "n": 173,
+      "p_value": 0.426908662202
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "bps_per90",
-      "rho": 0.261712981216,
-      "n": 240,
-      "p_value": 0.0000404230636465
+      "rho": 0.279398490025,
+      "n": 331,
+      "p_value": 2.37567364733e-7
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "tackles_per90",
-      "rho": 0.283187554896,
-      "n": 82,
-      "p_value": 0.00993714711354
+      "rho": 0.279364687235,
+      "n": 173,
+      "p_value": 0.000197480895637
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "recoveries_per90",
-      "rho": 0.198460545893,
-      "n": 82,
-      "p_value": 0.0738774559122
+      "rho": 0.109302138686,
+      "n": 173,
+      "p_value": 0.152282531537
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "cbi_per90",
-      "rho": -0.217314243167,
-      "n": 82,
-      "p_value": 0.0498604559443
+      "rho": -0.148576495368,
+      "n": 173,
+      "p_value": 0.0510697375292
     },
     {
       "group": "DEF",
       "a": "assists_per90",
       "b": "minutes_reliability",
-      "rho": 0.000294096411472,
-      "n": 240,
-      "p_value": 0.996383732091
+      "rho": -0.236357962816,
+      "n": 328,
+      "p_value": 0.0000152029150503
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "xgc_per90",
-      "rho": -0.383540057429,
-      "n": 240,
-      "p_value": 7.87322018922e-10
+      "rho": -0.310457023693,
+      "n": 331,
+      "p_value": 7.92250114054e-9
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.443851860608,
-      "n": 240,
-      "p_value": 5.24482069131e-13
+      "rho": -0.430803340114,
+      "n": 331,
+      "p_value": 2.17125139425e-16
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.393826233019,
-      "n": 240,
-      "p_value": 2.50277040857e-10
+      "rho": 0.320812389379,
+      "n": 331,
+      "p_value": 2.32633365067e-9
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.139989769091,
-      "n": 82,
-      "p_value": 0.209701190195
+      "rho": 0.194920426221,
+      "n": 173,
+      "p_value": 0.0101730854202
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "bps_per90",
-      "rho": 0.665847405038,
-      "n": 240,
-      "p_value": 4.08887582955e-32
+      "rho": 0.642951770256,
+      "n": 331,
+      "p_value": 5.33145437522e-40
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "tackles_per90",
-      "rho": 0.189210959965,
-      "n": 82,
-      "p_value": 0.0886635457121
+      "rho": 0.221281540319,
+      "n": 173,
+      "p_value": 0.00343612885482
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "recoveries_per90",
-      "rho": 0.16805085491,
-      "n": 82,
-      "p_value": 0.131258342774
+      "rho": 0.231535977891,
+      "n": 173,
+      "p_value": 0.00217624152843
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "cbi_per90",
-      "rho": 0.0615972399726,
-      "n": 82,
-      "p_value": 0.58249353963
+      "rho": 0.12568650424,
+      "n": 173,
+      "p_value": 0.099413452449
     },
     {
       "group": "DEF",
       "a": "bonus_per90",
       "b": "minutes_reliability",
-      "rho": 0.167105615371,
-      "n": 240,
-      "p_value": 0.00949948408943
+      "rho": -0.152120992572,
+      "n": 328,
+      "p_value": 0.0057696282798
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
-      "rho": 0.866485037277,
-      "n": 240,
-      "p_value": 9.22179530337e-74
+      "rho": 0.682978367798,
+      "n": 331,
+      "p_value": 8.43644594777e-47
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.83453011337,
-      "n": 240,
-      "p_value": 1.5065448424e-63
+      "rho": -0.570473644066,
+      "n": 331,
+      "p_value": 5.7275019404e-30
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.089822705456,
-      "n": 82,
-      "p_value": 0.42225436973
+      "rho": 0.084063347724,
+      "n": 173,
+      "p_value": 0.271500954687
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "bps_per90",
-      "rho": -0.411212000208,
-      "n": 240,
-      "p_value": 3.29035822122e-11
+      "rho": -0.419835255239,
+      "n": 331,
+      "p_value": 1.44990986563e-15
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "tackles_per90",
-      "rho": 0.06080691329,
-      "n": 82,
-      "p_value": 0.587350585203
+      "rho": 0.0339516978352,
+      "n": 173,
+      "p_value": 0.657436408368
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "recoveries_per90",
-      "rho": 0.045896322417,
-      "n": 82,
-      "p_value": 0.682213590083
+      "rho": -0.101837965089,
+      "n": 173,
+      "p_value": 0.182457118756
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "cbi_per90",
-      "rho": 0.0537978472154,
-      "n": 82,
-      "p_value": 0.631206595698
+      "rho": 0.0757958480108,
+      "n": 173,
+      "p_value": 0.321618227742
     },
     {
       "group": "DEF",
       "a": "xgc_per90",
       "b": "minutes_reliability",
-      "rho": -0.0921397593291,
-      "n": 240,
-      "p_value": 0.154736321409
+      "rho": -0.00854925165816,
+      "n": 328,
+      "p_value": 0.877416366681
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.787883812169,
-      "n": 240,
-      "p_value": 5.0850373788e-52
+      "rho": -0.602080792409,
+      "n": 331,
+      "p_value": 4.98800843995e-34
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.127828386718,
-      "n": 82,
-      "p_value": 0.252429941002
+      "rho": -0.0686810327284,
+      "n": 173,
+      "p_value": 0.369254978658
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
-      "rho": -0.515479659143,
-      "n": 240,
-      "p_value": 1.08071573511e-17
+      "rho": -0.656093353767,
+      "n": 331,
+      "p_value": 4.05744737134e-42
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
-      "rho": 0.00144752451541,
-      "n": 82,
-      "p_value": 0.989702257733
+      "rho": 0.0679496238842,
+      "n": 173,
+      "p_value": 0.374387061963
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
-      "rho": 0.0525571119165,
-      "n": 82,
-      "p_value": 0.639110486443
+      "rho": -0.0764380064261,
+      "n": 173,
+      "p_value": 0.317523667193
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
-      "rho": 0.105778126054,
-      "n": 82,
-      "p_value": 0.344243682211
+      "rho": -0.0894961403882,
+      "n": 173,
+      "p_value": 0.241616653095
     },
     {
       "group": "DEF",
       "a": "goals_conceded_per90",
       "b": "minutes_reliability",
-      "rho": -0.0966027693064,
-      "n": 240,
-      "p_value": 0.135635585969
+      "rho": -0.0462721721454,
+      "n": 328,
+      "p_value": 0.403564089292
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "saves_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "defensive_contribution_per90",
-      "rho": -0.0430448079581,
-      "n": 82,
-      "p_value": 0.700992244404
+      "rho": -0.0622997502161,
+      "n": 173,
+      "p_value": 0.415486761018
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "bps_per90",
-      "rho": 0.441242035452,
-      "n": 240,
-      "p_value": 7.42413951776e-13
+      "rho": 0.415485540337,
+      "n": 331,
+      "p_value": 3.02095168989e-15
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "tackles_per90",
-      "rho": -0.00101217879649,
-      "n": 82,
-      "p_value": 0.992799222839
+      "rho": -0.0444134779815,
+      "n": 173,
+      "p_value": 0.561766571627
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "recoveries_per90",
-      "rho": 0.020951012723,
-      "n": 82,
-      "p_value": 0.851795954374
+      "rho": 0.125988037363,
+      "n": 173,
+      "p_value": 0.0985980408187
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "cbi_per90",
-      "rho": -0.0517081877646,
-      "n": 82,
-      "p_value": 0.644541744192
+      "rho": -0.0327065083352,
+      "n": 173,
+      "p_value": 0.669246330537
     },
     {
       "group": "DEF",
       "a": "clean_sheet_prob",
       "b": "minutes_reliability",
-      "rho": 0.0972025933415,
-      "n": 240,
-      "p_value": 0.133212823072
+      "rho": -0.0197569694069,
+      "n": 328,
+      "p_value": 0.721479093611
     },
     {
       "group": "DEF",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 82,
+      "n": 173,
       "p_value": null
     },
     {
@@ -2787,7 +2788,7 @@
       "a": "saves_per90",
       "b": "bps_per90",
       "rho": null,
-      "n": 240,
+      "n": 331,
       "p_value": null
     },
     {
@@ -2795,7 +2796,7 @@
       "a": "saves_per90",
       "b": "tackles_per90",
       "rho": null,
-      "n": 82,
+      "n": 173,
       "p_value": null
     },
     {
@@ -2803,7 +2804,7 @@
       "a": "saves_per90",
       "b": "recoveries_per90",
       "rho": null,
-      "n": 82,
+      "n": 173,
       "p_value": null
     },
     {
@@ -2811,7 +2812,7 @@
       "a": "saves_per90",
       "b": "cbi_per90",
       "rho": null,
-      "n": 82,
+      "n": 173,
       "p_value": null
     },
     {
@@ -2819,927 +2820,927 @@
       "a": "saves_per90",
       "b": "minutes_reliability",
       "rho": null,
-      "n": 240,
+      "n": 328,
       "p_value": null
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
-      "rho": 0.037037037037,
-      "n": 82,
-      "p_value": 0.741136114779
+      "rho": 0.121970087922,
+      "n": 173,
+      "p_value": 0.109907243711
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
-      "rho": -0.298157399245,
-      "n": 82,
-      "p_value": 0.00651522472459
+      "rho": 0.146648896125,
+      "n": 173,
+      "p_value": 0.0541913736977
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
-      "rho": -0.286141857403,
-      "n": 82,
-      "p_value": 0.00915850533251
+      "rho": -0.0718132176146,
+      "n": 173,
+      "p_value": 0.347771451766
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
-      "rho": 0.957967370838,
-      "n": 82,
-      "p_value": 3.82731103935e-45
+      "rho": 0.937484643327,
+      "n": 173,
+      "p_value": 2.68060984103e-80
     },
     {
       "group": "DEF",
       "a": "defensive_contribution_per90",
       "b": "minutes_reliability",
-      "rho": 0.127613491688,
-      "n": 82,
-      "p_value": 0.253234913203
+      "rho": -0.0816811756483,
+      "n": 170,
+      "p_value": 0.289642913021
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "tackles_per90",
-      "rho": 0.02859133009,
-      "n": 82,
-      "p_value": 0.798736288359
+      "rho": 0.0857782028793,
+      "n": 173,
+      "p_value": 0.261808684742
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "recoveries_per90",
-      "rho": 0.0951121559408,
-      "n": 82,
-      "p_value": 0.395333892079
+      "rho": 0.200434442832,
+      "n": 173,
+      "p_value": 0.00819137056856
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "cbi_per90",
-      "rho": 0.0182736365516,
-      "n": 82,
-      "p_value": 0.870559346094
+      "rho": 0.08502005534,
+      "n": 173,
+      "p_value": 0.26606406647
     },
     {
       "group": "DEF",
       "a": "bps_per90",
       "b": "minutes_reliability",
-      "rho": 0.0803247437412,
-      "n": 240,
-      "p_value": 0.215014878377
+      "rho": 0.0183191038415,
+      "n": 328,
+      "p_value": 0.74099634076
     },
     {
       "group": "DEF",
       "a": "tackles_per90",
       "b": "recoveries_per90",
-      "rho": 0.37018534844,
-      "n": 82,
-      "p_value": 0.000618938048851
+      "rho": 0.181583973439,
+      "n": 173,
+      "p_value": 0.0168043183857
     },
     {
       "group": "DEF",
       "a": "tackles_per90",
       "b": "cbi_per90",
-      "rho": -0.535116074052,
-      "n": 82,
-      "p_value": 2.2267859567e-7
+      "rho": -0.165672122479,
+      "n": 173,
+      "p_value": 0.029379586721
     },
     {
       "group": "DEF",
       "a": "tackles_per90",
       "b": "minutes_reliability",
-      "rho": -0.164814593145,
-      "n": 82,
-      "p_value": 0.138956787663
+      "rho": -0.1627090326,
+      "n": 170,
+      "p_value": 0.0340092367046
     },
     {
       "group": "DEF",
       "a": "recoveries_per90",
       "b": "cbi_per90",
-      "rho": -0.35719027873,
-      "n": 82,
-      "p_value": 0.000986923064784
+      "rho": -0.137081459052,
+      "n": 173,
+      "p_value": 0.0721051473776
     },
     {
       "group": "DEF",
       "a": "recoveries_per90",
       "b": "minutes_reliability",
-      "rho": -0.191197117994,
-      "n": 82,
-      "p_value": 0.0853058878634
+      "rho": -0.173282630464,
+      "n": 170,
+      "p_value": 0.0238347286775
     },
     {
       "group": "DEF",
       "a": "cbi_per90",
       "b": "minutes_reliability",
-      "rho": 0.16050457671,
-      "n": 82,
-      "p_value": 0.149732998857
+      "rho": -0.025254642157,
+      "n": 170,
+      "p_value": 0.74374125938
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xa_per90",
-      "rho": 0.507153316028,
-      "n": 284,
-      "p_value": 5.7484203782e-20
+      "rho": 0.440951980614,
+      "n": 376,
+      "p_value": 2.55037463622e-19
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xgi_per90",
-      "rho": 0.923368442008,
-      "n": 284,
-      "p_value": 2.91797408732e-119
+      "rho": 0.899699526201,
+      "n": 376,
+      "p_value": 1.04371542933e-136
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "goals_per90",
-      "rho": 0.850751101372,
-      "n": 284,
-      "p_value": 9.19573944275e-81
+      "rho": 0.753214468529,
+      "n": 376,
+      "p_value": 4.99292762416e-70
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "assists_per90",
-      "rho": 0.518081998842,
-      "n": 284,
-      "p_value": 6.60389597352e-21
+      "rho": 0.459316319827,
+      "n": 376,
+      "p_value": 5.07246599118e-21
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "bonus_per90",
-      "rho": 0.603606528901,
-      "n": 284,
-      "p_value": 1.40499749763e-29
+      "rho": 0.581864098992,
+      "n": 376,
+      "p_value": 1.90179443829e-35
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "xgc_per90",
-      "rho": -0.162849067625,
-      "n": 284,
-      "p_value": 0.00594748147057
+      "rho": -0.202741706636,
+      "n": 376,
+      "p_value": 0.0000751341680097
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.204005114115,
-      "n": 284,
-      "p_value": 0.000541697701914
+      "rho": -0.116851120819,
+      "n": 376,
+      "p_value": 0.0234482540149
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.182070215603,
-      "n": 284,
-      "p_value": 0.00206612935613
+      "rho": 0.235249604196,
+      "n": 376,
+      "p_value": 4.00067250091e-6
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.701275150815,
-      "n": 94,
-      "p_value": 3.5191411352e-15
+      "rho": -0.314069436315,
+      "n": 186,
+      "p_value": 0.0000126870483562
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "bps_per90",
-      "rho": 0.360083506432,
-      "n": 284,
-      "p_value": 4.04051004364e-10
+      "rho": 0.370730157584,
+      "n": 376,
+      "p_value": 1.07574067031e-13
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "tackles_per90",
-      "rho": -0.588440559188,
-      "n": 94,
-      "p_value": 4.46061367978e-10
+      "rho": -0.243752565862,
+      "n": 186,
+      "p_value": 0.000800431581019
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "recoveries_per90",
-      "rho": -0.502423870245,
-      "n": 94,
-      "p_value": 2.4718763453e-7
+      "rho": -0.133093522338,
+      "n": 186,
+      "p_value": 0.0701435635439
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "cbi_per90",
-      "rho": -0.6597912076,
-      "n": 94,
-      "p_value": 4.74689654348e-13
+      "rho": -0.357405753204,
+      "n": 186,
+      "p_value": 5.50242329021e-7
     },
     {
       "group": "MID",
       "a": "xg_per90",
       "b": "minutes_reliability",
-      "rho": -0.0129671666441,
-      "n": 284,
-      "p_value": 0.82776264426
+      "rho": -0.0943417996928,
+      "n": 373,
+      "p_value": 0.0687607663986
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "xgi_per90",
-      "rho": 0.78092868163,
-      "n": 284,
-      "p_value": 1.40141021048e-59
+      "rho": 0.755164529985,
+      "n": 376,
+      "p_value": 1.39072715023e-70
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "goals_per90",
-      "rho": 0.454157694574,
-      "n": 284,
-      "p_value": 7.38280240897e-16
+      "rho": 0.385051770785,
+      "n": 376,
+      "p_value": 9.77794222926e-15
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "assists_per90",
-      "rho": 0.771173904259,
-      "n": 284,
-      "p_value": 3.04336950574e-57
+      "rho": 0.642616265553,
+      "n": 376,
+      "p_value": 3.52447169566e-45
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "bonus_per90",
-      "rho": 0.59165236037,
-      "n": 284,
-      "p_value": 3.29158361469e-28
+      "rho": 0.511719102989,
+      "n": 376,
+      "p_value": 1.75922363733e-26
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "xgc_per90",
-      "rho": -0.321567343432,
-      "n": 284,
-      "p_value": 2.97044354758e-8
+      "rho": -0.285789604439,
+      "n": 376,
+      "p_value": 1.6876983014e-8
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.3192875024,
-      "n": 284,
-      "p_value": 3.76210811836e-8
+      "rho": -0.162446693813,
+      "n": 376,
+      "p_value": 0.00157504976462
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.371206521255,
-      "n": 284,
-      "p_value": 1.0443763799e-10
+      "rho": 0.348191109399,
+      "n": 376,
+      "p_value": 3.71028237903e-12
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.399183614493,
-      "n": 94,
-      "p_value": 0.0000673533129512
+      "rho": -0.145905560274,
+      "n": 186,
+      "p_value": 0.0469092120687
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "bps_per90",
-      "rho": 0.608798036499,
-      "n": 284,
-      "p_value": 3.42497971198e-30
+      "rho": 0.565283458989,
+      "n": 376,
+      "p_value": 3.9261324241e-33
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "tackles_per90",
-      "rho": -0.336834880613,
-      "n": 94,
-      "p_value": 0.000901442058242
+      "rho": -0.0813485671705,
+      "n": 186,
+      "p_value": 0.269680819484
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "recoveries_per90",
-      "rho": -0.0364194632085,
-      "n": 94,
-      "p_value": 0.727471481904
+      "rho": 0.0618714790354,
+      "n": 186,
+      "p_value": 0.401508488411
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "cbi_per90",
-      "rho": -0.581114763573,
-      "n": 94,
-      "p_value": 8.21584693843e-10
+      "rho": -0.372275849903,
+      "n": 186,
+      "p_value": 1.67473489053e-7
     },
     {
       "group": "MID",
       "a": "xa_per90",
       "b": "minutes_reliability",
-      "rho": 0.171173724518,
-      "n": 284,
-      "p_value": 0.00381177186185
+      "rho": 0.0081077393083,
+      "n": 373,
+      "p_value": 0.875983003544
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "goals_per90",
-      "rho": 0.794620764908,
-      "n": 284,
-      "p_value": 4.52900239129e-63
+      "rho": 0.696551267688,
+      "n": 376,
+      "p_value": 7.07989423272e-56
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "assists_per90",
-      "rho": 0.692092343563,
-      "n": 284,
-      "p_value": 8.12269152825e-42
+      "rho": 0.593314265041,
+      "n": 376,
+      "p_value": 3.99595003334e-37
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "bonus_per90",
-      "rho": 0.678027665753,
-      "n": 284,
-      "p_value": 1.38834012435e-39
+      "rho": 0.621371506225,
+      "n": 376,
+      "p_value": 1.56302275266e-41
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "xgc_per90",
-      "rho": -0.258626858791,
-      "n": 284,
-      "p_value": 0.0000101210196365
+      "rho": -0.25446892032,
+      "n": 376,
+      "p_value": 5.7193880273e-7
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.287061555101,
-      "n": 284,
-      "p_value": 8.64316366083e-7
+      "rho": -0.152203846467,
+      "n": 376,
+      "p_value": 0.00308867310387
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.293541348519,
-      "n": 284,
-      "p_value": 4.74331827509e-7
+      "rho": 0.31579895801,
+      "n": 376,
+      "p_value": 3.74746104051e-10
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.708109670195,
-      "n": 94,
-      "p_value": 1.44582433169e-15
+      "rho": -0.304873409236,
+      "n": 186,
+      "p_value": 0.0000232594215591
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "bps_per90",
-      "rho": 0.512717966718,
-      "n": 284,
-      "p_value": 1.92873944689e-20
+      "rho": 0.527556373711,
+      "n": 376,
+      "p_value": 2.51729284577e-28
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "tackles_per90",
-      "rho": -0.609883321894,
-      "n": 94,
-      "p_value": 6.81748480337e-11
+      "rho": -0.206309309333,
+      "n": 186,
+      "p_value": 0.00472549462621
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "recoveries_per90",
-      "rho": -0.383592818697,
-      "n": 94,
-      "p_value": 0.000135422831848
+      "rho": -0.0836209642098,
+      "n": 186,
+      "p_value": 0.256484916515
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "cbi_per90",
-      "rho": -0.753437127479,
-      "n": 94,
-      "p_value": 1.93192265363e-18
+      "rho": -0.440805127723,
+      "n": 186,
+      "p_value": 3.04082130083e-10
     },
     {
       "group": "MID",
       "a": "xgi_per90",
       "b": "minutes_reliability",
-      "rho": 0.0556181014369,
-      "n": 284,
-      "p_value": 0.35036466582
+      "rho": -0.0343915037129,
+      "n": 373,
+      "p_value": 0.507857902549
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "assists_per90",
-      "rho": 0.459059885649,
-      "n": 284,
-      "p_value": 3.29120722979e-16
+      "rho": 0.370820884649,
+      "n": 376,
+      "p_value": 1.05991329637e-13
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "bonus_per90",
-      "rho": 0.734822115411,
-      "n": 284,
-      "p_value": 1.8308908842e-49
+      "rho": 0.750663060599,
+      "n": 376,
+      "p_value": 2.61130547238e-69
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "xgc_per90",
-      "rho": -0.166334159276,
-      "n": 284,
-      "p_value": 0.00494870455605
+      "rho": -0.182739883217,
+      "n": 376,
+      "p_value": 0.000368466988044
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.215181588865,
-      "n": 284,
-      "p_value": 0.000258994040932
+      "rho": -0.132248779785,
+      "n": 376,
+      "p_value": 0.0102539534239
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.189122769279,
-      "n": 284,
-      "p_value": 0.00136456911655
+      "rho": 0.193202269364,
+      "n": 376,
+      "p_value": 0.000163619754959
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.59310699917,
-      "n": 94,
-      "p_value": 2.99882006547e-10
+      "rho": -0.164346074137,
+      "n": 186,
+      "p_value": 0.0249914137758
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "bps_per90",
-      "rho": 0.500267405272,
-      "n": 284,
-      "p_value": 2.16051231618e-19
+      "rho": 0.449823239303,
+      "n": 376,
+      "p_value": 3.95882712219e-20
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "tackles_per90",
-      "rho": -0.496789798556,
-      "n": 94,
-      "p_value": 3.52727544177e-7
+      "rho": -0.0859620341065,
+      "n": 186,
+      "p_value": 0.243362500755
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "recoveries_per90",
-      "rho": -0.454386817598,
-      "n": 94,
-      "p_value": 4.21854182252e-6
+      "rho": -0.111104242696,
+      "n": 186,
+      "p_value": 0.131114102875
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "cbi_per90",
-      "rho": -0.534004412043,
-      "n": 94,
-      "p_value": 2.97850655658e-8
+      "rho": -0.163927165565,
+      "n": 186,
+      "p_value": 0.0253685968911
     },
     {
       "group": "MID",
       "a": "goals_per90",
       "b": "minutes_reliability",
-      "rho": 0.0382927032513,
-      "n": 284,
-      "p_value": 0.520412425011
+      "rho": -0.13282681931,
+      "n": 373,
+      "p_value": 0.010226048866
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "bonus_per90",
-      "rho": 0.591073336202,
-      "n": 284,
-      "p_value": 3.82216622695e-28
+      "rho": 0.534883737857,
+      "n": 376,
+      "p_value": 3.26767727704e-29
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "xgc_per90",
-      "rho": -0.320101075221,
-      "n": 284,
-      "p_value": 3.45869518718e-8
+      "rho": -0.258633439892,
+      "n": 376,
+      "p_value": 3.67298226954e-7
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.317290073886,
-      "n": 284,
-      "p_value": 4.61988105302e-8
+      "rho": -0.0978817024226,
+      "n": 376,
+      "p_value": 0.0579292721523
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.348537011074,
-      "n": 284,
-      "p_value": 1.5590712596e-9
+      "rho": 0.334835821221,
+      "n": 376,
+      "p_value": 2.6568949812e-11
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.30741443155,
-      "n": 94,
-      "p_value": 0.00257864550104
+      "rho": -0.105931487425,
+      "n": 186,
+      "p_value": 0.150143232966
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "bps_per90",
-      "rho": 0.589964396112,
-      "n": 284,
-      "p_value": 5.08452333445e-28
+      "rho": 0.457677067681,
+      "n": 376,
+      "p_value": 7.26619006441e-21
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "tackles_per90",
-      "rho": -0.260641199356,
-      "n": 94,
-      "p_value": 0.0111738167638
+      "rho": -0.059274761456,
+      "n": 186,
+      "p_value": 0.421594955536
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "recoveries_per90",
-      "rho": -0.121441343829,
-      "n": 94,
-      "p_value": 0.243620477395
+      "rho": -0.0191443520505,
+      "n": 186,
+      "p_value": 0.795359179335
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "cbi_per90",
-      "rho": -0.348653481498,
-      "n": 94,
-      "p_value": 0.000573556041713
+      "rho": -0.151192157892,
+      "n": 186,
+      "p_value": 0.0394040342116
     },
     {
       "group": "MID",
       "a": "assists_per90",
       "b": "minutes_reliability",
-      "rho": 0.144441970687,
-      "n": 284,
-      "p_value": 0.0148411285056
+      "rho": -0.0435216367156,
+      "n": 373,
+      "p_value": 0.401964199279
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "xgc_per90",
-      "rho": -0.321525559919,
-      "n": 284,
-      "p_value": 2.98338675827e-8
+      "rho": -0.333862715798,
+      "n": 376,
+      "p_value": 3.05549417581e-11
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.283482546571,
-      "n": 284,
-      "p_value": 1.19630718135e-6
+      "rho": -0.197323506749,
+      "n": 376,
+      "p_value": 0.000117425880229
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.331325080801,
-      "n": 284,
-      "p_value": 1.056648638e-8
+      "rho": 0.28425644547,
+      "n": 376,
+      "p_value": 2.02651934699e-8
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.207401038941,
-      "n": 94,
-      "p_value": 0.0448787318683
+      "rho": -0.00798527878895,
+      "n": 186,
+      "p_value": 0.91385905965
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "bps_per90",
-      "rho": 0.772287278771,
-      "n": 284,
-      "p_value": 1.66933007108e-57
+      "rho": 0.575538606552,
+      "n": 376,
+      "p_value": 1.50595741607e-34
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "tackles_per90",
-      "rho": -0.191795568355,
-      "n": 94,
-      "p_value": 0.0640432012775
+      "rho": -0.0301294601615,
+      "n": 186,
+      "p_value": 0.683102122111
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "recoveries_per90",
-      "rho": -0.0886694168993,
-      "n": 94,
-      "p_value": 0.395405671676
+      "rho": 0.0690425728488,
+      "n": 186,
+      "p_value": 0.349074795398
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "cbi_per90",
-      "rho": -0.275414881579,
-      "n": 94,
-      "p_value": 0.00721640133739
+      "rho": -0.100422239229,
+      "n": 186,
+      "p_value": 0.172632390423
     },
     {
       "group": "MID",
       "a": "bonus_per90",
       "b": "minutes_reliability",
-      "rho": 0.170640700553,
-      "n": 284,
-      "p_value": 0.00392423852688
+      "rho": -0.0271758801142,
+      "n": 373,
+      "p_value": 0.600843116994
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
-      "rho": 0.816425153674,
-      "n": 284,
-      "p_value": 3.24398173256e-69
+      "rho": 0.652571683114,
+      "n": 376,
+      "p_value": 5.45524409187e-47
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.830644869777,
-      "n": 284,
-      "p_value": 1.10682131794e-73
+      "rho": -0.648423707412,
+      "n": 376,
+      "p_value": 3.15728938028e-46
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.22306108442,
-      "n": 94,
-      "p_value": 0.0306932044075
+      "rho": 0.00774129780054,
+      "n": 186,
+      "p_value": 0.916481290946
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "bps_per90",
-      "rho": -0.418042418543,
-      "n": 284,
-      "p_value": 1.93251545022e-13
+      "rho": -0.299357925904,
+      "n": 376,
+      "p_value": 3.18468602062e-9
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "tackles_per90",
-      "rho": 0.178123758263,
-      "n": 94,
-      "p_value": 0.0858637862614
+      "rho": 0.120061824176,
+      "n": 186,
+      "p_value": 0.102617041593
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "recoveries_per90",
-      "rho": 0.110139796987,
-      "n": 94,
-      "p_value": 0.290613703611
+      "rho": -0.0256814450934,
+      "n": 186,
+      "p_value": 0.727881875039
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "cbi_per90",
-      "rho": 0.245703139111,
-      "n": 94,
-      "p_value": 0.0169854919094
+      "rho": -0.011591555403,
+      "n": 186,
+      "p_value": 0.875223336056
     },
     {
       "group": "MID",
       "a": "xgc_per90",
       "b": "minutes_reliability",
-      "rho": -0.0508806221236,
-      "n": 284,
-      "p_value": 0.392979087259
+      "rho": 0.0777459927261,
+      "n": 373,
+      "p_value": 0.133937430195
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.742718658951,
-      "n": 284,
-      "p_value": 4.84158488787e-51
+      "rho": -0.531313740722,
+      "n": 376,
+      "p_value": 8.89100916727e-29
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.268272947296,
-      "n": 94,
-      "p_value": 0.00894078170583
+      "rho": 0.00226840711355,
+      "n": 186,
+      "p_value": 0.975486116404
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
-      "rho": -0.411729775421,
-      "n": 284,
-      "p_value": 4.78556607753e-13
+      "rho": -0.24361384087,
+      "n": 376,
+      "p_value": 1.75008517111e-6
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
-      "rho": 0.223176678828,
-      "n": 94,
-      "p_value": 0.0306045630462
+      "rho": 0.0484550921226,
+      "n": 186,
+      "p_value": 0.511328581158
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
-      "rho": 0.191229274284,
-      "n": 94,
-      "p_value": 0.0648475304382
+      "rho": 0.030404446924,
+      "n": 186,
+      "p_value": 0.6803678021
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
-      "rho": 0.206617779865,
-      "n": 94,
-      "p_value": 0.0457116520753
+      "rho": -0.0373877117218,
+      "n": 186,
+      "p_value": 0.612407292016
     },
     {
       "group": "MID",
       "a": "goals_conceded_per90",
       "b": "minutes_reliability",
-      "rho": -0.00627272181973,
-      "n": 284,
-      "p_value": 0.916181717351
+      "rho": -0.00808972962171,
+      "n": 373,
+      "p_value": 0.876256269063
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "saves_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "defensive_contribution_per90",
-      "rho": -0.224188129899,
-      "n": 94,
-      "p_value": 0.0298381345731
+      "rho": 0.0166109053478,
+      "n": 186,
+      "p_value": 0.82195525138
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "bps_per90",
-      "rho": 0.483645260067,
-      "n": 284,
-      "p_value": 4.680185335e-18
+      "rho": 0.357689627602,
+      "n": 376,
+      "p_value": 8.63292308701e-13
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "tackles_per90",
-      "rho": -0.25794169707,
-      "n": 94,
-      "p_value": 0.0120729376893
+      "rho": -0.0862508282249,
+      "n": 186,
+      "p_value": 0.241776746342
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "recoveries_per90",
-      "rho": 0.0179821551132,
-      "n": 94,
-      "p_value": 0.863418152976
+      "rho": 0.0992874437399,
+      "n": 186,
+      "p_value": 0.177560050943
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "cbi_per90",
-      "rho": -0.283199075245,
-      "n": 94,
-      "p_value": 0.0056775884657
+      "rho": -0.00184916915903,
+      "n": 186,
+      "p_value": 0.980015628286
     },
     {
       "group": "MID",
       "a": "clean_sheet_prob",
       "b": "minutes_reliability",
-      "rho": 0.0146373075321,
-      "n": 284,
-      "p_value": 0.805993794519
+      "rho": -0.0557136377142,
+      "n": 373,
+      "p_value": 0.283167332923
     },
     {
       "group": "MID",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 94,
+      "n": 186,
       "p_value": null
     },
     {
@@ -3747,7 +3748,7 @@
       "a": "saves_per90",
       "b": "bps_per90",
       "rho": null,
-      "n": 284,
+      "n": 376,
       "p_value": null
     },
     {
@@ -3755,7 +3756,7 @@
       "a": "saves_per90",
       "b": "tackles_per90",
       "rho": null,
-      "n": 94,
+      "n": 186,
       "p_value": null
     },
     {
@@ -3763,7 +3764,7 @@
       "a": "saves_per90",
       "b": "recoveries_per90",
       "rho": null,
-      "n": 94,
+      "n": 186,
       "p_value": null
     },
     {
@@ -3771,7 +3772,7 @@
       "a": "saves_per90",
       "b": "cbi_per90",
       "rho": null,
-      "n": 94,
+      "n": 186,
       "p_value": null
     },
     {
@@ -3779,927 +3780,927 @@
       "a": "saves_per90",
       "b": "minutes_reliability",
       "rho": null,
-      "n": 284,
+      "n": 373,
       "p_value": null
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
-      "rho": 0.0603619549904,
-      "n": 94,
-      "p_value": 0.563312813194
+      "rho": 0.119911490605,
+      "n": 186,
+      "p_value": 0.103051258394
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
-      "rho": 0.881761369794,
-      "n": 94,
-      "p_value": 8.8941337993e-32
+      "rho": 0.672271595657,
+      "n": 186,
+      "p_value": 8.13076827253e-26
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
-      "rho": 0.754202940433,
-      "n": 94,
-      "p_value": 1.7066395795e-18
+      "rho": 0.75479077095,
+      "n": 186,
+      "p_value": 1.56850692177e-35
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
-      "rho": 0.838702452769,
-      "n": 94,
-      "p_value": 5.14914442727e-26
+      "rho": 0.705835453776,
+      "n": 186,
+      "p_value": 2.325108912e-29
     },
     {
       "group": "MID",
       "a": "defensive_contribution_per90",
       "b": "minutes_reliability",
-      "rho": 0.0910959473183,
-      "n": 94,
-      "p_value": 0.382549617102
+      "rho": -0.0465829111896,
+      "n": 183,
+      "p_value": 0.531194242266
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "tackles_per90",
-      "rho": 0.0297005382365,
-      "n": 94,
-      "p_value": 0.776282221177
+      "rho": 0.152949097263,
+      "n": 186,
+      "p_value": 0.037145228156
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "recoveries_per90",
-      "rho": 0.206112054329,
-      "n": 94,
-      "p_value": 0.0462562174734
+      "rho": 0.205163244995,
+      "n": 186,
+      "p_value": 0.00496745893483
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "cbi_per90",
-      "rho": -0.0869342195571,
-      "n": 94,
-      "p_value": 0.404754461148
+      "rho": -0.141046407545,
+      "n": 186,
+      "p_value": 0.0548251112232
     },
     {
       "group": "MID",
       "a": "bps_per90",
       "b": "minutes_reliability",
-      "rho": 0.156310099275,
-      "n": 284,
-      "p_value": 0.00831984505454
+      "rho": 0.155020680759,
+      "n": 373,
+      "p_value": 0.00268154103499
     },
     {
       "group": "MID",
       "a": "tackles_per90",
       "b": "recoveries_per90",
-      "rho": 0.587515803923,
-      "n": 94,
-      "p_value": 4.82218257163e-10
+      "rho": 0.285250026125,
+      "n": 186,
+      "p_value": 0.0000793440413485
     },
     {
       "group": "MID",
       "a": "tackles_per90",
       "b": "cbi_per90",
-      "rho": 0.663157894737,
-      "n": 94,
-      "p_value": 3.28170788887e-13
+      "rho": 0.364709256046,
+      "n": 186,
+      "p_value": 3.09083576858e-7
     },
     {
       "group": "MID",
       "a": "tackles_per90",
       "b": "minutes_reliability",
-      "rho": 0.036513515564,
-      "n": 94,
-      "p_value": 0.726795371672
+      "rho": -0.0907750309912,
+      "n": 183,
+      "p_value": 0.221672730784
     },
     {
       "group": "MID",
       "a": "recoveries_per90",
       "b": "cbi_per90",
-      "rho": 0.380370624571,
-      "n": 94,
-      "p_value": 0.000155781350789
+      "rho": 0.24383361352,
+      "n": 186,
+      "p_value": 0.000797113563256
     },
     {
       "group": "MID",
       "a": "recoveries_per90",
       "b": "minutes_reliability",
-      "rho": 0.160619010293,
-      "n": 94,
-      "p_value": 0.121988147212
+      "rho": -0.0223431745958,
+      "n": 183,
+      "p_value": 0.764009913109
     },
     {
       "group": "MID",
       "a": "cbi_per90",
       "b": "minutes_reliability",
-      "rho": 0.0855184969788,
-      "n": 94,
-      "p_value": 0.412477429396
+      "rho": 0.0142699913442,
+      "n": 183,
+      "p_value": 0.847955367077
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xa_per90",
-      "rho": 0.0805402930403,
-      "n": 64,
-      "p_value": 0.526960721492
+      "rho": -0.0319801143455,
+      "n": 84,
+      "p_value": 0.772746179523
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xgi_per90",
-      "rho": 0.953754578755,
-      "n": 64,
-      "p_value": 4.54973562978e-34
+      "rho": 0.94665863451,
+      "n": 84,
+      "p_value": 4.33940055998e-42
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "goals_per90",
-      "rho": 0.755128205128,
-      "n": 64,
-      "p_value": 5.64509834062e-13
+      "rho": 0.628145256176,
+      "n": 84,
+      "p_value": 1.59502110274e-10
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "assists_per90",
-      "rho": 0.128952490828,
-      "n": 64,
-      "p_value": 0.309850740072
+      "rho": -0.0651534861138,
+      "n": 84,
+      "p_value": 0.555981866341
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "bonus_per90",
-      "rho": 0.419688644689,
-      "n": 64,
-      "p_value": 0.000556012578283
+      "rho": 0.467638517862,
+      "n": 84,
+      "p_value": 7.29106339425e-6
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "xgc_per90",
-      "rho": -0.407967032967,
-      "n": 64,
-      "p_value": 0.000819038092274
+      "rho": -0.267147246876,
+      "n": 84,
+      "p_value": 0.014026580014
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.438827838828,
-      "n": 64,
-      "p_value": 0.000286429816335
+      "rho": -0.21882799693,
+      "n": 84,
+      "p_value": 0.045516592255
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.535119047619,
-      "n": 64,
-      "p_value": 5.22379388407e-6
+      "rho": 0.326598798216,
+      "n": 84,
+      "p_value": 0.00242869983008
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.26185770751,
-      "n": 23,
-      "p_value": 0.227434771936
+      "rho": -0.32948109367,
+      "n": 43,
+      "p_value": 0.0309641605302
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "bps_per90",
-      "rho": 0.486217948718,
-      "n": 64,
-      "p_value": 0.0000463595442325
+      "rho": 0.415773167694,
+      "n": 84,
+      "p_value": 0.0000838389467161
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "tackles_per90",
-      "rho": -0.356719367589,
-      "n": 23,
-      "p_value": 0.0947510094156
+      "rho": -0.0837972332632,
+      "n": 43,
+      "p_value": 0.593172479632
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "recoveries_per90",
-      "rho": -0.306324110672,
-      "n": 23,
-      "p_value": 0.15514347086
+      "rho": -0.37362181046,
+      "n": 43,
+      "p_value": 0.0135904316803
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "cbi_per90",
-      "rho": 0.098814229249,
-      "n": 23,
-      "p_value": 0.653742259477
+      "rho": -0.148209709922,
+      "n": 43,
+      "p_value": 0.342880087987
     },
     {
       "group": "FWD",
       "a": "xg_per90",
       "b": "minutes_reliability",
-      "rho": 0.216966769322,
-      "n": 64,
-      "p_value": 0.0850507466966
+      "rho": 0.204521759612,
+      "n": 83,
+      "p_value": 0.0636418117036
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "xgi_per90",
-      "rho": 0.328296703297,
-      "n": 64,
-      "p_value": 0.00808611584643
+      "rho": 0.208586037831,
+      "n": 84,
+      "p_value": 0.0568999668254
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "goals_per90",
-      "rho": 0.0741758241758,
-      "n": 64,
-      "p_value": 0.560220234609
+      "rho": 0.0259352718976,
+      "n": 84,
+      "p_value": 0.814846488427
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "assists_per90",
-      "rho": 0.490784204704,
-      "n": 64,
-      "p_value": 0.0000383377417351
+      "rho": 0.455566076517,
+      "n": 84,
+      "p_value": 0.000013344331708
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "bonus_per90",
-      "rho": 0.24304029304,
-      "n": 64,
-      "p_value": 0.0529750056789
+      "rho": 0.156432683259,
+      "n": 84,
+      "p_value": 0.155313451059
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "xgc_per90",
-      "rho": -0.227564102564,
-      "n": 64,
-      "p_value": 0.0705380696901
+      "rho": -0.137508226775,
+      "n": 84,
+      "p_value": 0.21227478551
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.126098901099,
-      "n": 64,
-      "p_value": 0.320768882425
+      "rho": -0.0079031572142,
+      "n": 84,
+      "p_value": 0.943119683134
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.247206959707,
-      "n": 64,
-      "p_value": 0.0489117228105
+      "rho": 0.113785247956,
+      "n": 84,
+      "p_value": 0.302735657388
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.313241106719,
-      "n": 23,
-      "p_value": 0.145558908924
+      "rho": 0.379084967591,
+      "n": 43,
+      "p_value": 0.0121785793451
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "bps_per90",
-      "rho": 0.34913003663,
-      "n": 64,
-      "p_value": 0.00469048257376
+      "rho": 0.297510745566,
+      "n": 84,
+      "p_value": 0.00598862942921
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "tackles_per90",
-      "rho": 0.404150197628,
-      "n": 23,
-      "p_value": 0.0557917568982
+      "rho": 0.571824698907,
+      "n": 43,
+      "p_value": 0.0000618498297354
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "recoveries_per90",
-      "rho": 0.467391304348,
-      "n": 23,
-      "p_value": 0.0245279432352
+      "rho": 0.303456101258,
+      "n": 43,
+      "p_value": 0.0479083879917
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "cbi_per90",
-      "rho": -0.0879446640316,
-      "n": 23,
-      "p_value": 0.689877024664
+      "rho": 0.164053349571,
+      "n": 43,
+      "p_value": 0.293160852726
     },
     {
       "group": "FWD",
       "a": "xa_per90",
       "b": "minutes_reliability",
-      "rho": 0.0179260293742,
-      "n": 64,
-      "p_value": 0.888191458001
+      "rho": -0.273651678085,
+      "n": 83,
+      "p_value": 0.0123056483371
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "goals_per90",
-      "rho": 0.744597069597,
-      "n": 64,
-      "p_value": 1.75115977961e-12
+      "rho": 0.587606644691,
+      "n": 84,
+      "p_value": 4.20285276285e-9
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "assists_per90",
-      "rho": 0.284968519326,
-      "n": 64,
-      "p_value": 0.022467903358
+      "rho": 0.0819463607011,
+      "n": 84,
+      "p_value": 0.458666289863
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "bonus_per90",
-      "rho": 0.488095238095,
-      "n": 64,
-      "p_value": 0.0000428902122545
+      "rho": 0.48243521229,
+      "n": 84,
+      "p_value": 3.36643624247e-6
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "xgc_per90",
-      "rho": -0.444597069597,
-      "n": 64,
-      "p_value": 0.00023270357206
+      "rho": -0.323397792852,
+      "n": 84,
+      "p_value": 0.00269400950709
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.444184981685,
-      "n": 64,
-      "p_value": 0.000236211080463
+      "rho": -0.260269534791,
+      "n": 84,
+      "p_value": 0.0168011204692
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.580402930403,
-      "n": 64,
-      "p_value": 4.98179487098e-7
+      "rho": 0.376369342918,
+      "n": 84,
+      "p_value": 0.000417956760198
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.162055335968,
-      "n": 23,
-      "p_value": 0.460056701545
+      "rho": -0.1782544761,
+      "n": 43,
+      "p_value": 0.252774247871
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "bps_per90",
-      "rho": 0.593406593407,
-      "n": 64,
-      "p_value": 2.37147444744e-7
+      "rho": 0.516232237691,
+      "n": 84,
+      "p_value": 5.00185849543e-7
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "tackles_per90",
-      "rho": -0.264822134387,
-      "n": 23,
-      "p_value": 0.222023455046
+      "rho": 0.0697148492429,
+      "n": 43,
+      "p_value": 0.656882732709
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "recoveries_per90",
-      "rho": -0.166007905138,
-      "n": 23,
-      "p_value": 0.449035549108
+      "rho": -0.235831604307,
+      "n": 43,
+      "p_value": 0.127897172407
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "cbi_per90",
-      "rho": 0.120553359684,
-      "n": 23,
-      "p_value": 0.583748920769
+      "rho": -0.132945586878,
+      "n": 43,
+      "p_value": 0.395394391567
     },
     {
       "group": "FWD",
       "a": "xgi_per90",
       "b": "minutes_reliability",
-      "rho": 0.234228871683,
-      "n": 64,
-      "p_value": 0.0624754690607
+      "rho": 0.174554467823,
+      "n": 83,
+      "p_value": 0.114498408267
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "assists_per90",
-      "rho": 0.100881511823,
-      "n": 64,
-      "p_value": 0.427677488789
+      "rho": 0.0603246624331,
+      "n": 84,
+      "p_value": 0.585686710496
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "bonus_per90",
-      "rho": 0.738827838828,
-      "n": 64,
-      "p_value": 3.18169734788e-12
+      "rho": 0.810789041357,
+      "n": 84,
+      "p_value": 9.11015903844e-21
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "xgc_per90",
-      "rho": -0.32326007326,
-      "n": 64,
-      "p_value": 0.00917483115864
+      "rho": -0.233441107939,
+      "n": 84,
+      "p_value": 0.0325909769221
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.306547619048,
-      "n": 64,
-      "p_value": 0.0137520309885
+      "rho": -0.12756032957,
+      "n": 84,
+      "p_value": 0.247549121991
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.477747252747,
-      "n": 64,
-      "p_value": 0.0000654847012943
+      "rho": 0.31079191535,
+      "n": 84,
+      "p_value": 0.00400973237624
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.208498023715,
-      "n": 23,
-      "p_value": 0.339725347838
+      "rho": -0.295956943524,
+      "n": 43,
+      "p_value": 0.0539863377353
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "bps_per90",
-      "rho": 0.781547619048,
-      "n": 64,
-      "p_value": 2.52112283358e-14
+      "rho": 0.805087010793,
+      "n": 84,
+      "p_value": 2.7226916556e-20
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "tackles_per90",
-      "rho": -0.216403162055,
-      "n": 23,
-      "p_value": 0.321307698457
+      "rho": -0.0126381798567,
+      "n": 43,
+      "p_value": 0.93589115887
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "recoveries_per90",
-      "rho": -0.256916996047,
-      "n": 23,
-      "p_value": 0.236645677018
+      "rho": -0.435073921698,
+      "n": 43,
+      "p_value": 0.00354919412991
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "cbi_per90",
-      "rho": 0.0928853754941,
-      "n": 23,
-      "p_value": 0.673365118901
+      "rho": 0.0565439357229,
+      "n": 43,
+      "p_value": 0.718738076041
     },
     {
       "group": "FWD",
       "a": "goals_per90",
       "b": "minutes_reliability",
-      "rho": 0.260854634342,
-      "n": 64,
-      "p_value": 0.0373515437748
+      "rho": 0.236014174546,
+      "n": 83,
+      "p_value": 0.0317116062117
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "bonus_per90",
-      "rho": 0.269513453398,
-      "n": 64,
-      "p_value": 0.0312686749853
+      "rho": 0.195765564604,
+      "n": 84,
+      "p_value": 0.074318452795
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "xgc_per90",
-      "rho": -0.0870062970785,
-      "n": 64,
-      "p_value": 0.494208894492
+      "rho": 0.0829536477273,
+      "n": 84,
+      "p_value": 0.453143241277
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.0431825990237,
-      "n": 64,
-      "p_value": 0.734752759331
+      "rho": -0.0450767455503,
+      "n": 84,
+      "p_value": 0.683896424718
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.199336005886,
-      "n": 64,
-      "p_value": 0.114301323846
+      "rho": 0.0689838993734,
+      "n": 84,
+      "p_value": 0.532944300659
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.0445104075302,
-      "n": 23,
-      "p_value": 0.840182758077
+      "rho": 0.348235944736,
+      "n": 43,
+      "p_value": 0.0221144503073
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "bps_per90",
-      "rho": 0.382850603539,
-      "n": 64,
-      "p_value": 0.00179425985263
+      "rho": 0.329430311025,
+      "n": 84,
+      "p_value": 0.0022138382156
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "tackles_per90",
-      "rho": 0.329377015724,
-      "n": 23,
-      "p_value": 0.124848110774
+      "rho": 0.382003831358,
+      "n": 43,
+      "p_value": 0.011476936787
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "recoveries_per90",
-      "rho": 0.276953646855,
-      "n": 23,
-      "p_value": 0.200772419948
+      "rho": 0.361331809983,
+      "n": 43,
+      "p_value": 0.0172823704474
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "cbi_per90",
-      "rho": -0.272997166185,
-      "n": 23,
-      "p_value": 0.207545886563
+      "rho": -0.0231992884439,
+      "n": 43,
+      "p_value": 0.882607230665
     },
     {
       "group": "FWD",
       "a": "assists_per90",
       "b": "minutes_reliability",
-      "rho": 0.22134197418,
-      "n": 64,
-      "p_value": 0.0787969790621
+      "rho": -0.0128143362349,
+      "n": 83,
+      "p_value": 0.908462278241
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "xgc_per90",
-      "rho": -0.393269230769,
-      "n": 64,
-      "p_value": 0.00130561280987
+      "rho": -0.259546533201,
+      "n": 84,
+      "p_value": 0.0171185500402
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "goals_conceded_per90",
-      "rho": -0.296062271062,
-      "n": 64,
-      "p_value": 0.0175329615962
+      "rho": -0.112456495634,
+      "n": 84,
+      "p_value": 0.308453568989
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "clean_sheet_prob",
-      "rho": 0.491483516484,
-      "n": 64,
-      "p_value": 0.0000372294007123
+      "rho": 0.270359281535,
+      "n": 84,
+      "p_value": 0.0128730488103
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "defensive_contribution_per90",
-      "rho": -0.108695652174,
-      "n": 23,
-      "p_value": 0.621530240295
+      "rho": -0.209945219992,
+      "n": 43,
+      "p_value": 0.176615073302
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "bps_per90",
-      "rho": 0.8586996337,
-      "n": 64,
-      "p_value": 1.16867559624e-19
+      "rho": 0.808475111515,
+      "n": 84,
+      "p_value": 1.42689313305e-20
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "tackles_per90",
-      "rho": -0.0405138339921,
-      "n": 23,
-      "p_value": 0.854376625427
+      "rho": 0.0853185849454,
+      "n": 43,
+      "p_value": 0.586455977313
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "recoveries_per90",
-      "rho": -0.0237154150198,
-      "n": 23,
-      "p_value": 0.914465926277
+      "rho": -0.355968338024,
+      "n": 43,
+      "p_value": 0.01914097096
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "cbi_per90",
-      "rho": -0.0335968379447,
-      "n": 23,
-      "p_value": 0.879043487667
+      "rho": 0.0794726834533,
+      "n": 43,
+      "p_value": 0.61244720399
     },
     {
       "group": "FWD",
       "a": "bonus_per90",
       "b": "minutes_reliability",
-      "rho": 0.244233564961,
-      "n": 64,
-      "p_value": 0.0517841849863
+      "rho": 0.175071305758,
+      "n": 83,
+      "p_value": 0.113412527559
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "goals_conceded_per90",
-      "rho": 0.895283882784,
-      "n": 64,
-      "p_value": 1.89971866741e-23
+      "rho": 0.683332828787,
+      "n": 84,
+      "p_value": 7.96255813047e-13
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.852838827839,
-      "n": 64,
-      "p_value": 3.75988467953e-19
+      "rho": -0.612675913739,
+      "n": 84,
+      "p_value": 5.87138927486e-10
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.187747035573,
-      "n": 23,
-      "p_value": 0.390971472966
+      "rho": 0.191925688038,
+      "n": 43,
+      "p_value": 0.217592076961
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "bps_per90",
-      "rho": -0.422161172161,
-      "n": 64,
-      "p_value": 0.000511467579522
+      "rho": -0.31734492936,
+      "n": 84,
+      "p_value": 0.0032676800024
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "tackles_per90",
-      "rho": 0.199604743083,
-      "n": 23,
-      "p_value": 0.36117753465
+      "rho": 0.159564497507,
+      "n": 43,
+      "p_value": 0.306748218821
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "recoveries_per90",
-      "rho": -0.00494071146245,
-      "n": 23,
-      "p_value": 0.982150033448
+      "rho": 0.042288087868,
+      "n": 43,
+      "p_value": 0.787736783731
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "cbi_per90",
-      "rho": 0.183794466403,
-      "n": 23,
-      "p_value": 0.401201090396
+      "rho": 0.127204754718,
+      "n": 43,
+      "p_value": 0.416293946307
     },
     {
       "group": "FWD",
       "a": "xgc_per90",
       "b": "minutes_reliability",
-      "rho": 0.00162547648221,
-      "n": 64,
-      "p_value": 0.989829225854
+      "rho": -0.00181300534213,
+      "n": 83,
+      "p_value": 0.98702156046
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "clean_sheet_prob",
-      "rho": -0.78195970696,
-      "n": 64,
-      "p_value": 2.39369739889e-14
+      "rho": -0.596113930803,
+      "n": 84,
+      "p_value": 2.19625278092e-9
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "defensive_contribution_per90",
-      "rho": 0.324110671937,
-      "n": 23,
-      "p_value": 0.131358277983
+      "rho": 0.067787645268,
+      "n": 43,
+      "p_value": 0.665805205472
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "bps_per90",
-      "rho": -0.342353479853,
-      "n": 64,
-      "p_value": 0.00562182834066
+      "rho": -0.197357296972,
+      "n": 84,
+      "p_value": 0.0719475803256
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "tackles_per90",
-      "rho": 0.251976284585,
-      "n": 23,
-      "p_value": 0.246097516654
+      "rho": 0.257119553304,
+      "n": 43,
+      "p_value": 0.0960168148004
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "recoveries_per90",
-      "rho": 0.22628458498,
-      "n": 23,
-      "p_value": 0.299154247516
+      "rho": -0.0959540712215,
+      "n": 43,
+      "p_value": 0.540480306912
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "cbi_per90",
-      "rho": 0.141304347826,
-      "n": 23,
-      "p_value": 0.520146278644
+      "rho": 0.033858595237,
+      "n": 43,
+      "p_value": 0.829342500686
     },
     {
       "group": "FWD",
       "a": "goals_conceded_per90",
       "b": "minutes_reliability",
-      "rho": -0.0984672443659,
-      "n": 64,
-      "p_value": 0.438873903681
+      "rho": -0.228543134055,
+      "n": 83,
+      "p_value": 0.0376964743859
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "saves_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "defensive_contribution_per90",
-      "rho": -0.338932806324,
-      "n": 23,
-      "p_value": 0.113635851022
+      "rho": -0.346463255029,
+      "n": 43,
+      "p_value": 0.0228480595466
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "bps_per90",
-      "rho": 0.521840659341,
-      "n": 64,
-      "p_value": 9.77379873059e-6
+      "rho": 0.345157158844,
+      "n": 84,
+      "p_value": 0.00130243544849
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "tackles_per90",
-      "rho": -0.398221343874,
-      "n": 23,
-      "p_value": 0.059836297256
+      "rho": -0.353115930204,
+      "n": 43,
+      "p_value": 0.0201960918473
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "recoveries_per90",
-      "rho": -0.156126482213,
-      "n": 23,
-      "p_value": 0.476847737653
+      "rho": -0.179120257898,
+      "n": 43,
+      "p_value": 0.250439275439
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "cbi_per90",
-      "rho": -0.23814229249,
-      "n": 23,
-      "p_value": 0.273850672881
+      "rho": -0.22223063443,
+      "n": 43,
+      "p_value": 0.152056955638
     },
     {
       "group": "FWD",
       "a": "clean_sheet_prob",
       "b": "minutes_reliability",
-      "rho": 0.119277922145,
-      "n": 64,
-      "p_value": 0.347847023751
+      "rho": 0.0949614251583,
+      "n": 83,
+      "p_value": 0.393131923056
     },
     {
       "group": "FWD",
       "a": "saves_per90",
       "b": "defensive_contribution_per90",
       "rho": null,
-      "n": 23,
+      "n": 43,
       "p_value": null
     },
     {
@@ -4707,7 +4708,7 @@
       "a": "saves_per90",
       "b": "bps_per90",
       "rho": null,
-      "n": 64,
+      "n": 84,
       "p_value": null
     },
     {
@@ -4715,7 +4716,7 @@
       "a": "saves_per90",
       "b": "tackles_per90",
       "rho": null,
-      "n": 23,
+      "n": 43,
       "p_value": null
     },
     {
@@ -4723,7 +4724,7 @@
       "a": "saves_per90",
       "b": "recoveries_per90",
       "rho": null,
-      "n": 23,
+      "n": 43,
       "p_value": null
     },
     {
@@ -4731,7 +4732,7 @@
       "a": "saves_per90",
       "b": "cbi_per90",
       "rho": null,
-      "n": 23,
+      "n": 43,
       "p_value": null
     },
     {
@@ -4739,128 +4740,128 @@
       "a": "saves_per90",
       "b": "minutes_reliability",
       "rho": null,
-      "n": 64,
+      "n": 83,
       "p_value": null
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "bps_per90",
-      "rho": 0.0998023715415,
-      "n": 23,
-      "p_value": 0.65049281191
+      "rho": 0.017372914155,
+      "n": 43,
+      "p_value": 0.911954863023
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "tackles_per90",
-      "rho": 0.758893280632,
-      "n": 23,
-      "p_value": 0.0000269576807886
+      "rho": 0.599176044056,
+      "n": 43,
+      "p_value": 0.0000218396301834
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "recoveries_per90",
-      "rho": 0.820158102767,
-      "n": 23,
-      "p_value": 1.66142459025e-6
+      "rho": 0.778894112764,
+      "n": 43,
+      "p_value": 7.71749477618e-10
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "cbi_per90",
-      "rho": 0.618577075099,
-      "n": 23,
-      "p_value": 0.00165304085224
+      "rho": 0.443554482149,
+      "n": 43,
+      "p_value": 0.00289052422817
     },
     {
       "group": "FWD",
       "a": "defensive_contribution_per90",
       "b": "minutes_reliability",
-      "rho": -0.0138339920949,
-      "n": 23,
-      "p_value": 0.950046507248
+      "rho": -0.195133512732,
+      "n": 42,
+      "p_value": 0.215570906205
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "tackles_per90",
-      "rho": 0.213438735178,
-      "n": 23,
-      "p_value": 0.328142171877
+      "rho": 0.269332028862,
+      "n": 43,
+      "p_value": 0.0807205137957
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "recoveries_per90",
-      "rho": 0.103754940711,
-      "n": 23,
-      "p_value": 0.637556964163
+      "rho": -0.087751095251,
+      "n": 43,
+      "p_value": 0.575788030602
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "cbi_per90",
-      "rho": 0.0938735177866,
-      "n": 23,
-      "p_value": 0.670079878815
+      "rho": 0.0507251886914,
+      "n": 43,
+      "p_value": 0.746669645147
     },
     {
       "group": "FWD",
       "a": "bps_per90",
       "b": "minutes_reliability",
-      "rho": 0.228390892768,
-      "n": 64,
-      "p_value": 0.0694948089835
+      "rho": 0.195916282669,
+      "n": 83,
+      "p_value": 0.0758882171988
     },
     {
       "group": "FWD",
       "a": "tackles_per90",
       "b": "recoveries_per90",
-      "rho": 0.630434782609,
-      "n": 23,
-      "p_value": 0.00126107754736
+      "rho": 0.394906304704,
+      "n": 43,
+      "p_value": 0.00877390100924
     },
     {
       "group": "FWD",
       "a": "tackles_per90",
       "b": "cbi_per90",
-      "rho": 0.20256916996,
-      "n": 23,
-      "p_value": 0.353941111118
+      "rho": 0.0744767053547,
+      "n": 43,
+      "p_value": 0.635039658058
     },
     {
       "group": "FWD",
       "a": "tackles_per90",
       "b": "minutes_reliability",
-      "rho": 0.046442687747,
-      "n": 23,
-      "p_value": 0.83333719957
+      "rho": -0.303204364319,
+      "n": 42,
+      "p_value": 0.0509488658077
     },
     {
       "group": "FWD",
       "a": "recoveries_per90",
       "b": "cbi_per90",
-      "rho": 0.192687747036,
-      "n": 23,
-      "p_value": 0.37839329225
+      "rho": -0.0582080558419,
+      "n": 43,
+      "p_value": 0.710814122262
     },
     {
       "group": "FWD",
       "a": "recoveries_per90",
       "b": "minutes_reliability",
-      "rho": -0.046442687747,
-      "n": 23,
-      "p_value": 0.83333719957
+      "rho": -0.17973940116,
+      "n": 42,
+      "p_value": 0.254704486826
     },
     {
       "group": "FWD",
       "a": "cbi_per90",
       "b": "minutes_reliability",
-      "rho": 0.107707509881,
-      "n": 23,
-      "p_value": 0.624722605764
+      "rho": 0.0710343949171,
+      "n": 42,
+      "p_value": 0.654854798474
     }
   ]
 }

@@ -14,9 +14,11 @@ import math
 from functools import lru_cache
 from pathlib import Path
 
+import polars as pl
 import pytest
 
 from web.export.contract import PlayersFile
+from web.export.current import load_current_actuals
 from web.export.players import ACTUAL_TOTALS, build_players
 
 PLAYERS_PATH = Path("data/web/v1/players.json")
@@ -43,9 +45,14 @@ def test_actuals_are_season_totals_not_the_latest_gameweek():
     else. That produced a row reading 0 minutes and 0 points beside 27
     goals, which is not a number anyone would query but is exactly the
     kind of thing a table renders without complaint.
+
+    `>= 1` rather than the original `>= 5`: that threshold was calibrated
+    against a season already well underway and fails outright at gw1-2,
+    when league-wide nobody has 5 yet. The join bug this guards against
+    shows up at the first goal, not the fifth.
     """
     file = _built()
-    scorers = [p for p in file.players if (p.actuals.get("goals_scored") or 0) >= 5]
+    scorers = [p for p in file.players if (p.actuals.get("goals_scored") or 0) >= 1]
 
     assert scorers, "expected some players with real goal tallies"
     for player in scorers:
@@ -59,15 +66,35 @@ def test_a_player_who_missed_the_latest_gameweek_still_has_his_metrics():
     rested in the last round — the players most worth looking at.
 
     The rates here are season-to-date and minutes-weighted, which is what
-    a player-level file means by "his xG per 90".
+    a player-level file means by "his xG per 90". Identifies the "rested
+    last round" population directly from data/current_season/ (played an
+    earlier gameweek, zero minutes in the latest one) rather than the
+    original `> 1500 minutes` proxy, which needs ~gw17 to hold true and
+    fails outright for a season that has only just started.
     """
-    file = _built()
-    rested = [
-        p for p in file.players
-        if (p.actuals.get("minutes") or 0) > 1500 and p.metrics["xg_per90"].value is not None
-    ]
+    current = load_current_actuals()
+    if current is None or current.height == 0:
+        pytest.skip("no current-season data on disk to find a rested player from")
+    latest_gw = current["gw"].max()
+    played_earlier = set(
+        current.filter((pl.col("gw") < latest_gw) & (pl.col("minutes") > 0))["element_id"].to_list()
+    )
+    played_latest = set(
+        current.filter((pl.col("gw") == latest_gw) & (pl.col("minutes") > 0))["element_id"].to_list()
+    )
+    rested_ids = played_earlier - played_latest
+    if not rested_ids:
+        pytest.skip("nobody who played an earlier gameweek sat out the latest one yet")
 
-    assert len(rested) > 100, "season rates should exist for every regular starter"
+    file = _built()
+    rested = [p for p in file.players if p.element_id in rested_ids]
+
+    assert rested, "expected at least one built player among the rested ids"
+    for player in rested:
+        assert player.metrics["xg_per90"].value is not None, (
+            f"{player.name} played an earlier gameweek but has a null season rate "
+            "after sitting out the latest one"
+        )
 
 
 def test_the_population_size_is_carried_once_per_group_not_per_player():

@@ -10,12 +10,12 @@ Trust these numbers.
 
 **Squad-level** (the real team's actual gw points, from
 `/entry/{id}/history/`, vs the shadow team's realized points,
-`squad/shadow.py:realized_points`): 13 observations at most, dominated by
-variance. A genuinely good model can sit at a bad rank after 13 gameweeks
-because one captain blanked twice. Log it, report it, and do **not**
-overhaul the model on the basis of it — that warning belongs in the report
-output itself (§6.3's explicit instruction), not just this docstring; see
-`evaluate_squad_level`'s `warning` field.
+`squad/shadow.py:realized_points`): a handful of observations for a long
+stretch of the season, dominated by variance. A genuinely good model can
+sit at a bad rank early on because one captain blanked twice. Log it,
+report it, and do **not** overhaul the model on the basis of it — that
+warning belongs in the report output itself (§6.3's explicit instruction),
+not just this docstring; see `evaluate_squad_level`'s `warning` field.
 
 **Degenerate freezes are excluded, not corrected.** A freeze whose
 projections are identical for every player predicted nothing, so metrics
@@ -29,11 +29,13 @@ prior. That was caught by hand; `projection_degeneracy` is what catches
 the next one automatically, at both player and squad level, and reports
 the exclusion in the gate rather than quietly shrinking the denominator.
 
-§6.5's launch gate is reported honestly rather than forced: with 0-1
-gameweeks of live data so far, most of its five criteria are correctly
-"not yet measurable," not a fabricated pass. Two of the five (baseline
-comparison on live data) are still flagged as not wired up yet — building
-the opponent-difficulty/kickoff-time-decorated live equivalent of
+§6.5's launch gate is reported live, honestly rather than forced: there is
+no fixed gameweek count a criterion must wait for before it can report
+PASS/FAIL — as soon as one real gameweek exists, a criterion that only
+needs that gameweek's data reports its real answer, not a placeholder.
+Two of the five (baseline comparison on live data) are still flagged as
+not wired up regardless of gameweek count — building the
+opponent-difficulty/kickoff-time-decorated live equivalent of
 `backtest/baselines.py`'s inputs is real, separate plumbing beyond this
 module's current scope. The fifth (§6.4's price-change hit rate) now calls
 `analytics/price_model.py` directly — built alongside this module rather
@@ -72,10 +74,11 @@ PRICE_MODEL_HORIZON_HOURS = 24  # FPL price changes land roughly once a day
 logger = logging.getLogger("papertrade.evaluate")
 
 SQUAD_LEVEL_VARIANCE_WARNING = (
-    "Squad-level comparison is at most 13 observations, dominated by variance "
-    "(§6.3): a genuinely good model can sit at a bad rank after 13 gameweeks "
-    "because one captain blanked twice. Treat this as a log, not a verdict -- "
-    "do not overhaul the model on the basis of these numbers alone."
+    "Squad-level comparison stays a handful of observations for a long stretch "
+    "of the season, dominated by variance (§6.3): a genuinely good model can sit "
+    "at a bad rank early on because one captain blanked twice. Treat this as a "
+    "log, not a verdict -- do not overhaul the model on the basis of these "
+    "numbers alone."
 )
 
 # A freeze whose projections carry no signal at all: every player assigned
@@ -101,7 +104,7 @@ DEGENERATE_FREEZE_POLICY = (
     "A freeze with zero projection variance is a null observation, not a bad "
     "prediction: every player received the same number, so MAE and rank "
     "correlation against it measure nothing about the model. Such gameweeks are "
-    "EXCLUDED from the evaluation and from §6.5's 13-gameweek count -- never "
+    "EXCLUDED from the evaluation and from §6.5's evaluated-gameweek count -- never "
     "corrected, re-frozen or back-filled, because the freeze is immutable by "
     "design (§6.1) and a repaired freeze is no longer a record of what was "
     "actually predicted before the deadline."
@@ -223,7 +226,8 @@ def evaluate_player_level(
     gameweek whose freeze assigned every player the same projection is not
     a gameweek the model got wrong -- it is a gameweek the model did not
     predict. Averaging its MAE in alongside real gameweeks, or counting it
-    toward §6.5's 13, would both overstate how much live evidence exists.
+    toward §6.5's evaluated count, would both overstate how much live
+    evidence exists.
 
     `skipped` is a different thing from `excluded`: skipped means there
     was nothing to evaluate (no freeze, no actuals), excluded means there
@@ -388,7 +392,8 @@ def _leakage_criterion(provenance: list[dict[str, Any]], n_gws: int, sufficient:
             ),
         }
     detail = f"all {len(provenance)} freeze(s) record a leakage assertion that ran and passed at freeze time."
-    return {"status": "PASS" if sufficient else "insufficient data", "detail": f"{n_gws}/13 gameweeks evaluated; {detail}"}
+    gw_word = "gameweek" if n_gws == 1 else "gameweeks"
+    return {"status": "PASS" if sufficient else "insufficient data", "detail": f"{n_gws} {gw_word} evaluated; {detail}"}
 
 
 def _manual_correction_criterion(
@@ -398,8 +403,9 @@ def _manual_correction_criterion(
     time; a freeze that predates the field says nothing either way and is
     reported as untracked rather than assumed clean."""
     n = squad_eval["n_gameweeks"]
+    gw_word = "gameweek" if n == 1 else "gameweeks"
     if not provenance:
-        return {"status": "insufficient data", "detail": f"{n}/13 gameweeks have both a freeze and recorded actuals; no freezes to inspect."}
+        return {"status": "insufficient data", "detail": f"{n} {gw_word} have both a freeze and recorded actuals; no freezes to inspect."}
 
     untracked = [p["gw"] for p in provenance if not p["records_manual_correction_field"]]
     corrected = [(p["gw"], p["manual_correction"]) for p in provenance if p["manual_correction"]]
@@ -414,14 +420,14 @@ def _manual_correction_criterion(
         return {
             "status": "not tracked",
             "detail": (
-                f"{n}/13 gameweeks have both a freeze and recorded actuals; "
+                f"{n} {gw_word} have both a freeze and recorded actuals; "
                 f"gw{', gw'.join(str(g) for g in untracked)} predate the manual-correction field and make no claim "
                 "either way. The field cannot be added retroactively — a freeze is immutable (§6.1)."
             ),
         }
     return {
         "status": "PASS" if sufficient else "insufficient data",
-        "detail": f"{n}/13 gameweeks; all {len(provenance)} freeze(s) declare no manual correction.",
+        "detail": f"{n} {gw_word}; all {len(provenance)} freeze(s) declare no manual correction.",
     }
 
 
@@ -436,12 +442,22 @@ def launch_gate_report(
     module docstring for exactly what's and isn't wired up yet.
 
     `excluded_gws` is reported rather than merely subtracted. A gate that
-    quietly said "1/13 gameweeks" after gw2 was dropped would look
-    identical to one where gw2 had never been frozen at all, and the
-    difference between those two is the whole reason the guard exists.
+    quietly said "1 gameweek" after gw2 was dropped would look identical to
+    one where gw2 had never been frozen at all, and the difference between
+    those two is the whole reason the guard exists.
+
+    There used to be a fixed 13-gameweek minimum before any criterion could
+    report PASS, mirroring §6.3's "roughly 13 observations" launch-decision
+    framing. That was a deliberately conservative floor, not a statistical
+    necessity for criteria that don't actually need 13 gameweeks to answer
+    honestly (a leakage assertion either fired or it didn't; a freeze either
+    declares a manual correction or it doesn't) — dropped at the operator's
+    direction 2026-09-02 so the gate reflects live data as it becomes
+    available rather than staying pinned to "insufficient data" for a third
+    of the season regardless of what the freezes actually show.
     """
     n_gws = len(player_eval_by_gw)
-    sufficient = n_gws >= 13
+    sufficient = n_gws >= 1  # any real live gameweek at all, not a fixed sample-size floor
     excluded_gws = excluded_gws or []
     freeze_provenance = freeze_provenance if freeze_provenance is not None else []
     exclusion_note = ""
@@ -466,17 +482,18 @@ def launch_gate_report(
             "carries little weight regardless of which side of 0.5 it lands on."
         )
 
+    gw_word = "gameweek" if n_gws == 1 else "gameweeks"
     criteria = {
         "beats_fixture_adjusted_trailing_mean_mae": {
             "status": "insufficient data" if not sufficient else "not wired to live baselines yet",
-            "detail": f"{n_gws}/13 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count.{exclusion_note}",
+            "detail": f"{n_gws} {gw_word} evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count.{exclusion_note}",
         },
         "beats_baselines_on_rank_correlation": {
             "status": "insufficient data" if not sufficient else "not wired to live baselines yet",
-            "detail": f"{n_gws}/13 gameweeks evaluated; same live-baseline gap as above.{exclusion_note}",
+            "detail": f"{n_gws} {gw_word} evaluated; same live-baseline gap as above.{exclusion_note}",
         },
         "no_leakage_assertion_fired": _leakage_criterion(freeze_provenance, n_gws, sufficient),
-        "squad_reconstruction_ran_13_consecutive_gws_without_manual_correction": _manual_correction_criterion(
+        "squad_reconstruction_ran_without_manual_correction": _manual_correction_criterion(
             freeze_provenance, squad_eval, sufficient
         ),
         "price_change_model_reports_hit_rate_with_ci": {"status": price_status, "detail": price_detail},

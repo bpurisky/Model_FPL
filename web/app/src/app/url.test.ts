@@ -35,6 +35,7 @@ const FULL: AppUrlState = {
     wrap: "position",
     aggregate: "median",
   },
+  entry: 2986528,
 };
 
 describe("round tripping", () => {

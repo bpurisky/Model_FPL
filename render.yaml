@@ -1,0 +1,22 @@
+# Render Blueprint for service/app.py (the Squad Optimizer backend).
+# One option among several hosts that can run the Dockerfile at the repo
+# root -- Fly.io and Railway would work the same way from the same image.
+# Render was picked here for its free-tier web service with zero extra
+# infra (no separate registry push step).
+#
+# Deploy: https://dashboard.render.com/blueprints -> New Blueprint
+# Instance -> point at this repo. Render reads this file automatically.
+# After the first deploy, set ALLOWED_ORIGINS in the Render dashboard
+# to the real deployed frontend origin(s), e.g.
+# "https://bpurisky.github.io" -- the default here is intentionally
+# permissive so the first deploy succeeds without extra configuration.
+services:
+  - type: web
+    name: fpl-trends-optimizer
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: "*"

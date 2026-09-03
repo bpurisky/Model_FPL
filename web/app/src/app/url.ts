@@ -53,6 +53,12 @@ export interface AppUrlState {
   selection: number[];
   /** View-level per §5.5.3, but linkable, so it travels in the URL too. */
   encoding: Encoding;
+  /**
+   * The Squad Optimizer's team ID (view-level, but §5.5 wants a run
+   * linkable the same as any other finding — "?view=optimizer&entry=123"
+   * should reproduce the request, not just the empty form).
+   */
+  entry: number | null;
 }
 
 export const DEFAULT_STATE: AppUrlState = {
@@ -62,6 +68,7 @@ export const DEFAULT_STATE: AppUrlState = {
   filters: NO_FILTERS,
   selection: [],
   encoding: EMPTY_ENCODING,
+  entry: null,
 };
 
 function isView(value: string): value is View {
@@ -113,6 +120,10 @@ export function parseUrl(search: string): AppUrlState {
 
   const aggregate = params.get("agg") ?? "";
 
+  const entryRaw = params.get("entry");
+  const entryParsed = entryRaw === null ? null : Number(entryRaw);
+  const entry = entryParsed !== null && Number.isFinite(entryParsed) ? entryParsed : null;
+
   return {
     view,
     position: params.get("pos") ?? DEFAULT_STATE.position,
@@ -136,6 +147,7 @@ export function parseUrl(search: string): AppUrlState {
       wrap: params.get("wrap") || null,
       aggregate: isAggregate(aggregate) ? aggregate : EMPTY_ENCODING.aggregate,
     },
+    entry,
   };
 }
 
@@ -180,6 +192,8 @@ export function toSearch(state: AppUrlState): string {
   if (anyChannel && encoding.aggregate !== EMPTY_ENCODING.aggregate) {
     set("agg", encoding.aggregate);
   }
+
+  if (state.entry !== null) set("entry", String(state.entry));
 
   const search = params.toString();
   return search ? `?${search}` : "";

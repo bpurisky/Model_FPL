@@ -1,16 +1,16 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-24T02:35:35.199884Z",
-    "source_gameweek": 38,
+    "generated_at": "2026-09-02T22:40:28.377850Z",
+    "source_gameweek": 2,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
+    "model_git_sha": "abde78adce9ad027b0fdf8348ee6e12b5d564880",
     "normalization_basis": "within_position_season_to_date",
-    "rows": 219,
+    "rows": 225,
     "current_season": "2026-27"
   },
-  "season": "2025-26",
-  "gameweek": 38,
+  "season": "2026-27",
+  "gameweek": 2,
   "trend_window": 3,
   "min_gameweeks": 3,
   "weights": [
@@ -71,78 +71,79 @@
   "bucket_accuracy": [
     {
       "bucket": "optimal",
-      "n": 6187,
+      "n": 6242,
       "comparison": "all classified players",
-      "forward_points": 3.31100156242,
-      "forward_points_other": 2.58579142957,
-      "lift": 0.725210132849
+      "forward_points": 3.3153102638,
+      "forward_points_other": 2.59110535406,
+      "lift": 0.724204909746
     },
     {
       "bucket": "rising",
       "n": 1775,
       "comparison": "other non-optimal players",
       "forward_points": 2.51643192488,
-      "forward_points_other": 2.59376146393,
-      "lift": -0.0773295390478
+      "forward_points_other": 2.59960457412,
+      "lift": -0.083172649233
     },
     {
       "bucket": "declining",
       "n": 3760,
       "comparison": "other non-optimal players",
       "forward_points": 2.47291666667,
-      "forward_points_other": 2.61731788243,
-      "lift": -0.144401215768
+      "forward_points_other": 2.62375704139,
+      "lift": -0.150840374724
     },
     {
       "bucket": "neutral",
-      "n": 11687,
+      "n": 11835,
       "comparison": "other non-optimal players",
-      "forward_points": 2.63264025555,
+      "forward_points": 2.63985354175,
       "forward_points_other": 2.48687142427,
-      "lift": 0.145768831285
+      "lift": 0.152982117485
     }
   ],
   "players": [
     {
-      "element_id": 191,
-      "name": "Maxime Estève",
-      "team": "Burnley",
+      "element_id": 449,
+      "name": "Hall",
+      "team": "Newcastle",
       "position": "DEF",
-      "composite": 1.062495665,
+      "composite": 1.30899719171,
       "percentile": 1.0,
       "rank": 1,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "bonus_per90",
+        "bps_per90",
+        "xa_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 568,
-      "name": "Pedro Porro Sauceda",
-      "team": "Spurs",
+      "element_id": 8,
+      "name": "Calafiori",
+      "team": "Arsenal",
       "position": "DEF",
-      "composite": 1.03242247815,
-      "percentile": 0.987654320988,
+      "composite": 1.26150025171,
+      "percentile": 0.988888888889,
       "rank": 2,
       "bucket": "optimal",
       "drivers": [
-        "bonus_per90",
-        "bps_per90",
-        "minutes_reliability"
+        "xa_per90",
+        "xgi_per90",
+        "bonus_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 694,
-      "name": "Nordi Mukiele",
-      "team": "Sunderland",
+      "element_id": 60,
+      "name": "Hill",
+      "team": "Bournemouth",
       "position": "DEF",
-      "composite": 1.00669177837,
-      "percentile": 0.975308641975,
+      "composite": 1.10222086788,
+      "percentile": 0.977777777778,
       "rank": 3,
       "bucket": "optimal",
       "drivers": [
@@ -150,3625 +151,3772 @@
         "xgi_per90",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 319,
-      "name": "Timothy Castagne",
-      "team": "Fulham",
+      "element_id": 390,
+      "name": "Rúben",
+      "team": "Man City",
       "position": "DEF",
-      "composite": 0.89173547125,
-      "percentile": 0.962962962963,
+      "composite": 0.978094991198,
+      "percentile": 0.966666666667,
       "rank": 4,
       "bucket": "optimal",
       "drivers": [
-        "bonus_per90",
-        "minutes_reliability",
+        "xa_per90",
+        "xgi_per90",
         "xgc_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 6,
-      "name": "William Saliba",
-      "team": "Arsenal",
+      "element_id": 173,
+      "name": "Thomas",
+      "team": "Coventry City",
       "position": "DEF",
-      "composite": 0.823674612515,
-      "percentile": 0.950617283951,
+      "composite": 0.754287378851,
+      "percentile": 0.955555555556,
       "rank": 5,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "bonus_per90",
+        "bps_per90",
+        "xgc_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 260,
-      "name": "Marc Guéhi",
-      "team": "Man City",
+      "element_id": 277,
+      "name": "Egan",
+      "team": "Hull City",
       "position": "DEF",
-      "composite": 0.653153283706,
-      "percentile": 0.925925925926,
+      "composite": 0.646811947018,
+      "percentile": 0.944444444444,
       "rank": 6,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "clean_sheet_prob",
+        "bps_per90",
+        "bonus_per90"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 407,
-      "name": "Matheus Nunes",
-      "team": "Man City",
+      "element_id": 593,
+      "name": "Dedić",
+      "team": "Newcastle",
       "position": "DEF",
-      "composite": 0.653153283706,
-      "percentile": 0.925925925926,
+      "composite": 0.541993573189,
+      "percentile": 0.933333333333,
       "rank": 7,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "bonus_per90",
+        "bps_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 411,
-      "name": "Nico O'Reilly",
-      "team": "Man City",
+      "element_id": 4,
+      "name": "Gabriel",
+      "team": "Arsenal",
       "position": "DEF",
-      "composite": 0.653153283706,
-      "percentile": 0.925925925926,
+      "composite": 0.535409622966,
+      "percentile": 0.922222222222,
       "rank": 8,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xgc_per90",
+        "bps_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 634,
-      "name": "Yerson Mosquera Valdelamar",
-      "team": "Wolves",
+      "element_id": 84,
+      "name": "Collins",
+      "team": "Brentford",
       "position": "DEF",
-      "composite": 0.639555706392,
-      "percentile": 0.901234567901,
+      "composite": 0.498469351394,
+      "percentile": 0.911111111111,
       "rank": 9,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
+        "clean_sheet_prob",
         "xg_per90",
-        "clean_sheet_prob"
+        "cbi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 371,
-      "name": "Milos Kerkez",
-      "team": "Liverpool",
+      "element_id": 229,
+      "name": "Tarkowski",
+      "team": "Everton",
       "position": "DEF",
-      "composite": 0.614511623949,
-      "percentile": 0.888888888889,
+      "composite": 0.497320058602,
+      "percentile": 0.9,
       "rank": 10,
       "bucket": "optimal",
+      "drivers": [
+        "bonus_per90",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 586,
+      "name": "Mendy",
+      "team": "Hull City",
+      "position": "DEF",
+      "composite": 0.422551145599,
+      "percentile": 0.888888888889,
+      "rank": 11,
+      "bucket": "optimal",
+      "drivers": [
+        "clean_sheet_prob",
+        "cbi_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 10,
+      "name": "White",
+      "team": "Arsenal",
+      "position": "DEF",
+      "composite": 0.402950166195,
+      "percentile": 0.877777777778,
+      "rank": 12,
+      "bucket": "optimal",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "bonus_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 255,
+      "name": "J.Cuenca",
+      "team": "Fulham",
+      "position": "DEF",
+      "composite": 0.382607737274,
+      "percentile": 0.866666666667,
+      "rank": 13,
+      "bucket": "optimal",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 61,
+      "name": "Truffert",
+      "team": "Bournemouth",
+      "position": "DEF",
+      "composite": 0.376453498992,
+      "percentile": 0.855555555556,
+      "rank": 14,
+      "bucket": "optimal",
+      "drivers": [
+        "bonus_per90",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 279,
+      "name": "Ajayi",
+      "team": "Hull City",
+      "position": "DEF",
+      "composite": 0.353443875403,
+      "percentile": 0.844444444444,
+      "rank": 15,
+      "bucket": "optimal",
+      "drivers": [
+        "clean_sheet_prob",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 87,
+      "name": "Ajer",
+      "team": "Brentford",
+      "position": "DEF",
+      "composite": 0.347998609758,
+      "percentile": 0.833333333333,
+      "rank": 16,
+      "bucket": "optimal",
+      "drivers": [
+        "cbi_per90",
+        "clean_sheet_prob",
+        "defensive_contribution_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 88,
+      "name": "Kayode",
+      "team": "Brentford",
+      "position": "DEF",
+      "composite": 0.339859634148,
+      "percentile": 0.822222222222,
+      "rank": 17,
+      "bucket": "optimal",
+      "drivers": [
+        "clean_sheet_prob",
+        "xa_per90",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 176,
+      "name": "Dasilva",
+      "team": "Coventry City",
+      "position": "DEF",
+      "composite": 0.337939128817,
+      "percentile": 0.811111111111,
+      "rank": 18,
+      "bucket": "optimal",
+      "drivers": [
+        "xg_per90",
+        "xgc_per90",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 566,
+      "name": "Silva",
+      "team": "Bournemouth",
+      "position": "DEF",
+      "composite": 0.334910245315,
+      "percentile": 0.8,
+      "rank": 19,
+      "bucket": "optimal",
+      "drivers": [
+        "xg_per90",
+        "xgi_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 421,
+      "name": "Heaven",
+      "team": "Man Utd",
+      "position": "DEF",
+      "composite": 0.332185413984,
+      "percentile": 0.788888888889,
+      "rank": 20,
+      "bucket": "optimal",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 282,
+      "name": "Giles",
+      "team": "Hull City",
+      "position": "DEF",
+      "composite": 0.319960485279,
+      "percentile": 0.777777777778,
+      "rank": 21,
+      "bucket": "optimal",
+      "drivers": [
+        "clean_sheet_prob",
+        "cbi_per90",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 541,
+      "name": "Meunier",
+      "team": "Sunderland",
+      "position": "DEF",
+      "composite": 0.307139287606,
+      "percentile": 0.766666666667,
+      "rank": 22,
+      "bucket": "optimal",
+      "drivers": [
+        "bps_per90",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 532,
+      "name": "Ballard",
+      "team": "Sunderland",
+      "position": "DEF",
+      "composite": 0.285039258041,
+      "percentile": 0.755555555556,
+      "rank": 23,
+      "bucket": "optimal",
+      "drivers": [
+        "bps_per90",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 175,
+      "name": "van Ewijk",
+      "team": "Coventry City",
+      "position": "DEF",
+      "composite": 0.281917012227,
+      "percentile": 0.744444444444,
+      "rank": 24,
+      "bucket": "neutral",
+      "drivers": [
+        "xa_per90",
+        "xgc_per90",
+        "cbi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 11,
+      "name": "Mosquera",
+      "team": "Arsenal",
+      "position": "DEF",
+      "composite": 0.275612666839,
+      "percentile": 0.733333333333,
+      "rank": 25,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 469,
+      "name": "N.Williams",
+      "team": "Nott'm Forest",
+      "position": "DEF",
+      "composite": 0.268733029416,
+      "percentile": 0.722222222222,
+      "rank": 26,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "clean_sheet_prob",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 334,
+      "name": "Muharemović",
+      "team": "Leeds",
+      "position": "DEF",
+      "composite": 0.240453184088,
+      "percentile": 0.711111111111,
+      "rank": 27,
+      "bucket": "neutral",
+      "drivers": [
+        "cbi_per90",
+        "defensive_contribution_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 473,
+      "name": "Aina",
+      "team": "Nott'm Forest",
+      "position": "DEF",
+      "composite": 0.193708585591,
+      "percentile": 0.7,
+      "rank": 28,
+      "bucket": "neutral",
+      "drivers": [
+        "xa_per90",
+        "xgi_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 305,
+      "name": "Davis",
+      "team": "Ipswich Town",
+      "position": "DEF",
+      "composite": 0.182941753299,
+      "percentile": 0.688888888889,
+      "rank": 29,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xg_per90",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 280,
+      "name": "Coyle",
+      "team": "Hull City",
+      "position": "DEF",
+      "composite": 0.175425028943,
+      "percentile": 0.677777777778,
+      "rank": 30,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 536,
+      "name": "Reinildo",
+      "team": "Sunderland",
+      "position": "DEF",
+      "composite": 0.17482015419,
+      "percentile": 0.666666666667,
+      "rank": 31,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 230,
+      "name": "Branthwaite",
+      "team": "Everton",
+      "position": "DEF",
+      "composite": 0.147256481055,
+      "percentile": 0.655555555556,
+      "rank": 32,
+      "bucket": "neutral",
+      "drivers": [
+        "cbi_per90",
+        "minutes_reliability",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 258,
+      "name": "Castagne",
+      "team": "Fulham",
+      "position": "DEF",
+      "composite": 0.146236773461,
+      "percentile": 0.644444444444,
+      "rank": 33,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 362,
+      "name": "Jacquet",
+      "team": "Liverpool",
+      "position": "DEF",
+      "composite": 0.130955962592,
+      "percentile": 0.633333333333,
+      "rank": 34,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 329,
+      "name": "Rodon",
+      "team": "Leeds",
+      "position": "DEF",
+      "composite": 0.11943069968,
+      "percentile": 0.622222222222,
+      "rank": 35,
+      "bucket": "neutral",
+      "drivers": [
+        "cbi_per90",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 112,
+      "name": "Van Hecke",
+      "team": "Spurs",
+      "position": "DEF",
+      "composite": 0.114821822691,
+      "percentile": 0.611111111111,
+      "rank": 36,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 534,
+      "name": "Hume",
+      "team": "Sunderland",
+      "position": "DEF",
+      "composite": 0.0896340810798,
+      "percentile": 0.6,
+      "rank": 37,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "xgc_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 423,
+      "name": "Shaw",
+      "team": "Man Utd",
+      "position": "DEF",
+      "composite": 0.0820158847772,
+      "percentile": 0.588888888889,
+      "rank": 38,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgi_per90",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 32,
+      "name": "Cash",
+      "team": "Aston Villa",
+      "position": "DEF",
+      "composite": 0.08182325899,
+      "percentile": 0.577777777778,
+      "rank": 39,
+      "bucket": "neutral",
+      "drivers": [
+        "xg_per90",
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 182,
+      "name": "Amenda",
+      "team": "Coventry City",
+      "position": "DEF",
+      "composite": 0.0817908094446,
+      "percentile": 0.566666666667,
+      "rank": 40,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 445,
+      "name": "Thiaw",
+      "team": "Newcastle",
+      "position": "DEF",
+      "composite": 0.0801350797862,
+      "percentile": 0.555555555556,
+      "rank": 41,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "minutes_reliability",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 447,
+      "name": "Botman",
+      "team": "Newcastle",
+      "position": "DEF",
+      "composite": 0.0794465316988,
+      "percentile": 0.544444444444,
+      "rank": 42,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "minutes_reliability",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 393,
+      "name": "Khusanov",
+      "team": "Man City",
+      "position": "DEF",
+      "composite": 0.0375381545483,
+      "percentile": 0.533333333333,
+      "rank": 43,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "minutes_reliability",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 388,
+      "name": "Guéhi",
+      "team": "Man City",
+      "position": "DEF",
+      "composite": 0.0362592888834,
+      "percentile": 0.522222222222,
+      "rank": 44,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 233,
+      "name": "Mykolenko",
+      "team": "Everton",
+      "position": "DEF",
+      "composite": 0.0314214663716,
+      "percentile": 0.511111111111,
+      "rank": 45,
+      "bucket": "neutral",
+      "drivers": [
+        "cbi_per90",
+        "minutes_reliability",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 37,
+      "name": "Lindelöf",
+      "team": "Aston Villa",
+      "position": "DEF",
+      "composite": 0.0244534877842,
+      "percentile": 0.5,
+      "rank": 46,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 502,
+      "name": "Robertson",
+      "team": "Spurs",
+      "position": "DEF",
+      "composite": 0.015846533376,
+      "percentile": 0.488888888889,
+      "rank": 47,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 391,
+      "name": "Gvardiol",
+      "team": "Man City",
+      "position": "DEF",
+      "composite": 0.0126796476379,
+      "percentile": 0.477777777778,
+      "rank": 48,
+      "bucket": "neutral",
       "drivers": [
         "xgc_per90",
         "bps_per90",
         "cbi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 636,
-      "name": "Santiago Ignacio Bueno",
-      "team": "Wolves",
+      "element_id": 330,
+      "name": "Bogle",
+      "team": "Leeds",
       "position": "DEF",
-      "composite": 0.580057848255,
-      "percentile": 0.876543209877,
-      "rank": 11,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "xg_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 295,
-      "name": "Michael Keane",
-      "team": "Everton",
-      "position": "DEF",
-      "composite": 0.562339805743,
-      "percentile": 0.864197530864,
-      "rank": 12,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "xa_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 228,
-      "name": "Malo Gusto",
-      "team": "Chelsea",
-      "position": "DEF",
-      "composite": 0.528151353608,
-      "percentile": 0.851851851852,
-      "rank": 13,
-      "bucket": "optimal",
-      "drivers": [
-        "xa_per90",
-        "xgi_per90",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 532,
-      "name": "Trai Hume",
-      "team": "Sunderland",
-      "position": "DEF",
-      "composite": 0.485088124831,
-      "percentile": 0.83950617284,
-      "rank": 14,
-      "bucket": "optimal",
-      "drivers": [
-        "xgi_per90",
-        "xa_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 74,
-      "name": "Adrien Truffert",
-      "team": "Bournemouth",
-      "position": "DEF",
-      "composite": 0.463203594263,
-      "percentile": 0.827160493827,
-      "rank": 15,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "bonus_per90",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 606,
-      "name": "Konstantinos Mavropanos",
-      "team": "West Ham",
-      "position": "DEF",
-      "composite": 0.39677767263,
-      "percentile": 0.814814814815,
-      "rank": 16,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 106,
-      "name": "Nathan Collins",
-      "team": "Brentford",
-      "position": "DEF",
-      "composite": 0.359814148699,
-      "percentile": 0.802469135802,
-      "rank": 17,
-      "bucket": "optimal",
-      "drivers": [
-        "xa_per90",
-        "minutes_reliability",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 603,
-      "name": "El Hadji Malick Diouf",
-      "team": "West Ham",
-      "position": "DEF",
-      "composite": 0.345766020257,
-      "percentile": 0.79012345679,
-      "rank": 18,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 373,
-      "name": "Virgil van Dijk",
-      "team": "Liverpool",
-      "position": "DEF",
-      "composite": 0.3435464564,
-      "percentile": 0.777777777778,
-      "rank": 19,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "xa_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 575,
-      "name": "Micky van de Ven",
-      "team": "Spurs",
-      "position": "DEF",
-      "composite": 0.338175764808,
-      "percentile": 0.765432098765,
-      "rank": 20,
-      "bucket": "optimal",
+      "composite": 0.0103682751374,
+      "percentile": 0.466666666667,
+      "rank": 49,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgc_per90",
-        "bps_per90"
+        "xgi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 709,
-      "name": "Ladislav Krejcí",
-      "team": "Wolves",
+      "element_id": 498,
+      "name": "Senesi",
+      "team": "Spurs",
       "position": "DEF",
-      "composite": 0.299012115013,
-      "percentile": 0.753086419753,
-      "rank": 21,
-      "bucket": "optimal",
+      "composite": -0.00812262707012,
+      "percentile": 0.455555555556,
+      "rank": 50,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 257,
+      "name": "Bassey",
+      "team": "Fulham",
+      "position": "DEF",
+      "composite": -0.0142091767416,
+      "percentile": 0.444444444444,
+      "rank": 51,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "bonus_per90",
+        "xgi_per90",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 683,
-      "name": "Omar Alderete",
-      "team": "Sunderland",
+      "element_id": 472,
+      "name": "Murillo",
+      "team": "Nott'm Forest",
       "position": "DEF",
-      "composite": 0.252057484794,
-      "percentile": 0.740740740741,
-      "rank": 22,
-      "bucket": "declining",
+      "composite": -0.0261921768627,
+      "percentile": 0.433333333333,
+      "rank": 52,
+      "bucket": "neutral",
       "drivers": [
+        "xg_per90",
         "clean_sheet_prob",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 610,
-      "name": "Aaron Wan-Bissaka",
-      "team": "West Ham",
+      "element_id": 358,
+      "name": "Kerkez",
+      "team": "Liverpool",
       "position": "DEF",
-      "composite": 0.250943432237,
-      "percentile": 0.728395061728,
-      "rank": 23,
-      "bucket": "rising",
+      "composite": -0.0293276176752,
+      "percentile": 0.422222222222,
+      "rank": 53,
+      "bucket": "neutral",
       "drivers": [
+        "xgc_per90",
         "clean_sheet_prob",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 107,
-      "name": "Keane Lewis-Potter",
-      "team": "Brentford",
+      "element_id": 332,
+      "name": "Justin",
+      "team": "Leeds",
       "position": "DEF",
-      "composite": 0.227927152649,
-      "percentile": 0.716049382716,
-      "rank": 24,
-      "bucket": "rising",
+      "composite": -0.0343642893765,
+      "percentile": 0.411111111111,
+      "rank": 54,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob",
         "xa_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 505,
-      "name": "Nikola Milenković",
-      "team": "Nott'm Forest",
-      "position": "DEF",
-      "composite": 0.213863134615,
-      "percentile": 0.703703703704,
-      "rank": 25,
-      "bucket": "neutral",
-      "drivers": [
-        "xa_per90",
-        "xgc_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 257,
-      "name": "Maxence Lacroix",
-      "team": "Crystal Palace",
-      "position": "DEF",
-      "composite": 0.204167279578,
-      "percentile": 0.691358024691,
-      "rank": 26,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 443,
-      "name": "Luke Shaw",
-      "team": "Man Utd",
-      "position": "DEF",
-      "composite": 0.19772485576,
-      "percentile": 0.679012345679,
-      "rank": 27,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 541,
-      "name": "Reinildo Mandava",
-      "team": "Sunderland",
-      "position": "DEF",
-      "composite": 0.196253279619,
-      "percentile": 0.666666666667,
-      "rank": 28,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 374,
-      "name": "Ibrahima Konaté",
+      "element_id": 356,
+      "name": "Virgil",
       "team": "Liverpool",
       "position": "DEF",
-      "composite": 0.194851356671,
-      "percentile": 0.654320987654,
-      "rank": 29,
+      "composite": -0.0356707502051,
+      "percentile": 0.4,
+      "rank": 55,
       "bucket": "neutral",
       "drivers": [
+        "clean_sheet_prob",
         "minutes_reliability",
-        "xg_per90",
         "xgc_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 633,
-      "name": "Hugo Bueno López",
-      "team": "Wolves",
+      "element_id": 327,
+      "name": "Bijol",
+      "team": "Leeds",
       "position": "DEF",
-      "composite": 0.181533205539,
-      "percentile": 0.641975308642,
-      "rank": 30,
-      "bucket": "rising",
+      "composite": -0.0767307399633,
+      "percentile": 0.388888888889,
+      "rank": 56,
+      "bucket": "neutral",
       "drivers": [
-        "xg_per90",
-        "xgi_per90",
-        "minutes_reliability"
+        "bps_per90",
+        "minutes_reliability",
+        "cbi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 318,
-      "name": "Calvin Bassey",
-      "team": "Fulham",
+      "element_id": 418,
+      "name": "Maguire",
+      "team": "Man Utd",
       "position": "DEF",
-      "composite": 0.180081837407,
-      "percentile": 0.62962962963,
-      "rank": 31,
+      "composite": -0.0841215508814,
+      "percentile": 0.377777777778,
+      "rank": 57,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgc_per90",
-        "clean_sheet_prob"
+        "xa_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 815,
-      "name": "Axel Disasi",
-      "team": "West Ham",
+      "element_id": 387,
+      "name": "O'Reilly",
+      "team": "Man City",
       "position": "DEF",
-      "composite": 0.155592111179,
-      "percentile": 0.617283950617,
-      "rank": 32,
-      "bucket": "rising",
+      "composite": -0.0882622905699,
+      "percentile": 0.366666666667,
+      "rank": 58,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "cbi_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 357,
+      "name": "Frimpong",
+      "team": "Liverpool",
+      "position": "DEF",
+      "composite": -0.0958327014515,
+      "percentile": 0.355555555556,
+      "rank": 59,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 36,
+      "name": "Maatsen",
+      "team": "Aston Villa",
+      "position": "DEF",
+      "composite": -0.106708827933,
+      "percentile": 0.344444444444,
+      "rank": 60,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "clean_sheet_prob",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 204,
+      "name": "Mitchell",
+      "team": "Crystal Palace",
+      "position": "DEF",
+      "composite": -0.115028302159,
+      "percentile": 0.333333333333,
+      "rank": 61,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "xgi_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 148,
+      "name": "Hato",
+      "team": "Chelsea",
+      "position": "DEF",
+      "composite": -0.118280077353,
+      "percentile": 0.322222222222,
+      "rank": 62,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob",
         "goals_conceded_per90"
       ],
-      "gameweeks_seen": 14,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 291,
-      "name": "James Tarkowski",
-      "team": "Everton",
-      "position": "DEF",
-      "composite": 0.104630070715,
-      "percentile": 0.604938271605,
-      "rank": 33,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 77,
-      "name": "James Hill",
-      "team": "Bournemouth",
-      "position": "DEF",
-      "composite": 0.103373421627,
-      "percentile": 0.592592592593,
-      "rank": 34,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 5,
-      "name": "Gabriel dos Santos Magalhães",
-      "team": "Arsenal",
-      "position": "DEF",
-      "composite": 0.0869812698471,
-      "percentile": 0.58024691358,
-      "rank": 35,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 187,
-      "name": "Kyle Walker",
-      "team": "Burnley",
-      "position": "DEF",
-      "composite": 0.0842565712214,
-      "percentile": 0.567901234568,
-      "rank": 36,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 72,
-      "name": "Marcos Senesi Barón",
-      "team": "Bournemouth",
-      "position": "DEF",
-      "composite": 0.0718156378638,
-      "percentile": 0.555555555556,
-      "rank": 37,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 342,
-      "name": "Jayden Bogle",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": 0.0339653099832,
-      "percentile": 0.543209876543,
-      "rank": 38,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xa_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 344,
-      "name": "Jaka Bijol",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": 0.0286092552504,
-      "percentile": 0.530864197531,
-      "rank": 39,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 36,
-      "name": "Matty Cash",
-      "team": "Aston Villa",
-      "position": "DEF",
-      "composite": 0.00661472929823,
-      "percentile": 0.518518518519,
-      "rank": 40,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 475,
-      "name": "Sven Botman",
-      "team": "Newcastle",
-      "position": "DEF",
-      "composite": -0.00919811567458,
-      "percentile": 0.506172839506,
-      "rank": 41,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 226,
-      "name": "Trevoh Chalobah",
+      "element_id": 149,
+      "name": "Colwill",
       "team": "Chelsea",
       "position": "DEF",
-      "composite": -0.0189969861912,
-      "percentile": 0.493827160494,
-      "rank": 42,
+      "composite": -0.130088554969,
+      "percentile": 0.311111111111,
+      "rank": 63,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "cbi_per90",
         "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 508,
-      "name": "Neco Williams",
+      "element_id": 471,
+      "name": "Milenković",
       "team": "Nott'm Forest",
       "position": "DEF",
-      "composite": -0.021343822473,
-      "percentile": 0.481481481481,
-      "rank": 43,
+      "composite": -0.132265957573,
+      "percentile": 0.3,
+      "rank": 64,
       "bucket": "neutral",
       "drivers": [
-        "xgc_per90",
         "clean_sheet_prob",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 292,
-      "name": "Vitalii Mykolenko",
-      "team": "Everton",
-      "position": "DEF",
-      "composite": -0.0284669314998,
-      "percentile": 0.469135802469,
-      "rank": 44,
-      "bucket": "neutral",
-      "drivers": [
         "minutes_reliability",
-        "xgi_per90",
-        "xgc_per90"
+        "cbi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 706,
-      "name": "James Justin",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": -0.0292278846336,
-      "percentile": 0.456790123457,
-      "rank": 45,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 684,
-      "name": "Malick Thiaw",
-      "team": "Newcastle",
-      "position": "DEF",
-      "composite": -0.097832930492,
-      "percentile": 0.444444444444,
-      "rank": 46,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 151,
-      "name": "Jan Paul van Hecke",
-      "team": "Brighton",
+      "name": "Acheampong",
+      "team": "Chelsea",
       "position": "DEF",
-      "composite": -0.10787551431,
-      "percentile": 0.432098765432,
-      "rank": 47,
+      "composite": -0.150185776646,
+      "percentile": 0.288888888889,
+      "rank": 65,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "goals_conceded_per90",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 293,
-      "name": "Jake O'Brien",
-      "team": "Everton",
-      "position": "DEF",
-      "composite": -0.109163900432,
-      "percentile": 0.41975308642,
-      "rank": 48,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 473,
-      "name": "Lewis Hall",
-      "team": "Newcastle",
-      "position": "DEF",
-      "composite": -0.145417340791,
-      "percentile": 0.407407407407,
-      "rank": 49,
-      "bucket": "rising",
-      "drivers": [
-        "goals_conceded_per90",
-        "bps_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 148,
-      "name": "Ferdi Kadıoğlu",
-      "team": "Brighton",
-      "position": "DEF",
-      "composite": -0.147462336308,
-      "percentile": 0.395061728395,
-      "rank": 50,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "goals_conceded_per90",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 724,
-      "name": "Lutsharel Geertruida",
-      "team": "Sunderland",
-      "position": "DEF",
-      "composite": -0.156904540613,
-      "percentile": 0.382716049383,
-      "rank": 51,
-      "bucket": "neutral",
-      "drivers": [
-        "clean_sheet_prob",
         "xgc_per90",
-        "bps_per90"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 348,
-      "name": "Joe Rodon",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": -0.228420421951,
-      "percentile": 0.37037037037,
-      "rank": 52,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
+        "bps_per90",
         "goals_conceded_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 192,
-      "name": "Quilindschy Hartman",
-      "team": "Burnley",
+      "element_id": 254,
+      "name": "Robinson",
+      "team": "Fulham",
       "position": "DEF",
-      "composite": -0.23174801634,
-      "percentile": 0.358024691358,
-      "rank": 53,
+      "composite": -0.153481366345,
+      "percentile": 0.277777777778,
+      "rank": 66,
       "bucket": "neutral",
       "drivers": [
+        "cbi_per90",
         "minutes_reliability",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 444,
-      "name": "Leny Yoro",
+      "element_id": 64,
+      "name": "Smith",
+      "team": "Bournemouth",
+      "position": "DEF",
+      "composite": -0.165909880561,
+      "percentile": 0.266666666667,
+      "rank": 67,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgi_per90",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 34,
+      "name": "Pau",
+      "team": "Aston Villa",
+      "position": "DEF",
+      "composite": -0.180738365966,
+      "percentile": 0.255555555556,
+      "rank": 68,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 200,
+      "name": "Lacroix",
+      "team": "Chelsea",
+      "position": "DEF",
+      "composite": -0.192867033411,
+      "percentile": 0.244444444444,
+      "rank": 69,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 533,
+      "name": "Mukiele",
+      "team": "Sunderland",
+      "position": "DEF",
+      "composite": -0.202936827204,
+      "percentile": 0.233333333333,
+      "rank": 70,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "cbi_per90",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 474,
+      "name": "Jair Cunha",
+      "team": "Nott'm Forest",
+      "position": "DEF",
+      "composite": -0.222880140287,
+      "percentile": 0.222222222222,
+      "rank": 71,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 130,
+      "name": "Wieffer",
+      "team": "Brighton",
+      "position": "DEF",
+      "composite": -0.258080024043,
+      "percentile": 0.211111111111,
+      "rank": 72,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "goals_conceded_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 144,
+      "name": "Gusto",
+      "team": "Chelsea",
+      "position": "DEF",
+      "composite": -0.29335828821,
+      "percentile": 0.2,
+      "rank": 73,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 114,
+      "name": "Boscagli",
+      "team": "Brighton",
+      "position": "DEF",
+      "composite": -0.340371388702,
+      "percentile": 0.188888888889,
+      "rank": 74,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 203,
+      "name": "Canvot",
+      "team": "Crystal Palace",
+      "position": "DEF",
+      "composite": -0.378065166651,
+      "percentile": 0.177777777778,
+      "rank": 75,
+      "bucket": "neutral",
+      "drivers": [
+        "goals_conceded_per90",
+        "bps_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 504,
+      "name": "Vuskovic",
+      "team": "Brighton",
+      "position": "DEF",
+      "composite": -0.384350261682,
+      "percentile": 0.166666666667,
+      "rank": 76,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 202,
+      "name": "Richards",
+      "team": "Crystal Palace",
+      "position": "DEF",
+      "composite": -0.385490530594,
+      "percentile": 0.155555555556,
+      "rank": 77,
+      "bucket": "neutral",
+      "drivers": [
+        "bps_per90",
+        "goals_conceded_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 142,
+      "name": "James",
+      "team": "Chelsea",
+      "position": "DEF",
+      "composite": -0.400644637042,
+      "percentile": 0.144444444444,
+      "rank": 78,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 499,
+      "name": "Pedro Porro",
+      "team": "Spurs",
+      "position": "DEF",
+      "composite": -0.429125172226,
+      "percentile": 0.133333333333,
+      "rank": 79,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgi_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 115,
+      "name": "De Cuyper",
+      "team": "Brighton",
+      "position": "DEF",
+      "composite": -0.479004419497,
+      "percentile": 0.122222222222,
+      "rank": 80,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 259,
+      "name": "Diop",
+      "team": "Ipswich Town",
+      "position": "DEF",
+      "composite": -0.4801506378,
+      "percentile": 0.111111111111,
+      "rank": 81,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "goals_conceded_per90",
+        "cbi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 116,
+      "name": "Dunk",
+      "team": "Brighton",
+      "position": "DEF",
+      "composite": -0.581258607102,
+      "percentile": 0.1,
+      "rank": 82,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 306,
+      "name": "Greaves",
+      "team": "Ipswich Town",
+      "position": "DEF",
+      "composite": -0.67529019692,
+      "percentile": 0.0888888888889,
+      "rank": 83,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 253,
+      "name": "Andersen",
+      "team": "Fulham",
+      "position": "DEF",
+      "composite": -0.795981436914,
+      "percentile": 0.0777777777778,
+      "rank": 84,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 304,
+      "name": "O'Shea",
+      "team": "Ipswich Town",
+      "position": "DEF",
+      "composite": -0.800721795097,
+      "percentile": 0.0666666666667,
+      "rank": 85,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "bps_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 422,
+      "name": "Mazraoui",
       "team": "Man Utd",
       "position": "DEF",
-      "composite": -0.265839371286,
-      "percentile": 0.345679012346,
-      "rank": 54,
+      "composite": -0.842769742415,
+      "percentile": 0.0555555555556,
+      "rank": 86,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "goals_conceded_per90",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 503,
+      "name": "Van de Ven",
+      "team": "Spurs",
+      "position": "DEF",
+      "composite": -0.864120147121,
+      "percentile": 0.0444444444444,
+      "rank": 87,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgc_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 588,
+      "name": "Khalaili",
+      "team": "Crystal Palace",
+      "position": "DEF",
+      "composite": -0.983342072402,
+      "percentile": 0.0333333333333,
+      "rank": 88,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "defensive_contribution_per90",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 419,
+      "name": "Martinez",
+      "team": "Man Utd",
+      "position": "DEF",
+      "composite": -1.00432822954,
+      "percentile": 0.0222222222222,
+      "rank": 89,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "cbi_per90",
         "defensive_contribution_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 224,
-      "name": "Marc Cucurella Saseta",
-      "team": "Chelsea",
-      "position": "DEF",
-      "composite": -0.273815443041,
-      "percentile": 0.333333333333,
-      "rank": 55,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "cbi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 476,
-      "name": "Dan Burn",
-      "team": "Newcastle",
-      "position": "DEF",
-      "composite": -0.363630701078,
-      "percentile": 0.320987654321,
-      "rank": 56,
-      "bucket": "neutral",
-      "drivers": [
-        "xgi_per90",
-        "goals_conceded_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 146,
-      "name": "Lewis Dunk",
-      "team": "Brighton",
-      "position": "DEF",
-      "composite": -0.370139352466,
-      "percentile": 0.308641975309,
-      "rank": 57,
-      "bucket": "declining",
-      "drivers": [
-        "goals_conceded_per90",
-        "bps_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 110,
-      "name": "Michael Kayode",
-      "team": "Brentford",
-      "position": "DEF",
-      "composite": -0.373443507523,
-      "percentile": 0.296296296296,
-      "rank": 58,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 225,
-      "name": "Reece James",
-      "team": "Chelsea",
-      "position": "DEF",
-      "composite": -0.393713694376,
-      "percentile": 0.283950617284,
-      "rank": 59,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "cbi_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 609,
-      "name": "Jean-Clair Todibo",
-      "team": "West Ham",
-      "position": "DEF",
-      "composite": -0.396178408434,
-      "percentile": 0.271604938272,
-      "rank": 60,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 573,
-      "name": "Djed Spence",
-      "team": "Spurs",
-      "position": "DEF",
-      "composite": -0.396813478724,
-      "percentile": 0.259259259259,
-      "rank": 61,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 725,
-      "name": "Piero Hincapié",
-      "team": "Arsenal",
-      "position": "DEF",
-      "composite": -0.404288982242,
-      "percentile": 0.246913580247,
-      "rank": 62,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 34,
-      "low_confidence": false
-    },
-    {
-      "element_id": 440,
-      "name": "Diogo Dalot Teixeira",
-      "team": "Man Utd",
-      "position": "DEF",
-      "composite": -0.449513305808,
-      "percentile": 0.234567901235,
-      "rank": 63,
-      "bucket": "declining",
-      "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 108,
-      "name": "Kristoffer Ajer",
-      "team": "Brentford",
-      "position": "DEF",
-      "composite": -0.460995762562,
-      "percentile": 0.222222222222,
-      "rank": 64,
-      "bucket": "neutral",
-      "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 38,
-      "name": "Ezri Konsa Ngoyo",
-      "team": "Aston Villa",
-      "position": "DEF",
-      "composite": -0.470787555641,
-      "percentile": 0.20987654321,
-      "rank": 65,
-      "bucket": "neutral",
-      "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 230,
-      "name": "Wesley Fofana",
-      "team": "Chelsea",
-      "position": "DEF",
-      "composite": -0.493329003354,
-      "percentile": 0.197530864198,
-      "rank": 66,
-      "bucket": "neutral",
-      "drivers": [
-        "bps_per90",
-        "goals_conceded_per90",
-        "xgc_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 713,
-      "name": "Álex Jiménez Sánchez",
-      "team": "Bournemouth",
-      "position": "DEF",
-      "composite": -0.503952519565,
-      "percentile": 0.185185185185,
-      "rank": 67,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 34,
-      "low_confidence": false
-    },
-    {
-      "element_id": 258,
-      "name": "Tyrick Mitchell",
+      "element_id": 577,
+      "name": "Tomiyasu",
       "team": "Crystal Palace",
       "position": "DEF",
-      "composite": -0.583276570372,
-      "percentile": 0.172839506173,
-      "rank": 68,
+      "composite": -1.14395938701,
+      "percentile": 0.0111111111111,
+      "rank": 90,
       "bucket": "neutral",
       "drivers": [
-        "xgc_per90",
-        "clean_sheet_prob",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 256,
-      "name": "Daniel Muñoz Mejía",
-      "team": "Crystal Palace",
-      "position": "DEF",
-      "composite": -0.585395477163,
-      "percentile": 0.16049382716,
-      "rank": 69,
-      "bucket": "declining",
-      "drivers": [
+        "minutes_reliability",
         "bps_per90",
-        "clean_sheet_prob",
         "xgc_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 113,
-      "name": "Sepp van den Berg",
-      "team": "Brentford",
-      "position": "DEF",
-      "composite": -0.655177329219,
-      "percentile": 0.148148148148,
-      "rank": 70,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 343,
-      "name": "Pascal Struijk",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": -0.697372680016,
-      "percentile": 0.135802469136,
-      "rank": 71,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 408,
-      "name": "Rúben dos Santos Gato Alves Dias",
-      "team": "Man City",
-      "position": "DEF",
-      "composite": -0.756493820037,
-      "percentile": 0.123456790123,
-      "rank": 72,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "goals_conceded_per90"
-      ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
-    },
-    {
-      "element_id": 695,
-      "name": "Jackson Tchatchoua",
-      "team": "Wolves",
-      "position": "DEF",
-      "composite": -0.985118439463,
-      "percentile": 0.111111111111,
-      "rank": 73,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
-    },
-    {
-      "element_id": 531,
-      "name": "Daniel Ballard",
-      "team": "Sunderland",
-      "position": "DEF",
-      "composite": -1.04218619655,
-      "percentile": 0.0987654320988,
-      "rank": 74,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 261,
-      "name": "Chris Richards",
-      "team": "Crystal Palace",
-      "position": "DEF",
-      "composite": -1.09007640176,
-      "percentile": 0.0864197530864,
-      "rank": 75,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 8,
-      "name": "Jurriën Timber",
-      "team": "Arsenal",
-      "position": "DEF",
-      "composite": -1.1176909095,
-      "percentile": 0.0740740740741,
-      "rank": 76,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 37,
-      "name": "Lucas Digne",
-      "team": "Aston Villa",
-      "position": "DEF",
-      "composite": -1.11790939631,
-      "percentile": 0.0617283950617,
-      "rank": 77,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 317,
-      "name": "Joachim Andersen",
-      "team": "Fulham",
-      "position": "DEF",
-      "composite": -1.12963584903,
-      "percentile": 0.0493827160494,
-      "rank": 78,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 347,
-      "name": "Gabriel Gudmundsson",
-      "team": "Leeds",
-      "position": "DEF",
-      "composite": -1.15718158216,
-      "percentile": 0.037037037037,
-      "rank": 79,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 569,
-      "name": "Cristian Romero",
-      "team": "Spurs",
-      "position": "DEF",
-      "composite": -1.37295258054,
-      "percentile": 0.0246913580247,
-      "rank": 80,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 506,
-      "name": "Murillo Costa dos Santos",
-      "team": "Nott'm Forest",
-      "position": "DEF",
-      "composite": -1.50923721059,
-      "percentile": 0.0123456790123,
-      "rank": 81,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 322,
-      "name": "Kenny Tete",
-      "team": "Fulham",
-      "position": "DEF",
-      "composite": -1.7767576897,
-      "percentile": 0.0,
-      "rank": 82,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 283,
-      "name": "Jean-Philippe Mateta",
-      "team": "Crystal Palace",
-      "position": "FWD",
-      "composite": 1.45171726784,
-      "percentile": 1.0,
-      "rank": 1,
-      "bucket": "optimal",
-      "drivers": [
-        "goals_per90",
-        "bps_per90",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 666,
-      "name": "Viktor Gyökeres",
-      "team": "Arsenal",
-      "position": "FWD",
-      "composite": 0.856124687219,
-      "percentile": 0.954545454545,
-      "rank": 2,
-      "bucket": "optimal",
-      "drivers": [
-        "xa_per90",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 430,
-      "name": "Erling Haaland",
-      "team": "Man City",
-      "position": "FWD",
-      "composite": 0.714244305218,
-      "percentile": 0.909090909091,
-      "rank": 3,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
-    },
-    {
-      "element_id": 730,
-      "name": "Brian Brobbey",
-      "team": "Sunderland",
-      "position": "FWD",
-      "composite": 0.529607328811,
-      "percentile": 0.863636363636,
-      "rank": 4,
-      "bucket": "optimal",
-      "drivers": [
-        "assists_per90",
-        "minutes_reliability",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 624,
-      "name": "Jarrod Bowen",
-      "team": "West Ham",
-      "position": "FWD",
-      "composite": 0.484186343932,
-      "percentile": 0.818181818182,
-      "rank": 5,
-      "bucket": "optimal",
-      "drivers": [
-        "assists_per90",
-        "minutes_reliability",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 64,
-      "name": "Ollie Watkins",
-      "team": "Aston Villa",
-      "position": "FWD",
-      "composite": 0.368129662103,
-      "percentile": 0.772727272727,
-      "rank": 6,
-      "bucket": "optimal",
-      "drivers": [
-        "goals_per90",
-        "bonus_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 791,
-      "name": "Valentín Castellanos",
-      "team": "West Ham",
-      "position": "FWD",
-      "composite": 0.311760324609,
-      "percentile": 0.727272727273,
-      "rank": 7,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "bonus_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 18,
-      "low_confidence": false
-    },
-    {
-      "element_id": 817,
-      "name": "Adam Armstrong",
-      "team": "Wolves",
-      "position": "FWD",
-      "composite": 0.282887800961,
-      "percentile": 0.681818181818,
-      "rank": 8,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
-        "xg_per90",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 13,
-      "low_confidence": false
-    },
-    {
-      "element_id": 749,
-      "name": "Mateus Mané",
-      "team": "Wolves",
-      "position": "FWD",
-      "composite": 0.192237896408,
-      "percentile": 0.636363636364,
-      "rank": 9,
-      "bucket": "neutral",
-      "drivers": [
-        "xa_per90",
-        "minutes_reliability",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 27,
-      "low_confidence": false
-    },
-    {
-      "element_id": 215,
-      "name": "Zian Flemming",
-      "team": "Burnley",
-      "position": "FWD",
-      "composite": 0.160812666329,
-      "percentile": 0.590909090909,
-      "rank": 10,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "bonus_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 691,
-      "name": "Dominic Calvert-Lewin",
-      "team": "Leeds",
-      "position": "FWD",
-      "composite": -0.0253232853487,
-      "percentile": 0.545454545455,
-      "rank": 11,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "goals_per90",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
-    },
-    {
-      "element_id": 597,
-      "name": "Richarlison de Andrade",
-      "team": "Spurs",
-      "position": "FWD",
-      "composite": -0.157899404847,
-      "percentile": 0.5,
-      "rank": 12,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xg_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 726,
-      "name": "Randal Kolo Muani",
-      "team": "Spurs",
-      "position": "FWD",
-      "composite": -0.168821205397,
-      "percentile": 0.454545454545,
-      "rank": 13,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 136,
-      "name": "Igor Thiago Nascimento Rodrigues",
-      "team": "Brentford",
-      "position": "FWD",
-      "composite": -0.203599641673,
-      "percentile": 0.409090909091,
-      "rank": 14,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 654,
-      "name": "Jørgen Strand Larsen",
-      "team": "Crystal Palace",
-      "position": "FWD",
-      "composite": -0.203720544148,
-      "percentile": 0.363636363636,
-      "rank": 15,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 178,
-      "name": "Danny Welbeck",
+      "name": "F.Kadıoğlu",
       "team": "Brighton",
-      "position": "FWD",
-      "composite": -0.233037749252,
-      "percentile": 0.318181818182,
-      "rank": 16,
-      "bucket": "declining",
+      "position": "DEF",
+      "composite": -1.4158895638,
+      "percentile": 0.0,
+      "rank": 91,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
+        "xgc_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 249,
-      "name": "João Pedro Junqueira de Jesus",
+      "element_id": 165,
+      "name": "João Pedro",
       "team": "Chelsea",
       "position": "FWD",
-      "composite": -0.314207197938,
-      "percentile": 0.272727272727,
-      "rank": 17,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 526,
-      "name": "Igor Jesus Maciel da Cruz",
-      "team": "Nott'm Forest",
-      "position": "FWD",
-      "composite": -0.39278707103,
-      "percentile": 0.227272727273,
-      "rank": 18,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 714,
-      "name": "Nick Woltemade",
-      "team": "Newcastle",
-      "position": "FWD",
-      "composite": -0.427601050626,
-      "percentile": 0.181818181818,
-      "rank": 19,
-      "bucket": "neutral",
-      "drivers": [
-        "xg_per90",
-        "xgi_per90",
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 97,
-      "name": "Francisco Evanilson de Lima Barbosa",
-      "team": "Bournemouth",
-      "position": "FWD",
-      "composite": -0.436564268437,
-      "percentile": 0.136363636364,
-      "rank": 20,
-      "bucket": "declining",
-      "drivers": [
-        "xgi_per90",
-        "minutes_reliability",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 337,
-      "name": "Raúl Jiménez Rodríguez",
-      "team": "Fulham",
-      "position": "FWD",
-      "composite": -0.676807000312,
-      "percentile": 0.0909090909091,
-      "rank": 21,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 310,
-      "name": "Thierno Barry",
-      "team": "Everton",
-      "position": "FWD",
-      "composite": -0.988719764323,
-      "percentile": 0.0454545454545,
-      "rank": 22,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 661,
-      "name": "Hugo Ekitiké",
-      "team": "Liverpool",
-      "position": "FWD",
-      "composite": -2.36593426103,
-      "percentile": 0.0,
-      "rank": 23,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 1,
-      "name": "David Raya Martín",
-      "team": "Arsenal",
-      "position": "GK",
-      "composite": 0.670296545328,
+      "composite": 1.16593192696,
       "percentile": 1.0,
       "rank": 1,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "assists_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 670,
-      "name": "Robin Roefs",
-      "team": "Sunderland",
-      "position": "GK",
-      "composite": 0.641258367113,
+      "element_id": 411,
+      "name": "Haaland",
+      "team": "Man City",
+      "position": "FWD",
+      "composite": 0.903808808775,
       "percentile": 0.947368421053,
       "rank": 2,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "xgc_per90"
+        "goals_per90",
+        "bps_per90",
+        "bonus_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 736,
-      "name": "Gianluigi Donnarumma",
-      "team": "Man City",
-      "position": "GK",
-      "composite": 0.481299660151,
+      "element_id": 346,
+      "name": "Calvert-Lewin",
+      "team": "Leeds",
+      "position": "FWD",
+      "composite": 0.641216978918,
       "percentile": 0.894736842105,
       "rank": 3,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "goals_per90",
+        "bonus_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 33,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 314,
-      "name": "Bernd Leno",
-      "team": "Fulham",
-      "position": "GK",
-      "composite": 0.404769331704,
+      "element_id": 379,
+      "name": "Isak",
+      "team": "Liverpool",
+      "position": "FWD",
+      "composite": 0.56117976438,
       "percentile": 0.842105263158,
       "rank": 4,
       "bucket": "optimal",
       "drivers": [
-        "clean_sheet_prob",
-        "xgc_per90",
+        "goals_per90",
+        "bonus_per90",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 67,
-      "name": "Đorđe Petrović",
-      "team": "Bournemouth",
-      "position": "GK",
-      "composite": 0.381625049675,
+      "element_id": 125,
+      "name": "Georginio",
+      "team": "Brighton",
+      "position": "FWD",
+      "composite": 0.48733971724,
       "percentile": 0.789473684211,
       "rank": 5,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "goals_conceded_per90"
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 733,
-      "name": "Senne Lammens",
-      "team": "Man Utd",
-      "position": "GK",
-      "composite": 0.322264164814,
+      "element_id": 249,
+      "name": "Barry",
+      "team": "Everton",
+      "position": "FWD",
+      "composite": 0.452175687609,
       "percentile": 0.736842105263,
       "rank": 6,
       "bucket": "optimal",
       "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability",
-        "goals_conceded_per90"
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 502,
-      "name": "Matz Sels",
-      "team": "Nott'm Forest",
-      "position": "GK",
-      "composite": 0.305075669707,
+      "element_id": 464,
+      "name": "Wissa",
+      "team": "Newcastle",
+      "position": "FWD",
+      "composite": 0.392094361345,
       "percentile": 0.684210526316,
       "rank": 7,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
+        "goals_per90",
+        "bonus_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 287,
-      "name": "Jordan Pickford",
-      "team": "Everton",
-      "position": "GK",
-      "composite": 0.280862040467,
+      "element_id": 79,
+      "name": "Evanilson",
+      "team": "Bournemouth",
+      "position": "FWD",
+      "composite": 0.347397235836,
       "percentile": 0.631578947368,
       "rank": 8,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "xgc_per90",
-        "clean_sheet_prob"
+        "assists_per90",
+        "xa_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 628,
-      "name": "José Malheiro de Sá",
-      "team": "Wolves",
-      "position": "GK",
-      "composite": 0.130949214387,
+      "element_id": 491,
+      "name": "Igor Jesus",
+      "team": "Nott'm Forest",
+      "position": "FWD",
+      "composite": 0.089712131634,
       "percentile": 0.578947368421,
       "rank": 9,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob",
-        "bonus_per90"
+        "xa_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 469,
-      "name": "Nick Pope",
-      "team": "Newcastle",
-      "position": "GK",
-      "composite": 0.0827093343614,
+      "element_id": 106,
+      "name": "Thiago",
+      "team": "Brentford",
+      "position": "FWD",
+      "composite": -0.054175052011,
       "percentile": 0.526315789474,
       "rank": 10,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "goals_conceded_per90",
-        "xgc_per90"
+        "bps_per90",
+        "goals_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 139,
-      "name": "Bart Verbruggen",
-      "team": "Brighton",
-      "position": "GK",
-      "composite": 0.0359488075993,
+      "element_id": 26,
+      "name": "Havertz",
+      "team": "Arsenal",
+      "position": "FWD",
+      "composite": -0.293035210659,
       "percentile": 0.473684210526,
       "rank": 11,
-      "bucket": "declining",
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "minutes_reliability",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 569,
+      "name": "Gonzalo",
+      "team": "Fulham",
+      "position": "FWD",
+      "composite": -0.300847068735,
+      "percentile": 0.421052631579,
+      "rank": 12,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
+        "bps_per90",
+        "goals_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 295,
+      "name": "McBurnie",
+      "team": "Hull City",
+      "position": "FWD",
+      "composite": -0.397635057984,
+      "percentile": 0.368421052632,
+      "rank": 13,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 194,
+      "name": "Thomas-Asante",
+      "team": "Coventry City",
+      "position": "FWD",
+      "composite": -0.410269717399,
+      "percentile": 0.315789473684,
+      "rank": 14,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 316,
+      "name": "Emersonn",
+      "team": "Ipswich Town",
+      "position": "FWD",
+      "composite": -0.41063065632,
+      "percentile": 0.263157894737,
+      "rank": 15,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 552,
+      "name": "Brobbey",
+      "team": "Sunderland",
+      "position": "FWD",
+      "composite": -0.430284287865,
+      "percentile": 0.210526315789,
+      "rank": 16,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "minutes_reliability",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 492,
+      "name": "Awoniyi",
+      "team": "Coventry City",
+      "position": "FWD",
+      "composite": -0.46619600722,
+      "percentile": 0.157894736842,
+      "rank": 17,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgi_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 138,
+      "name": "Kostoulas",
+      "team": "Brighton",
+      "position": "FWD",
+      "composite": -0.544086278693,
+      "percentile": 0.105263157895,
+      "rank": 18,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "assists_per90",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 401,
+      "name": "Marmoush",
+      "team": "Spurs",
+      "position": "FWD",
+      "composite": -0.560031159489,
+      "percentile": 0.0526315789474,
+      "rank": 19,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xa_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 224,
+      "name": "Nketiah",
+      "team": "Crystal Palace",
+      "position": "FWD",
+      "composite": -0.806819802641,
+      "percentile": 0.0,
+      "rank": 20,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xa_per90",
+        "goals_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 572,
+      "name": "Tzolakis",
+      "team": "Hull City",
+      "position": "GK",
+      "composite": 1.22699931523,
+      "percentile": 1.0,
+      "rank": 1,
+      "bucket": "optimal",
+      "drivers": [
+        "clean_sheet_prob",
+        "bonus_per90",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 1,
+      "name": "Raya",
+      "team": "Arsenal",
+      "position": "GK",
+      "composite": 0.645973871669,
+      "percentile": 0.952380952381,
+      "rank": 2,
+      "bucket": "optimal",
+      "drivers": [
+        "xgc_per90",
         "goals_conceded_per90",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 32,
-      "name": "Emiliano Martínez Romero",
-      "team": "Aston Villa",
+      "element_id": 82,
+      "name": "Kelleher",
+      "team": "Brentford",
       "position": "GK",
-      "composite": -0.047181475743,
-      "percentile": 0.421052631579,
-      "rank": 12,
-      "bucket": "declining",
+      "composite": 0.504128218314,
+      "percentile": 0.904761904762,
+      "rank": 3,
+      "bucket": "optimal",
       "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 110,
+      "name": "Rushworth",
+      "team": "Coventry City",
+      "position": "GK",
+      "composite": 0.499060139196,
+      "percentile": 0.857142857143,
+      "rank": 4,
+      "bucket": "optimal",
+      "drivers": [
+        "xgc_per90",
         "clean_sheet_prob",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 341,
-      "name": "Karl Darlow",
-      "team": "Leeds",
+      "element_id": 529,
+      "name": "Roefs",
+      "team": "Sunderland",
       "position": "GK",
-      "composite": -0.104251179496,
-      "percentile": 0.368421052632,
-      "rank": 13,
-      "bucket": "declining",
+      "composite": 0.390126164334,
+      "percentile": 0.809523809524,
+      "rank": 5,
+      "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
         "goals_conceded_per90",
+        "minutes_reliability",
         "xgc_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 101,
-      "name": "Caoimhín Kelleher",
-      "team": "Brentford",
+      "element_id": 567,
+      "name": "Horníček",
+      "team": "Newcastle",
       "position": "GK",
-      "composite": -0.128161798716,
-      "percentile": 0.315789473684,
-      "rank": 14,
+      "composite": 0.365426873301,
+      "percentile": 0.761904761905,
+      "rank": 6,
+      "bucket": "optimal",
+      "drivers": [
+        "goals_conceded_per90",
+        "minutes_reliability",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 384,
+      "name": "Donnarumma",
+      "team": "Man City",
+      "position": "GK",
+      "composite": 0.268393084567,
+      "percentile": 0.714285714286,
+      "rank": 7,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 250,
+      "name": "Leno",
+      "team": "Fulham",
+      "position": "GK",
+      "composite": 0.229906599034,
+      "percentile": 0.666666666667,
+      "rank": 8,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 350,
+      "name": "A.Becker",
+      "team": "Liverpool",
+      "position": "GK",
+      "composite": 0.224025171105,
+      "percentile": 0.619047619048,
+      "rank": 9,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "minutes_reliability",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 226,
+      "name": "Pickford",
+      "team": "Everton",
+      "position": "GK",
+      "composite": 0.150759190355,
+      "percentile": 0.571428571429,
+      "rank": 10,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgc_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 412,
+      "name": "Lammens",
+      "team": "Man Utd",
+      "position": "GK",
+      "composite": 0.0933486780579,
+      "percentile": 0.52380952381,
+      "rank": 11,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 496,
+      "name": "Kinsky",
+      "team": "Spurs",
+      "position": "GK",
+      "composite": 0.0833376190331,
+      "percentile": 0.47619047619,
+      "rank": 12,
       "bucket": "neutral",
       "drivers": [
         "xgc_per90",
         "clean_sheet_prob",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 470,
-      "name": "Martin Dúbravka",
-      "team": "Burnley",
+      "element_id": 57,
+      "name": "Petrović",
+      "team": "Bournemouth",
       "position": "GK",
-      "composite": -0.227742852164,
-      "percentile": 0.263157894737,
+      "composite": 0.0667766477589,
+      "percentile": 0.428571428571,
+      "rank": 13,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 385,
+      "name": "Trafford",
+      "team": "Leeds",
+      "position": "GK",
+      "composite": 0.0658324042243,
+      "percentile": 0.380952380952,
+      "rank": 14,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "goals_conceded_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 140,
+      "name": "Sánchez",
+      "team": "Chelsea",
+      "position": "GK",
+      "composite": 0.00493855337519,
+      "percentile": 0.333333333333,
       "rank": 15,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 220,
-      "name": "Robert Lynch Sánchez",
-      "team": "Chelsea",
+      "element_id": 29,
+      "name": "M.Bizot",
+      "team": "Aston Villa",
       "position": "GK",
-      "composite": -0.254977786492,
-      "percentile": 0.210526315789,
+      "composite": -0.10221840561,
+      "percentile": 0.285714285714,
       "rank": 16,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "goals_conceded_per90",
-        "xgc_per90"
+        "clean_sheet_prob",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 253,
-      "name": "Dean Henderson",
-      "team": "Crystal Palace",
+      "element_id": 467,
+      "name": "Sels",
+      "team": "Nott'm Forest",
       "position": "GK",
-      "composite": -0.343566169862,
-      "percentile": 0.157894736842,
+      "composite": -0.136420725452,
+      "percentile": 0.238095238095,
       "rank": 17,
       "bucket": "neutral",
       "drivers": [
         "clean_sheet_prob",
         "minutes_reliability",
-        "xgc_per90"
+        "goals_conceded_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 366,
-      "name": "Alisson Becker",
-      "team": "Liverpool",
+      "element_id": 198,
+      "name": "Henderson",
+      "team": "Crystal Palace",
       "position": "GK",
-      "composite": -0.836344401087,
-      "percentile": 0.105263157895,
+      "composite": -0.331478517746,
+      "percentile": 0.190476190476,
       "rank": 18,
+      "bucket": "neutral",
+      "drivers": [
+        "goals_conceded_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 109,
+      "name": "Verbruggen",
+      "team": "Brighton",
+      "position": "GK",
+      "composite": -0.503674311177,
+      "percentile": 0.142857142857,
+      "rank": 19,
+      "bucket": "neutral",
+      "drivers": [
+        "goals_conceded_per90",
+        "xgc_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 564,
+      "name": "Scherpen",
+      "team": "Ipswich Town",
+      "position": "GK",
+      "composite": -0.873078169052,
+      "percentile": 0.0952380952381,
+      "rank": 20,
+      "bucket": "neutral",
+      "drivers": [
+        "xgc_per90",
+        "goals_conceded_per90",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 597,
+      "name": "Suzuki",
+      "team": "Aston Villa",
+      "position": "GK",
+      "composite": -1.3619993043,
+      "percentile": 0.047619047619,
+      "rank": 21,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob",
+        "xgc_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 28,
+      "name": "Martinez",
+      "team": "Chelsea",
+      "position": "GK",
+      "composite": -1.54674032066,
+      "percentile": 0.0,
+      "rank": 22,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "goals_conceded_per90",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 600,
-      "name": "Alphonse Areola",
-      "team": "West Ham",
-      "position": "GK",
-      "composite": -0.991356917645,
-      "percentile": 0.0526315789474,
-      "rank": 19,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 565,
-      "name": "Guglielmo Vicario",
-      "team": "Spurs",
-      "position": "GK",
-      "composite": -1.35672624867,
-      "percentile": 0.0,
-      "rank": 20,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 121,
-      "name": "Mikkel Damsgaard",
-      "team": "Brentford",
+      "element_id": 426,
+      "name": "B.Fernandes",
+      "team": "Man Utd",
       "position": "MID",
-      "composite": 2.19366620837,
+      "composite": 3.1204309214,
       "percentile": 1.0,
       "rank": 1,
       "bucket": "optimal",
       "drivers": [
-        "xa_per90",
         "xgi_per90",
-        "bps_per90"
+        "xg_per90",
+        "goals_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 382,
-      "name": "Florian Wirtz",
-      "team": "Liverpool",
+      "element_id": 427,
+      "name": "Mbeumo",
+      "team": "Man Utd",
       "position": "MID",
-      "composite": 1.49239028253,
-      "percentile": 0.989247311828,
+      "composite": 1.9589078779,
+      "percentile": 0.989010989011,
       "rank": 2,
       "bucket": "optimal",
       "drivers": [
         "xg_per90",
         "xgi_per90",
-        "minutes_reliability"
+        "goals_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 266,
-      "name": "Eberechi Eze",
-      "team": "Arsenal",
+      "element_id": 483,
+      "name": "Ndoye",
+      "team": "Nott'm Forest",
       "position": "MID",
-      "composite": 1.10312454581,
-      "percentile": 0.978494623656,
+      "composite": 1.52566401573,
+      "percentile": 0.978021978022,
       "rank": 3,
       "bucket": "optimal",
       "drivers": [
-        "xg_per90",
+        "xa_per90",
         "xgi_per90",
-        "minutes_reliability"
+        "goals_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 646,
-      "name": "João Victor Gomes da Silva",
-      "team": "Wolves",
+      "element_id": 398,
+      "name": "Foden",
+      "team": "Man City",
       "position": "MID",
-      "composite": 1.01313603942,
-      "percentile": 0.967741935484,
+      "composite": 1.35788770614,
+      "percentile": 0.967032967033,
       "rank": 4,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xg_per90",
+        "assists_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 20,
-      "name": "Leandro Trossard",
-      "team": "Arsenal",
+      "element_id": 40,
+      "name": "Rogers",
+      "team": "Chelsea",
       "position": "MID",
-      "composite": 0.908693244124,
-      "percentile": 0.951612903226,
+      "composite": 1.10162639797,
+      "percentile": 0.956043956044,
       "rank": 5,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xa_per90",
+        "xgi_per90",
+        "assists_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 21,
-      "name": "Declan Rice",
-      "team": "Arsenal",
+      "element_id": 289,
+      "name": "Crooks",
+      "team": "Hull City",
       "position": "MID",
-      "composite": 0.908693244124,
-      "percentile": 0.951612903226,
+      "composite": 0.933536035319,
+      "percentile": 0.945054945055,
       "rank": 6,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "clean_sheet_prob",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 90,
-      "name": "Alex Scott",
-      "team": "Bournemouth",
+      "element_id": 367,
+      "name": "Gakpo",
+      "team": "Liverpool",
       "position": "MID",
-      "composite": 0.882393206787,
-      "percentile": 0.935483870968,
+      "composite": 0.918624397654,
+      "percentile": 0.934065934066,
       "rank": 7,
       "bucket": "optimal",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xa_per90",
+        "xgi_per90",
+        "assists_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 660,
-      "name": "Anton Stach",
-      "team": "Leeds",
+      "element_id": 399,
+      "name": "Cherki",
+      "team": "Man City",
       "position": "MID",
-      "composite": 0.87758183585,
-      "percentile": 0.924731182796,
+      "composite": 0.903723002575,
+      "percentile": 0.923076923077,
       "rank": 8,
       "bucket": "optimal",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob"
+        "xa_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 54,
-      "name": "John McGinn",
-      "team": "Aston Villa",
+      "element_id": 480,
+      "name": "Gibbs-White",
+      "team": "Nott'm Forest",
       "position": "MID",
-      "composite": 0.786860298044,
-      "percentile": 0.913978494624,
+      "composite": 0.892544952797,
+      "percentile": 0.912087912088,
       "rank": 9,
       "bucket": "optimal",
       "drivers": [
-        "bps_per90",
         "xg_per90",
-        "xgi_per90"
+        "xgi_per90",
+        "bonus_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 48,
-      "name": "Youri Tielemans",
-      "team": "Aston Villa",
+      "element_id": 12,
+      "name": "Saka",
+      "team": "Arsenal",
       "position": "MID",
-      "composite": 0.754891318279,
-      "percentile": 0.903225806452,
+      "composite": 0.770508079894,
+      "percentile": 0.901098901099,
       "rank": 10,
       "bucket": "optimal",
       "drivers": [
-        "xa_per90",
-        "xgi_per90",
-        "minutes_reliability"
+        "xg_per90",
+        "bonus_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 388,
-      "name": "Curtis Jones",
-      "team": "Liverpool",
+      "element_id": 69,
+      "name": "Scott",
+      "team": "Bournemouth",
       "position": "MID",
-      "composite": 0.67330419788,
-      "percentile": 0.89247311828,
+      "composite": 0.662903136778,
+      "percentile": 0.89010989011,
       "rank": 11,
       "bucket": "optimal",
       "drivers": [
         "bonus_per90",
-        "minutes_reliability",
-        "goals_per90"
+        "goals_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 119,
-      "name": "Bryan Mbeumo",
-      "team": "Man Utd",
+      "element_id": 161,
+      "name": "Lavia",
+      "team": "Chelsea",
       "position": "MID",
-      "composite": 0.591488148457,
-      "percentile": 0.881720430108,
+      "composite": 0.572831039441,
+      "percentile": 0.879120879121,
       "rank": 12,
       "bucket": "optimal",
       "drivers": [
         "xg_per90",
-        "goals_per90",
-        "xgi_per90"
+        "xgi_per90",
+        "goals_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 673,
-      "name": "João Maria Lobo Alves Palhares Costa Palhinha Gonçalves",
-      "team": "Spurs",
+      "element_id": 397,
+      "name": "Semenyo",
+      "team": "Man City",
       "position": "MID",
-      "composite": 0.587234978577,
-      "percentile": 0.870967741935,
+      "composite": 0.563199643074,
+      "percentile": 0.868131868132,
       "rank": 13,
-      "bucket": "optimal",
-      "drivers": [
-        "bonus_per90",
-        "minutes_reliability",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 84,
-      "name": "Marcus Tavernier",
-      "team": "Bournemouth",
-      "position": "MID",
-      "composite": 0.562558039964,
-      "percentile": 0.860215053763,
-      "rank": 14,
-      "bucket": "optimal",
-      "drivers": [
-        "bonus_per90",
-        "minutes_reliability",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 547,
-      "name": "Enzo Le Fée",
-      "team": "Sunderland",
-      "position": "MID",
-      "composite": 0.539634061261,
-      "percentile": 0.849462365591,
-      "rank": 15,
-      "bucket": "optimal",
-      "drivers": [
-        "bonus_per90",
-        "minutes_reliability",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 329,
-      "name": "Harry Wilson",
-      "team": "Fulham",
-      "position": "MID",
-      "composite": 0.514157919485,
-      "percentile": 0.838709677419,
-      "rank": 16,
-      "bucket": "optimal",
-      "drivers": [
-        "assists_per90",
-        "bps_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 449,
-      "name": "Bruno Borges Fernandes",
-      "team": "Man Utd",
-      "position": "MID",
-      "composite": 0.493309067634,
-      "percentile": 0.827956989247,
-      "rank": 17,
-      "bucket": "optimal",
-      "drivers": [
-        "bonus_per90",
-        "minutes_reliability",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 450,
-      "name": "Matheus Santos Carneiro da Cunha",
-      "team": "Man Utd",
-      "position": "MID",
-      "composite": 0.415467982713,
-      "percentile": 0.817204301075,
-      "rank": 18,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 129,
-      "name": "Yehor Yarmoliuk",
-      "team": "Brentford",
-      "position": "MID",
-      "composite": 0.406421912439,
-      "percentile": 0.806451612903,
-      "rank": 19,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 47,
-      "name": "Morgan Rogers",
-      "team": "Aston Villa",
-      "position": "MID",
-      "composite": 0.398707775109,
-      "percentile": 0.795698924731,
-      "rank": 20,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 332,
-      "name": "Saša Lukić",
-      "team": "Fulham",
-      "position": "MID",
-      "composite": 0.389469480761,
-      "percentile": 0.784946236559,
-      "rank": 21,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 613,
-      "name": "Tomáš Souček",
-      "team": "West Ham",
-      "position": "MID",
-      "composite": 0.348067611732,
-      "percentile": 0.774193548387,
-      "rank": 22,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "xg_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 235,
-      "name": "Cole Palmer",
-      "team": "Chelsea",
-      "position": "MID",
-      "composite": 0.338022439398,
-      "percentile": 0.763440860215,
-      "rank": 23,
-      "bucket": "optimal",
-      "drivers": [
-        "minutes_reliability",
-        "goals_per90",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 452,
-      "name": "Amad Diallo",
-      "team": "Man Utd",
-      "position": "MID",
-      "composite": 0.311112531318,
-      "percentile": 0.752688172043,
-      "rank": 24,
       "bucket": "optimal",
       "drivers": [
         "xa_per90",
         "xgi_per90",
         "assists_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 120,
-      "name": "Kevin Schade",
-      "team": "Brentford",
+      "element_id": 154,
+      "name": "Palmer",
+      "team": "Chelsea",
       "position": "MID",
-      "composite": 0.277343818464,
-      "percentile": 0.741935483871,
-      "rank": 25,
-      "bucket": "rising",
+      "composite": 0.534754168858,
+      "percentile": 0.857142857143,
+      "rank": 14,
+      "bucket": "optimal",
       "drivers": [
         "xg_per90",
-        "goals_per90",
-        "xgi_per90"
+        "xgi_per90",
+        "goals_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 387,
-      "name": "Dominik Szoboszlai",
+      "element_id": 591,
+      "name": "Enciso",
+      "team": "Ipswich Town",
+      "position": "MID",
+      "composite": 0.497310867315,
+      "percentile": 0.846153846154,
+      "rank": 15,
+      "bucket": "optimal",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "assists_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 104,
+      "name": "Onyeka",
+      "team": "Coventry City",
+      "position": "MID",
+      "composite": 0.467669457248,
+      "percentile": 0.835164835165,
+      "rank": 16,
+      "bucket": "optimal",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 428,
+      "name": "Cunha",
+      "team": "Man Utd",
+      "position": "MID",
+      "composite": 0.461494603928,
+      "percentile": 0.824175824176,
+      "rank": 17,
+      "bucket": "optimal",
+      "drivers": [
+        "assists_per90",
+        "minutes_reliability",
+        "bps_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 94,
+      "name": "Schade",
+      "team": "Brentford",
+      "position": "MID",
+      "composite": 0.415982110944,
+      "percentile": 0.813186813187,
+      "rank": 18,
+      "bucket": "optimal",
+      "drivers": [
+        "bonus_per90",
+        "goals_per90",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 124,
+      "name": "Groß",
+      "team": "Brighton",
+      "position": "MID",
+      "composite": 0.391779742764,
+      "percentile": 0.802197802198,
+      "rank": 19,
+      "bucket": "optimal",
+      "drivers": [
+        "bonus_per90",
+        "bps_per90",
+        "goals_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 366,
+      "name": "Wirtz",
       "team": "Liverpool",
       "position": "MID",
-      "composite": 0.255935200127,
-      "percentile": 0.731182795699,
+      "composite": 0.319328137477,
+      "percentile": 0.791208791209,
+      "rank": 20,
+      "bucket": "optimal",
+      "drivers": [
+        "assists_per90",
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 544,
+      "name": "Xhaka",
+      "team": "Sunderland",
+      "position": "MID",
+      "composite": 0.316496201395,
+      "percentile": 0.78021978022,
+      "rank": 21,
+      "bucket": "optimal",
+      "drivers": [
+        "bonus_per90",
+        "xa_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 70,
+      "name": "Kluivert",
+      "team": "Bournemouth",
+      "position": "MID",
+      "composite": 0.266553037048,
+      "percentile": 0.769230769231,
+      "rank": 22,
+      "bucket": "optimal",
+      "drivers": [
+        "xg_per90",
+        "xgi_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 43,
+      "name": "Tielemans",
+      "team": "Man Utd",
+      "position": "MID",
+      "composite": 0.25542822811,
+      "percentile": 0.758241758242,
+      "rank": 23,
+      "bucket": "optimal",
+      "drivers": [
+        "xg_per90",
+        "xgi_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 95,
+      "name": "O.Dango",
+      "team": "Brentford",
+      "position": "MID",
+      "composite": 0.253550857754,
+      "percentile": 0.747252747253,
+      "rank": 24,
+      "bucket": "optimal",
+      "drivers": [
+        "bps_per90",
+        "minutes_reliability",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 127,
+      "name": "Gomez",
+      "team": "Brighton",
+      "position": "MID",
+      "composite": 0.24885917969,
+      "percentile": 0.736263736264,
+      "rank": 25,
+      "bucket": "neutral",
+      "drivers": [
+        "assists_per90",
+        "xgi_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 454,
+      "name": "Elanga",
+      "team": "Newcastle",
+      "position": "MID",
+      "composite": 0.226433653265,
+      "percentile": 0.725274725275,
       "rank": 26,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
+        "goals_per90",
+        "bps_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 615,
-      "name": "Crysencio Summerville",
-      "team": "West Ham",
+      "element_id": 86,
+      "name": "Lewis-Potter",
+      "team": "Brentford",
       "position": "MID",
-      "composite": 0.233152286394,
-      "percentile": 0.720430107527,
+      "composite": 0.180925694519,
+      "percentile": 0.714285714286,
       "rank": 27,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "assists_per90",
+        "minutes_reliability",
         "clean_sheet_prob"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 16,
-      "name": "Bukayo Saka",
-      "team": "Arsenal",
+      "element_id": 261,
+      "name": "Iwobi",
+      "team": "Fulham",
       "position": "MID",
-      "composite": 0.223435324222,
-      "percentile": 0.709677419355,
+      "composite": 0.167294146938,
+      "percentile": 0.703296703297,
       "rank": 28,
       "bucket": "neutral",
       "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
+        "xa_per90",
+        "minutes_reliability",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 708,
-      "name": "Mateus Gonçalo Espanha Fernandes",
-      "team": "West Ham",
+      "element_id": 542,
+      "name": "E.Le Fée",
+      "team": "Sunderland",
       "position": "MID",
-      "composite": 0.218407737707,
-      "percentile": 0.698924731183,
+      "composite": 0.147940134957,
+      "percentile": 0.692307692308,
       "rank": 29,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "assists_per90",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 418,
-      "name": "Jérémy Doku",
-      "team": "Man City",
+      "element_id": 286,
+      "name": "Belloumi",
+      "team": "Hull City",
       "position": "MID",
-      "composite": 0.214452844177,
-      "percentile": 0.688172043011,
+      "composite": 0.143835308477,
+      "percentile": 0.681318681319,
       "rank": 30,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
+        "clean_sheet_prob",
+        "assists_per90",
         "xa_per90"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 82,
-      "name": "Antoine Semenyo",
-      "team": "Man City",
+      "element_id": 315,
+      "name": "Fatawu",
+      "team": "Ipswich Town",
       "position": "MID",
-      "composite": 0.176053229991,
-      "percentile": 0.677419354839,
+      "composite": 0.0960262372642,
+      "percentile": 0.67032967033,
       "rank": 31,
       "bucket": "neutral",
       "drivers": [
-        "goals_per90",
-        "xgi_per90",
-        "xg_per90"
+        "assists_per90",
+        "xg_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 712,
-      "name": "Yéremy Pino Santos",
-      "team": "Crystal Palace",
+      "element_id": 368,
+      "name": "Szoboszlai",
+      "team": "Liverpool",
       "position": "MID",
-      "composite": 0.157008928274,
-      "percentile": 0.666666666667,
+      "composite": 0.0919754066195,
+      "percentile": 0.659340659341,
       "rank": 32,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xgi_per90",
+        "clean_sheet_prob",
         "assists_per90"
       ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 515,
-      "name": "Morgan Gibbs-White",
-      "team": "Nott'm Forest",
+      "element_id": 268,
+      "name": "King",
+      "team": "Fulham",
       "position": "MID",
-      "composite": 0.10395511906,
-      "percentile": 0.655913978495,
+      "composite": 0.071195448585,
+      "percentile": 0.648351648352,
       "rank": 33,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "goals_per90",
-        "bonus_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 386,
-      "name": "Alexis Mac Allister",
-      "team": "Liverpool",
-      "position": "MID",
-      "composite": 0.043844481435,
-      "percentile": 0.645161290323,
-      "rank": 34,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 490,
-      "name": "Joelinton Cássio Apolinário de Lira",
-      "team": "Newcastle",
-      "position": "MID",
-      "composite": 0.0409795604505,
-      "percentile": 0.629032258065,
-      "rank": 35,
-      "bucket": "rising",
-      "drivers": [
-        "clean_sheet_prob",
+        "xg_per90",
+        "xa_per90",
         "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 491,
-      "name": "Sandro Tonali",
-      "team": "Newcastle",
+      "element_id": 488,
+      "name": "I.Sangaré",
+      "team": "Nott'm Forest",
       "position": "MID",
-      "composite": 0.0409795604505,
-      "percentile": 0.629032258065,
+      "composite": 0.0601053054664,
+      "percentile": 0.637362637363,
+      "rank": 34,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "clean_sheet_prob"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 481,
+      "name": "Anderson",
+      "team": "Man City",
+      "position": "MID",
+      "composite": 0.0341476865612,
+      "percentile": 0.626373626374,
+      "rank": 35,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xa_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 68,
+      "name": "Tavernier",
+      "team": "Bournemouth",
+      "position": "MID",
+      "composite": -0.0382588006016,
+      "percentile": 0.615384615385,
       "rank": 36,
       "bucket": "neutral",
       "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
+        "minutes_reliability",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 668,
-      "name": "Granit Xhaka",
-      "team": "Sunderland",
+      "element_id": 190,
+      "name": "Tchaouna",
+      "team": "Coventry City",
       "position": "MID",
-      "composite": 0.0239498628885,
-      "percentile": 0.612903225806,
+      "composite": -0.0430858107277,
+      "percentile": 0.604395604396,
       "rank": 37,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xg_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 381,
-      "name": "Mohamed Salah",
-      "team": "Liverpool",
-      "position": "MID",
-      "composite": 0.0229415847862,
-      "percentile": 0.602150537634,
-      "rank": 38,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
-        "assists_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 303,
-      "name": "James Garner",
-      "team": "Everton",
-      "position": "MID",
-      "composite": 0.0203708002158,
-      "percentile": 0.591397849462,
-      "rank": 39,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xg_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 783,
-      "name": "Pascal Groß",
-      "team": "Brighton",
-      "position": "MID",
-      "composite": -0.0177960654237,
-      "percentile": 0.58064516129,
-      "rank": 40,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
+        "bps_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 18,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 200,
-      "name": "Jaidon Anthony",
-      "team": "Burnley",
+      "element_id": 575,
+      "name": "Yirenkyi",
+      "team": "Coventry City",
       "position": "MID",
-      "composite": -0.0215844021399,
-      "percentile": 0.569892473118,
-      "rank": 41,
+      "composite": -0.0553011442267,
+      "percentile": 0.593406593407,
+      "rank": 38,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob",
+        "xg_per90",
         "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 517,
-      "name": "Elliot Anderson",
-      "team": "Nott'm Forest",
+      "element_id": 565,
+      "name": "M.Sangaré",
+      "team": "Brentford",
       "position": "MID",
-      "composite": -0.0277780491054,
-      "percentile": 0.559139784946,
-      "rank": 42,
+      "composite": -0.0605542783873,
+      "percentile": 0.582417582418,
+      "rank": 39,
       "bucket": "neutral",
       "drivers": [
         "xa_per90",
-        "xg_per90",
-        "goals_per90"
+        "minutes_reliability",
+        "clean_sheet_prob"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 160,
-      "name": "Yankuba Minteh",
-      "team": "Brighton",
+      "element_id": 236,
+      "name": "Dewsbury-Hall",
+      "team": "Everton",
       "position": "MID",
-      "composite": -0.0346573845395,
-      "percentile": 0.548387096774,
-      "rank": 43,
-      "bucket": "declining",
+      "composite": -0.0606931141466,
+      "percentile": 0.571428571429,
+      "rank": 40,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
         "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 796,
-      "name": "Conor Gallagher",
-      "team": "Spurs",
+      "element_id": 265,
+      "name": "Berge",
+      "team": "Fulham",
       "position": "MID",
-      "composite": -0.0500937021179,
-      "percentile": 0.537634408602,
+      "composite": -0.077113937423,
+      "percentile": 0.56043956044,
+      "rank": 41,
+      "bucket": "neutral",
+      "drivers": [
+        "xg_per90",
+        "minutes_reliability",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 67,
+      "name": "Rayan",
+      "team": "Bournemouth",
+      "position": "MID",
+      "composite": -0.0787029690338,
+      "percentile": 0.549450549451,
+      "rank": 42,
+      "bucket": "neutral",
+      "drivers": [
+        "xg_per90",
+        "bps_per90",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 15,
+      "name": "Ødegaard",
+      "team": "Arsenal",
+      "position": "MID",
+      "composite": -0.121846026802,
+      "percentile": 0.538461538462,
+      "rank": 43,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xgi_per90",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 371,
+      "name": "Gravenberch",
+      "team": "Liverpool",
+      "position": "MID",
+      "composite": -0.138338933989,
+      "percentile": 0.527472527473,
       "rank": 44,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "xa_per90"
+        "xg_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 17,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 807,
-      "name": "Rayan Vitor Simplício Rocha",
-      "team": "Bournemouth",
+      "element_id": 98,
+      "name": "Janelt",
+      "team": "Brentford",
       "position": "MID",
-      "composite": -0.0680284743676,
-      "percentile": 0.52688172043,
+      "composite": -0.144138955444,
+      "percentile": 0.516483516484,
       "rank": 45,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
+        "xg_per90",
         "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
+        "xgi_per90"
       ],
-      "gameweeks_seen": 14,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 676,
-      "name": "Lesley Ugochukwu",
-      "team": "Burnley",
+      "element_id": 377,
+      "name": "Munoz",
+      "team": "Liverpool",
       "position": "MID",
-      "composite": -0.0698736425131,
-      "percentile": 0.516129032258,
+      "composite": -0.169166854565,
+      "percentile": 0.505494505495,
       "rank": 46,
       "bucket": "neutral",
       "drivers": [
-        "clean_sheet_prob",
-        "xgi_per90",
-        "xa_per90"
+        "minutes_reliability",
+        "goals_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 384,
-      "name": "Cody Gakpo",
-      "team": "Liverpool",
+      "element_id": 13,
+      "name": "Rice",
+      "team": "Arsenal",
       "position": "MID",
-      "composite": -0.0699791862859,
-      "percentile": 0.505376344086,
+      "composite": -0.171109643413,
+      "percentile": 0.494505494505,
       "rank": 47,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 643,
-      "name": "André Trindade da Costa Neto",
-      "team": "Wolves",
-      "position": "MID",
-      "composite": -0.0812949588081,
-      "percentile": 0.494623655914,
-      "rank": 48,
-      "bucket": "rising",
-      "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "clean_sheet_prob"
+        "xg_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 390,
-      "name": "Ryan Gravenberch",
-      "team": "Liverpool",
+      "element_id": 7,
+      "name": "Lewis-Skelly",
+      "team": "Arsenal",
       "position": "MID",
-      "composite": -0.0982781220549,
-      "percentile": 0.483870967742,
+      "composite": -0.193212087489,
+      "percentile": 0.483516483516,
+      "rank": 48,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 514,
+      "name": "Tel",
+      "team": "Spurs",
+      "position": "MID",
+      "composite": -0.210336595036,
+      "percentile": 0.472527472527,
       "rank": 49,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xgi_per90",
-        "xa_per90"
+        "xa_per90",
+        "clean_sheet_prob"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 552,
-      "name": "Noah Sadiki",
-      "team": "Sunderland",
+      "element_id": 486,
+      "name": "McAtee",
+      "team": "Nott'm Forest",
       "position": "MID",
-      "composite": -0.102762292114,
-      "percentile": 0.47311827957,
+      "composite": -0.23253779274,
+      "percentile": 0.461538461538,
       "rank": 50,
       "bucket": "neutral",
       "drivers": [
+        "xg_per90",
         "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
+        "xgi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 126,
-      "name": "Mathias Jensen",
-      "team": "Brentford",
+      "element_id": 290,
+      "name": "Slater",
+      "team": "Hull City",
       "position": "MID",
-      "composite": -0.106569568386,
-      "percentile": 0.462365591398,
+      "composite": -0.243832260386,
+      "percentile": 0.450549450549,
       "rank": 51,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "clean_sheet_prob",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 241,
-      "name": "Moisés Caicedo Corozo",
-      "team": "Chelsea",
-      "position": "MID",
-      "composite": -0.107572324949,
-      "percentile": 0.451612903226,
-      "rank": 52,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "xg_per90"
+        "xa_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 354,
-      "name": "Ethan Ampadu",
-      "team": "Leeds",
-      "position": "MID",
-      "composite": -0.109781016999,
-      "percentile": 0.440860215054,
-      "rank": 53,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 488,
-      "name": "Bruno Guimarães Rodriguez Moura",
-      "team": "Newcastle",
-      "position": "MID",
-      "composite": -0.122373497635,
-      "percentile": 0.430107526882,
-      "rank": 54,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 236,
-      "name": "Pedro Lomba Neto",
-      "team": "Chelsea",
-      "position": "MID",
-      "composite": -0.122933080167,
-      "percentile": 0.41935483871,
-      "rank": 55,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "assists_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 416,
-      "name": "Bernardo Mota Veiga de Carvalho e Silva",
-      "team": "Man City",
-      "position": "MID",
-      "composite": -0.133333209949,
-      "percentile": 0.408602150538,
-      "rank": 56,
-      "bucket": "neutral",
-      "drivers": [
-        "xa_per90",
-        "xgi_per90",
-        "goals_per90"
-      ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
-    },
-    {
-      "element_id": 163,
-      "name": "Jack Hinshelwood",
-      "team": "Brighton",
-      "position": "MID",
-      "composite": -0.137934147279,
-      "percentile": 0.397849462366,
-      "rank": 57,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 585,
-      "name": "Rodrigo Bentancur",
-      "team": "Spurs",
-      "position": "MID",
-      "composite": -0.149478952932,
-      "percentile": 0.387096774194,
-      "rank": 58,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 237,
-      "name": "Enzo Fernández",
-      "team": "Chelsea",
-      "position": "MID",
-      "composite": -0.157577995816,
-      "percentile": 0.376344086022,
-      "rank": 59,
-      "bucket": "neutral",
-      "drivers": [
-        "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 299,
-      "name": "Iliman Ndiaye",
+      "name": "Ndiaye",
       "team": "Everton",
       "position": "MID",
-      "composite": -0.159790816059,
-      "percentile": 0.365591397849,
-      "rank": 60,
-      "bucket": "declining",
+      "composite": -0.245161828722,
+      "percentile": 0.43956043956,
+      "rank": 52,
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "xgi_per90",
+        "minutes_reliability",
         "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 242,
-      "name": "Kiernan Dewsbury-Hall",
+      "name": "George",
       "team": "Everton",
       "position": "MID",
-      "composite": -0.177408914665,
-      "percentile": 0.354838709677,
-      "rank": 61,
-      "bucket": "declining",
+      "composite": -0.252811009637,
+      "percentile": 0.428571428571,
+      "rank": 53,
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "xg_per90"
+        "xa_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 83,
-      "name": "Dango Ouattara",
-      "team": "Brentford",
+      "element_id": 184,
+      "name": "Grimes",
+      "team": "Coventry City",
       "position": "MID",
-      "composite": -0.17930052859,
-      "percentile": 0.344086021505,
+      "composite": -0.272126520415,
+      "percentile": 0.417582417582,
+      "rank": 54,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "minutes_reliability",
+        "xa_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 576,
+      "name": "Stroud",
+      "team": "Hull City",
+      "position": "MID",
+      "composite": -0.275195665819,
+      "percentile": 0.406593406593,
+      "rank": 55,
+      "bucket": "neutral",
+      "drivers": [
+        "clean_sheet_prob",
+        "bps_per90",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 210,
+      "name": "Wharton",
+      "team": "Crystal Palace",
+      "position": "MID",
+      "composite": -0.288555858386,
+      "percentile": 0.395604395604,
+      "rank": 56,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xg_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 260,
+      "name": "Wilson",
+      "team": "Leeds",
+      "position": "MID",
+      "composite": -0.292617245293,
+      "percentile": 0.384615384615,
+      "rank": 57,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "minutes_reliability",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 545,
+      "name": "Sadiki",
+      "team": "Sunderland",
+      "position": "MID",
+      "composite": -0.293036591881,
+      "percentile": 0.373626373626,
+      "rank": 58,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 46,
+      "name": "Barkley",
+      "team": "Aston Villa",
+      "position": "MID",
+      "composite": -0.297722628027,
+      "percentile": 0.362637362637,
+      "rank": 59,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 338,
+      "name": "Ampadu",
+      "team": "Leeds",
+      "position": "MID",
+      "composite": -0.300997284875,
+      "percentile": 0.351648351648,
+      "rank": 60,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "minutes_reliability",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 214,
+      "name": "Kamada",
+      "team": "Crystal Palace",
+      "position": "MID",
+      "composite": -0.30300983026,
+      "percentile": 0.340659340659,
+      "rank": 61,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 455,
+      "name": "Tonali",
+      "team": "Spurs",
+      "position": "MID",
+      "composite": -0.30589145254,
+      "percentile": 0.32967032967,
       "rank": 62,
       "bucket": "neutral",
       "drivers": [
-        "bps_per90",
-        "xg_per90",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 417,
-      "name": "Rayan Cherki",
-      "team": "Man City",
+      "element_id": 459,
+      "name": "L.Miley",
+      "team": "Newcastle",
       "position": "MID",
-      "composite": -0.182832901973,
-      "percentile": 0.333333333333,
+      "composite": -0.31409860686,
+      "percentile": 0.318681318681,
       "rank": 63,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
-        "bps_per90",
+        "xgi_per90",
         "xg_per90",
-        "xgi_per90"
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 350,
-      "name": "Brenden Aaronson",
-      "team": "Leeds",
+      "element_id": 244,
+      "name": "Armstrong",
+      "team": "Everton",
       "position": "MID",
-      "composite": -0.202426882205,
-      "percentile": 0.322580645161,
+      "composite": -0.326824924124,
+      "percentile": 0.307692307692,
       "rank": 64,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 722,
-      "name": "Florentino Ibrain Morris Luís",
-      "team": "Burnley",
-      "position": "MID",
-      "composite": -0.202511802025,
-      "percentile": 0.311827956989,
-      "rank": 65,
-      "bucket": "rising",
-      "drivers": [
-        "clean_sheet_prob",
         "xgi_per90",
+        "xa_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 34,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 580,
-      "name": "Brennan Johnson",
-      "team": "Crystal Palace",
-      "position": "MID",
-      "composite": -0.264622849094,
-      "percentile": 0.301075268817,
-      "rank": 66,
-      "bucket": "rising",
-      "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 457,
-      "name": "Carlos Henrique Casimiro",
+      "element_id": 432,
+      "name": "Mainoo",
       "team": "Man Utd",
       "position": "MID",
-      "composite": -0.269789937189,
-      "percentile": 0.290322580645,
-      "rank": 67,
-      "bucket": "declining",
+      "composite": -0.334400623458,
+      "percentile": 0.296703296703,
+      "rank": 65,
+      "bucket": "neutral",
       "drivers": [
-        "clean_sheet_prob",
-        "minutes_reliability"
+        "minutes_reliability",
+        "xa_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 85,
-      "name": "Tyler Adams",
-      "team": "Bournemouth",
+      "element_id": 335,
+      "name": "Stach",
+      "team": "Leeds",
       "position": "MID",
-      "composite": -0.275420814088,
-      "percentile": 0.279569892473,
+      "composite": -0.335929488953,
+      "percentile": 0.285714285714,
+      "rank": 66,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 562,
+      "name": "Maeda",
+      "team": "Ipswich Town",
+      "position": "MID",
+      "composite": -0.339101818033,
+      "percentile": 0.274725274725,
+      "rank": 67,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 372,
+      "name": "Mac Allister",
+      "team": "Liverpool",
+      "position": "MID",
+      "composite": -0.33966433019,
+      "percentile": 0.263736263736,
       "rank": 68,
       "bucket": "neutral",
       "drivers": [
-        "xgi_per90",
-        "xg_per90",
-        "xa_per90"
+        "minutes_reliability",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 272,
-      "name": "Jefferson Lerma Solís",
-      "team": "Crystal Palace",
+      "element_id": 247,
+      "name": "Hackney",
+      "team": "Everton",
       "position": "MID",
-      "composite": -0.294916223666,
-      "percentile": 0.268817204301,
+      "composite": -0.342385792171,
+      "percentile": 0.252747252747,
       "rank": 69,
       "bucket": "neutral",
       "drivers": [
-        "xg_per90",
-        "clean_sheet_prob",
-        "xgi_per90"
+        "xgi_per90",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 693,
-      "name": "Omari Hutchinson",
-      "team": "Nott'm Forest",
+      "element_id": 264,
+      "name": "Bobb",
+      "team": "Fulham",
       "position": "MID",
-      "composite": -0.299255361428,
-      "percentile": 0.258064516129,
+      "composite": -0.342434777167,
+      "percentile": 0.241758241758,
       "rank": 70,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "assists_per90",
+        "xgi_per90",
+        "xa_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 50,
-      "name": "Emiliano Buendía Stati",
-      "team": "Aston Villa",
+      "element_id": 246,
+      "name": "Röhl",
+      "team": "Everton",
       "position": "MID",
-      "composite": -0.318379603044,
-      "percentile": 0.247311827957,
+      "composite": -0.344185448482,
+      "percentile": 0.230769230769,
       "rank": 71,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "bonus_per90",
-        "xgi_per90"
+        "xgi_per90",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 273,
-      "name": "Adam Wharton",
-      "team": "Crystal Palace",
+      "element_id": 453,
+      "name": "Barnes",
+      "team": "Newcastle",
       "position": "MID",
-      "composite": -0.322979452759,
-      "percentile": 0.236559139785,
+      "composite": -0.353498275805,
+      "percentile": 0.21978021978,
       "rank": 72,
       "bucket": "neutral",
       "drivers": [
         "xgi_per90",
-        "xg_per90",
-        "clean_sheet_prob"
+        "xa_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 324,
-      "name": "Alex Iwobi",
+      "element_id": 570,
+      "name": "Palacios",
       "team": "Fulham",
       "position": "MID",
-      "composite": -0.361538955598,
-      "percentile": 0.225806451613,
+      "composite": -0.357087400292,
+      "percentile": 0.208791208791,
       "rank": 73,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob",
-        "goals_per90"
+        "xgi_per90",
+        "xa_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 325,
-      "name": "Emile Smith Rowe",
-      "team": "Fulham",
+      "element_id": 71,
+      "name": "Cook",
+      "team": "Bournemouth",
       "position": "MID",
-      "composite": -0.38060740832,
-      "percentile": 0.215053763441,
+      "composite": -0.360962425684,
+      "percentile": 0.197802197802,
       "rank": 74,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
         "xgi_per90",
-        "clean_sheet_prob",
-        "xa_per90"
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 267,
-      "name": "Ismaïla Sarr",
-      "team": "Crystal Palace",
+      "name": "Lukić",
+      "team": "Ipswich Town",
       "position": "MID",
-      "composite": -0.41188027132,
-      "percentile": 0.204301075269,
+      "composite": -0.361146427699,
+      "percentile": 0.186813186813,
       "rank": 75,
       "bucket": "neutral",
       "drivers": [
         "xgi_per90",
-        "xg_per90",
-        "clean_sheet_prob"
+        "xa_per90",
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 487,
-      "name": "Harvey Barnes",
-      "team": "Newcastle",
+      "element_id": 557,
+      "name": "Tzolis",
+      "team": "Arsenal",
       "position": "MID",
-      "composite": -0.426337872921,
-      "percentile": 0.193548387097,
+      "composite": -0.375745093892,
+      "percentile": 0.175824175824,
       "rank": 76,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xgi_per90"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 271,
-      "name": "Daichi Kamada",
-      "team": "Crystal Palace",
-      "position": "MID",
-      "composite": -0.429487619993,
-      "percentile": 0.182795698925,
-      "rank": 77,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
         "xgi_per90",
-        "xg_per90",
-        "clean_sheet_prob"
+        "bps_per90",
+        "xa_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 169,
-      "name": "Diego Gómez Amarilla",
-      "team": "Brighton",
+      "element_id": 337,
+      "name": "Aaronson",
+      "team": "Leeds",
       "position": "MID",
-      "composite": -0.451943407623,
-      "percentile": 0.172043010753,
+      "composite": -0.390997909729,
+      "percentile": 0.164835164835,
+      "rank": 77,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "xg_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 45,
+      "name": "McGinn",
+      "team": "Aston Villa",
+      "position": "MID",
+      "composite": -0.39401150484,
+      "percentile": 0.153846153846,
       "rank": 78,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "bps_per90",
-        "xa_per90"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 414,
-      "name": "Phil Foden",
-      "team": "Man City",
-      "position": "MID",
-      "composite": -0.463340441677,
-      "percentile": 0.161290322581,
-      "rank": 79,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "xg_per90"
+        "minutes_reliability"
       ],
-      "gameweeks_seen": 36,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 158,
-      "name": "Georginio Rutter",
-      "team": "Brighton",
+      "element_id": 41,
+      "name": "Buendía",
+      "team": "Aston Villa",
       "position": "MID",
-      "composite": -0.513153725544,
-      "percentile": 0.150537634409,
+      "composite": -0.39811850123,
+      "percentile": 0.142857142857,
+      "rank": 79,
+      "bucket": "neutral",
+      "drivers": [
+        "xgi_per90",
+        "xa_per90",
+        "minutes_reliability"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 47,
+      "name": "Kamara",
+      "team": "Aston Villa",
+      "position": "MID",
+      "composite": -0.398847938028,
+      "percentile": 0.131868131868,
       "rank": 80,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "bps_per90",
-        "xa_per90"
+        "xgi_per90",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 157,
-      "name": "Mitoma Kaoru",
-      "team": "Brighton",
+      "element_id": 309,
+      "name": "Núñez",
+      "team": "Ipswich Town",
       "position": "MID",
-      "composite": -0.570693054658,
-      "percentile": 0.139784946237,
+      "composite": -0.405313035988,
+      "percentile": 0.120879120879,
       "rank": 81,
-      "bucket": "declining",
+      "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xa_per90",
+        "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 26,
-      "name": "Martín Zubimendi Ibáñez",
-      "team": "Arsenal",
+      "element_id": 522,
+      "name": "Gray",
+      "team": "Spurs",
       "position": "MID",
-      "composite": -0.612626100405,
-      "percentile": 0.129032258065,
+      "composite": -0.428698841951,
+      "percentile": 0.10989010989,
       "rank": 82,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "xgi_per90",
+        "xa_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 173,
-      "name": "Mats Wieffer",
-      "team": "Brighton",
+      "element_id": 51,
+      "name": "George Hemmings",
+      "team": "Aston Villa",
       "position": "MID",
-      "composite": -0.666363608618,
-      "percentile": 0.118279569892,
+      "composite": -0.455785982293,
+      "percentile": 0.0989010989011,
       "rank": 83,
       "bucket": "neutral",
       "drivers": [
-        "minutes_reliability",
         "xgi_per90",
-        "xg_per90"
+        "xa_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 521,
-      "name": "Ibrahim Sangaré",
-      "team": "Nott'm Forest",
+      "element_id": 211,
+      "name": "Yeremy",
+      "team": "Crystal Palace",
       "position": "MID",
-      "composite": -0.683802299819,
-      "percentile": 0.10752688172,
+      "composite": -0.494325400053,
+      "percentile": 0.0879120879121,
       "rank": 84,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xgi_per90",
-        "xg_per90"
+        "assists_per90",
+        "bps_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 59,
-      "name": "Amadou Onana",
-      "team": "Aston Villa",
+      "element_id": 429,
+      "name": "Rashford",
+      "team": "Man Utd",
       "position": "MID",
-      "composite": -0.718883496976,
-      "percentile": 0.0967741935484,
+      "composite": -0.557563190707,
+      "percentile": 0.0769230769231,
       "rank": 85,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "xgi_per90",
+        "xa_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 330,
-      "name": "Sander Berge",
-      "team": "Fulham",
+      "element_id": 183,
+      "name": "Rudoni",
+      "team": "Coventry City",
       "position": "MID",
-      "composite": -0.741379416744,
-      "percentile": 0.0860215053763,
+      "composite": -0.680073153554,
+      "percentile": 0.0659340659341,
       "rank": 86,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgi_per90",
-        "clean_sheet_prob"
+        "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 124,
-      "name": "Jordan Henderson",
-      "team": "Brentford",
+      "element_id": 525,
+      "name": "Fernandes",
+      "team": "Spurs",
       "position": "MID",
-      "composite": -0.755258862583,
-      "percentile": 0.0752688172043,
+      "composite": -0.751741249183,
+      "percentile": 0.0549450549451,
       "rank": 87,
+      "bucket": "neutral",
+      "drivers": [
+        "minutes_reliability",
+        "xg_per90",
+        "xgi_per90"
+      ],
+      "gameweeks_seen": 2,
+      "low_confidence": true
+    },
+    {
+      "element_id": 551,
+      "name": "N.Angulo",
+      "team": "Sunderland",
+      "position": "MID",
+      "composite": -0.846172867296,
+      "percentile": 0.043956043956,
+      "rank": 88,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgi_per90",
         "xg_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 209,
-      "name": "Josh Laurent",
-      "team": "Burnley",
+      "element_id": 336,
+      "name": "Okafor",
+      "team": "Leeds",
       "position": "MID",
-      "composite": -0.958933321144,
-      "percentile": 0.0645161290323,
-      "rank": 88,
+      "composite": -0.854561690657,
+      "percentile": 0.032967032967,
+      "rank": 89,
       "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob"
+        "xa_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 166,
-      "name": "Yasin Ayari",
-      "team": "Brighton",
-      "position": "MID",
-      "composite": -1.25595097456,
-      "percentile": 0.0537634408602,
-      "rank": 89,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 37,
-      "low_confidence": false
-    },
-    {
-      "element_id": 485,
-      "name": "Anthony Gordon",
+      "element_id": 460,
+      "name": "Willock",
       "team": "Newcastle",
       "position": "MID",
-      "composite": -1.32953627935,
-      "percentile": 0.0430107526882,
+      "composite": -0.904832478476,
+      "percentile": 0.021978021978,
       "rank": 90,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob"
+        "bps_per90",
+        "xgi_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
-    },
-    {
-      "element_id": 717,
-      "name": "Xavi Simons",
-      "team": "Spurs",
-      "position": "MID",
-      "composite": -1.34817990257,
-      "percentile": 0.0322580645161,
-      "rank": 91,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 35,
-      "low_confidence": false
-    },
-    {
-      "element_id": 302,
-      "name": "Idrissa Gana Gueye",
-      "team": "Everton",
-      "position": "MID",
-      "composite": -1.43313714676,
-      "percentile": 0.0215053763441,
-      "rank": 92,
-      "bucket": "declining",
-      "drivers": [
-        "minutes_reliability",
-        "clean_sheet_prob"
-      ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
       "element_id": 516,
-      "name": "Callum Hudson-Odoi",
-      "team": "Nott'm Forest",
+      "name": "Bentancur",
+      "team": "Spurs",
       "position": "MID",
-      "composite": -1.45554719922,
-      "percentile": 0.010752688172,
-      "rank": 93,
-      "bucket": "rising",
+      "composite": -0.940268710245,
+      "percentile": 0.010989010989,
+      "rank": 91,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xa_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     },
     {
-      "element_id": 328,
-      "name": "Ryan Sessegnon",
-      "team": "Fulham",
+      "element_id": 558,
+      "name": "Schlager",
+      "team": "Nott'm Forest",
       "position": "MID",
-      "composite": -1.66630427894,
+      "composite": -0.942818026819,
       "percentile": 0.0,
-      "rank": 94,
-      "bucket": "declining",
+      "rank": 92,
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
-        "clean_sheet_prob"
+        "xgi_per90",
+        "xa_per90"
       ],
-      "gameweeks_seen": 38,
-      "low_confidence": false
+      "gameweeks_seen": 2,
+      "low_confidence": true
     }
   ]
 }

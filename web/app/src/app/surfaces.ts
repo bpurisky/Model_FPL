@@ -104,9 +104,9 @@ export const SURFACES: Surface[] = [
   {
     view: "optimizer",
     label: "Squad Optimizer",
-    blurb: "Phase 3 solves for a 15-man squad under budget and formation constraints.",
-    status: "out_of_phase",
-    milestone: "Phase 3",
+    blurb: "Given a team ID, solves for the best legal transfer under budget and formation constraints — the only surface that calls a live backend.",
+    status: "live",
+    milestone: "5H",
   },
   {
     view: "papertrade",

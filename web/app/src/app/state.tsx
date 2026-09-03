@@ -41,6 +41,7 @@ export type Action =
   | { type: "encoding"; encoding: Partial<Encoding> }
   | { type: "select"; ids: number[] }
   | { type: "toggleSelect"; id: number }
+  | { type: "entry"; entryId: number | null }
   | { type: "restore"; state: AppUrlState };
 
 /**
@@ -97,6 +98,9 @@ export function reducer(state: AppUrlState, action: Action): AppUrlState {
           : [...state.selection, action.id],
       };
     }
+
+    case "entry":
+      return { ...state, entry: action.entryId };
 
     case "restore":
       return action.state;

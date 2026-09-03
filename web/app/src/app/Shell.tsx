@@ -22,6 +22,7 @@ import { FixtureTicker } from "../views/FixtureTicker";
 import { ModelBoard } from "../views/ModelBoard";
 import { PaperTradeResults } from "../views/PaperTradeResults";
 import { Scorecard } from "../views/Scorecard";
+import { SquadOptimizer } from "../views/SquadOptimizer";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
 import { SURFACES } from "./surfaces";
@@ -123,6 +124,7 @@ function Shell() {
           </Suspense>
         )}
         {state.view === "papertrade" && <PaperTradeResults />}
+        {state.view === "optimizer" && <SquadOptimizer />}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
     </div>

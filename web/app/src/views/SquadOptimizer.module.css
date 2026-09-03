@@ -1,0 +1,285 @@
+/*
+ * Flat on `--ground`, like Scorecard and Paper Trade Results — this
+ * surface reports a live solve rather than actively classifying players
+ * the way Model Board does, so it doesn't earn §5.8.6's `--panel` wall.
+ */
+
+.optimizer {
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 1100px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 76ch;
+  line-height: 1.5;
+}
+
+/* --- form ---------------------------------------------------------- */
+
+.form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-block-end: var(--hairline) solid var(--rule);
+  padding-block-end: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fieldLabel {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.input {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--paper);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+  min-inline-size: 12ch;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+
+.submit {
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--ground);
+  background: var(--paper);
+  border: none;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: opacity var(--dur-state) var(--ease);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.submit:not(:disabled):hover {
+  opacity: 0.85;
+}
+
+/* --- notes and states ------------------------------------------------ */
+
+.empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 76ch;
+  line-height: 1.55;
+}
+
+.loadingNote {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 68ch;
+  line-height: 1.55;
+}
+
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--flag);
+  max-inline-size: 68ch;
+}
+
+.failureHead {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-md);
+}
+
+/* §5.8.2: amber is reserved for epistemic warnings about how far a
+ * number can be trusted -- exactly what the early-season caveat is. */
+.caveat {
+  color: var(--flag);
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-3);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  max-inline-size: 84ch;
+  margin: 0;
+}
+
+.note {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+/* --- panels ----------------------------------------------------------- */
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-block-start: var(--hairline) solid var(--rule);
+  padding-block-start: var(--space-3);
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+/* --- summary ------------------------------------------------------- */
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.summary dt {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.summary dd {
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+/* --- transfers ------------------------------------------------------- */
+
+.transfers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.transferRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-3);
+  background: var(--panel);
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+}
+
+.transferOut {
+  color: var(--rho-pos);
+}
+
+.transferIn {
+  color: var(--rho-neg);
+}
+
+/* --- template risk ---------------------------------------------------- */
+
+.riskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.riskItem {
+  color: var(--flag);
+  font-size: var(--text-sm);
+  border-inline-start: 2px solid var(--flag);
+  padding-inline-start: var(--space-3);
+}
+
+/* --- starting XI ------------------------------------------------------ */
+
+.xi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.xiRow {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+
+.xiPos {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  min-inline-size: 4ch;
+}
+
+.xiPlayers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.xiPlayer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.captainBadge {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--ground);
+  background: var(--paper);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-1);
+}
+
+/* --- bench -------------------------------------------------------------- */
+
+.bench {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}

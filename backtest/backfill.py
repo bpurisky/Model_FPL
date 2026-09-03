@@ -1,7 +1,15 @@
 """Downloads and normalizes historical FPL seasons (§3.1) into
 data/historical/{season}.parquet — the committed input the backtest harness
-reads. Re-running this script re-derives that Parquet from a fresh download;
-nothing downstream depends on the raw cache surviving.
+reads. Re-running this script re-derives that Parquet from a fresh download.
+
+That used to mean nothing downstream depended on RAW_CACHE_DIR surviving --
+no longer true. `analytics/evaluate.py:build_difficulty_table` (the live
+scorecard's walk-forward baseline) reads `RAW_CACHE_DIR/{season}/fixtures.csv`
+directly rather than the normalized parquet, and that directory is gitignored
+(§8), so a fresh checkout never has it. `.github/workflows/web.yml` runs this
+script before `web.export all` for exactly that reason -- if you add another
+consumer of RAW_CACHE_DIR, it needs the same guarantee, not an assumption
+that some earlier step already populated it.
 
 Source: vaastav/Fantasy-Premier-League — one row per player per gameweek,
 plus per-season fixtures.csv (kickoff times, FPL's own difficulty ratings)

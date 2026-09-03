@@ -91,12 +91,17 @@ def test_evaluate_squad_level_skips_gameweeks_missing_a_freeze_or_actuals(tmp_pa
     assert result["per_gw"] == []
 
 
-def test_launch_gate_report_insufficient_data_before_13_gameweeks():
+def test_launch_gate_report_reports_baseline_gap_as_soon_as_any_live_data_exists():
+    """The gate has no fixed gameweek minimum any more -- one real gameweek
+    is enough for a criterion to report its real answer. The baseline
+    criteria specifically never reach PASS regardless of gameweek count
+    (backtest/baselines.py isn't wired to live data yet), but they still
+    move off "insufficient data" the moment there is any live evidence."""
     report = launch_gate_report({2: {}}, {"n_gameweeks": 1})
 
     assert report["ready_to_launch"] is False
     assert report["gameweeks_evaluated"] == 1
-    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "insufficient data"
+    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "not wired to live baselines yet"
 
 
 def test_launch_gate_report_never_fabricates_a_pass_with_no_data():
@@ -227,7 +232,7 @@ def test_evaluate_player_level_separates_skipped_from_excluded(tmp_path):
     assert [s["gw"] for s in result["skipped"]] == [9]
 
 
-def test_excluded_gameweeks_do_not_count_toward_the_thirteen(tmp_path):
+def test_excluded_gameweeks_do_not_count_toward_the_evaluated_total(tmp_path):
     """§6.5's gate counts live evidence. A null observation is not
     evidence, and must not shrink the denominator silently either."""
     squad_eval = {"n_gameweeks": 0}
@@ -238,7 +243,7 @@ def test_excluded_gameweeks_do_not_count_toward_the_thirteen(tmp_path):
     assert gate["gameweeks_evaluated"] == 1  # gw3 only, not gw2
     assert gate["gameweeks_excluded"] == excluded
     detail = gate["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["detail"]
-    assert "gw2" in detail and "1/13" in detail
+    assert "gw2" in detail and "1 gameweek evaluated" in detail
 
 
 def test_evaluate_squad_level_excludes_a_degenerate_gameweek(tmp_path):
@@ -298,14 +303,16 @@ def test_leakage_criterion_is_not_tracked_for_a_freeze_that_predates_the_check(t
     assert "retroactively" in criterion["detail"]
 
 
-def test_leakage_criterion_reports_all_freezes_verified(tmp_path):
+def test_leakage_criterion_passes_as_soon_as_a_single_gameweek_is_clean(tmp_path):
+    """No fixed gameweek minimum any more -- one verified freeze is enough
+    for this criterion to report PASS live."""
     write_freeze(3, _provenanced_freeze(3), freezes_dir=tmp_path)
     provenance = collect_freeze_provenance([3], freezes_dir=tmp_path)
 
     gate = launch_gate_report({3: {}}, {"n_gameweeks": 1}, freeze_provenance=provenance)
 
     criterion = gate["criteria"]["no_leakage_assertion_fired"]
-    assert criterion["status"] == "insufficient data"  # 1 of 13 gameweeks
+    assert criterion["status"] == "PASS"
     assert "ran and passed" in criterion["detail"]
 
 
@@ -315,7 +322,7 @@ def test_manual_correction_criterion_fails_when_a_correction_is_declared(tmp_pat
 
     gate = launch_gate_report({3: {}}, {"n_gameweeks": 1}, freeze_provenance=provenance)
 
-    criterion = gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]
+    criterion = gate["criteria"]["squad_reconstruction_ran_without_manual_correction"]
     assert criterion["status"] == "FAIL"
     assert "rebuilt shadow squad by hand" in criterion["detail"]
 
@@ -328,9 +335,22 @@ def test_manual_correction_criterion_untracked_for_a_freeze_without_the_field(tm
 
     gate = launch_gate_report({}, {"n_gameweeks": 1}, freeze_provenance=provenance)
 
-    criterion = gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]
+    criterion = gate["criteria"]["squad_reconstruction_ran_without_manual_correction"]
     assert criterion["status"] == "not tracked"
     assert "immutable" in criterion["detail"]
+
+
+def test_manual_correction_criterion_passes_as_soon_as_a_clean_gameweek_exists(tmp_path):
+    """No fixed gameweek minimum any more -- one freeze that declares no
+    manual correction is enough for this criterion to report PASS live."""
+    write_freeze(3, _provenanced_freeze(3), freezes_dir=tmp_path)
+    provenance = collect_freeze_provenance([3], freezes_dir=tmp_path)
+
+    gate = launch_gate_report({3: {}}, {"n_gameweeks": 1}, freeze_provenance=provenance)
+
+    criterion = gate["criteria"]["squad_reconstruction_ran_without_manual_correction"]
+    assert criterion["status"] == "PASS"
+    assert "declare no manual correction" in criterion["detail"]
 
 
 def test_gate_never_fabricates_a_pass_from_absent_provenance():
@@ -338,5 +358,5 @@ def test_gate_never_fabricates_a_pass_from_absent_provenance():
     gate = launch_gate_report({}, {"n_gameweeks": 0}, freeze_provenance=[])
 
     assert gate["criteria"]["no_leakage_assertion_fired"]["status"] == "insufficient data"
-    assert gate["criteria"]["squad_reconstruction_ran_13_consecutive_gws_without_manual_correction"]["status"] == "insufficient data"
+    assert gate["criteria"]["squad_reconstruction_ran_without_manual_correction"]["status"] == "insufficient data"
     assert gate["ready_to_launch"] is False

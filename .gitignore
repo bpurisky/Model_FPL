@@ -19,6 +19,10 @@ papertrade/report.json
 
 # Local overrides
 .env
+# Vite's own local-override convention (web/app/.env.example is committed
+# and documents VITE_OPTIMIZER_API_URL; the .local variants are not).
+web/app/.env.local
+web/app/.env.*.local
 
 # Generated knowledge graph (/graphify) — AST cache, graph.json, graph.html.
 # Regenerates from the source it indexes; 3.4MB of churn, not an input to anything.

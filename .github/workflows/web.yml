@@ -56,6 +56,19 @@ jobs:
       # publish a well-formed file the app reads wrongly.
       - run: uv run pytest tests/test_export_columns.py tests/test_export_contract.py tests/test_schema_ts.py -q
 
+      # `analytics/evaluate.py:build_difficulty_table` (scorecard's live
+      # walk-forward baseline) reads data/historical/raw/{season}/fixtures.csv
+      # directly, not the committed data/historical/{season}.parquet -- and
+      # that raw cache is gitignored (backtest/backfill.py's own docstring:
+      # "nothing downstream depends on the raw cache surviving", which was
+      # true when written and stopped being true once evaluate.py started
+      # reading it). A fresh checkout has never had this directory, so this
+      # job has failed on `web.export all` on every run since it was created
+      # -- confirmed by reproducing the exact FileNotFoundError in a clean
+      # worktree at data/historical/raw/2023-24/fixtures.csv. Re-running the
+      # backfill here is exactly what the module was already designed for.
+      - run: uv run python -m backtest.backfill
+
       - run: uv run python -m web.export all
 
       # panel.parquet and timeseries.parquet are build artifacts (§5.3.4).

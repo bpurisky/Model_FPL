@@ -13,7 +13,7 @@ import logging
 from pathlib import Path
 
 from collector.config import load_config
-from squad.live import build_projections, fetch_live_data
+from squad.live import build_projections, fetch_live_data, live_data_caveat
 from squad.optimize import OptimizationResult, optimize_squad, pair_transfers_by_position, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -35,23 +35,7 @@ def format_report(live, result: OptimizationResult, horizon: list[int]) -> str:
     lines.append("FPL SQUAD RECOMMENDATION")
     lines.append("=" * 70)
     lines.append("")
-    lines.append(
-        f"CAVEAT: this is trained on {live.history_gws} gameweek(s) of 2026/27 "
-        f"data, through gameweek {live.data_gw}, in which only "
-        f"{live.teams_with_played_data}/{live.teams_total} "
-        "teams have *played* their fixture as of this run -- an "
-        "in-progress match's stats (e.g. 0 minutes because a "
-        "fixture hasn't kicked off yet, not because of a blank) are "
-        "deliberately excluded, so a team not yet counted here contributes "
-        "nothing to that gameweek and is projected from its earlier ones, "
-        "or from the position-level pooled average if it has none. "
-        "Every projection is otherwise a trailing rate "
-        "plus custom fixture difficulty (Elo carried over from 2025/26) -- "
-        "not the validated model from Phase 2's backtest, which needed "
-        "several seasons of data to clear its baselines. Treat this as a "
-        "provisional, early-season read, not a settled recommendation "
-        "(see squad/live.py's module docstring)."
-    )
+    lines.append(f"CAVEAT: {live_data_caveat(live)} (See squad/live.py's module docstring.)")
     lines.append("")
 
     pool_by_id = {p.element_id: p for p in live.pool}

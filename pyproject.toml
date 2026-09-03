@@ -31,6 +31,19 @@ dependencies = [
 dev = [
     "pytest>=8.3",
 ]
+# Not in §1.1's locked stack, which has no HTTP framework -- that section
+# locks the *client* to "no build step, no framework"; it says nothing
+# about the solver. Needed because squad/optimize.py's ILP solve cannot
+# run in the browser (frontend §5.1.1/§5.6: no API server, no runtime
+# Python, no client-side inference) or be precomputed (it takes an
+# arbitrary live entry ID as input). fastapi+uvicorn over hand-rolling on
+# `http.server` because a public, unauthenticated endpoint needs its input
+# validation and CORS handling to be audited code, not bespoke. See
+# service/app.py and the 2026-09-02 fpl-trends-superprompt.md entry.
+service = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+]
 
 [tool.uv]
 package = false

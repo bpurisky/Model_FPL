@@ -45,7 +45,7 @@ const CRITERION_ORDER = [
   "beats_fixture_adjusted_trailing_mean_mae",
   "beats_baselines_on_rank_correlation",
   "no_leakage_assertion_fired",
-  "squad_reconstruction_ran_13_consecutive_gws_without_manual_correction",
+  "squad_reconstruction_ran_without_manual_correction",
   "price_change_model_reports_hit_rate_with_ci",
 ] as const;
 
@@ -53,8 +53,7 @@ const CRITERION_LABELS: Record<string, string> = {
   beats_fixture_adjusted_trailing_mean_mae: "Beats the fixture-adjusted trailing mean (MAE)",
   beats_baselines_on_rank_correlation: "Beats all three baselines on rank correlation",
   no_leakage_assertion_fired: "No leakage assertion fired",
-  squad_reconstruction_ran_13_consecutive_gws_without_manual_correction:
-    "13 consecutive gameweeks, no manual correction",
+  squad_reconstruction_ran_without_manual_correction: "Squad reconstruction ran with no manual correction",
   price_change_model_reports_hit_rate_with_ci: "Price-change model reports its hit rate with a CI",
 };
 
@@ -132,9 +131,9 @@ function LaunchGate({ file }: { file: PaperTradeFile }) {
         §6.5 launch gate
       </h2>
       <p className={styles.panelSub}>
-        Five criteria, all required, reported as they actually stand rather than forced
-        toward a verdict. <span className="data">{count(gate.gameweeks_evaluated, "gameweek")}</span>{" "}
-        evaluated toward the 13 the gate needs.
+        Five criteria, all required, reported live as they actually stand rather than
+        forced toward a verdict or held back for a fixed sample size.{" "}
+        <span className="data">{count(gate.gameweeks_evaluated, "gameweek")}</span> evaluated so far.
       </p>
 
       <p className={styles.readiness} data-ready={gate.ready_to_launch || undefined}>
