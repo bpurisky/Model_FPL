@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-02T22:27:54.141898Z",
+    "generated_at": "2026-09-03T03:43:41.447152Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "abde78adce9ad027b0fdf8348ee6e12b5d564880",
+    "model_git_sha": "01f041ce89a77ee563a4c6372091602cb328a7ed",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 0,
     "current_season": "2026-27"
@@ -19,7 +19,7 @@
     "cumulative_real_points": 0,
     "cumulative_shadow_points": 0,
     "shadow_minus_real": 0,
-    "warning": "Squad-level comparison is at most 13 observations, dominated by variance (§6.3): a genuinely good model can sit at a bad rank after 13 gameweeks because one captain blanked twice. Treat this as a log, not a verdict -- do not overhaul the model on the basis of these numbers alone."
+    "warning": "Squad-level comparison stays a handful of observations for a long stretch of the season, dominated by variance (§6.3): a genuinely good model can sit at a bad rank early on because one captain blanked twice. Treat this as a log, not a verdict -- do not overhaul the model on the basis of these numbers alone."
   },
   "launch_gate": {
     "ready_to_launch": false,
@@ -29,31 +29,31 @@
     "criteria": {
       "beats_fixture_adjusted_trailing_mean_mae": {
         "status": "insufficient data",
-        "detail": "0/13 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
+        "detail": "0 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
       },
       "beats_baselines_on_rank_correlation": {
         "status": "insufficient data",
-        "detail": "0/13 gameweeks evaluated; same live-baseline gap as above."
+        "detail": "0 gameweeks evaluated; same live-baseline gap as above."
       },
       "no_leakage_assertion_fired": {
         "status": "insufficient data",
         "detail": "no freezes on disk to report a leakage check for."
       },
-      "squad_reconstruction_ran_13_consecutive_gws_without_manual_correction": {
+      "squad_reconstruction_ran_without_manual_correction": {
         "status": "insufficient data",
-        "detail": "0/13 gameweeks have both a freeze and recorded actuals; no freezes to inspect."
+        "detail": "0 gameweeks have both a freeze and recorded actuals; no freezes to inspect."
       },
       "price_change_model_reports_hit_rate_with_ci": {
-        "status": "FAIL",
-        "detail": "hit_rate=0.03 (95% CI [0.02, 0.05]) over 611 predicted move(s) of 629 evaluated -- see analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate carries little weight regardless of which side of 0.5 it lands on."
+        "status": "insufficient data",
+        "detail": "analytics/price_model.py ran against 629 player(s) but predicted zero actual moves (rise/fall) to score — either too little distilled history has accumulated yet, or pressure never crossed the model's (unfitted) thresholds in this window."
       }
     }
   },
   "price_eval": {
     "n": 629,
-    "n_moves_predicted": 611,
-    "hit_rate": 0.0327332242226,
-    "ci_low": 0.0186242638385,
-    "ci_high": 0.0468421846066
+    "n_moves_predicted": 0,
+    "hit_rate": null,
+    "ci_low": null,
+    "ci_high": null
   }
 }
