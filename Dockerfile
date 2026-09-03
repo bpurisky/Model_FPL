@@ -20,6 +20,18 @@ RUN uv sync --locked --no-dev --group service
 
 COPY . .
 
+# squad/live.py:build_elo_final_for_current_teams reads
+# data/historical/raw/{season}/{fixtures,teams}.csv directly, not the
+# committed data/historical/{season}.parquet -- and that raw directory is
+# gitignored (backtest/backfill.py's own module docstring flags this exact
+# hazard: "if you add another consumer of RAW_CACHE_DIR, it needs the same
+# guarantee, not an assumption that some earlier step already populated
+# it"). .github/workflows/web.yml already runs this before web.export for
+# the identical reason; this container is the other RAW_CACHE_DIR consumer
+# the docstring warns about, and a long-lived service has no earlier CI
+# step to inherit the cache from, so it has to populate it at build time.
+RUN uv run python -m backtest.backfill
+
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
