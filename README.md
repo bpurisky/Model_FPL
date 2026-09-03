@@ -256,11 +256,14 @@ uv run pytest tests/test_service.py
 Deploy: `Dockerfile` (repo root) builds the service as a container —
 `python:3.12-slim`, not alpine, because `pulp`'s bundled CBC solver binary
 is a glibc build. `render.yaml` is one working deploy target (Render's free
-tier, zero extra infra); Fly.io or Railway would work identically from the
-same image. After deploying, set `ALLOWED_ORIGINS` (comma-separated) to the
-real frontend origin(s) — it defaults to `*` only so a first deploy
-succeeds with no configuration — and set `VITE_OPTIMIZER_API_URL` in the
-frontend build to the deployed service's URL. With that env var unset, the
+tier, zero extra infra; `ALLOWED_ORIGINS` is already set there to
+`https://bpurisky.github.io`, the real Pages origin — CORS matches origin,
+not path, so the project-site `/Model_FPL/` prefix doesn't need naming);
+Fly.io or Railway would work identically from the same image. After
+deploying, set the `OPTIMIZER_API_URL` repository variable (Settings →
+Secrets and variables → Actions → Variables — a public URL, not a secret)
+to the deployed service's URL; `.github/workflows/web.yml`'s build step
+reads it into `VITE_OPTIMIZER_API_URL`. With that variable unset, the
 Squad Optimizer view degrades to an explanation rather than a broken form
 or a raw network error (§7.3's rule for the Cloudflare Worker, applied
 here too).

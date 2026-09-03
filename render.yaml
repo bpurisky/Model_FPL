@@ -6,10 +6,10 @@
 #
 # Deploy: https://dashboard.render.com/blueprints -> New Blueprint
 # Instance -> point at this repo. Render reads this file automatically.
-# After the first deploy, set ALLOWED_ORIGINS in the Render dashboard
-# to the real deployed frontend origin(s), e.g.
-# "https://bpurisky.github.io" -- the default here is intentionally
-# permissive so the first deploy succeeds without extra configuration.
+# ALLOWED_ORIGINS is set to the real GitHub Pages origin below (a project
+# site at bpurisky.github.io/Model_FPL/ still has origin bpurisky.github.io
+# -- CORS matches on origin, not path). Add a second comma-separated value
+# here (and redeploy) if a custom domain is ever added in front of Pages.
 services:
   - type: web
     name: fpl-trends-optimizer
@@ -19,4 +19,4 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: ALLOWED_ORIGINS
-        value: "*"
+        value: "https://bpurisky.github.io"
