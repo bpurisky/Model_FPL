@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-11T03:51:16.741204Z",
+    "generated_at": "2026-09-12T13:27:17.162252Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "3a259409b0079963e773619bfb1eb7b4a48ee2f6",
+    "model_git_sha": "f897f89ca00f56823d4814e052e5502819dff97e",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 0,
     "current_season": "2026-27"
@@ -45,12 +45,12 @@
       },
       "price_change_model_reports_hit_rate_with_ci": {
         "status": "insufficient data",
-        "detail": "analytics/price_model.py ran against 654 player(s) but predicted zero actual moves (rise/fall) to score — either too little distilled history has accumulated yet, or pressure never crossed the model's (unfitted) thresholds in this window."
+        "detail": "analytics/price_model.py ran against 655 player(s) but predicted zero actual moves (rise/fall) to score — either too little distilled history has accumulated yet, or pressure never crossed the model's (unfitted) thresholds in this window."
       }
     }
   },
   "price_eval": {
-    "n": 654,
+    "n": 655,
     "n_moves_predicted": 0,
     "hit_rate": null,
     "ci_low": null,
