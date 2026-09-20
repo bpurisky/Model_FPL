@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-19T22:14:31.549898Z",
+    "generated_at": "2026-09-20T04:13:02.718959Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "8ed35eb9239a9c4b0f3560472d87b89aa1323fd0",
+    "model_git_sha": "cdfc4f4cfa79a9dd951faba30762556b0369cd2f",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 0,
     "current_season": "2026-27"
@@ -44,16 +44,16 @@
         "detail": "0 gameweeks have both a freeze and recorded actuals; no freezes to inspect."
       },
       "price_change_model_reports_hit_rate_with_ci": {
-        "status": "FAIL",
-        "detail": "hit_rate=0.05 (95% CI [0.04, 0.07]) over 630 predicted move(s) of 662 evaluated -- see analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate carries little weight regardless of which side of 0.5 it lands on."
+        "status": "insufficient data",
+        "detail": "analytics/price_model.py ran against 662 player(s) but predicted zero actual moves (rise/fall) to score — either too little distilled history has accumulated yet, or pressure never crossed the model's (unfitted) thresholds in this window."
       }
     }
   },
   "price_eval": {
     "n": 662,
-    "n_moves_predicted": 630,
-    "hit_rate": 0.0539682539683,
-    "ci_low": 0.0363241399598,
-    "ci_high": 0.0716123679767
+    "n_moves_predicted": 0,
+    "hit_rate": null,
+    "ci_low": null,
+    "ci_high": null
   }
 }
