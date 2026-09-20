@@ -1,16 +1,16 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-20T16:08:54.544911Z",
+    "generated_at": "2026-09-20T18:53:03.173875Z",
     "source_gameweek": 38,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "ca92b65d3873fa94d2fbc35b6dbfb3c6df4da990",
+    "model_git_sha": "73b5b90a1bf2df2fd869976ebae01e00716405ef",
     "normalization_basis": "elo_pre_match_with_carry_forward",
     "rows": 380,
     "current_season": "2026-27"
   },
   "season": "2026-27",
-  "elo_matches": 1189,
+  "elo_matches": 1190,
   "elo_seeded_from": [
     "2023-24",
     "2024-25",
@@ -665,12 +665,12 @@
       "team_h": "Fulham",
       "team_a": "Man Utd",
       "kickoff_time": "2026-09-20T15:30:00Z",
-      "played": false,
+      "played": true,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
       "custom_difficulty_home": 3.19719983448,
       "custom_difficulty_away": 2.80280016552,
-      "difficulty_basis": "current_elo"
+      "difficulty_basis": "pre_match"
     },
     {
       "fixture": 51,
@@ -720,8 +720,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 2,
-      "custom_difficulty_home": 2.66908298499,
-      "custom_difficulty_away": 3.33091701501,
+      "custom_difficulty_home": 2.67473459739,
+      "custom_difficulty_away": 3.32526540261,
       "difficulty_basis": "current_elo"
     },
     {
@@ -746,8 +746,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 1.89191831849,
-      "custom_difficulty_away": 4.10808168151,
+      "custom_difficulty_home": 1.89756993089,
+      "custom_difficulty_away": 4.10243006911,
       "difficulty_basis": "current_elo"
     },
     {
@@ -837,8 +837,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.82470944649,
-      "custom_difficulty_away": 3.17529055351,
+      "custom_difficulty_home": 2.81905783408,
+      "custom_difficulty_away": 3.18094216592,
       "difficulty_basis": "current_elo"
     },
     {
@@ -902,8 +902,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.9599420804,
-      "custom_difficulty_away": 3.0400579196,
+      "custom_difficulty_home": 2.95429046799,
+      "custom_difficulty_away": 3.04570953201,
       "difficulty_basis": "current_elo"
     },
     {
@@ -980,8 +980,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 2,
-      "custom_difficulty_home": 2.73575968194,
-      "custom_difficulty_away": 3.26424031806,
+      "custom_difficulty_home": 2.74141129435,
+      "custom_difficulty_away": 3.25858870565,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1045,8 +1045,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.54041615043,
-      "custom_difficulty_away": 3.45958384957,
+      "custom_difficulty_home": 2.54606776283,
+      "custom_difficulty_away": 3.45393223717,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1071,8 +1071,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.93202272712,
-      "custom_difficulty_away": 3.06797727288,
+      "custom_difficulty_home": 2.92637111471,
+      "custom_difficulty_away": 3.07362888529,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1162,8 +1162,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.29834179293,
-      "custom_difficulty_away": 3.70165820707,
+      "custom_difficulty_home": 2.30399340533,
+      "custom_difficulty_away": 3.69600659467,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1253,8 +1253,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.90870682504,
-      "custom_difficulty_away": 3.09129317496,
+      "custom_difficulty_home": 2.90305521263,
+      "custom_difficulty_away": 3.09694478737,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1292,8 +1292,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.60445837259,
-      "custom_difficulty_away": 3.39554162741,
+      "custom_difficulty_home": 2.610109985,
+      "custom_difficulty_away": 3.389890015,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1409,8 +1409,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.58933705656,
-      "custom_difficulty_away": 3.41066294344,
+      "custom_difficulty_home": 2.58368544416,
+      "custom_difficulty_away": 3.41631455584,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1422,8 +1422,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 5,
-      "custom_difficulty_home": 1.59357763682,
-      "custom_difficulty_away": 4.40642236318,
+      "custom_difficulty_home": 1.59922924922,
+      "custom_difficulty_away": 4.40077075078,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1513,8 +1513,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.03761598491,
-      "custom_difficulty_away": 2.96238401509,
+      "custom_difficulty_home": 3.0319643725,
+      "custom_difficulty_away": 2.9680356275,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1552,8 +1552,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.49946466762,
-      "custom_difficulty_away": 3.50053533238,
+      "custom_difficulty_home": 2.50511628002,
+      "custom_difficulty_away": 3.49488371998,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1695,8 +1695,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.98849300944,
-      "custom_difficulty_away": 3.01150699056,
+      "custom_difficulty_home": 2.98284139703,
+      "custom_difficulty_away": 3.01715860297,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1708,8 +1708,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.01088184703,
-      "custom_difficulty_away": 2.98911815297,
+      "custom_difficulty_home": 3.01653345944,
+      "custom_difficulty_away": 2.98346654056,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1773,8 +1773,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.52341451214,
-      "custom_difficulty_away": 3.47658548786,
+      "custom_difficulty_home": 2.52906612455,
+      "custom_difficulty_away": 3.47093387545,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1799,8 +1799,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.16704048358,
-      "custom_difficulty_away": 3.83295951642,
+      "custom_difficulty_home": 2.17269209599,
+      "custom_difficulty_away": 3.82730790401,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1890,8 +1890,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.20323167194,
-      "custom_difficulty_away": 2.79676832806,
+      "custom_difficulty_home": 3.19758005953,
+      "custom_difficulty_away": 2.80241994047,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1903,8 +1903,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.9966645021,
-      "custom_difficulty_away": 3.0033354979,
+      "custom_difficulty_home": 2.99101288969,
+      "custom_difficulty_away": 3.00898711031,
       "difficulty_basis": "current_elo"
     },
     {
@@ -1981,8 +1981,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 5,
-      "custom_difficulty_home": 2.04920593167,
-      "custom_difficulty_away": 3.95079406833,
+      "custom_difficulty_home": 2.04355431926,
+      "custom_difficulty_away": 3.95644568074,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2046,8 +2046,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.46274224592,
-      "custom_difficulty_away": 3.53725775408,
+      "custom_difficulty_home": 2.46839385833,
+      "custom_difficulty_away": 3.53160614167,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2137,8 +2137,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.06706661092,
-      "custom_difficulty_away": 2.93293338908,
+      "custom_difficulty_home": 3.06141499852,
+      "custom_difficulty_away": 2.93858500148,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2215,8 +2215,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.26061614126,
-      "custom_difficulty_away": 3.73938385874,
+      "custom_difficulty_home": 2.26626775367,
+      "custom_difficulty_away": 3.73373224633,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2306,8 +2306,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.84799390281,
-      "custom_difficulty_away": 2.15200609719,
+      "custom_difficulty_home": 3.84234229041,
+      "custom_difficulty_away": 2.15765770959,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2319,8 +2319,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.34896564669,
-      "custom_difficulty_away": 3.65103435331,
+      "custom_difficulty_home": 2.35461725909,
+      "custom_difficulty_away": 3.64538274091,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2384,8 +2384,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.83013322356,
-      "custom_difficulty_away": 3.16986677644,
+      "custom_difficulty_home": 2.82448161115,
+      "custom_difficulty_away": 3.17551838885,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2436,8 +2436,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.64218402426,
-      "custom_difficulty_away": 3.35781597574,
+      "custom_difficulty_home": 2.64783563666,
+      "custom_difficulty_away": 3.35216436334,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2579,8 +2579,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.38911815297,
-      "custom_difficulty_away": 3.61088184703,
+      "custom_difficulty_home": 2.38346654056,
+      "custom_difficulty_away": 3.61653345944,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2618,8 +2618,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.41150699056,
-      "custom_difficulty_away": 3.58849300944,
+      "custom_difficulty_home": 2.41715860297,
+      "custom_difficulty_away": 3.58284139703,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2631,8 +2631,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.79554162741,
-      "custom_difficulty_away": 3.20445837259,
+      "custom_difficulty_home": 2.789890015,
+      "custom_difficulty_away": 3.210109985,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2735,8 +2735,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.49129317496,
-      "custom_difficulty_away": 3.50870682504,
+      "custom_difficulty_home": 2.49694478737,
+      "custom_difficulty_away": 3.50305521263,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2813,8 +2813,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.10165820707,
-      "custom_difficulty_away": 2.89834179293,
+      "custom_difficulty_home": 3.09600659467,
+      "custom_difficulty_away": 2.90399340533,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2852,8 +2852,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.81066294344,
-      "custom_difficulty_away": 3.18933705656,
+      "custom_difficulty_home": 2.81631455584,
+      "custom_difficulty_away": 3.18368544416,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2904,8 +2904,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.36238401509,
-      "custom_difficulty_away": 3.63761598491,
+      "custom_difficulty_home": 2.3680356275,
+      "custom_difficulty_away": 3.6319643725,
       "difficulty_basis": "current_elo"
     },
     {
@@ -2917,8 +2917,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.90053533238,
-      "custom_difficulty_away": 3.09946466762,
+      "custom_difficulty_home": 2.89488371998,
+      "custom_difficulty_away": 3.10511628002,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3073,8 +3073,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.80642236318,
-      "custom_difficulty_away": 2.19357763682,
+      "custom_difficulty_home": 3.80077075078,
+      "custom_difficulty_away": 2.19922924922,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3112,8 +3112,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.46797727288,
-      "custom_difficulty_away": 3.53202272712,
+      "custom_difficulty_home": 2.47362888529,
+      "custom_difficulty_away": 3.52637111471,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3203,8 +3203,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.75781597574,
-      "custom_difficulty_away": 3.24218402426,
+      "custom_difficulty_home": 2.75216436334,
+      "custom_difficulty_away": 3.24783563666,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3242,8 +3242,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.56986677644,
-      "custom_difficulty_away": 3.43013322356,
+      "custom_difficulty_home": 2.57551838885,
+      "custom_difficulty_away": 3.42448161115,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3281,8 +3281,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 5,
-      "custom_difficulty_home": 1.55200609719,
-      "custom_difficulty_away": 4.44799390281,
+      "custom_difficulty_home": 1.55765770959,
+      "custom_difficulty_away": 4.44234229041,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3385,8 +3385,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.13938385874,
-      "custom_difficulty_away": 2.86061614126,
+      "custom_difficulty_home": 3.13373224633,
+      "custom_difficulty_away": 2.86626775367,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3463,8 +3463,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.93725775408,
-      "custom_difficulty_away": 3.06274224592,
+      "custom_difficulty_home": 2.93160614167,
+      "custom_difficulty_away": 3.06839385833,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3502,8 +3502,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 3.35079406833,
-      "custom_difficulty_away": 2.64920593167,
+      "custom_difficulty_home": 3.35644568074,
+      "custom_difficulty_away": 2.64355431926,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3580,8 +3580,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.33293338908,
-      "custom_difficulty_away": 3.66706661092,
+      "custom_difficulty_home": 2.33858500148,
+      "custom_difficulty_away": 3.66141499852,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3658,8 +3658,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.05103435331,
-      "custom_difficulty_away": 2.94896564669,
+      "custom_difficulty_home": 3.04538274091,
+      "custom_difficulty_away": 2.95461725909,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3723,8 +3723,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.70603183746,
-      "custom_difficulty_away": 3.29396816254,
+      "custom_difficulty_home": 2.71168344986,
+      "custom_difficulty_away": 3.28831655014,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3762,8 +3762,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.37938565338,
-      "custom_difficulty_away": 3.62061434662,
+      "custom_difficulty_home": 2.38503726578,
+      "custom_difficulty_away": 3.61496273422,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3853,8 +3853,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.30786277791,
-      "custom_difficulty_away": 2.69213722209,
+      "custom_difficulty_home": 3.30221116551,
+      "custom_difficulty_away": 2.69778883449,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3892,8 +3892,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 5,
-      "custom_difficulty_home": 2.0907774713,
-      "custom_difficulty_away": 3.9092225287,
+      "custom_difficulty_home": 2.08512585889,
+      "custom_difficulty_away": 3.91487414111,
       "difficulty_basis": "current_elo"
     },
     {
@@ -3957,8 +3957,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.43482289264,
-      "custom_difficulty_away": 3.56517710736,
+      "custom_difficulty_home": 2.44047450504,
+      "custom_difficulty_away": 3.55952549496,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4022,8 +4022,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.32750961201,
-      "custom_difficulty_away": 3.67249038799,
+      "custom_difficulty_home": 2.33316122442,
+      "custom_difficulty_away": 3.66683877558,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4113,8 +4113,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.84616548116,
-      "custom_difficulty_away": 3.15383451884,
+      "custom_difficulty_home": 2.84051386876,
+      "custom_difficulty_away": 3.15948613124,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4139,8 +4139,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 2,
-      "custom_difficulty_home": 3.16628281947,
-      "custom_difficulty_away": 2.83371718053,
+      "custom_difficulty_home": 3.16063120706,
+      "custom_difficulty_away": 2.83936879294,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4217,8 +4217,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.4033354979,
-      "custom_difficulty_away": 3.5966645021,
+      "custom_difficulty_home": 2.40898711031,
+      "custom_difficulty_away": 3.59101288969,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4269,8 +4269,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.19676832806,
-      "custom_difficulty_away": 3.80323167194,
+      "custom_difficulty_home": 2.20241994047,
+      "custom_difficulty_away": 3.79758005953,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4347,8 +4347,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 2,
-      "custom_difficulty_home": 3.23295951642,
-      "custom_difficulty_away": 2.76704048358,
+      "custom_difficulty_home": 3.22730790401,
+      "custom_difficulty_away": 2.77269209599,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4373,8 +4373,8 @@
       "played": false,
       "team_h_difficulty": 3,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.87658548786,
-      "custom_difficulty_away": 3.12341451214,
+      "custom_difficulty_home": 2.87093387545,
+      "custom_difficulty_away": 3.12906612455,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4451,8 +4451,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.85958384957,
-      "custom_difficulty_away": 3.14041615043,
+      "custom_difficulty_home": 2.85393223717,
+      "custom_difficulty_away": 3.14606776283,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4503,8 +4503,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.73091701501,
-      "custom_difficulty_away": 3.26908298499,
+      "custom_difficulty_home": 2.72526540261,
+      "custom_difficulty_away": 3.27473459739,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4646,8 +4646,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 2,
-      "custom_difficulty_home": 2.57529055351,
-      "custom_difficulty_away": 3.42470944649,
+      "custom_difficulty_home": 2.58094216592,
+      "custom_difficulty_away": 3.41905783408,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4685,8 +4685,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.4400579196,
-      "custom_difficulty_away": 3.5599420804,
+      "custom_difficulty_home": 2.44570953201,
+      "custom_difficulty_away": 3.55429046799,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4763,8 +4763,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 2.66424031806,
-      "custom_difficulty_away": 3.33575968194,
+      "custom_difficulty_home": 2.65858870565,
+      "custom_difficulty_away": 3.34141129435,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4828,8 +4828,8 @@
       "played": false,
       "team_h_difficulty": 4,
       "team_a_difficulty": 3,
-      "custom_difficulty_home": 3.50808168151,
-      "custom_difficulty_away": 2.49191831849,
+      "custom_difficulty_home": 3.50243006911,
+      "custom_difficulty_away": 2.49756993089,
       "difficulty_basis": "current_elo"
     },
     {
@@ -4945,8 +4945,8 @@
       "played": false,
       "team_h_difficulty": 2,
       "team_a_difficulty": 4,
-      "custom_difficulty_home": 2.20280016552,
-      "custom_difficulty_away": 3.79719983448,
+      "custom_difficulty_home": 2.21410339033,
+      "custom_difficulty_away": 3.78589660967,
       "difficulty_basis": "current_elo"
     },
     {
