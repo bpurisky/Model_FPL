@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-21T19:28:48.800413Z",
+    "generated_at": "2026-09-22T22:10:29.352830Z",
     "source_gameweek": 38,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "026ce6e6030d8cc10eff24b8bfc89768c16a23ac",
+    "model_git_sha": "6b3f92482f149c1cac692d5ddb1ad40b786e1247",
     "normalization_basis": "walk_forward_within_position",
     "rows": 460,
     "current_season": "2026-27"
@@ -7140,7 +7140,7 @@
           "position": "DEF",
           "rho": 0.662439204076,
           "n": 249,
-          "p_value": 7.85920008154e-33
+          "p_value": 7.85920008155e-33
         },
         {
           "position": "FWD",
@@ -7893,7 +7893,7 @@
           "position": "MID",
           "rho": 0.759418819773,
           "n": 373,
-          "p_value": 2.98990711869e-71
+          "p_value": 2.98990711868e-71
         }
       ]
     },
