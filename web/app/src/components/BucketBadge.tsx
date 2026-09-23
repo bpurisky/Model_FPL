@@ -6,11 +6,11 @@
  * > linking to their Model Board card."
  *
  * The badge is deliberately quiet, and that is a judgement the accuracy
- * panel forces. Two of the four buckets measured **worse** than the
- * players they were picked out from — rising at −0.077 forward points,
- * declining at −0.144 — so a badge that announced "Rising" in a colour
- * would be the app leaning on a classification its own export says is
- * worth nothing. It reads as a label with a link, not as a verdict.
+ * panel forces. Rising's lift is mostly its upper-half level floor: its
+ * trend beat same-level peers by only ~0.1 points a gameweek. So a badge
+ * that announced "Rising" in a colour would be the app leaning on a
+ * signal its own export shows to be thin. It reads as a label with a
+ * link, not as a verdict.
  *
  * §5.8.6's rule points the same way: model-authored claims are marked
  * structurally, not chromatically, and there are no new colours to spend.

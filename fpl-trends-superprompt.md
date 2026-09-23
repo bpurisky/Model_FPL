@@ -1470,3 +1470,24 @@ The 2026-08-25 entry above recorded the decision, in detail, to leave the Squad 
 `surfaces.ts`'s `optimizer` entry moves from `out_of_phase`/`"Phase 3"` to `live`/`"5H"`. 543 Python tests pass (14 of them new, in `test_service.py`), 1 skipped (unrelated, pre-existing — the real-freeze immutability check, still waiting on its first eligible freeze). 177 frontend tests pass (7 of them new, in `data/optimizer.test.ts`), typecheck clean. One pre-existing, unrelated failure surfaced by running the full suite: `tests/test_export_correlations.py::test_construction_identities_hold_on_the_real_panel` now fails (DEF `xgc_per90`/`goals_conceded_per90` rho 0.683 against an asserted floor of 0.8) — real data drift as more of the 2026/27 season lands on the panel, nothing this session's changes touched, and not fixed here since it's outside this session's scope.
 
 **What to do next.** Provision hosting (Render or otherwise) for `service/app.py`, set `ALLOWED_ORIGINS` to the real deployed frontend origin, set `VITE_OPTIMIZER_API_URL` in the frontend build/CI to the deployed backend's URL, and verify the Docker build actually succeeds on that host (unverified locally — see above). The `test_export_correlations.py` regression is a second, unrelated thing worth a look.
+
+### Rising is redefined as a growing role near the top — 2026-09-23
+
+The operator noticed that Rising skewed toward low-composite players. The rule was "composite up in every gameweek of the window", and three things pushed it low. Optimal wins collisions, so Rising could only fire outside the top quartile. Any rise counted, however small. And low-minute players, whose season-to-date per-90s swing most, produced the most accidental runs.
+
+Nine alternatives were backtested over 17,370 non-optimal player-gameweeks (2023-24 to 2025-26). Each was scored two ways: raw lift as `bucket_accuracy` measures it, and *level-matched* lift against players in the same position and percentile decile, which is what shows whether the trend adds anything beyond "already fairly good":
+
+| rule | n | raw | level-matched | by season |
+| --- | --- | --- | --- | --- |
+| composite up every GW (old) | 1775 | -0.083 | **-0.274** | -0.35 / -0.29 / -0.16 |
+| ... + upper half | 906 | +0.218 | -0.304 | |
+| large rise for that player (t >= 1.5) | 328 | +0.113 | +0.029 | |
+| reliability +0.10 | 2808 | +0.099 | -0.074 | |
+| reliability +0.10, 60'+ every GW | 1779 | +0.340 | **+0.098** | -0.06 / +0.05 / +0.31 |
+| upper half, no trend | 5777 | +0.678 | - | |
+
+The old rule was worse than useless: against same-level peers it lost 0.27 points a gameweek. That fits a bounce-back effect. Every rule with the level floor looks good raw and collapses once level is matched. The one exception is a growing role.
+
+**Rising is now: percentile >= 0.5, `minutes_reliability` up >= 0.10 across the window, and >= 60 minutes in every gameweek of it** (`config/frontend.yaml:board.rising`). Shipped `bucket_accuracy`: rising **+0.574** (n=854), optimal +0.724, declining -0.176 (it moved from -0.144 because the old Rising players are now in its comparison pool). Most of Rising's lift is the level floor. The trend part is +0.10 and not stable across seasons, and the board docstring, the accuracy panel copy and the bucket blurb all say so. Declining keeps its monotone rule.
+
+`test_export_early_season`'s trend-window check now asserts Declining rather than Rising. Nobody's role changes in the synthetic season, so Rising correctly stays empty there. The Rising rule itself is covered by five new unit tests in `test_export_board.py`. `board.json` was not regenerated locally because the local panel stops at gw2 while the committed file is at gw5. `web.yml` rebuilds it on the next push touching `web/export/**`. The three failures in `test_export_correlations`/`test_export_players` pre-date this change and are untouched.

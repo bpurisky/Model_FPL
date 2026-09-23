@@ -135,6 +135,22 @@ board:
   # three games" needs three observations to be a rise at all.
   trend_window: 3
 
+  # What Rising means. It was "composite up in every gameweek of the
+  # window", and that measured -0.274 forward points against players at
+  # the same level: a run of rises is mostly noise and bounce-back, and it
+  # landed on low-composite players whose per-90s swing most. Backtested
+  # over 2023-24 to 2025-26 (web/export/board.py docstring), the rule below
+  # is the only one tried that beat same-level peers at all (+0.098):
+  #   min_percentile      already in the upper half of the position
+  #   reliability_gain    minutes_reliability up by this much across the window
+  #   min_minutes         and on the pitch this long in every gameweek of it
+  # Most of its raw lift is the level floor, not the trend -- read the
+  # docstring before tightening or loosening these.
+  rising:
+    min_percentile: 0.5
+    reliability_gain: 0.10
+    min_minutes: 60
+
   # §5.4.6's amber flag: a classification resting on less than this is
   # marked rather than hidden. Same rolling basis as the normalization
   # floor -- see `normalization.minutes_per_fixture_floor`.

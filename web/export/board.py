@@ -10,8 +10,9 @@ the next three against 3.065 for everyone else, a lift of +0.671 measured
 over 8,753 player-gameweeks.
 
 **The buckets** are §5.4.6's Optimal / Rising / Declining. Optimal is the
-top of the ranking and inherits its evidence. Rising and Declining are
-momentum, and momentum does not work — see below. They ship because the
+top of the ranking and inherits its evidence. Declining is momentum, and
+composite momentum does not work — see below. Rising is now a gain in role
+among players near the top, which is mostly a level call. They ship because the
 spec asks for them and because §5.4.6 requires the board to publish its
 own hit rate, which is exactly the mechanism for saying so on screen.
 Shipping them silently, or dropping them silently, would both be worse
@@ -32,24 +33,48 @@ lifts +0.682 on a 3-game window, +0.712 on 6, and +0.842 on 10. What the
 ranking measures is quality, not form, and it measures it better the
 longer it looks.
 
+**Rising was redefined on 2026-09-23**, because the monotone rule was
+worse than useless and skewed toward weak players. It could only fire
+outside the top quartile, since Optimal wins collisions. It took any rise
+however small. And low-minute players, whose per-90s swing most, produced
+the most accidental runs. Nine alternatives were backtested over 17,370
+non-optimal player-gameweeks (2023-24 to 2025-26), scored two ways: raw
+lift against other non-optimal players, and *level-matched* lift against
+players in the same position and percentile decile. Only the second shows
+whether the trend adds anything the level does not already say:
+
+    rule                                        raw     level-matched
+    composite up every GW (old Rising)        -0.083   -0.274
+      ... + upper half                         +0.218   -0.304
+    large rise for that player (t >= 1.5)      +0.113   +0.029
+    reliability +0.10, 60'+ every GW           +0.340   +0.098
+    upper half, no trend at all                +0.678      -
+
+Every rule that includes the level floor looks good raw and collapses
+once level is matched, except one. **Rising is now: upper half of the
+position, `minutes_reliability` up by 0.10 across the window, and 60+
+minutes in every gameweek of it** — a player near the top whose role is
+growing. It is the only definition whose trend beat same-level peers, and
+only modestly and not every season (-0.06, +0.05, +0.31). Most of its raw
+lift is the level floor. Treat it as "near the top and earning more
+minutes", not as the model seeing form before the points arrive.
+
 **Measured on what actually ships**, with each bucket compared inside the
 pool it is drawn from — Optimal takes the top quartile, so scoring a
 momentum bucket against "everyone else" would score it against a pool the
 good players were already removed from:
 
-    optimal     n=6187   +0.725   vs all classified players
-    declining   n=3760   -0.144   vs other non-optimal players
-    rising      n=1775   -0.077   vs other non-optimal players
+    optimal     n=6242   +0.724   vs all classified players
+    rising      n=854    +0.574   vs other non-optimal players
+    declining   n=3708   -0.176   vs other non-optimal players
 
-So Declining is the one that survives. A flagged player really does score
-less than his non-optimal peers, and for a *warning* that is the right
-sign. Rising still points the wrong way and no definition tried has moved
-it. That asymmetry is worth keeping on screen rather than averaging away:
-the model can see a player falling off and cannot see one arriving.
+Declining keeps the monotone rule. A flagged player really does score
+less than their non-optimal peers, and for a *warning* that is the right
+sign.
 
 `bucket_accuracy` is therefore not decoration and not defensive
 documentation. It is the finding, carried in the file, so the surface
-cannot present Rising as insight without also showing what it is worth.
+cannot present a bucket as insight without also showing what it is worth.
 
 **Weights.** `config/frontend.yaml:board.position_weights`, fitted rather
 than adopted from §5.4.6's illustrative profiles, which name three columns
@@ -137,15 +162,30 @@ def with_composite(panel: pl.DataFrame, weights: dict[str, dict[str, float]]) ->
     )
 
 
-def with_momentum(scored: pl.DataFrame, window: int) -> pl.DataFrame:
-    """Whether the composite rose or fell in each of the last `window`
-    gameweeks, and the short-window mean.
+def with_momentum(
+    scored: pl.DataFrame,
+    window: int,
+    *,
+    reliability_gain: float,
+    min_minutes: int,
+) -> pl.DataFrame:
+    """The two trend flags, and the short-window mean.
 
-    "Consistent" is monotone, not a fitted slope: the brief this
-    implements asked for a rise across three games, and a slope can be
-    positive while the series zig-zags. It is also the stronger condition,
-    which is why it was worth measuring separately — and it still does not
-    predict (see the module docstring).
+    **Declining** is the composite falling in every gameweek of the window.
+    Monotone rather than a fitted slope, because a slope can be negative
+    while the series zig-zags.
+
+    **Rising** is a gain in role: `minutes_reliability` up by at least
+    `reliability_gain` across the window while the player gets at least
+    `min_minutes` in every gameweek of it. The mirror of the declining
+    rule was the original definition, and it measured worse than the
+    players it was picked from. See the module docstring. The
+    upper-half level floor is applied in `classify`, where the percentile
+    exists.
+
+    A frame without `minutes` or `minutes_reliability` gets no Rising
+    flags rather than an error: the rule cannot be evaluated, which is
+    different from a player failing it.
     """
     group = ["season", "element_id"]
     scored = scored.sort(["season", "element_id", "gw"])
@@ -157,13 +197,18 @@ def with_momentum(scored: pl.DataFrame, window: int) -> pl.DataFrame:
         pl.col("gw").cum_count().over(group).alias("gameweeks_seen"),
     )
 
-    rising = pl.lit(True)
     declining = pl.lit(True)
     for i in range(1, window):
         earlier = pl.col(f"_c{i}")
         later = pl.col("composite") if i == 1 else pl.col(f"_c{i - 1}")
-        rising = rising & (later > earlier)
         declining = declining & (later < earlier)
+
+    if {"minutes", "minutes_reliability"} <= set(scored.columns):
+        gain = pl.col("minutes_reliability") - pl.col("minutes_reliability").shift(window - 1).over(group)
+        playing = pl.col("minutes").rolling_min(window, min_samples=window).over(group) >= min_minutes
+        rising = (gain >= reliability_gain) & playing
+    else:
+        rising = pl.lit(False)
 
     return scored.with_columns(
         rising.fill_null(False).alias("is_rising"),
@@ -171,11 +216,16 @@ def with_momentum(scored: pl.DataFrame, window: int) -> pl.DataFrame:
     ).drop([f"_c{i}" for i in range(1, window)])
 
 
-def classify(scored: pl.DataFrame, optimal_quantile: float) -> pl.DataFrame:
+def classify(
+    scored: pl.DataFrame, optimal_quantile: float, rising_min_percentile: float
+) -> pl.DataFrame:
     """One bucket per player, within position.
 
     Optimal wins over the momentum buckets where they collide: it is the
     classification with measured edge, and a card can only say one thing.
+    Rising also requires the player to sit at `rising_min_percentile` or
+    above. That makes Rising the band just below Optimal, where it
+    has something to rise into.
     """
     peers = ["season", "gw", "position"]
     ranked = scored.drop_nulls("composite").with_columns(
@@ -192,7 +242,7 @@ def classify(scored: pl.DataFrame, optimal_quantile: float) -> pl.DataFrame:
     return ranked.with_columns(
         pl.when(pl.col("composite") >= pl.col("_cutoff"))
         .then(pl.lit("optimal"))
-        .when(pl.col("is_rising"))
+        .when(pl.col("is_rising") & (pl.col("percentile") >= rising_min_percentile))
         .then(pl.lit("rising"))
         .when(pl.col("is_declining"))
         .then(pl.lit("declining"))
@@ -285,9 +335,16 @@ def build_board(
     settings = config["board"]
     weights = settings["position_weights"]
 
+    rising = settings["rising"]
     scored = classify(
-        with_momentum(with_composite(panel, weights), settings["trend_window"]),
+        with_momentum(
+            with_composite(panel, weights),
+            settings["trend_window"],
+            reliability_gain=rising["reliability_gain"],
+            min_minutes=rising["min_minutes"],
+        ),
         settings["optimal_quantile"],
+        rising["min_percentile"],
     )
 
     # Accuracy is measured over every season in the panel; the board itself
