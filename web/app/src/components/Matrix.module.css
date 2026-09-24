@@ -135,12 +135,27 @@
   background-color: var(--panel);
 }
 
+/*
+ * Row labels stay pinned while the cells scroll under them, so a reader
+ * scrolling right on a phone still knows which row they are on.
+ */
+.rowLabel,
+.corner {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 2;
+}
+
 @container (max-width: 40rem) {
+  /* Block, not flex: a flex item's text overflows off the start edge when
+   * right-aligned and never shows its ellipsis. */
   .rowLabel {
+    display: block;
     font-size: var(--text-xs);
-    max-inline-size: 6rem;
+    max-inline-size: 7.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 20px;
   }
 }
 

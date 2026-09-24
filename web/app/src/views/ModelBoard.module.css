@@ -1,28 +1,16 @@
 /*
- * §5.8.6 — walling off the model.
- *
- * "Model-authored surfaces sit on `--panel` with a persistent left rule
- * in `--rule` and a small monospace attribution carrying `model_git_sha`;
- * user-driven surfaces sit directly on `--ground` with no such rule.
- *
- * No new colors, no badge, no icon set. The distinction is structural — a
- * raised panel with an attribution stripe — which is why it survives
- * greyscale, low vision, and screenshots, and why it costs nothing from
- * the §5.8.5 budget."
- *
- * So: the whole route is raised and ruled. Every other surface in this
- * app is flat on `--ground` with no rule, and a reader who has seen two
- * of them knows what the rule means without being told.
+ * §5.8.6 — walling off the model. Model-authored content sits in raised
+ * cards and carries the attribution line with `model_git_sha`, so a
+ * reader can always tell the model's opinion from their own query. The
+ * distinction is structural (raised, attributed), not a colour, which is
+ * why it survives greyscale and screenshots.
  */
 
 .board {
-  padding: var(--space-4) var(--space-5) var(--space-6);
+  padding: var(--space-5) var(--gutter) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  background: var(--panel);
-  border-inline-start: 3px solid var(--rule);
-  min-block-size: 100%;
 }
 
 .head {
@@ -47,11 +35,14 @@
 /* --- panels --------------------------------------------------------- */
 
 .panel {
-  border: var(--hairline) solid var(--rule);
-  padding: var(--space-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: var(--card-pad);
 }
 
 .panelTitle {
@@ -102,18 +93,33 @@
 .accuracyRow {
   display: grid;
   grid-template-columns: 84px minmax(120px, 260px) 62px minmax(0, 1fr);
+  grid-template-areas: "name track value basis";
   gap: var(--space-3);
   align-items: center;
 }
 
+/* On a phone the explanation gets its own line instead of a column one
+ * word wide. */
+@media (max-width: 640px) {
+  .accuracyRow {
+    grid-template-columns: 76px minmax(0, 1fr) 56px;
+    grid-template-areas:
+      "name track value"
+      ". basis basis";
+    row-gap: var(--space-1);
+  }
+}
+
 .accuracyName {
-  font-size: var(--text-xs);
+  grid-area: name;
+  font-size: var(--text-sm);
   text-align: end;
   color: var(--paper);
 }
 
 /* A diverging bar around a true zero, so a negative lift reads as one. */
 .accuracyTrack {
+  grid-area: track;
   position: relative;
   block-size: 12px;
   background: var(--ground);
@@ -131,27 +137,31 @@
 .accuracyFill {
   position: absolute;
   inset-block: 2px;
-  background: var(--rho-neg);
+  border-radius: var(--radius-data);
+  background: var(--bad);
 }
 
 .accuracyFill[data-good] {
-  background: var(--rho-pos);
+  background: var(--good);
 }
 
 .accuracyValue {
-  font-size: var(--text-xs);
+  grid-area: value;
+  font-size: var(--text-sm);
+  font-weight: 600;
   text-align: end;
-  color: var(--rho-neg);
+  color: var(--bad);
 }
 
 .accuracyValue[data-good] {
-  color: var(--rho-pos);
+  color: var(--good);
 }
 
 .accuracyBasis {
-  font-size: 10px;
+  grid-area: basis;
+  font-size: var(--text-xs);
   font-family: var(--font-data);
-  color: var(--rule);
+  color: var(--muted);
 }
 
 /*
@@ -267,12 +277,13 @@
 .chip {
   font: inherit;
   font-family: var(--font-data);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
+  font-weight: 500;
   color: var(--muted);
   background: transparent;
   border: var(--hairline) solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.85rem;
   cursor: pointer;
   transition: color var(--dur-state) var(--ease);
 }
@@ -282,15 +293,15 @@
 }
 
 .chip[data-on] {
-  color: var(--ground);
-  background: var(--paper);
-  border-color: var(--paper);
+  color: var(--selected-ink);
+  background: var(--selected-bg);
+  border-color: var(--selected-bg);
 }
 
 .count {
   margin: 0;
   font-size: var(--text-xs);
-  color: var(--rule);
+  color: var(--muted);
 }
 
 /* --- cards ---------------------------------------------------------- */
@@ -306,26 +317,44 @@
 
 .card {
   border: var(--hairline) solid var(--rule);
-  background: var(--ground);
-  padding: var(--space-3);
+  background: var(--panel);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  /* §5.8.8: data surfaces have zero radius. */
-  border-radius: var(--radius-data);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
 }
 
 .cardHead {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-3);
 }
 
+/* The rank as a kit number: the one big numeral on the card. */
 .rank {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--rule);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--muted);
+  min-inline-size: 2.2ch;
   flex: none;
+}
+
+.card[data-bucket="optimal"] .rank {
+  color: var(--brand);
+}
+
+:root[data-theme="dark"] .card[data-bucket="optimal"] .rank {
+  color: var(--accent-ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .card[data-bucket="optimal"] .rank {
+    color: var(--accent-ink);
+  }
 }
 
 .identity {
@@ -336,56 +365,64 @@
 }
 
 .name {
-  font-size: var(--text-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .meta {
-  font-size: 10px;
-  font-family: var(--font-data);
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
 /*
- * The bucket, as a word. Deliberately not a coloured pill: §5.8.6 says
- * "no new colors, no badge, no icon set", and the honest reading of the
- * accuracy panel above is that three of these four names should not be
- * given visual weight they have not earned.
+ * The bucket, as a word in a pill. Only Optimal is filled: the accuracy
+ * panel above is the reason the other three do not get visual weight
+ * they have not earned.
  */
 .bucket {
-  font-family: var(--font-data);
-  font-size: 10px;
-  letter-spacing: 0.04em;
+  font-size: var(--text-xs);
+  font-weight: 600;
   color: var(--muted);
   border: var(--hairline) solid var(--rule);
-  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.6rem;
   flex: none;
 }
 
 .card[data-bucket="optimal"] .bucket {
-  color: var(--paper);
-  border-color: var(--paper);
+  color: var(--brand);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .scores {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .score {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  background: var(--panel-2);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
 }
 
 .scoreValue {
-  font-size: var(--text-md);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
   line-height: 1.1;
 }
 
 .scoreLabel {
-  font-size: 9px;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
@@ -397,7 +434,7 @@
 }
 
 .muted {
-  color: var(--rule);
+  color: var(--muted);
 }
 
 /* §5.4.6's amber flag, for a classification resting on too little. */
@@ -412,11 +449,12 @@
 .explain {
   font: inherit;
   font-size: var(--text-xs);
+  font-weight: 600;
   color: var(--paper);
   background: transparent;
   border: var(--hairline) solid var(--rule);
-  border-radius: var(--radius-control);
-  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
   cursor: pointer;
   align-self: flex-start;
   margin-block-start: auto;

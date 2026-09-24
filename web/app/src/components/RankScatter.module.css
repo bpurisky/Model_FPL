@@ -1,9 +1,9 @@
 .panel {
   background: var(--panel);
   border: var(--hairline) solid var(--rule);
-  border-radius: var(--radius-data);
+  border-radius: var(--radius-card);
   padding: var(--space-4);
-  box-shadow: var(--elevation);
+  box-shadow: var(--shadow);
   container-type: inline-size;
 }
 

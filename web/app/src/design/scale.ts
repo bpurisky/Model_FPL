@@ -40,10 +40,34 @@ export function divergingColor(value: number | null, direction: Direction = "neu
   const magnitude = Math.min(Math.abs(oriented) / SCALE_MAX, 1);
   const pole = oriented >= 0 ? "var(--rho-pos)" : "var(--rho-neg)";
 
-  // `color-mix` in oklch is the interpolation; the percentage is the
-  // magnitude. Rounded to whole percent so identical values produce
+  // `color-mix` in OKLab is the interpolation; the percentage is the
+  // magnitude. OKLab rather than OKLCH: both are perceptual, but OKLCH
+  // interpolates hue, and the path from a pole to the purple-tinted card
+  // colour swings through blue (green to purple via hue 237). OKLab mixes
+  // straight across, so a pole fades toward the card without changing
+  // hue on the way. Rounded to whole percent so identical values produce
   // byte-identical colours and the browser can cache the parse.
-  return `color-mix(in oklch, ${pole} ${Math.round(magnitude * 100)}%, var(--panel))`;
+  return `color-mix(in oklab, ${pole} ${Math.round(magnitude * 100)}%, var(--panel))`;
+}
+
+/**
+ * A CSS colour for an outcome: green where the value is good for the
+ * reader, red where it is bad, fading to the card colour at the middle.
+ *
+ * This is FPL's own convention (the fixture difficulty ticker, form,
+ * price rises and falls) and it answers a different question from
+ * `divergingColor`. That one says which way a relationship runs and
+ * deliberately avoids implying good or bad; this one says exactly that.
+ * Same orientation rules and same magnitude mapping, so the two scales
+ * read with the same intensity.
+ */
+export function outcomeColor(value: number | null, direction: Direction = "higher_is_better"): string {
+  if (value === null || Number.isNaN(value)) return "transparent";
+
+  const oriented = direction === "lower_is_better" ? -value : value;
+  const magnitude = Math.min(Math.abs(oriented) / SCALE_MAX, 1);
+  const pole = oriented >= 0 ? "var(--good)" : "var(--bad)";
+  return `color-mix(in oklab, ${pole} ${Math.round(magnitude * 100)}%, var(--panel))`;
 }
 
 /**

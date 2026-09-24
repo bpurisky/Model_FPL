@@ -1,5 +1,5 @@
 .form {
-  padding: var(--space-4) var(--space-5) var(--space-6);
+  padding: var(--space-5) var(--gutter) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -54,7 +54,7 @@
 .count {
   margin: 0;
   font-size: var(--text-xs);
-  color: var(--rule);
+  color: var(--muted);
 }
 
 /* --- the key ------------------------------------------------------- */
@@ -83,8 +83,8 @@
 }
 
 .keySwatch[data-state="value"] {
-  background: var(--rho-pos);
-  border-color: var(--rho-pos);
+  background: var(--good);
+  border-color: var(--good);
 }
 
 /*
@@ -295,7 +295,7 @@
 }
 
 .noTrend {
-  color: var(--rule);
+  color: var(--muted);
   font-size: var(--text-xs);
 }
 

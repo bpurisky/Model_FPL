@@ -6,7 +6,7 @@
  */
 
 .paperTrade {
-  padding: var(--space-4) var(--space-5) var(--space-6);
+  padding: var(--space-5) var(--gutter) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -37,9 +37,12 @@
 .panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  border-block-start: var(--hairline) solid var(--rule);
-  padding-block-start: var(--space-3);
+  gap: var(--space-3);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: var(--card-pad);
 }
 
 .panelTitle {
@@ -63,7 +66,7 @@
 }
 
 .note {
-  color: var(--rule);
+  color: var(--muted);
   font-size: var(--text-xs);
   margin: 0;
 }
@@ -71,14 +74,15 @@
 /* --- the gate's own headline -------------------------------------------- */
 
 .readiness {
-  font-family: var(--font-data);
-  font-size: var(--text-lg);
-  color: var(--rho-neg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  color: var(--bad);
   margin: 0;
 }
 
 .readiness[data-ready] {
-  color: var(--rho-pos);
+  color: var(--good);
 }
 
 /* --- the five criteria --------------------------------------------------- */
@@ -101,11 +105,11 @@
 }
 
 .criterion[data-tone="pass"] {
-  border-inline-start-color: var(--rho-pos);
+  border-inline-start-color: var(--good);
 }
 
 .criterion[data-tone="fail"] {
-  border-inline-start-color: var(--rho-neg);
+  border-inline-start-color: var(--bad);
 }
 
 .criterionHead {
@@ -122,11 +126,11 @@
 }
 
 .criterionBadge[data-tone="pass"] {
-  color: var(--rho-pos);
+  color: var(--good);
 }
 
 .criterionBadge[data-tone="fail"] {
-  color: var(--rho-neg);
+  color: var(--bad);
 }
 
 .criterionName {
@@ -185,15 +189,15 @@
 }
 
 .better {
-  color: var(--rho-pos);
+  color: var(--good);
 }
 
 .worse {
-  color: var(--rho-neg);
+  color: var(--bad);
 }
 
 .muted {
-  color: var(--rule);
+  color: var(--muted);
 }
 
 /* --- states --------------------------------------------------------------- */
