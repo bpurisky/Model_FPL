@@ -38,7 +38,7 @@ jobs:
       - run: uv run python -m papertrade freeze
       # §6.3-6.5 made legible (§5.16 D14) -- runs after freeze so the export
       # sees this run's own freeze, and its own schedule (this workflow's,
-      # not `web.export all`'s hourly one) is deliberate: see
+      # not `web.export all`'s six-hourly one) is deliberate: see
       # web/export/__main__.py:cmd_papertrade's docstring.
       - run: uv run pytest tests/test_export_papertrade.py -q
       - run: uv run python -m web.export papertrade

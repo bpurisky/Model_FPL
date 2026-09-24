@@ -26,7 +26,7 @@ figure thresholded after the fact — see that function's docstring for why
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 import polars as pl
 
@@ -229,6 +229,7 @@ def project_points(
     window: int = DEFAULT_WINDOW,
     minutes_window: int = DEFAULT_MINUTES_WINDOW,
     goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
+    on_projection: Callable[[int, pl.DataFrame], None] | None = None,
 ) -> pl.DataFrame:
     """The full model, in the same (train_df, target_roster, target_gw) ->
     DataFrame[element_id, prediction] shape as backtest.baselines' three
@@ -239,11 +240,18 @@ def project_points(
     `difficulty_table` is analytics.fdr.team_gameweek_difficulty's output
     for the whole season — safe to pass un-truncated for any target_gw
     since its values are pre-match by construction (see fdr.py).
+
+    `on_projection`, if given, receives (target_gw, event vectors) before
+    they are collapsed to points, so a caller that also needs the
+    per-component detail (analytics.evaluate.run_evaluation) can take it
+    from this pass instead of projecting the same gameweek a second time.
     """
     gw_difficulty = difficulty_table.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
     roster = target_roster.join(gw_difficulty, on="team", how="left").with_columns(pl.col("custom_difficulty").fill_null(3.0))
 
     projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window)
+    if on_projection is not None:
+        on_projection(target_gw, projected)
     predictions = [
         expected_points_from_projection(row, config, goals_conceded_shrinkage)
         for row in projected.to_dicts()

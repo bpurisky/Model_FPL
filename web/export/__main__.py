@@ -238,7 +238,7 @@ def cmd_papertrade(args: argparse.Namespace) -> None:
     hiccup shouldn't be able to fail board/players/observations along with
     it, and this exporter's own cadence is already owned by
     `.github/workflows/papertrade.yml`'s schedule, which runs it right
-    after `freeze` rather than on `all`'s hourly trigger."""
+    after `freeze` rather than on `all`'s six-hourly trigger."""
 
     async def _fetch(entry_id: int, cfg) -> dict[int, int]:
         return await fetch_real_gw_points(cfg, entry_id)
@@ -262,7 +262,6 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
     cmd_correlations(args)
-    cmd_scorecard(args)
     cmd_fixtures(args)
     cmd_golden(args)
     cmd_reductions(args)
@@ -270,8 +269,12 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_board(args)
     cmd_players(args)
     cmd_observations(args)
-    # `shrinkage` and `papertrade` are both deliberately excluded: shrinkage
-    # describes the model rather than the season (see its own module), and
+    # `scorecard`, `shrinkage` and `papertrade` are deliberately excluded.
+    # The scorecard is a walk-forward over the archive seasons only, so
+    # nothing the current season does can change it, and it was ~95% of
+    # this command's time; web.yml runs it on code or archive changes
+    # instead. Shrinkage describes the model rather than the season (see
+    # its own module), and
     # papertrade makes a live API call whose cadence and failure isolation
     # are already owned by papertrade.yml — see cmd_papertrade's docstring.
 

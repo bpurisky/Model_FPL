@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import pytest
 
-from analytics.evaluate import run_comparison, run_component_decomposition
+from analytics.evaluate import run_evaluation
 from backtest.backfill import NORMALIZED_DIR, RAW_CACHE_DIR
 from backtest.report import build_report, component_decomposition_mae, minutes_head_metrics
 
@@ -21,9 +21,15 @@ _BASELINE_NAMES = ("trailing_mean", "fpl_form_approx", "fixture_adjusted_trailin
 
 
 @pytest.fixture(scope="module")
-def comparison_report():
-    results = run_comparison()
-    return build_report(results)
+def evaluation():
+    """One walk-forward for the whole module: results and decomposition
+    come out of the same pass (see run_evaluation)."""
+    return run_evaluation()
+
+
+@pytest.fixture(scope="module")
+def comparison_report(evaluation):
+    return build_report(evaluation[0])
 
 
 def test_event_model_runs_without_leakage_across_all_seasons(comparison_report):
@@ -55,8 +61,8 @@ def test_minutes_head_reported_separately(comparison_report):
 
 
 @pytest.fixture(scope="module")
-def decomposition():
-    return run_component_decomposition()
+def decomposition(evaluation):
+    return evaluation[1]
 
 
 def test_component_decomposition_covers_every_event_type(decomposition):
