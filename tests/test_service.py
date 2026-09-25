@@ -205,6 +205,7 @@ def test_shape_response_pairs_transfers_and_marks_the_captain():
         bank_after=5,
         hits_taken=0,
         objective_value=42.0,
+        vice_captain={4: 3},
     )
     from datetime import datetime, timezone
 
@@ -237,9 +238,10 @@ def test_shape_response_pairs_transfers_and_marks_the_captain():
     # Sorted GK/DEF/MID/FWD then element_id, matching squad/__main__.py's
     # own CLI report order rather than an alphabetical accident.
     assert body["starting_xi"]["4"] == [
-        {"element_id": 2, "name": "Keeper2", "position": "GK", "club": "LIV", "now_cost": 55, "captain": False},
-        {"element_id": 3, "name": "Striker3", "position": "FWD", "club": "ARS", "now_cost": 100, "captain": False},
-        {"element_id": 4, "name": "Striker4", "position": "FWD", "club": "LIV", "now_cost": 110, "captain": True},
+        {"element_id": 2, "name": "Keeper2", "position": "GK", "club": "LIV", "now_cost": 55, "captain": False, "vice_captain": False},
+        {"element_id": 3, "name": "Striker3", "position": "FWD", "club": "ARS", "now_cost": 100, "captain": False, "vice_captain": True},
+        {"element_id": 4, "name": "Striker4", "position": "FWD", "club": "LIV", "now_cost": 110, "captain": True, "vice_captain": False},
     ]
+    assert body["plan"] == []
     assert body["squad_size"] == 3
     assert body["unchanged_from_current"] == 0

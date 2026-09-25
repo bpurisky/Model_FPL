@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from squad.optimize import Player, optimize_squad, pair_transfers_by_position, template_risk_flags
+from squad.optimize import Player, optimize_squad, pair_transfers_by_position, prune_pool, template_risk_flags
 from squad.reconstruct import SquadPlayer, SquadState
 
 AS_OF = datetime(2026, 8, 24, tzinfo=timezone.utc)
@@ -123,8 +123,13 @@ def test_horizon_control_changes_the_recommendation():
     short = optimize_squad(current, pool, projections, horizon=[3], free_transfers=1)
     long = optimize_squad(current, pool, projections, horizon=[3, 4], free_transfers=1)
 
-    assert late_bloomer not in short.transfers_in
-    assert late_bloomer in long.transfers_in
+    assert late_bloomer not in short.transfers_in and not short.plan
+    # The long horizon sees him coming, and waits: he is worse this week,
+    # and next week's transfer is free.
+    assert late_bloomer not in long.transfers_in
+    assert late_bloomer in long.plan[0].transfers_in
+    assert long.plan[0].gw == 4 and long.plan[0].hits == 0
+    assert late_bloomer in long.starting_xi[4]
 
 
 def test_max_transfers_cap_is_respected():
@@ -253,3 +258,69 @@ def test_template_risk_flag_fires_on_high_ownership_sale():
 
     assert 1 in flags
     assert 2 not in flags
+
+
+def test_an_unused_free_transfer_is_banked_for_next_week():
+    """Two good moves a week from now and nothing this week: roll the free
+    transfer and make both then, rather than take a hit."""
+    current, pool = _make_universe(seed=7, bank=200)
+    owned = {sp.element_id for sp in current.players}
+    outs = [sp.element_id for sp in current.players if sp.squad_position in (4, 5)]  # two DEF
+    ins = [p.element_id for p in pool if p.position == "DEF" and p.element_id not in owned][:2]
+    projections = _flat_projections(pool, [3, 4, 5], value=3.0)
+    for e in ins:
+        projections[3][e] = 0.0  # no fixture this week: buying now costs a week
+    for gw in (4, 5):
+        for e in outs:
+            projections[gw][e] = 0.0
+        for e in ins:
+            projections[gw][e] = 9.0
+
+    result = optimize_squad(current, pool, projections, horizon=[3, 4, 5], free_transfers=1)
+
+    assert result.transfers_in == frozenset() and result.hits_taken == 0
+    assert result.free_transfers_after == 2
+    assert result.plan[0].transfers_in == frozenset(ins)
+    assert result.plan[0].hits == 0
+
+
+def test_bench_is_ordered_and_the_vice_captain_is_a_second_starter():
+    current, pool = _make_universe(seed=8)
+    owned = [sp.element_id for sp in current.players]
+    projections = {3: {e: float(i) for i, e in enumerate(owned)}}
+    result = optimize_squad(current, pool, projections, horizon=[3], free_transfers=1, max_transfers=0)
+    by_id = {p.element_id: p for p in pool}
+
+    gk, *outfield = result.bench_order
+    assert by_id[gk].position == "GK"
+    assert all(by_id[e].position != "GK" for e in outfield)
+    # the first outfield sub carries the largest weight, so he is the best of them
+    assert projections[3][outfield[0]] >= max(projections[3][e] for e in outfield[1:])
+    assert result.vice_captain[3] in result.starting_xi[3]
+    assert result.vice_captain[3] != result.captain[3]
+
+
+def test_the_starting_xi_fields_two_midfielders_at_least():
+    current, pool = _make_universe(seed=9)
+    owned = {sp.element_id for sp in current.players}
+    by_id = {p.element_id: p for p in pool}
+    projections = {3: {e: (0.1 if by_id[e].position == "MID" else 8.0) for e in owned}}
+    result = optimize_squad(current, pool, projections, horizon=[3], free_transfers=1, max_transfers=0)
+    assert sum(by_id[e].position == "MID" for e in result.starting_xi[3]) >= 2
+
+
+def test_holding_the_squad_after_week_one_reproduces_the_old_single_decision():
+    current, pool = _make_universe(seed=4, bank=100)
+    projections = _flat_projections(pool, [3, 4], value=3.0)
+    held = optimize_squad(
+        current, pool, projections, horizon=[3, 4], free_transfers=1,
+        decay=1.0, ft_value=0.0, vice_weight=0.0, bench_weights=(0, 0, 0, 0), plan_future_transfers=False,
+    )
+    assert all(not week.transfers_in and not week.transfers_out for week in held.plan)
+
+
+def test_prune_pool_keeps_every_owned_player():
+    current, pool = _make_universe(seed=10)
+    projections = _flat_projections(pool, [3], value=1.0)
+    pruned = prune_pool(current, pool, projections, [3], per_position=1)
+    assert {sp.element_id for sp in current.players} <= {p.element_id for p in pruned}

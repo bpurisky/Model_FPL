@@ -289,7 +289,7 @@ function Recommendation({ data }: { data: OptimizerRecommendation }) {
       </section>
 
       <section className={styles.panel}>
-        <h2 className={styles.panelTitle}>Bench order (best-first)</h2>
+        <h2 className={styles.panelTitle}>Bench order (substitute keeper, then outfield)</h2>
         {data.bench_order.length === 0 ? (
           <p className={styles.empty}>No bench players in this recommendation.</p>
         ) : (
@@ -302,6 +302,35 @@ function Recommendation({ data }: { data: OptimizerRecommendation }) {
           </ol>
         )}
       </section>
+
+      {data.plan && data.plan.length > 0 && (
+        <section className={styles.panel}>
+          <h2 className={styles.panelTitle}>The plan behind it</h2>
+          <p className={styles.sub}>
+            The later weeks this recommendation was planned around. Only this week&rsquo;s
+            transfers are advice; the rest is re-solved next week with new information.
+          </p>
+          <ul className={styles.transfers}>
+            {data.plan.map((week) => (
+              <li key={week.gw} className={styles.transferRow}>
+                <strong>
+                  Gameweek {week.gw} ({week.free_transfers} free
+                  {week.hits > 0 ? `, ${week.hits} hit${week.hits > 1 ? "s" : ""}` : ""})
+                </strong>
+                {week.transfers.length === 0 ? (
+                  <span>Roll the transfer.</span>
+                ) : (
+                  week.transfers.map((transfer) => (
+                    <span key={`${transfer.out.element_id}-${transfer.in.element_id}`}>
+                      {transfer.out.name} &rarr; {transfer.in.name} ({price(transfer.in.now_cost)})
+                    </span>
+                  ))
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <p className={styles.note}>
         Squad size {data.squad_size}; {data.unchanged_from_current} of the currently-owned
@@ -325,6 +354,7 @@ function XiGrid({ xi }: { xi: OptimizerXiPlayer[] }) {
                 <span key={player.element_id} className={styles.xiPlayer}>
                   {player.name}
                   {player.captain && <span className={styles.captainBadge}>C</span>}
+                  {player.vice_captain && <span className={styles.captainBadge}>V</span>}
                 </span>
               ))}
             </span>

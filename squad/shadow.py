@@ -76,7 +76,9 @@ def apply_recommendation(
 
     captain_id = result.captain[next_gw]
     xi = sorted(result.starting_xi[next_gw], key=lambda eid: (pool_by_id[eid].position != "GK", eid))
-    vice_id = next((eid for eid in xi if eid != captain_id), captain_id)
+    # The optimizer's own vice-captain; the first other starter only for a
+    # result that doesn't carry one.
+    vice_id = result.vice_captain.get(next_gw) or next((eid for eid in xi if eid != captain_id), captain_id)
     bench = list(result.bench_order)
 
     final_players = [
