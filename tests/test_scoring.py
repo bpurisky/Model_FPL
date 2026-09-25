@@ -68,10 +68,19 @@ def test_saves_per_n_mode_matches_real_data():
     assert compute_points(EventVector(position="GK", minutes=90, saves=6), CONFIG_2024_25) == 4  # 2 + 2
 
 
-def test_saves_flat_plus_bonus_mode_2026_27():
+def test_saves_flat_plus_bonus_mode():
+    """The save rule the 2026/27 spec described, kept for when it arrives.
+    No season file uses it — see test_saves_2026_27_are_still_per_three."""
+    config = {**CONFIG_2026_27, "saves": {"mode": "flat_plus_bonus", "flat_rate": 1, "close_range_bonus": 1, "big_chance_bonus": 1}}
     event = EventVector(position="GK", minutes=90, saves=3, close_range_saves=1, big_chance_saves=1)
     # 2 (minutes) + 3*1 (flat) + 1*1 (close-range) + 1*1 (big-chance)
-    assert compute_points(event, CONFIG_2026_27) == 2 + 3 + 1 + 1
+    assert compute_points(event, config) == 2 + 3 + 1 + 1
+
+
+def test_saves_2026_27_are_still_per_three():
+    """2026/27 gw1-5's official goalkeeper totals match one point per three
+    saves in all 100 appearances; the flat rate matched 7%."""
+    assert compute_points(EventVector(position="GK", minutes=90, saves=5), CONFIG_2026_27) == 2 + 1
 
 
 def test_own_goals_penalties_and_cards():
