@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-25T11:52:55.351787Z",
+    "generated_at": "2026-09-25T17:13:33.202366Z",
     "source_gameweek": 5,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "a7adcfebfaf40908546adf983c77b0873539b78a",
+    "model_git_sha": "1653ef36c781a3151a552d22c83bc973fccf128c",
     "normalization_basis": "within_position_season_to_date",
     "rows": 667,
     "current_season": "2026-27"
@@ -146,8 +146,8 @@
           "percentile": 0.184210526316
         },
         "clean_sheet_prob": {
-          "value": 0.311552363699,
-          "z": 1.82166658204,
+          "value": 0.308652946578,
+          "z": 1.7996346624,
           "percentile": 0.947368421053
         },
         "saves_per90": {
@@ -494,9 +494,9 @@
           "percentile": 0.183908045977
         },
         "clean_sheet_prob": {
-          "value": 0.311552363699,
-          "z": 1.69968582939,
-          "percentile": 0.942528735632
+          "value": 0.308652946578,
+          "z": 1.68389827961,
+          "percentile": 0.919540229885
         },
         "saves_per90": {
           "value": 0.0,
@@ -610,7 +610,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.328115960617,
+          "value": 0.310924256915,
           "z": null,
           "percentile": null
         },
@@ -842,9 +842,9 @@
           "percentile": 0.0416666666667
         },
         "clean_sheet_prob": {
-          "value": 0.314320025744,
-          "z": 1.81402646475,
-          "percentile": 0.947916666667
+          "value": 0.31840299775,
+          "z": 1.98112903699,
+          "percentile": 0.958333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -958,9 +958,9 @@
           "percentile": 0.252873563218
         },
         "clean_sheet_prob": {
-          "value": 0.315091126548,
-          "z": 1.77087686523,
-          "percentile": 0.954022988506
+          "value": 0.311954737836,
+          "z": 1.74900947251,
+          "percentile": 0.942528735632
         },
         "saves_per90": {
           "value": 0.0,
@@ -1190,9 +1190,9 @@
           "percentile": 0.0344827586207
         },
         "clean_sheet_prob": {
-          "value": 0.310649282837,
-          "z": 1.68151810671,
-          "percentile": 0.908045977011
+          "value": 0.315165549832,
+          "z": 1.81232655796,
+          "percentile": 0.954022988506
         },
         "saves_per90": {
           "value": 0.0,
@@ -1306,7 +1306,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.312315866786,
+          "value": 0.319654800652,
           "z": null,
           "percentile": null
         },
@@ -1422,8 +1422,8 @@
           "percentile": 0.255208333333
         },
         "clean_sheet_prob": {
-          "value": 0.313479251736,
-          "z": 1.79617959357,
+          "value": 0.311071325045,
+          "z": 1.82453017646,
           "percentile": 0.927083333333
         },
         "saves_per90": {
@@ -1538,9 +1538,9 @@
           "percentile": 0.28125
         },
         "clean_sheet_prob": {
-          "value": 0.309595672969,
-          "z": 1.71374396954,
-          "percentile": 0.895833333333
+          "value": 0.306190370509,
+          "z": 1.72027676125,
+          "percentile": 0.916666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -1654,7 +1654,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.319097228481,
+          "value": 0.321404801542,
           "z": null,
           "percentile": null
         },
@@ -1770,8 +1770,8 @@
           "percentile": 0.333333333333
         },
         "clean_sheet_prob": {
-          "value": 0.313929195423,
-          "z": 1.80573042048,
+          "value": 0.311076664833,
+          "z": 1.82464423019,
           "percentile": 0.9375
         },
         "saves_per90": {
@@ -2002,7 +2002,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.293044239743,
+          "value": 0.285528328046,
           "z": null,
           "percentile": null
         },
@@ -2234,7 +2234,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.289263497365,
+          "value": 0.27993668916,
           "z": null,
           "percentile": null
         },
@@ -2350,7 +2350,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.265160634417,
+          "value": 0.23485661433,
           "z": null,
           "percentile": null
         },
@@ -2930,7 +2930,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.26108539505,
+          "value": 0.243320969482,
           "z": null,
           "percentile": null
         },
@@ -3046,8 +3046,8 @@
           "percentile": 0.238095238095
         },
         "clean_sheet_prob": {
-          "value": 0.313225413854,
-          "z": 1.73211657386,
+          "value": 0.31023974405,
+          "z": 1.69822481623,
           "percentile": 0.952380952381
         },
         "saves_per90": {
@@ -3278,9 +3278,9 @@
           "percentile": 0.921052631579
         },
         "clean_sheet_prob": {
-          "value": 0.225014243197,
-          "z": -0.0760286876485,
-          "percentile": 0.578947368421
+          "value": 0.216112655976,
+          "z": -0.195724072629,
+          "percentile": 0.526315789474
         },
         "saves_per90": {
           "value": 4.5,
@@ -3394,7 +3394,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.199848926225,
+          "value": 0.1761772266,
           "z": null,
           "percentile": null
         },
@@ -3626,9 +3626,9 @@
           "percentile": 0.48275862069
         },
         "clean_sheet_prob": {
-          "value": 0.311039796285,
-          "z": 1.68937425815,
-          "percentile": 0.919540229885
+          "value": 0.301952659173,
+          "z": 1.55176887719,
+          "percentile": 0.908045977011
         },
         "saves_per90": {
           "value": 0.0,
@@ -3742,9 +3742,9 @@
           "percentile": 0.827586206897
         },
         "clean_sheet_prob": {
-          "value": 0.204937521529,
-          "z": -0.445137481604,
-          "percentile": 0.390804597701
+          "value": 0.197740045292,
+          "z": -0.503299743414,
+          "percentile": 0.287356321839
         },
         "saves_per90": {
           "value": 0.0,
@@ -3858,9 +3858,9 @@
           "percentile": 0.51724137931
         },
         "clean_sheet_prob": {
-          "value": 0.242112592906,
-          "z": 0.302731746104,
-          "percentile": 0.666666666667
+          "value": 0.240661454231,
+          "z": 0.343108741882,
+          "percentile": 0.67816091954
         },
         "saves_per90": {
           "value": 0.0,
@@ -3974,7 +3974,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.16366695535,
+          "value": 0.154426131432,
           "z": null,
           "percentile": null
         },
@@ -4090,7 +4090,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.199848926225,
+          "value": 0.1761772266,
           "z": null,
           "percentile": null
         },
@@ -4206,9 +4206,9 @@
           "percentile": 0.735632183908
         },
         "clean_sheet_prob": {
-          "value": 0.20393717681,
-          "z": -0.465261909221,
-          "percentile": 0.367816091954
+          "value": 0.198213571826,
+          "z": -0.493961818916,
+          "percentile": 0.298850574713
         },
         "saves_per90": {
           "value": 0.0,
@@ -4322,9 +4322,9 @@
           "percentile": 0.67816091954
         },
         "clean_sheet_prob": {
-          "value": 0.209389702867,
-          "z": -0.355570755961,
-          "percentile": 0.436781609195
+          "value": 0.204655362942,
+          "z": -0.366929953086,
+          "percentile": 0.413793103448
         },
         "saves_per90": {
           "value": 0.0,
@@ -4670,9 +4670,9 @@
           "percentile": 0.958333333333
         },
         "clean_sheet_prob": {
-          "value": 0.231680442527,
-          "z": 0.0598594910797,
-          "percentile": 0.604166666667
+          "value": 0.224347327196,
+          "z": -0.0278273674188,
+          "percentile": 0.53125
         },
         "saves_per90": {
           "value": 0.0,
@@ -4786,9 +4786,9 @@
           "percentile": 0.75
         },
         "clean_sheet_prob": {
-          "value": 0.20519098886,
-          "z": -0.502424622235,
-          "percentile": 0.34375
+          "value": 0.20017329692,
+          "z": -0.544165964107,
+          "percentile": 0.302083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -5019,8 +5019,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.235684587877,
-          "z": 0.144854347737,
-          "percentile": 0.645833333333
+          "z": 0.214327755377,
+          "percentile": 0.65625
         },
         "saves_per90": {
           "value": 0.0,
@@ -5250,9 +5250,9 @@
           "percentile": 0.578125
         },
         "clean_sheet_prob": {
-          "value": 0.209459660178,
-          "z": -0.411814747946,
-          "percentile": 0.416666666667
+          "value": 0.205041670155,
+          "z": -0.440181275747,
+          "percentile": 0.34375
         },
         "saves_per90": {
           "value": 0.0,
@@ -5366,9 +5366,9 @@
           "percentile": 0.927083333333
         },
         "clean_sheet_prob": {
-          "value": 0.209921899576,
-          "z": -0.402002923453,
-          "percentile": 0.4375
+          "value": 0.20431139934,
+          "z": -0.455779295755,
+          "percentile": 0.322916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -5482,9 +5482,9 @@
           "percentile": 0.552083333333
         },
         "clean_sheet_prob": {
-          "value": 0.209264408246,
-          "z": -0.415959305265,
-          "percentile": 0.40625
+          "value": 0.204455259338,
+          "z": -0.452706557421,
+          "percentile": 0.333333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -5946,9 +5946,9 @@
           "percentile": 0.875
         },
         "clean_sheet_prob": {
-          "value": 0.206766997227,
-          "z": -0.468971140023,
-          "percentile": 0.375
+          "value": 0.199593754916,
+          "z": -0.556544533231,
+          "percentile": 0.291666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -6062,7 +6062,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.211103637541,
+          "value": 0.20892692953,
           "z": null,
           "percentile": null
         },
@@ -6294,7 +6294,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.212037393366,
+          "value": 0.204880833014,
           "z": null,
           "percentile": null
         },
@@ -6643,8 +6643,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177042416779,
-          "z": -1.1280033266,
-          "percentile": 0.105263157895
+          "z": -1.03815867654,
+          "percentile": 0.157894736842
         },
         "saves_per90": {
           "value": 2.2,
@@ -6991,8 +6991,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177042416779,
-          "z": -1.00631704828,
-          "percentile": 0.149425287356
+          "z": -0.911456158392,
+          "percentile": 0.183908045977
         },
         "saves_per90": {
           "value": 0.0,
@@ -7107,8 +7107,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177042416779,
-          "z": -1.00631704828,
-          "percentile": 0.149425287356
+          "z": -0.911456158392,
+          "percentile": 0.183908045977
         },
         "saves_per90": {
           "value": 0.0,
@@ -7455,8 +7455,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177760362852,
-          "z": -0.99187377339,
-          "percentile": 0.172413793103
+          "z": -0.897298290255,
+          "percentile": 0.206896551724
         },
         "saves_per90": {
           "value": 0.0,
@@ -7803,8 +7803,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177624209628,
-          "z": -1.08757681949,
-          "percentile": 0.125
+          "z": -1.02579703495,
+          "percentile": 0.145833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -7919,8 +7919,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177986941227,
-          "z": -1.07987721881,
-          "percentile": 0.135416666667
+          "z": -1.01804936844,
+          "percentile": 0.15625
         },
         "saves_per90": {
           "value": 0.0,
@@ -8035,8 +8035,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.176924245471,
-          "z": -1.10243475995,
-          "percentile": 0.09375
+          "z": -1.04074772818,
+          "percentile": 0.135416666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -8151,8 +8151,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.183367340841,
-          "z": -0.965669003552,
-          "percentile": 0.177083333333
+          "z": -0.903128192502,
+          "percentile": 0.197916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -8499,8 +8499,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.18115525006,
-          "z": -1.01262442662,
-          "percentile": 0.15625
+          "z": -0.950376741333,
+          "percentile": 0.177083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -9195,7 +9195,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.17815922476,
-          "z": -1.09700099661,
+          "z": -1.00707215288,
           "percentile": 0.142857142857
         },
         "saves_per90": {
@@ -9542,8 +9542,8 @@
           "percentile": 0.184210526316
         },
         "clean_sheet_prob": {
-          "value": 0.247549230333,
-          "z": 0.418141260139,
+          "value": 0.242937943779,
+          "z": 0.382684229209,
           "percentile": 0.736842105263
         },
         "saves_per90": {
@@ -9774,7 +9774,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.295653386298,
+          "value": 0.303240244892,
           "z": null,
           "percentile": null
         },
@@ -10006,8 +10006,8 @@
           "percentile": 0.291666666667
         },
         "clean_sheet_prob": {
-          "value": 0.253800942901,
-          "z": 0.529405073069,
+          "value": 0.248689911007,
+          "z": 0.492111402442,
           "percentile": 0.739583333333
         },
         "saves_per90": {
@@ -10122,8 +10122,8 @@
           "percentile": 0.183908045977
         },
         "clean_sheet_prob": {
-          "value": 0.247549230333,
-          "z": 0.412103259953,
+          "value": 0.242937943779,
+          "z": 0.388001025656,
           "percentile": 0.689655172414
         },
         "saves_per90": {
@@ -10238,9 +10238,9 @@
           "percentile": 0.0459770114943
         },
         "clean_sheet_prob": {
-          "value": 0.265028522892,
-          "z": 0.763742800725,
-          "percentile": 0.804597701149
+          "value": 0.264058670674,
+          "z": 0.804500923977,
+          "percentile": 0.816091954023
         },
         "saves_per90": {
           "value": 0.0,
@@ -10470,7 +10470,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.214089697561,
+          "value": 0.202148760098,
           "z": null,
           "percentile": null
         },
@@ -10586,9 +10586,9 @@
           "percentile": 0.908045977011
         },
         "clean_sheet_prob": {
-          "value": 0.152712666257,
-          "z": -1.49577062726,
-          "percentile": 0.0344827586207
+          "value": 0.133319689296,
+          "z": -1.77366661365,
+          "percentile": 0.0114942528736
         },
         "saves_per90": {
           "value": 0.0,
@@ -10818,9 +10818,9 @@
           "percentile": 0.436781609195
         },
         "clean_sheet_prob": {
-          "value": 0.210073034285,
-          "z": -0.34182384115,
-          "percentile": 0.448275862069
+          "value": 0.196183837829,
+          "z": -0.533988092988,
+          "percentile": 0.275862068966
         },
         "saves_per90": {
           "value": 0.0,
@@ -10934,9 +10934,9 @@
           "percentile": 0.197916666667
         },
         "clean_sheet_prob": {
-          "value": 0.246407567764,
-          "z": 0.37246799782,
-          "percentile": 0.6875
+          "value": 0.241765332978,
+          "z": 0.344207769455,
+          "percentile": 0.697916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -11050,7 +11050,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.244673735352,
+          "value": 0.241819783236,
           "z": null,
           "percentile": null
         },
@@ -11166,9 +11166,9 @@
           "percentile": 0.03125
         },
         "clean_sheet_prob": {
-          "value": 0.270310895803,
-          "z": 0.879857156576,
-          "percentile": 0.833333333333
+          "value": 0.257093638907,
+          "z": 0.671608533096,
+          "percentile": 0.770833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -11282,7 +11282,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.172768241663,
+          "value": 0.197848339078,
           "z": null,
           "percentile": null
         },
@@ -11398,8 +11398,8 @@
           "percentile": 0.1875
         },
         "clean_sheet_prob": {
-          "value": 0.247549230333,
-          "z": 0.396701745089,
+          "value": 0.242937943779,
+          "z": 0.36925382957,
           "percentile": 0.708333333333
         },
         "saves_per90": {
@@ -11862,7 +11862,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.22356859878,
+          "value": 0.216210720921,
           "z": null,
           "percentile": null
         },
@@ -12094,9 +12094,9 @@
           "percentile": 0.822916666667
         },
         "clean_sheet_prob": {
-          "value": 0.140352819774,
-          "z": -1.87872603153,
-          "percentile": 0.0104166666667
+          "value": 0.126419521678,
+          "z": -2.11948958095,
+          "percentile": 0.0
         },
         "saves_per90": {
           "value": 0.0,
@@ -12210,8 +12210,8 @@
           "percentile": 0.40625
         },
         "clean_sheet_prob": {
-          "value": 0.249675734575,
-          "z": 0.441840446968,
+          "value": 0.243723294059,
+          "z": 0.386028304354,
           "percentile": 0.71875
         },
         "saves_per90": {
@@ -12326,8 +12326,8 @@
           "percentile": 0.142857142857
         },
         "clean_sheet_prob": {
-          "value": 0.24890273239,
-          "z": 0.384803604356,
+          "value": 0.243754045222,
+          "z": 0.336452766158,
           "percentile": 0.714285714286
         },
         "saves_per90": {
@@ -12558,7 +12558,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.249780049482,
+          "value": 0.248473477264,
           "z": null,
           "percentile": null
         },
@@ -12674,9 +12674,9 @@
           "percentile": 0.368421052632
         },
         "clean_sheet_prob": {
-          "value": 0.243495595031,
-          "z": 0.32924905295,
-          "percentile": 0.684210526316
+          "value": 0.23043538513,
+          "z": 0.113103385567,
+          "percentile": 0.631578947368
         },
         "saves_per90": {
           "value": 2.4,
@@ -12790,9 +12790,9 @@
           "percentile": 0.815789473684
         },
         "clean_sheet_prob": {
-          "value": 0.178350589273,
-          "z": -1.09931639951,
-          "percentile": 0.157894736842
+          "value": 0.166197657044,
+          "z": -1.27199397061,
+          "percentile": 0.0526315789474
         },
         "saves_per90": {
           "value": 1.8,
@@ -13022,8 +13022,8 @@
           "percentile": 0.591954022989
         },
         "clean_sheet_prob": {
-          "value": 0.208874940229,
-          "z": -0.36592648959,
+          "value": 0.204157859767,
+          "z": -0.376740696006,
           "percentile": 0.402298850575
         },
         "saves_per90": {
@@ -13138,9 +13138,9 @@
           "percentile": 0.505747126437
         },
         "clean_sheet_prob": {
-          "value": 0.242142637604,
-          "z": 0.303336170095,
-          "percentile": 0.67816091954
+          "value": 0.226997514676,
+          "z": 0.073656394723,
+          "percentile": 0.586206896552
         },
         "saves_per90": {
           "value": 0.0,
@@ -13254,9 +13254,9 @@
           "percentile": 0.373563218391
         },
         "clean_sheet_prob": {
-          "value": 0.241837435842,
-          "z": 0.297196275872,
-          "percentile": 0.649425287356
+          "value": 0.228388707111,
+          "z": 0.101090654461,
+          "percentile": 0.603448275862
         },
         "saves_per90": {
           "value": 0.0,
@@ -13370,9 +13370,9 @@
           "percentile": 0.425287356322
         },
         "clean_sheet_prob": {
-          "value": 0.237731693582,
-          "z": 0.214599035868,
-          "percentile": 0.632183908046
+          "value": 0.225999117312,
+          "z": 0.0539680382196,
+          "percentile": 0.574712643678
         },
         "saves_per90": {
           "value": 0.0,
@@ -13486,9 +13486,9 @@
           "percentile": 0.459770114943
         },
         "clean_sheet_prob": {
-          "value": 0.272263892775,
-          "z": 0.90930030166,
-          "percentile": 0.827586206897
+          "value": 0.255938630399,
+          "z": 0.644374051168,
+          "percentile": 0.747126436782
         },
         "saves_per90": {
           "value": 0.0,
@@ -13834,7 +13834,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.238333176055,
+          "value": 0.226809461437,
           "z": null,
           "percentile": null
         },
@@ -14414,9 +14414,9 @@
           "percentile": 0.385416666667
         },
         "clean_sheet_prob": {
-          "value": 0.243495595031,
-          "z": 0.310656379259,
-          "percentile": 0.666666666667
+          "value": 0.23043538513,
+          "z": 0.1022088431,
+          "percentile": 0.614583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -14762,9 +14762,9 @@
           "percentile": 0.427083333333
         },
         "clean_sheet_prob": {
-          "value": 0.243936424939,
-          "z": 0.320013750572,
-          "percentile": 0.677083333333
+          "value": 0.230363458529,
+          "z": 0.100672546513,
+          "percentile": 0.604166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -14994,9 +14994,9 @@
           "percentile": 0.0104166666667
         },
         "clean_sheet_prob": {
-          "value": 0.274597971642,
-          "z": 0.970857698404,
-          "percentile": 0.84375
+          "value": 0.256949039343,
+          "z": 0.668519998202,
+          "percentile": 0.760416666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -16038,9 +16038,9 @@
           "percentile": 0.52380952381
         },
         "clean_sheet_prob": {
-          "value": 0.25106181546,
-          "z": 0.430028096812,
-          "percentile": 0.761904761905
+          "value": 0.234412822669,
+          "z": 0.145124164503,
+          "percentile": 0.619047619048
         },
         "saves_per90": {
           "value": 0.0,
@@ -16502,9 +16502,9 @@
           "percentile": 0.850574712644
         },
         "clean_sheet_prob": {
-          "value": 0.267943692747,
-          "z": 0.822388709068,
-          "percentile": 0.816091954023
+          "value": 0.265261022626,
+          "z": 0.828211256878,
+          "percentile": 0.827586206897
         },
         "saves_per90": {
           "value": 0.0,
@@ -16734,9 +16734,9 @@
           "percentile": 0.919540229885
         },
         "clean_sheet_prob": {
-          "value": 0.255927792656,
-          "z": 0.580658926471,
-          "percentile": 0.735632183908
+          "value": 0.244146280157,
+          "z": 0.411829371186,
+          "percentile": 0.701149425287
         },
         "saves_per90": {
           "value": 0.0,
@@ -16850,9 +16850,9 @@
           "percentile": 0.804597701149
         },
         "clean_sheet_prob": {
-          "value": 0.230681335416,
-          "z": 0.0727635067992,
-          "percentile": 0.609195402299
+          "value": 0.223035100239,
+          "z": -0.00448226113471,
+          "percentile": 0.528735632184
         },
         "saves_per90": {
           "value": 0.0,
@@ -17198,9 +17198,9 @@
           "percentile": 1.0
         },
         "clean_sheet_prob": {
-          "value": 0.228325629299,
-          "z": 0.0253726061393,
-          "percentile": 0.574712643678
+          "value": 0.21590480992,
+          "z": -0.145091303974,
+          "percentile": 0.48275862069
         },
         "saves_per90": {
           "value": 0.0,
@@ -17314,8 +17314,8 @@
           "percentile": 0.931034482759
         },
         "clean_sheet_prob": {
-          "value": 0.251700756181,
-          "z": 0.495621550978,
+          "value": 0.244287117557,
+          "z": 0.414606679145,
           "percentile": 0.712643678161
         },
         "saves_per90": {
@@ -17546,7 +17546,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.205305858811,
+          "value": 0.201761335392,
           "z": null,
           "percentile": null
         },
@@ -17894,9 +17894,9 @@
           "percentile": 0.947916666667
         },
         "clean_sheet_prob": {
-          "value": 0.231194920567,
-          "z": 0.0495534542667,
-          "percentile": 0.59375
+          "value": 0.22394475903,
+          "z": -0.0364259122106,
+          "percentile": 0.520833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -18010,9 +18010,9 @@
           "percentile": 0.364583333333
         },
         "clean_sheet_prob": {
-          "value": 0.341780065739,
-          "z": 2.39691293853,
-          "percentile": 1.0
+          "value": 0.32180831753,
+          "z": 2.0538640347,
+          "percentile": 0.96875
         },
         "saves_per90": {
           "value": 0.0,
@@ -18126,9 +18126,9 @@
           "percentile": 0.885416666667
         },
         "clean_sheet_prob": {
-          "value": 0.230694511918,
-          "z": 0.0389314219156,
-          "percentile": 0.572916666667
+          "value": 0.223508893317,
+          "z": -0.0457356668356,
+          "percentile": 0.510416666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -18474,7 +18474,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.157985052141,
+          "value": 0.122378703255,
           "z": null,
           "percentile": null
         },
@@ -18590,7 +18590,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.20867065967,
+          "value": 0.205616246815,
           "z": null,
           "percentile": null
         },
@@ -18706,9 +18706,9 @@
           "percentile": 1.0
         },
         "clean_sheet_prob": {
-          "value": 0.249990847213,
-          "z": 0.448529253488,
-          "percentile": 0.729166666667
+          "value": 0.240744237231,
+          "z": 0.322397953746,
+          "percentile": 0.677083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -19170,8 +19170,8 @@
           "percentile": 0.857142857143
         },
         "clean_sheet_prob": {
-          "value": 0.2471737273,
-          "z": 0.348587592678,
+          "value": 0.238272140078,
+          "z": 0.224171398319,
           "percentile": 0.666666666667
         },
         "saves_per90": {
@@ -19287,7 +19287,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.214201294368,
-          "z": -0.342058156437,
+          "z": -0.26885199599,
           "percentile": 0.47619047619
         },
         "saves_per90": {
@@ -19402,9 +19402,9 @@
           "percentile": 0.333333333333
         },
         "clean_sheet_prob": {
-          "value": 0.294703230568,
-          "z": 1.34414801912,
-          "percentile": 0.857142857143
+          "value": 0.308754722412,
+          "z": 1.66780833575,
+          "percentile": 0.904761904762
         },
         "saves_per90": {
           "value": 0.0,
@@ -20098,9 +20098,9 @@
           "percentile": 0.724137931034
         },
         "clean_sheet_prob": {
-          "value": 0.17365718204,
-          "z": -1.07441948351,
-          "percentile": 0.114942528736
+          "value": 0.161142720935,
+          "z": -1.22499753108,
+          "percentile": 0.103448275862
         },
         "saves_per90": {
           "value": 0.0,
@@ -20330,9 +20330,9 @@
           "percentile": 0.959770114943
         },
         "clean_sheet_prob": {
-          "value": 0.185412254143,
-          "z": -0.837936906063,
-          "percentile": 0.212643678161
+          "value": 0.170221088858,
+          "z": -1.045972475,
+          "percentile": 0.14367816092
         },
         "saves_per90": {
           "value": 0.0,
@@ -20446,9 +20446,9 @@
           "percentile": 0.816091954023
         },
         "clean_sheet_prob": {
-          "value": 0.179636905182,
-          "z": -0.954122446743,
-          "percentile": 0.183908045977
+          "value": 0.167319744139,
+          "z": -1.103186878,
+          "percentile": 0.114942528736
         },
         "saves_per90": {
           "value": 0.0,
@@ -21142,9 +21142,9 @@
           "percentile": 0.959770114943
         },
         "clean_sheet_prob": {
-          "value": 0.185412254143,
-          "z": -0.837936906063,
-          "percentile": 0.212643678161
+          "value": 0.170221088858,
+          "z": -1.045972475,
+          "percentile": 0.14367816092
         },
         "saves_per90": {
           "value": 0.0,
@@ -21258,9 +21258,9 @@
           "percentile": 0.510416666667
         },
         "clean_sheet_prob": {
-          "value": 0.190273190425,
-          "z": -0.819080494845,
-          "percentile": 0.21875
+          "value": 0.175542363481,
+          "z": -1.07026365909,
+          "percentile": 0.125
         },
         "saves_per90": {
           "value": 0.0,
@@ -21374,9 +21374,9 @@
           "percentile": 0.78125
         },
         "clean_sheet_prob": {
-          "value": 0.178001919968,
-          "z": -1.07955926934,
-          "percentile": 0.145833333333
+          "value": 0.166617118896,
+          "z": -1.26089998292,
+          "percentile": 0.0625
         },
         "saves_per90": {
           "value": 0.0,
@@ -21606,9 +21606,9 @@
           "percentile": 0.479166666667
         },
         "clean_sheet_prob": {
-          "value": 0.188569613438,
-          "z": -0.855241839927,
-          "percentile": 0.197916666667
+          "value": 0.173049635051,
+          "z": -1.1235064111,
+          "percentile": 0.09375
         },
         "saves_per90": {
           "value": 0.0,
@@ -21838,7 +21838,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.207610391762,
+          "value": 0.200731373519,
           "z": null,
           "percentile": null
         },
@@ -22534,8 +22534,8 @@
           "percentile": 0.952380952381
         },
         "clean_sheet_prob": {
-          "value": 0.165933200001,
-          "z": -1.35308922783,
+          "value": 0.161382542558,
+          "z": -1.35069517735,
           "percentile": 0.047619047619
         },
         "saves_per90": {
@@ -22999,7 +22999,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.211739686198,
-          "z": -0.367126574648,
+          "z": -0.290014282718,
           "percentile": 0.421052631579
         },
         "saves_per90": {
@@ -23230,9 +23230,9 @@
           "percentile": 0.942528735632
         },
         "clean_sheet_prob": {
-          "value": 0.191669603559,
-          "z": -0.712054724761,
-          "percentile": 0.241379310345
+          "value": 0.182865835977,
+          "z": -0.796618562324,
+          "percentile": 0.229885057471
         },
         "saves_per90": {
           "value": 0.0,
@@ -23346,9 +23346,9 @@
           "percentile": 0.528735632184
         },
         "clean_sheet_prob": {
-          "value": 0.287049653429,
-          "z": 1.20675273394,
-          "percentile": 0.850574712644
+          "value": 0.297163717532,
+          "z": 1.45733113761,
+          "percentile": 0.896551724138
         },
         "saves_per90": {
           "value": 0.0,
@@ -23463,8 +23463,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.199002082066,
-          "z": -0.564543641783,
-          "percentile": 0.310344827586
+          "z": -0.478412428182,
+          "percentile": 0.32183908046
         },
         "saves_per90": {
           "value": 0.0,
@@ -23579,8 +23579,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.191492585641,
-          "z": -0.715615881439,
-          "percentile": 0.229885057471
+          "z": -0.626499400438,
+          "percentile": 0.241379310345
         },
         "saves_per90": {
           "value": 0.0,
@@ -23695,8 +23695,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.195172872343,
-          "z": -0.641577740505,
-          "percentile": 0.264367816092
+          "z": -0.553924292348,
+          "percentile": 0.252873563218
         },
         "saves_per90": {
           "value": 0.0,
@@ -24274,8 +24274,8 @@
           "percentile": 0.0729166666667
         },
         "clean_sheet_prob": {
-          "value": 0.220397585354,
-          "z": -0.179638515217,
+          "value": 0.221146769587,
+          "z": -0.0961888034625,
           "percentile": 0.489583333333
         },
         "saves_per90": {
@@ -24391,8 +24391,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.19803755959,
-          "z": -0.654268434683,
-          "percentile": 0.25
+          "z": -0.58978366224,
+          "percentile": 0.260416666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -24507,8 +24507,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.196606825954,
-          "z": -0.68463821141,
-          "percentile": 0.239583333333
+          "z": -0.620343026525,
+          "percentile": 0.25
         },
         "saves_per90": {
           "value": 0.0,
@@ -24855,8 +24855,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.198209453755,
-          "z": -0.650619686023,
-          "percentile": 0.260416666667
+          "z": -0.586112135758,
+          "percentile": 0.270833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -25783,7 +25783,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.191652514412,
-          "z": -0.81436843628,
+          "z": -0.730700165591,
           "percentile": 0.190476190476
         },
         "saves_per90": {
@@ -26246,9 +26246,9 @@
           "percentile": 0.0263157894737
         },
         "clean_sheet_prob": {
-          "value": 0.223503551922,
-          "z": -0.109156651021,
-          "percentile": 0.526315789474
+          "value": 0.229447080166,
+          "z": 0.0917935006523,
+          "percentile": 0.578947368421
         },
         "saves_per90": {
           "value": 3.0,
@@ -26594,9 +26594,9 @@
           "percentile": 0.126436781609
         },
         "clean_sheet_prob": {
-          "value": 0.223503551922,
-          "z": -0.0716355003779,
-          "percentile": 0.528735632184
+          "value": 0.229447080166,
+          "z": 0.121961729216,
+          "percentile": 0.632183908046
         },
         "saves_per90": {
           "value": 0.0,
@@ -26710,9 +26710,9 @@
           "percentile": 0.126436781609
         },
         "clean_sheet_prob": {
-          "value": 0.223503551922,
-          "z": -0.0716355003779,
-          "percentile": 0.528735632184
+          "value": 0.229447080166,
+          "z": 0.121961729216,
+          "percentile": 0.632183908046
         },
         "saves_per90": {
           "value": 0.0,
@@ -27058,9 +27058,9 @@
           "percentile": 0.126436781609
         },
         "clean_sheet_prob": {
-          "value": 0.223503551922,
-          "z": -0.0716355003779,
-          "percentile": 0.528735632184
+          "value": 0.229447080166,
+          "z": 0.121961729216,
+          "percentile": 0.632183908046
         },
         "saves_per90": {
           "value": 0.0,
@@ -27406,9 +27406,9 @@
           "percentile": 0.119791666667
         },
         "clean_sheet_prob": {
-          "value": 0.223503551922,
-          "z": -0.113709044586,
-          "percentile": 0.520833333333
+          "value": 0.229447080166,
+          "z": 0.0810994131722,
+          "percentile": 0.572916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -27522,9 +27522,9 @@
           "percentile": 0.322916666667
         },
         "clean_sheet_prob": {
-          "value": 0.317597355692,
-          "z": 1.88359341722,
-          "percentile": 0.958333333333
+          "value": 0.31298550736,
+          "z": 1.86541563077,
+          "percentile": 0.947916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -27754,9 +27754,9 @@
           "percentile": 0.09375
         },
         "clean_sheet_prob": {
-          "value": 0.22847329464,
-          "z": -0.00821772669726,
-          "percentile": 0.552083333333
+          "value": 0.229469922851,
+          "z": 0.0815873152754,
+          "percentile": 0.583333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -28102,9 +28102,9 @@
           "percentile": 0.270833333333
         },
         "clean_sheet_prob": {
-          "value": 0.198805919984,
-          "z": -0.637958666705,
-          "percentile": 0.270833333333
+          "value": 0.206788328467,
+          "z": -0.402874004625,
+          "percentile": 0.395833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -28218,7 +28218,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.261377893043,
+          "value": 0.267321421287,
           "z": null,
           "percentile": null
         },
@@ -28334,9 +28334,9 @@
           "percentile": 0.135416666667
         },
         "clean_sheet_prob": {
-          "value": 0.223036824215,
-          "z": -0.123616141137,
-          "percentile": 0.5
+          "value": 0.229033657645,
+          "z": 0.0722690277531,
+          "percentile": 0.5625
         },
         "saves_per90": {
           "value": 0.0,
@@ -28566,9 +28566,9 @@
           "percentile": 0.166666666667
         },
         "clean_sheet_prob": {
-          "value": 0.199346841119,
-          "z": -0.626476687332,
-          "percentile": 0.291666666667
+          "value": 0.210088157222,
+          "z": -0.332392213658,
+          "percentile": 0.4375
         },
         "saves_per90": {
           "value": 0.0,
@@ -28682,7 +28682,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.212002267473,
+          "value": 0.22892180043,
           "z": null,
           "percentile": null
         },
@@ -28798,7 +28798,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.250410823434,
+          "value": 0.260955792899,
           "z": null,
           "percentile": null
         },
@@ -28914,9 +28914,9 @@
           "percentile": 0.0952380952381
         },
         "clean_sheet_prob": {
-          "value": 0.221423511864,
-          "z": -0.190780456589,
-          "percentile": 0.52380952381
+          "value": 0.226982207343,
+          "z": -0.00707103601403,
+          "percentile": 0.571428571429
         },
         "saves_per90": {
           "value": 0.0,
@@ -29030,9 +29030,9 @@
           "percentile": 0.605263157895
         },
         "clean_sheet_prob": {
-          "value": 0.197199957842,
-          "z": -0.685968416416,
-          "percentile": 0.210526315789
+          "value": 0.20467990692,
+          "z": -0.44223762413,
+          "percentile": 0.315789473684
         },
         "saves_per90": {
           "value": 3.2,
@@ -29378,7 +29378,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.2657149601,
+          "value": 0.283430628968,
           "z": null,
           "percentile": null
         },
@@ -29494,9 +29494,9 @@
           "percentile": 0.64367816092
         },
         "clean_sheet_prob": {
-          "value": 0.196739948035,
-          "z": -0.610052106687,
-          "percentile": 0.287356321839
+          "value": 0.203539901742,
+          "z": -0.388926803803,
+          "percentile": 0.390804597701
         },
         "saves_per90": {
           "value": 0.0,
@@ -29842,9 +29842,9 @@
           "percentile": 0.591954022989
         },
         "clean_sheet_prob": {
-          "value": 0.197199957842,
-          "z": -0.600797862737,
-          "percentile": 0.298850574713
+          "value": 0.20467990692,
+          "z": -0.366445946816,
+          "percentile": 0.425287356322
         },
         "saves_per90": {
           "value": 0.0,
@@ -29958,9 +29958,9 @@
           "percentile": 0.551724137931
         },
         "clean_sheet_prob": {
-          "value": 0.194245040142,
-          "z": -0.660243398056,
-          "percentile": 0.252873563218
+          "value": 0.202494983978,
+          "z": -0.409532540752,
+          "percentile": 0.344827586207
         },
         "saves_per90": {
           "value": 0.0,
@@ -30074,9 +30074,9 @@
           "percentile": 0.879310344828
         },
         "clean_sheet_prob": {
-          "value": 0.171485822974,
-          "z": -1.11810178371,
-          "percentile": 0.0919540229885
+          "value": 0.157270729867,
+          "z": -1.30135304166,
+          "percentile": 0.0804597701149
         },
         "saves_per90": {
           "value": 0.0,
@@ -30190,7 +30190,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.184502993329,
+          "value": 0.175851807976,
           "z": null,
           "percentile": null
         },
@@ -30306,9 +30306,9 @@
           "percentile": 0.635416666667
         },
         "clean_sheet_prob": {
-          "value": 0.201331668954,
-          "z": -0.584345310325,
-          "percentile": 0.3125
+          "value": 0.208848284448,
+          "z": -0.358874937507,
+          "percentile": 0.427083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -30422,7 +30422,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.224832429085,
+          "value": 0.235658671171,
           "z": null,
           "percentile": null
         },
@@ -30654,9 +30654,9 @@
           "percentile": 0.645833333333
         },
         "clean_sheet_prob": {
-          "value": 0.199128767771,
-          "z": -0.631105668393,
-          "percentile": 0.28125
+          "value": 0.207633666139,
+          "z": -0.384818245527,
+          "percentile": 0.40625
         },
         "saves_per90": {
           "value": 0.0,
@@ -30770,9 +30770,9 @@
           "percentile": 0.520833333333
         },
         "clean_sheet_prob": {
-          "value": 0.191428269584,
-          "z": -0.794561957429,
-          "percentile": 0.229166666667
+          "value": 0.194535984817,
+          "z": -0.664574592167,
+          "percentile": 0.239583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -31002,8 +31002,8 @@
           "percentile": 0.895833333333
         },
         "clean_sheet_prob": {
-          "value": 0.172064305985,
-          "z": -1.2055953158,
+          "value": 0.156072326241,
+          "z": -1.48612860139,
           "percentile": 0.0520833333333
         },
         "saves_per90": {
@@ -31118,9 +31118,9 @@
           "percentile": 0.604166666667
         },
         "clean_sheet_prob": {
-          "value": 0.200844733839,
-          "z": -0.59468134378,
-          "percentile": 0.302083333333
+          "value": 0.208764679921,
+          "z": -0.360660665573,
+          "percentile": 0.416666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -31234,7 +31234,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.245014236098,
+          "value": 0.253242180084,
           "z": null,
           "percentile": null
         },
@@ -31466,7 +31466,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.16056020382,
+          "value": 0.167449630602,
           "z": null,
           "percentile": null
         },
@@ -32163,7 +32163,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.329445210913,
-          "z": 2.05964505291,
+          "z": 2.09392090925,
           "percentile": 0.965517241379
         },
         "saves_per90": {
@@ -32395,7 +32395,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.336918665441,
-          "z": 2.20999221995,
+          "z": 2.2412971367,
           "percentile": 0.988505747126
         },
         "saves_per90": {
@@ -32511,8 +32511,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.29515063318,
-          "z": 1.3697241351,
-          "percentile": 0.862068965517
+          "z": 1.41763319386,
+          "percentile": 0.885057471264
         },
         "saves_per90": {
           "value": 0.0,
@@ -32743,7 +32743,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.329572922863,
-          "z": 2.06221429714,
+          "z": 2.09643938385,
           "percentile": 0.977011494253
         },
         "saves_per90": {
@@ -33207,8 +33207,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.337220332212,
-          "z": 2.30012476935,
-          "percentile": 0.989583333333
+          "z": 2.38305275258,
+          "percentile": 1.0
         },
         "saves_per90": {
           "value": 0.0,
@@ -33671,8 +33671,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.329445210913,
-          "z": 2.13508447669,
-          "percentile": 0.96875
+          "z": 2.21698217292,
+          "percentile": 0.979166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -34251,7 +34251,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.332148830581,
-          "z": 2.12848942718,
+          "z": 2.14697066996,
           "percentile": 1.0
         },
         "saves_per90": {
@@ -35294,9 +35294,9 @@
           "percentile": 0.879310344828
         },
         "clean_sheet_prob": {
-          "value": 0.171485822974,
-          "z": -1.11810178371,
-          "percentile": 0.0919540229885
+          "value": 0.157270729867,
+          "z": -1.30135304166,
+          "percentile": 0.0804597701149
         },
         "saves_per90": {
           "value": 0.0,
@@ -35410,9 +35410,9 @@
           "percentile": 0.879310344828
         },
         "clean_sheet_prob": {
-          "value": 0.171485822974,
-          "z": -1.11810178371,
-          "percentile": 0.0919540229885
+          "value": 0.157270729867,
+          "z": -1.30135304166,
+          "percentile": 0.0804597701149
         },
         "saves_per90": {
           "value": 0.0,
@@ -35526,9 +35526,9 @@
           "percentile": 0.977011494253
         },
         "clean_sheet_prob": {
-          "value": 0.165384681621,
-          "z": -1.24084145045,
-          "percentile": 0.0574712643678
+          "value": 0.147466497033,
+          "z": -1.49469212507,
+          "percentile": 0.0344827586207
         },
         "saves_per90": {
           "value": 0.0,
@@ -35874,7 +35874,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.236461314979,
+          "value": 0.196354445143,
           "z": null,
           "percentile": null
         },
@@ -36338,7 +36338,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.169910475769,
+          "value": 0.161966747269,
           "z": null,
           "percentile": null
         },
@@ -36570,8 +36570,8 @@
           "percentile": 0.96875
         },
         "clean_sheet_prob": {
-          "value": 0.167059930988,
-          "z": -1.31182176326,
+          "value": 0.153935200137,
+          "z": -1.53177596266,
           "percentile": 0.03125
         },
         "saves_per90": {
@@ -36686,9 +36686,9 @@
           "percentile": 0.761904761905
         },
         "clean_sheet_prob": {
-          "value": 0.173973349904,
-          "z": -1.18467898755,
-          "percentile": 0.0952380952381
+          "value": 0.159399516277,
+          "z": -1.39131187856,
+          "percentile": 0.0
         },
         "saves_per90": {
           "value": 0.0,
@@ -37150,7 +37150,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.20424023663,
+          "value": 0.18237086262,
           "z": null,
           "percentile": null
         },
@@ -37266,7 +37266,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.299316367781,
+          "value": 0.228240902249,
           "z": null,
           "percentile": null
         },
@@ -37498,7 +37498,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.213294245748,
+          "value": 0.172679694015,
           "z": null,
           "percentile": null
         },
@@ -37962,7 +37962,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.161961159472,
+          "value": 0.158312526334,
           "z": null,
           "percentile": null
         },
@@ -38078,7 +38078,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.152300327076,
+          "value": 0.151633989836,
           "z": null,
           "percentile": null
         },
@@ -38310,8 +38310,8 @@
           "percentile": 0.0229885057471
         },
         "clean_sheet_prob": {
-          "value": 0.213748824481,
-          "z": -0.267876158634,
+          "value": 0.209080187228,
+          "z": -0.279672593321,
           "percentile": 0.459770114943
         },
         "saves_per90": {
@@ -38426,9 +38426,9 @@
           "percentile": 0.0574712643678
         },
         "clean_sheet_prob": {
-          "value": 0.225682199573,
-          "z": -0.0278065721205,
-          "percentile": 0.563218390805
+          "value": 0.223723684149,
+          "z": 0.00909658631736,
+          "percentile": 0.551724137931
         },
         "saves_per90": {
           "value": 0.0,
@@ -38542,9 +38542,9 @@
           "percentile": 0.126436781609
         },
         "clean_sheet_prob": {
-          "value": 0.209125597468,
-          "z": -0.36088389441,
-          "percentile": 0.419540229885
+          "value": 0.206020718085,
+          "z": -0.340005203709,
+          "percentile": 0.442528735632
         },
         "saves_per90": {
           "value": 0.0,
@@ -38774,9 +38774,9 @@
           "percentile": 0.126436781609
         },
         "clean_sheet_prob": {
-          "value": 0.209125597468,
-          "z": -0.36088389441,
-          "percentile": 0.419540229885
+          "value": 0.206020718085,
+          "z": -0.340005203709,
+          "percentile": 0.442528735632
         },
         "saves_per90": {
           "value": 0.0,
@@ -38890,9 +38890,9 @@
           "percentile": 0.0833333333333
         },
         "clean_sheet_prob": {
-          "value": 0.208361422071,
-          "z": -0.435126736461,
-          "percentile": 0.385416666667
+          "value": 0.205572635905,
+          "z": -0.428840257839,
+          "percentile": 0.364583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -39006,9 +39006,9 @@
           "percentile": 0.0208333333333
         },
         "clean_sheet_prob": {
-          "value": 0.219043013792,
-          "z": -0.208391621234,
-          "percentile": 0.458333333333
+          "value": 0.216786667299,
+          "z": -0.189317217329,
+          "percentile": 0.479166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -39122,7 +39122,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.189299368609,
+          "value": 0.187935824514,
           "z": null,
           "percentile": null
         },
@@ -39238,9 +39238,9 @@
           "percentile": 0.119791666667
         },
         "clean_sheet_prob": {
-          "value": 0.209125597468,
-          "z": -0.418905802251,
-          "percentile": 0.395833333333
+          "value": 0.206020718085,
+          "z": -0.419269568905,
+          "percentile": 0.385416666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -39354,7 +39354,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.206596136247,
+          "value": 0.196555582522,
           "z": null,
           "percentile": null
         },
@@ -39818,7 +39818,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.237620603961,
+          "value": 0.2553274714,
           "z": null,
           "percentile": null
         },
@@ -40050,9 +40050,9 @@
           "percentile": 0.0520833333333
         },
         "clean_sheet_prob": {
-          "value": 0.220293008817,
-          "z": -0.181858331681,
-          "percentile": 0.479166666667
+          "value": 0.215021973856,
+          "z": -0.227009704906,
+          "percentile": 0.458333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -40166,9 +40166,9 @@
           "percentile": 0.0
         },
         "clean_sheet_prob": {
-          "value": 0.210334485254,
-          "z": -0.423052946323,
-          "percentile": 0.380952380952
+          "value": 0.209443902821,
+          "z": -0.366293745942,
+          "percentile": 0.428571428571
         },
         "saves_per90": {
           "value": 0.0,
@@ -40282,7 +40282,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.20321015918,
+          "value": 0.200415831556,
           "z": null,
           "percentile": null
         },
@@ -40631,7 +40631,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.260087757678,
-          "z": 0.693098745846,
+          "z": 0.752469441069,
           "percentile": 0.789473684211
         },
         "saves_per90": {
@@ -41327,8 +41327,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.260087757678,
-          "z": 0.664346992508,
-          "percentile": 0.770114942529
+          "z": 0.726194676876,
+          "percentile": 0.781609195402
         },
         "saves_per90": {
           "value": 0.0,
@@ -41559,8 +41559,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.24903759169,
-          "z": 0.442045358711,
-          "percentile": 0.701149425287
+          "z": 0.508285841,
+          "percentile": 0.724137931034
         },
         "saves_per90": {
           "value": 0.0,
@@ -42023,8 +42023,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.2572848672,
-          "z": 0.607959863738,
-          "percentile": 0.758620689655
+          "z": 0.670921787609,
+          "percentile": 0.770114942529
         },
         "saves_per90": {
           "value": 0.0,
@@ -42487,8 +42487,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.265440854439,
-          "z": 0.776482171016,
-          "percentile": 0.822916666667
+          "z": 0.849898603257,
+          "percentile": 0.84375
         },
         "saves_per90": {
           "value": 0.0,
@@ -42603,8 +42603,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.247145045863,
-          "z": 0.388122236085,
-          "percentile": 0.697916666667
+          "z": 0.459114277378,
+          "percentile": 0.729166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -42719,8 +42719,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.261484070354,
-          "z": 0.692492638482,
-          "percentile": 0.791666666667
+          "z": 0.765384754377,
+          "percentile": 0.802083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -43183,7 +43183,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.255512560966,
-          "z": 0.565737103863,
+          "z": 0.637837930689,
           "percentile": 0.75
         },
         "saves_per90": {
@@ -43763,8 +43763,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.288833937642,
-          "z": 1.27304050746,
-          "percentile": 0.864583333333
+          "z": 1.34955677423,
+          "percentile": 0.875
         },
         "saves_per90": {
           "value": 0.0,
@@ -43995,7 +43995,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.266397834944,
-          "z": 0.751258765085,
+          "z": 0.800246942882,
           "percentile": 0.809523809524
         },
         "saves_per90": {
@@ -44574,8 +44574,8 @@
           "percentile": 0.368421052632
         },
         "clean_sheet_prob": {
-          "value": 0.298922676971,
-          "z": 1.54471006133,
+          "value": 0.286895246383,
+          "z": 1.33049395778,
           "percentile": 0.894736842105
         },
         "saves_per90": {
@@ -44690,8 +44690,8 @@
           "percentile": 0.0263157894737
         },
         "clean_sheet_prob": {
-          "value": 0.209125597468,
-          "z": -0.424450951347,
+          "value": 0.206020718085,
+          "z": -0.413326981495,
           "percentile": 0.368421052632
         },
         "saves_per90": {
@@ -44922,7 +44922,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.21687368823,
+          "value": 0.215028990287,
           "z": null,
           "percentile": null
         },
@@ -45038,9 +45038,9 @@
           "percentile": 0.32183908046
         },
         "clean_sheet_prob": {
-          "value": 0.298922676971,
-          "z": 1.44560819859,
-          "percentile": 0.879310344828
+          "value": 0.286895246383,
+          "z": 1.254837293,
+          "percentile": 0.85632183908
         },
         "saves_per90": {
           "value": 0.0,
@@ -45154,7 +45154,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.276418644041,
+          "value": 0.251008579419,
           "z": null,
           "percentile": null
         },
@@ -45270,9 +45270,9 @@
           "percentile": 0.32183908046
         },
         "clean_sheet_prob": {
-          "value": 0.298922676971,
-          "z": 1.44560819859,
-          "percentile": 0.879310344828
+          "value": 0.286895246383,
+          "z": 1.254837293,
+          "percentile": 0.85632183908
         },
         "saves_per90": {
           "value": 0.0,
@@ -45386,9 +45386,9 @@
           "percentile": 0.402298850575
         },
         "clean_sheet_prob": {
-          "value": 0.3029911954,
-          "z": 1.52745658846,
-          "percentile": 0.896551724138
+          "value": 0.290520357233,
+          "z": 1.32632433547,
+          "percentile": 0.873563218391
         },
         "saves_per90": {
           "value": 0.0,
@@ -45619,7 +45619,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.311429367278,
-          "z": 1.69721144977,
+          "z": 1.73864918589,
           "percentile": 0.931034482759
         },
         "saves_per90": {
@@ -46082,9 +46082,9 @@
           "percentile": 0.385416666667
         },
         "clean_sheet_prob": {
-          "value": 0.298922676971,
-          "z": 1.48719131326,
-          "percentile": 0.875
+          "value": 0.286895246383,
+          "z": 1.30814782783,
+          "percentile": 0.864583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -46314,9 +46314,9 @@
           "percentile": 0.489583333333
         },
         "clean_sheet_prob": {
-          "value": 0.312954714032,
-          "z": 1.78504538062,
-          "percentile": 0.916666666667
+          "value": 0.29622782381,
+          "z": 1.50748446625,
+          "percentile": 0.895833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -46430,7 +46430,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.385934813728,
+          "value": 0.32579766079,
           "z": null,
           "percentile": null
         },
@@ -46546,9 +46546,9 @@
           "percentile": 0.571428571429
         },
         "clean_sheet_prob": {
-          "value": 0.205154412063,
-          "z": -0.53155557145,
-          "percentile": 0.333333333333
+          "value": 0.19889280083,
+          "z": -0.582403315994,
+          "percentile": 0.285714285714
         },
         "saves_per90": {
           "value": 0.0,
@@ -46779,8 +46779,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.233525225243,
-          "z": 0.099018170106,
-          "percentile": 0.635416666667
+          "z": 0.168205439028,
+          "percentile": 0.645833333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -47706,9 +47706,9 @@
           "percentile": 0.380952380952
         },
         "clean_sheet_prob": {
-          "value": 0.298922676971,
-          "z": 1.43252920494,
-          "percentile": 0.904761904762
+          "value": 0.286895246383,
+          "z": 1.22007861327,
+          "percentile": 0.857142857143
         },
         "saves_per90": {
           "value": 0.0,
@@ -47823,8 +47823,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.231708638092,
-          "z": 0.0707727618447,
-          "percentile": 0.631578947368
+          "z": 0.140557334585,
+          "percentile": 0.684210526316
         },
         "saves_per90": {
           "value": 3.2,
@@ -48403,8 +48403,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.221604713521,
-          "z": -0.109835368078,
-          "percentile": 0.494252873563
+          "z": -0.0326894305855,
+          "percentile": 0.51724137931
         },
         "saves_per90": {
           "value": 0.0,
@@ -48519,8 +48519,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.231708638092,
-          "z": 0.0934302609018,
-          "percentile": 0.620689655172
+          "z": 0.166559562002,
+          "percentile": 0.666666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -48635,8 +48635,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.223568511044,
-          "z": -0.0703286857101,
-          "percentile": 0.551724137931
+          "z": 0.00603657883236,
+          "percentile": 0.540229885057
         },
         "saves_per90": {
           "value": 0.0,
@@ -49099,8 +49099,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.254978272739,
-          "z": 0.561556966456,
-          "percentile": 0.724137931034
+          "z": 0.625435836132,
+          "percentile": 0.735632183908
         },
         "saves_per90": {
           "value": 0.0,
@@ -49447,8 +49447,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.231708638092,
-          "z": 0.0604579903347,
-          "percentile": 0.619791666667
+          "z": 0.129404541967,
+          "percentile": 0.630208333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -49563,8 +49563,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.231708638092,
-          "z": 0.0604579903347,
-          "percentile": 0.619791666667
+          "z": 0.129404541967,
+          "percentile": 0.630208333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -49679,8 +49679,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.229714034493,
-          "z": 0.0181191059457,
-          "percentile": 0.5625
+          "z": 0.0868013511992,
+          "percentile": 0.59375
         },
         "saves_per90": {
           "value": 0.0,
@@ -49795,8 +49795,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.22776111054,
-          "z": -0.0233350564109,
-          "percentile": 0.541666666667
+          "z": 0.0450884054641,
+          "percentile": 0.552083333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -50143,8 +50143,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.223392292725,
-          "z": -0.116070711977,
-          "percentile": 0.510416666667
+          "z": -0.0482261653398,
+          "percentile": 0.5
         },
         "saves_per90": {
           "value": 0.0,
@@ -51651,8 +51651,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.202665659029,
-          "z": -0.490841658923,
-          "percentile": 0.33908045977
+          "z": -0.406166835505,
+          "percentile": 0.362068965517
         },
         "saves_per90": {
           "value": 0.0,
@@ -51883,8 +51883,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.202665659029,
-          "z": -0.490841658923,
-          "percentile": 0.33908045977
+          "z": -0.406166835505,
+          "percentile": 0.362068965517
         },
         "saves_per90": {
           "value": 0.0,
@@ -52115,8 +52115,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.202803480818,
-          "z": -0.488069030075,
-          "percentile": 0.35632183908
+          "z": -0.403448995269,
+          "percentile": 0.379310344828
         },
         "saves_per90": {
           "value": 0.0,
@@ -52462,7 +52462,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.327992279592,
+          "value": 0.315897926503,
           "z": null,
           "percentile": null
         },
@@ -52579,8 +52579,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.202665659029,
-          "z": -0.556029081693,
-          "percentile": 0.333333333333
+          "z": -0.490931036415,
+          "percentile": 0.3125
         },
         "saves_per90": {
           "value": 0.0,
@@ -52695,8 +52695,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.167386513768,
-          "z": -1.30488948329,
-          "percentile": 0.0416666666667
+          "z": -1.2444663033,
+          "percentile": 0.0729166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -52810,9 +52810,9 @@
           "percentile": 0.6875
         },
         "clean_sheet_prob": {
-          "value": 0.209829935938,
-          "z": -0.403955009493,
-          "percentile": 0.427083333333
+          "value": 0.205742536006,
+          "z": -0.425211323043,
+          "percentile": 0.375
         },
         "saves_per90": {
           "value": 0.0,
@@ -53275,7 +53275,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.210859345778,
-          "z": -0.382104019046,
+          "z": -0.315920222356,
           "percentile": 0.447916666667
         },
         "saves_per90": {
@@ -53391,8 +53391,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.225413620281,
-          "z": -0.0731645657571,
-          "percentile": 0.53125
+          "z": -0.0050521715297,
+          "percentile": 0.541666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -53855,8 +53855,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.201917660156,
-          "z": -0.599353084307,
-          "percentile": 0.285714285714
+          "z": -0.520447602852,
+          "percentile": 0.333333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -54202,8 +54202,8 @@
           "percentile": 0.368421052632
         },
         "clean_sheet_prob": {
-          "value": 0.263186574016,
-          "z": 0.761052718881,
+          "value": 0.263179226551,
+          "z": 0.819127859573,
           "percentile": 0.842105263158
         },
         "saves_per90": {
@@ -54434,9 +54434,9 @@
           "percentile": 0.32183908046
         },
         "clean_sheet_prob": {
-          "value": 0.263186574016,
-          "z": 0.726687407632,
-          "percentile": 0.793103448276
+          "value": 0.263179226551,
+          "z": 0.787158320677,
+          "percentile": 0.804597701149
         },
         "saves_per90": {
           "value": 0.0,
@@ -54666,9 +54666,9 @@
           "percentile": 0.32183908046
         },
         "clean_sheet_prob": {
-          "value": 0.23037585784,
-          "z": 0.0666180638862,
-          "percentile": 0.597701149425
+          "value": 0.224271037444,
+          "z": 0.019890371631,
+          "percentile": 0.563218390805
         },
         "saves_per90": {
           "value": 0.0,
@@ -54782,9 +54782,9 @@
           "percentile": 0.35632183908
         },
         "clean_sheet_prob": {
-          "value": 0.263081042899,
-          "z": 0.72456438615,
-          "percentile": 0.781609195402
+          "value": 0.263005116721,
+          "z": 0.783724881727,
+          "percentile": 0.793103448276
         },
         "saves_per90": {
           "value": 0.0,
@@ -54898,8 +54898,8 @@
           "percentile": 0.275862068966
         },
         "clean_sheet_prob": {
-          "value": 0.214365665448,
-          "z": -0.255466864984,
+          "value": 0.213863286573,
+          "z": -0.18535006358,
           "percentile": 0.471264367816
         },
         "saves_per90": {
@@ -55014,8 +55014,8 @@
           "percentile": 0.32183908046
         },
         "clean_sheet_prob": {
-          "value": 0.277767164678,
-          "z": 1.02001233409,
+          "value": 0.273188549381,
+          "z": 0.984541770685,
           "percentile": 0.83908045977
         },
         "saves_per90": {
@@ -55478,7 +55478,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.283857615568,
+          "value": 0.254761938165,
           "z": null,
           "percentile": null
         },
@@ -55710,9 +55710,9 @@
           "percentile": 0.385416666667
         },
         "clean_sheet_prob": {
-          "value": 0.263186574016,
-          "z": 0.728631200414,
-          "percentile": 0.8125
+          "value": 0.263179226551,
+          "z": 0.801591980125,
+          "percentile": 0.833333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -55826,8 +55826,8 @@
           "percentile": 0.4375
         },
         "clean_sheet_prob": {
-          "value": 0.304742650619,
-          "z": 1.61073024175,
+          "value": 0.291637702037,
+          "z": 1.40944301399,
           "percentile": 0.885416666667
         },
         "saves_per90": {
@@ -56058,9 +56058,9 @@
           "percentile": 0.239583333333
         },
         "clean_sheet_prob": {
-          "value": 0.256956932186,
-          "z": 0.596396361718,
-          "percentile": 0.760416666667
+          "value": 0.257409514306,
+          "z": 0.678355387397,
+          "percentile": 0.78125
         },
         "saves_per90": {
           "value": 0.0,
@@ -56406,9 +56406,9 @@
           "percentile": 0.255208333333
         },
         "clean_sheet_prob": {
-          "value": 0.261283669104,
-          "z": 0.68823877803,
-          "percentile": 0.78125
+          "value": 0.262886737304,
+          "z": 0.795344635958,
+          "percentile": 0.822916666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -56638,7 +56638,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.272343196492,
+          "value": 0.231650965876,
           "z": null,
           "percentile": null
         },
@@ -56870,7 +56870,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.319114599778,
+          "value": 0.305180065543,
           "z": null,
           "percentile": null
         },
@@ -56986,9 +56986,9 @@
           "percentile": 0.428571428571
         },
         "clean_sheet_prob": {
-          "value": 0.233342356942,
-          "z": 0.0588735408958,
-          "percentile": 0.571428571429
+          "value": 0.220928268147,
+          "z": -0.131068908272,
+          "percentile": 0.52380952381
         },
         "saves_per90": {
           "value": 0.0,
@@ -57102,9 +57102,9 @@
           "percentile": 1.0
         },
         "clean_sheet_prob": {
-          "value": 0.21091790708,
-          "z": -0.410832501295,
-          "percentile": 0.428571428571
+          "value": 0.197298241652,
+          "z": -0.615063364092,
+          "percentile": 0.238095238095
         },
         "saves_per90": {
           "value": 0.0,
@@ -57218,7 +57218,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.266861492715,
+          "value": 0.217762537097,
           "z": null,
           "percentile": null
         },
@@ -57566,9 +57566,9 @@
           "percentile": 0.605263157895
         },
         "clean_sheet_prob": {
-          "value": 0.208874940229,
-          "z": -0.429947616332,
-          "percentile": 0.315789473684
+          "value": 0.204157859767,
+          "z": -0.453494032984,
+          "percentile": 0.263157894737
         },
         "saves_per90": {
           "value": 2.4,
@@ -57914,7 +57914,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.166788325054,
+          "value": 0.156067687641,
           "z": null,
           "percentile": null
         },
@@ -58147,7 +58147,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.124815142888,
-          "z": -2.05699885048,
+          "z": -1.94137593219,
           "percentile": 0.0
         },
         "saves_per90": {
@@ -58262,9 +58262,9 @@
           "percentile": 0.655172413793
         },
         "clean_sheet_prob": {
-          "value": 0.22043516031,
-          "z": -0.13336384628,
-          "percentile": 0.48275862069
+          "value": 0.216117613986,
+          "z": -0.140894816218,
+          "percentile": 0.494252873563
         },
         "saves_per90": {
           "value": 0.0,
@@ -58378,9 +58378,9 @@
           "percentile": 0.459770114943
         },
         "clean_sheet_prob": {
-          "value": 0.204265077314,
-          "z": -0.45866537322,
-          "percentile": 0.379310344828
+          "value": 0.198368726736,
+          "z": -0.490902170216,
+          "percentile": 0.310344827586
         },
         "saves_per90": {
           "value": 0.0,
@@ -58494,9 +58494,9 @@
           "percentile": 0.373563218391
         },
         "clean_sheet_prob": {
-          "value": 0.241837435842,
-          "z": 0.297196275872,
-          "percentile": 0.649425287356
+          "value": 0.228388707111,
+          "z": 0.101090654461,
+          "percentile": 0.603448275862
         },
         "saves_per90": {
           "value": 0.0,
@@ -58726,7 +58726,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.161846788072,
+          "value": 0.155813313063,
           "z": null,
           "percentile": null
         },
@@ -59422,7 +59422,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.221798658114,
+          "value": 0.217580130872,
           "z": null,
           "percentile": null
         },
@@ -59654,9 +59654,9 @@
           "percentile": 0.53125
         },
         "clean_sheet_prob": {
-          "value": 0.184176212791,
-          "z": -0.948499308307,
-          "percentile": 0.1875
+          "value": 0.178027489231,
+          "z": -1.01718329442,
+          "percentile": 0.166666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -59886,9 +59886,9 @@
           "percentile": 0.59375
         },
         "clean_sheet_prob": {
-          "value": 0.205239450661,
-          "z": -0.501395937335,
-          "percentile": 0.354166666667
+          "value": 0.199502460911,
+          "z": -0.558494502604,
+          "percentile": 0.28125
         },
         "saves_per90": {
           "value": 0.0,
@@ -60582,8 +60582,8 @@
           "percentile": 0.854166666667
         },
         "clean_sheet_prob": {
-          "value": 0.220284129726,
-          "z": -0.182046805632,
+          "value": 0.215136826942,
+          "z": -0.2245565318,
           "percentile": 0.46875
         },
         "saves_per90": {
@@ -60698,7 +60698,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.205495103263,
+          "value": 0.199665003816,
           "z": null,
           "percentile": null
         },
@@ -60930,9 +60930,9 @@
           "percentile": 0.5625
         },
         "clean_sheet_prob": {
-          "value": 0.202348952544,
-          "z": -0.562751720331,
-          "percentile": 0.322916666667
+          "value": 0.193824108336,
+          "z": -0.679779723406,
+          "percentile": 0.229166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -61046,7 +61046,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.239805975122,
+          "value": 0.237724910213,
           "z": null,
           "percentile": null
         },
@@ -61395,8 +61395,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.175026564928,
-          "z": -1.17220896108,
-          "percentile": 0.0526315789474
+          "z": -1.08162458285,
+          "percentile": 0.105263157895
         },
         "saves_per90": {
           "value": 1.2,
@@ -61743,8 +61743,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.175026564928,
-          "z": -1.04687093323,
-          "percentile": 0.126436781609
+          "z": -0.951208677115,
+          "percentile": 0.16091954023
         },
         "saves_per90": {
           "value": 0.0,
@@ -61859,8 +61859,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.152715919589,
-          "z": -1.49570517838,
-          "percentile": 0.0459770114943
+          "z": -1.39117372006,
+          "percentile": 0.0574712643678
         },
         "saves_per90": {
           "value": 0.0,
@@ -62207,8 +62207,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.19609737601,
-          "z": -0.622979044713,
-          "percentile": 0.275862068966
+          "z": -0.535693116627,
+          "percentile": 0.264367816092
         },
         "saves_per90": {
           "value": 0.0,
@@ -62787,8 +62787,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.182119327476,
-          "z": -0.904182334306,
-          "percentile": 0.195402298851
+          "z": -0.811339680411,
+          "percentile": 0.218390804598
         },
         "saves_per90": {
           "value": 0.0,
@@ -62903,8 +62903,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.172645149221,
-          "z": -1.19326592133,
-          "percentile": 0.0625
+          "z": -1.13214591572,
+          "percentile": 0.0833333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -63135,8 +63135,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.175026564928,
-          "z": -1.14271628614,
-          "percentile": 0.0833333333333
+          "z": -1.0812807174,
+          "percentile": 0.114583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -63251,8 +63251,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.182526028447,
-          "z": -0.983527302928,
-          "percentile": 0.166666666667
+          "z": -0.921097974798,
+          "percentile": 0.1875
         },
         "saves_per90": {
           "value": 0.0,
@@ -63947,8 +63947,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.174883563266,
-          "z": -1.14575174182,
-          "percentile": 0.0729166666667
+          "z": -1.08433512233,
+          "percentile": 0.104166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -64063,8 +64063,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.165504265576,
-          "z": -1.36207375553,
-          "percentile": 0.0
+          "z": -1.26627330463,
+          "percentile": 0.0952380952381
         },
         "saves_per90": {
           "value": 0.0,
@@ -64642,8 +64642,8 @@
           "percentile": 0.354166666667
         },
         "clean_sheet_prob": {
-          "value": 0.309668963683,
-          "z": 1.71529969072,
+          "value": 0.30560659519,
+          "z": 1.70780777178,
           "percentile": 0.90625
         },
         "saves_per90": {
@@ -64758,9 +64758,9 @@
           "percentile": 0.5
         },
         "clean_sheet_prob": {
-          "value": 0.26246331874,
-          "z": 0.713278865988,
-          "percentile": 0.802083333333
+          "value": 0.27211761756,
+          "z": 0.992509101419,
+          "percentile": 0.854166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -65222,9 +65222,9 @@
           "percentile": 0.979166666667
         },
         "clean_sheet_prob": {
-          "value": 0.177263981049,
-          "z": -1.09522328928,
-          "percentile": 0.114583333333
+          "value": 0.155584591948,
+          "z": -1.49654622878,
+          "percentile": 0.0416666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -65454,8 +65454,8 @@
           "percentile": 0.921052631579
         },
         "clean_sheet_prob": {
-          "value": 0.165204598137,
-          "z": -1.38759496448,
+          "value": 0.147435731754,
+          "z": -1.67653961521,
           "percentile": 0.0
         },
         "saves_per90": {
@@ -65570,9 +65570,9 @@
           "percentile": 0.229166666667
         },
         "clean_sheet_prob": {
-          "value": 0.259486536412,
-          "z": 0.650091552537,
-          "percentile": 0.770833333333
+          "value": 0.258598260549,
+          "z": 0.703746088078,
+          "percentile": 0.791666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -65687,8 +65687,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.177042416779,
-          "z": -1.00631704828,
-          "percentile": 0.149425287356
+          "z": -0.911456158392,
+          "percentile": 0.183908045977
         },
         "saves_per90": {
           "value": 0.0,
@@ -65803,8 +65803,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.202665659029,
-          "z": -0.566111002984,
-          "percentile": 0.263157894737
+          "z": -0.485668945758,
+          "percentile": 0.210526315789
         },
         "saves_per90": {
           "value": 3.8,
@@ -65918,7 +65918,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.211118447784,
+          "value": 0.208641484384,
           "z": null,
           "percentile": null
         },
@@ -66034,9 +66034,9 @@
           "percentile": 0.619047619048
         },
         "clean_sheet_prob": {
-          "value": 0.200844733839,
-          "z": -0.621826767136,
-          "percentile": 0.238095238095
+          "value": 0.208764679921,
+          "z": -0.380205711629,
+          "percentile": 0.380952380952
         },
         "saves_per90": {
           "value": 0.0,
@@ -66150,9 +66150,9 @@
           "percentile": 0.989583333333
         },
         "clean_sheet_prob": {
-          "value": 0.231134561786,
-          "z": 0.0482722355415,
-          "percentile": 0.583333333333
+          "value": 0.24106369773,
+          "z": 0.329221383008,
+          "percentile": 0.6875
         },
         "saves_per90": {
           "value": 0.0,
@@ -66383,7 +66383,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.327600066285,
-          "z": 2.17357680507,
+          "z": 2.208173479,
           "percentile": 1.0
         },
         "saves_per90": {
@@ -66730,8 +66730,8 @@
           "percentile": 0.703125
         },
         "clean_sheet_prob": {
-          "value": 0.189166662176,
-          "z": -0.842568455854,
+          "value": 0.185268551839,
+          "z": -0.862519795507,
           "percentile": 0.208333333333
         },
         "saves_per90": {
@@ -66847,8 +66847,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.336817914339,
-          "z": 2.2915827594,
-          "percentile": 0.979166666667
+          "z": 2.37445741794,
+          "percentile": 0.989583333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -67195,8 +67195,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.229894796985,
-          "z": 0.0569403256315,
-          "percentile": 0.586206896552
+          "z": 0.130790687162,
+          "percentile": 0.655172413793
         },
         "saves_per90": {
           "value": 0.0,
@@ -67310,9 +67310,9 @@
           "percentile": 0.614583333333
         },
         "clean_sheet_prob": {
-          "value": 0.176962021507,
-          "z": -1.10163289875,
-          "percentile": 0.104166666667
+          "value": 0.186589678736,
+          "z": -0.834301546404,
+          "percentile": 0.21875
         },
         "saves_per90": {
           "value": 0.0,
@@ -67426,7 +67426,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.300515995108,
+          "value": 0.310796851807,
           "z": null,
           "percentile": null
         },
@@ -67658,7 +67658,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.229619291856,
+          "value": 0.226537973202,
           "z": null,
           "percentile": null
         },
@@ -68007,7 +68007,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.347219364532,
-          "z": 2.4172164589,
+          "z": 2.44442651504,
           "percentile": 1.0
         },
         "saves_per90": {
@@ -68239,8 +68239,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.19932839557,
-          "z": -0.557979032249,
-          "percentile": 0.32183908046
+          "z": -0.471977538806,
+          "percentile": 0.333333333333
         },
         "saves_per90": {
           "value": 0.0,
@@ -68586,8 +68586,8 @@
           "percentile": 0.9375
         },
         "clean_sheet_prob": {
-          "value": 0.164261284995,
-          "z": -1.37122782728,
+          "value": 0.152214595922,
+          "z": -1.56852673841,
           "percentile": 0.0208333333333
         },
         "saves_per90": {
@@ -68702,7 +68702,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.185982448057,
+          "value": 0.180556840001,
           "z": null,
           "percentile": null
         },
@@ -68819,8 +68819,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.168533615874,
-          "z": -1.17749278853,
-          "percentile": 0.0689655172414
+          "z": -1.07924937543,
+          "percentile": 0.126436781609
         },
         "saves_per90": {
           "value": 0.0,
@@ -68934,7 +68934,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.292641009621,
+          "value": 0.25573172077,
           "z": null,
           "percentile": null
         },
@@ -69166,7 +69166,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.224975638287,
+          "value": 0.223299765748,
           "z": null,
           "percentile": null
         },
@@ -69283,7 +69283,7 @@
         },
         "clean_sheet_prob": {
           "value": 0.211774897028,
-          "z": -0.366354436035,
+          "z": -0.289255064917,
           "percentile": 0.473684210526
         },
         "saves_per90": {
@@ -69398,8 +69398,8 @@
           "percentile": 0.229885057471
         },
         "clean_sheet_prob": {
-          "value": 0.221768490703,
-          "z": -0.106540581826,
+          "value": 0.217482614254,
+          "z": -0.113977064963,
           "percentile": 0.505747126437
         },
         "saves_per90": {
@@ -69514,7 +69514,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.200416375315,
+          "value": 0.139651714172,
           "z": null,
           "percentile": null
         },
@@ -70210,9 +70210,9 @@
           "percentile": 0.625
         },
         "clean_sheet_prob": {
-          "value": 0.287480383556,
-          "z": 1.24430899913,
-          "percentile": 0.854166666667
+          "value": 0.262577440948,
+          "z": 0.788738304921,
+          "percentile": 0.8125
         },
         "saves_per90": {
           "value": 0.0,
@@ -71835,8 +71835,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.137584362588,
-          "z": -1.93749128632,
-          "percentile": 0.0
+          "z": -1.88101721114,
+          "percentile": 0.0104166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -72763,8 +72763,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.237765839564,
-          "z": 0.189032486501,
-          "percentile": 0.65625
+          "z": 0.258781682321,
+          "percentile": 0.666666666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -73575,8 +73575,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.245801087412,
-          "z": 0.319836062402,
-          "percentile": 0.619047619048
+          "z": 0.378380652729,
+          "percentile": 0.761904761905
         },
         "saves_per90": {
           "value": 0.0,
@@ -73690,7 +73690,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.165968551191,
+          "value": 0.177087394415,
           "z": null,
           "percentile": null
         },
@@ -74386,7 +74386,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.322987731537,
+          "value": 0.272784962911,
           "z": null,
           "percentile": null
         },
@@ -74735,8 +74735,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.205502805956,
-          "z": -0.495805769261,
-          "percentile": 0.364583333333
+          "z": -0.430331771573,
+          "percentile": 0.354166666667
         },
         "saves_per90": {
           "value": 0.0,
@@ -75198,7 +75198,7 @@
           "percentile": null
         },
         "clean_sheet_prob": {
-          "value": 0.274768360851,
+          "value": 0.330080382033,
           "z": null,
           "percentile": null
         },
@@ -75315,8 +75315,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.257239552609,
-          "z": 0.607048247771,
-          "percentile": 0.747126436782
+          "z": 0.670028185656,
+          "percentile": 0.758620689655
         },
         "saves_per90": {
           "value": 0.0,
@@ -75431,8 +75431,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.136617166407,
-          "z": -1.81957172827,
-          "percentile": 0.0114942528736
+          "z": -1.70864049555,
+          "percentile": 0.0229885057471
         },
         "saves_per90": {
           "value": 0.0,
@@ -76127,8 +76127,8 @@
         },
         "clean_sheet_prob": {
           "value": 0.150103929791,
-          "z": -1.5482518641,
-          "percentile": 0.0229885057471
+          "z": -1.44268205547,
+          "percentile": 0.0459770114943
         },
         "saves_per90": {
           "value": 0.0,
