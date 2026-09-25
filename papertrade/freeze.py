@@ -43,7 +43,7 @@ from squad.live import (
     build_train_df,
     training_feature_availability,
 )
-from squad.optimize import optimize_squad
+from squad.optimize import optimize_squad, prune_pool
 from squad.reconstruct import SquadState, reconstruct_squad, squad_state_from_dict, squad_state_to_dict
 from squad.shadow import apply_recommendation
 from squad.transfers import accrue_free_transfers
@@ -422,8 +422,9 @@ async def run_freeze(
         )
 
     result = optimize_squad(
-        shadow_state, pool, projections, horizon=horizon,
+        shadow_state, prune_pool(shadow_state, pool, projections, horizon), projections, horizon=horizon,
         free_transfers=free_transfers, max_transfers=cap["max_transfers"], hit_cost=hit_cost,
+        max_banked=scoring_config["free_transfers"]["max_banked"],
     )
 
     shadow_state_after = apply_recommendation(shadow_state, result, pool_by_id, now_cost_by_id, next_gw=gw, as_of=now)
@@ -466,9 +467,18 @@ async def run_freeze(
             "transfers_in": sorted(result.transfers_in),
             "starting_xi": sorted(result.starting_xi[gw]),
             "captain": result.captain[gw],
+            "vice_captain": result.vice_captain.get(gw),
             "bench_order": list(result.bench_order),
             "hits_taken": result.hits_taken,
             "bank_after": result.bank_after,
+            # The later weeks the optimizer planned around this decision —
+            # not acted on, re-solved next week, recorded so a reader can
+            # see why this week's move was made.
+            "plan": [
+                {"gw": week.gw, "transfers_out": sorted(week.transfers_out),
+                 "transfers_in": sorted(week.transfers_in), "hits": week.hits}
+                for week in result.plan
+            ],
         },
         # Whether the optimizer was free to pay hits this gameweek, and on
         # what evidence. Without this a capped hold and a chosen hold are

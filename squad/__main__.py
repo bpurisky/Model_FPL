@@ -14,7 +14,7 @@ from pathlib import Path
 
 from collector.config import load_config
 from squad.live import build_projections, fetch_live_data, live_data_caveat
-from squad.optimize import OptimizationResult, optimize_squad, pair_transfers_by_position, template_risk_flags
+from squad.optimize import OptimizationResult, optimize_squad, pair_transfers_by_position, prune_pool, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)  # one INFO line per request is noise, not signal, here
@@ -71,19 +71,27 @@ def format_report(live, result: OptimizationResult, horizon: list[int]) -> str:
     next_gw = horizon[0]
     xi = result.starting_xi[next_gw]
     captain_id = result.captain[next_gw]
+    vice_id = result.vice_captain.get(next_gw)
     lines.append(f"-- Starting XI, gameweek {next_gw} --")
     for pos in ["GK", "DEF", "MID", "FWD"]:
         names_tagged = [
-            f"{_name(live, eid)}{' (C)' if eid == captain_id else ''}"
+            f"{_name(live, eid)}{' (C)' if eid == captain_id else ' (V)' if eid == vice_id else ''}"
             for eid in xi if pool_by_id[eid].position == pos
         ]
         if names_tagged:
             lines.append(f"  {pos}: {', '.join(names_tagged)}")
     lines.append("")
-    lines.append(f"-- Bench order, gameweek {next_gw} (best-first) --")
+    lines.append(f"-- Bench order, gameweek {next_gw} (substitute GK, then outfield 1-3) --")
     for eid in result.bench_order:
         lines.append(f"  {_name(live, eid)} ({pool_by_id[eid].position})")
     lines.append("")
+    if result.plan:
+        lines.append("-- The plan behind it (re-solved each week, not acted on) --")
+        for week in result.plan:
+            moves = [f"{_name(live, o)} -> {_name(live, i)}" for o, i in pair_transfers_by_position(week.transfers_out, week.transfers_in, pool_by_id)]
+            hit = f", {week.hits} hit(s)" if week.hits else ""
+            lines.append(f"  gw{week.gw} ({week.free_transfers_before} FT{hit}): {', '.join(moves) if moves else 'roll the transfer'}")
+        lines.append("")
     lines.append(f"Squad size: {len(result.squad)}, all currently-owned players not sold: {len(current_ids & result.squad)}")
 
     return "\n".join(lines)
@@ -104,8 +112,10 @@ async def cmd_recommend(args: argparse.Namespace) -> None:
         availability=live.availability, scoreline=live.scoreline,
     )
     result = optimize_squad(
-        live.squad, live.pool, projections, horizon=horizon, free_transfers=live.free_transfers,
+        live.squad, prune_pool(live.squad, live.pool, projections, horizon), projections,
+        horizon=horizon, free_transfers=live.free_transfers,
         max_transfers=args.max_transfers, hit_cost=args.hit_cost,
+        max_banked=live.scoring_config["free_transfers"]["max_banked"],
     )
     print(format_report(live, result, horizon))
 

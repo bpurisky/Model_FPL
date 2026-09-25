@@ -39,7 +39,15 @@ const TemplateRisk = z.object({
   message: z.string(),
 });
 
-const XiPlayer = Player.extend({ captain: z.boolean() });
+const XiPlayer = Player.extend({ captain: z.boolean(), vice_captain: z.boolean().optional() });
+
+/** A later week the optimizer planned around this one's decision. */
+const PlannedWeek = z.object({
+  gw: z.number(),
+  free_transfers: z.number(),
+  hits: z.number(),
+  transfers: z.array(Transfer),
+});
 
 const Recommendation = z.object({
   entry_id: z.number(),
@@ -57,6 +65,7 @@ const Recommendation = z.object({
   template_risk: z.array(TemplateRisk),
   starting_xi: z.record(z.string(), z.array(XiPlayer)),
   bench_order: z.array(Player),
+  plan: z.array(PlannedWeek).optional(),
   squad_size: z.number(),
   unchanged_from_current: z.number(),
 });
@@ -66,6 +75,7 @@ export type OptimizerTransfer = z.infer<typeof Transfer>;
 export type OptimizerTemplateRisk = z.infer<typeof TemplateRisk>;
 export type OptimizerXiPlayer = z.infer<typeof XiPlayer>;
 export type OptimizerRecommendation = z.infer<typeof Recommendation>;
+export type OptimizerPlannedWeek = z.infer<typeof PlannedWeek>;
 
 /**
  * Set at build time via `VITE_OPTIMIZER_API_URL` (see `.env.example`).

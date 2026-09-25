@@ -40,7 +40,7 @@ from pydantic import BaseModel, Field, field_validator
 from collector.client import FPLNotFoundError, FPLServerError
 from collector.config import load_config
 from squad.live import LiveData, build_projections, fetch_live_data, live_data_caveat
-from squad.optimize import OptimizationResult, Player, pair_transfers_by_position, optimize_squad, template_risk_flags
+from squad.optimize import OptimizationResult, Player, pair_transfers_by_position, optimize_squad, prune_pool, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -157,7 +157,11 @@ def shape_response(
 
     starting_xi = {
         str(gw): [
-            {**_player_json(live, pool_by_id, eid), "captain": eid == result.captain[gw]}
+            {
+                **_player_json(live, pool_by_id, eid),
+                "captain": eid == result.captain[gw],
+                "vice_captain": eid == result.vice_captain.get(gw),
+            }
             for eid in sorted(
                 result.starting_xi[gw], key=lambda eid: (POSITION_ORDER[pool_by_id[eid].position], eid)
             )
@@ -165,6 +169,18 @@ def shape_response(
         for gw in horizon
     }
     bench_order = [_player_json(live, pool_by_id, eid) for eid in result.bench_order]
+    plan = [
+        {
+            "gw": week.gw,
+            "free_transfers": week.free_transfers_before,
+            "hits": week.hits,
+            "transfers": [
+                {"out": _player_json(live, pool_by_id, o), "in": _player_json(live, pool_by_id, i)}
+                for o, i in pair_transfers_by_position(week.transfers_out, week.transfers_in, pool_by_id)
+            ],
+        }
+        for week in result.plan
+    ]
 
     return {
         "entry_id": entry_id,
@@ -182,6 +198,7 @@ def shape_response(
         "template_risk": template_risk,
         "starting_xi": starting_xi,
         "bench_order": bench_order,
+        "plan": plan,
         "squad_size": len(result.squad),
         "unchanged_from_current": len(current_ids & result.squad),
     }
@@ -198,12 +215,13 @@ async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:
     )
     result = optimize_squad(
         live.squad,
-        live.pool,
+        prune_pool(live.squad, live.pool, projections, horizon),
         projections,
         horizon=horizon,
         free_transfers=live.free_transfers,
         max_transfers=payload.max_transfers,
         hit_cost=payload.hit_cost,
+        max_banked=live.scoring_config["free_transfers"]["max_banked"],
     )
     return shape_response(payload.entry_id, live, result, horizon)
 
