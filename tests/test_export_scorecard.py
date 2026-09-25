@@ -297,3 +297,20 @@ def test_the_committed_scorecard_beats_every_baseline_on_mae():
     event = pooled.pop(d["event_model"])
 
     assert event["mae"] < min(r["mae"] for r in pooled.values())
+
+
+def test_error_by_return_uses_openfpls_four_groups():
+    from web.export.scorecard import build_error_by_return
+
+    results = pl.DataFrame({
+        "baseline": ["m"] * 4,
+        "minutes": [0, 90, 90, 90],
+        "total_points": [0, 2, 4, 9],
+        "prediction": [0.5, 2.0, 3.0, 4.0],
+        "error": [0.5, 0.0, -1.0, -5.0],
+    })
+    groups = {r.group: r for r in build_error_by_return(results)}
+    assert list(groups) == ["zero", "blank", "ticker", "hauler"]
+    assert groups["hauler"].rmse == pytest.approx(5.0)
+    assert groups["hauler"].mean_prediction == pytest.approx(4.0)
+    assert groups["zero"].n == 1

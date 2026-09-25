@@ -145,6 +145,16 @@ export const EventErrorBucket = z.object({
   mae: z.number().nullable(),
 });
 
+export const ReturnGroupError = z.object({
+  model: z.string(),
+  group: z.string(),
+  n: z.number().int(),
+  mae: z.number().nullable(),
+  rmse: z.number().nullable(),
+  mean_prediction: z.number().nullable(),
+  mean_actual: z.number().nullable(),
+});
+
 export const ComponentError = z.object({
   component: z.string(),
   mae: z.number().nullable(),
@@ -168,6 +178,7 @@ export const ScorecardFile = z.object({
   error_by_event: z.array(EventErrorBucket),
   component_decomposition: z.array(ComponentError),
   minutes_head: MinutesHead,
+  error_by_return: z.array(ReturnGroupError).optional(),
 });
 
 export const DifficultyBasis = z.enum(["pre_match", "current_elo"]);
@@ -444,6 +455,9 @@ export const PaperTradePlayerLevelGw = z.object({
   n: z.number().int(),
   mae: z.number().nullable(),
   spearman_mean: z.number().nullable(),
+  fpl_n: z.number().int().nullable().optional(),
+  fpl_mae: z.number().nullable().optional(),
+  fpl_spearman_mean: z.number().nullable().optional(),
 });
 
 export const PaperTradeLeakageCheck = z.object({
@@ -502,6 +516,7 @@ export type ColumnsFile = z.infer<typeof ColumnsFile>;
 export type CorrelationCell = z.infer<typeof CorrelationCell>;
 export type CorrelationsFile = z.infer<typeof CorrelationsFile>;
 export type ScorecardRow = z.infer<typeof ScorecardRow>;
+export type ReturnGroupError = z.infer<typeof ReturnGroupError>;
 export type ScorecardFile = z.infer<typeof ScorecardFile>;
 export type ShrinkagePoint = z.infer<typeof ShrinkagePoint>;
 export type ShrinkageFile = z.infer<typeof ShrinkageFile>;

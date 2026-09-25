@@ -62,6 +62,7 @@ from web.export.contract import (
     CalibrationBin,
     ComponentError,
     EventErrorBucket,
+    ReturnGroupError,
     MinutesHead,
     PositionSpearman,
     ScorecardFile,
@@ -168,6 +169,43 @@ def build_error_by_event(results: pl.DataFrame) -> list[EventErrorBucket]:
     return buckets
 
 
+# OpenFPL's return groups, in reading order (see contract.ReturnGroupError).
+RETURN_GROUPS = ["zero", "blank", "ticker", "hauler"]
+
+
+def return_group_expr() -> pl.Expr:
+    """zero: did not play; blank: 0-2 points; ticker: 3-4; hauler: 5+."""
+    return (
+        pl.when(pl.col("minutes") == 0).then(pl.lit("zero"))
+        .when(pl.col("total_points") <= 2).then(pl.lit("blank"))
+        .when(pl.col("total_points") <= 4).then(pl.lit("ticker"))
+        .otherwise(pl.lit("hauler"))
+    )
+
+
+def build_error_by_return(results: pl.DataFrame) -> list[ReturnGroupError]:
+    grouped = (
+        results.with_columns(return_group_expr().alias("group"))
+        .group_by("baseline", "group")
+        .agg(
+            pl.len().alias("n"),
+            pl.col("error").abs().mean().alias("mae"),
+            (pl.col("error") ** 2).mean().sqrt().alias("rmse"),
+            pl.col("prediction").mean().alias("mean_prediction"),
+            pl.col("total_points").mean().alias("mean_actual"),
+        )
+    )
+    order = {g: i for i, g in enumerate(RETURN_GROUPS)}
+    return [
+        ReturnGroupError(
+            model=r["baseline"], group=r["group"], n=int(r["n"]),
+            mae=json_safe(r["mae"]), rmse=json_safe(r["rmse"]),
+            mean_prediction=json_safe(r["mean_prediction"]), mean_actual=json_safe(r["mean_actual"]),
+        )
+        for r in sorted(grouped.to_dicts(), key=lambda r: (r["baseline"], order[r["group"]]))
+    ]
+
+
 def build_scorecard(
     results: pl.DataFrame | None = None,
     decomposition: dict[str, list] | None = None,
@@ -215,6 +253,7 @@ def build_scorecard(
         rows=rows,
         calibration=build_calibration(results),
         error_by_event=build_error_by_event(results),
+        error_by_return=build_error_by_return(results),
         component_decomposition=[
             ComponentError(component=name, mae=json_safe(value))
             for name, value in sorted(components.items())

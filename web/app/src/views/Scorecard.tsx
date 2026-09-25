@@ -13,11 +13,12 @@
  * re-aggregating the detail rows, which §5.6 forbids and which would
  * produce a third number matching neither the file nor the paper result.
  *
- * The margins here are small and the surface has to say so. The event
- * model beats the best baseline by 0.0055 MAE — about half a percent —
- * and a scorecard that rendered that as a triumphant bar chart would be
+ * The surface has to say what the margins are worth. When the event
+ * model beat the best baseline by 0.0055 MAE — about half a percent — a
+ * scorecard that rendered that as a triumphant bar chart would have been
  * lying with a true number. So the model table prints the deltas, and
- * the copy says what they are worth.
+ * the copy takes the size of the margin from the file rather than
+ * asserting one: small margins are called small.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -27,6 +28,7 @@ import type {
   BoardFile,
   ScorecardFile,
   ScorecardRow,
+  ReturnGroupError,
   ShrinkageFile,
 } from "../data/schema";
 import { ShrinkagePanel } from "./ShrinkagePanel";
@@ -183,10 +185,9 @@ export function Scorecard() {
                         <span className={styles.muted}>—</span>
                       ) : (
                         /*
-                         * The honest headline. 0.0055 MAE is about half a
-                         * percent, and it is the whole margin the event
-                         * model has over a trailing mean that costs
-                         * nothing to compute.
+                         * The honest headline: the whole margin the event
+                         * model has over a baseline that costs nothing to
+                         * compute.
                          */
                         <span className={delta < 0 ? styles.better : styles.worse}>
                           {delta < 0 ? "−" : "+"}
@@ -204,17 +205,11 @@ export function Scorecard() {
           </table>
         </div>
 
-        {event && best && (
+        {event && best && event.mae != null && best.mae != null && (
           <p className={styles.finding}>
-            The event model wins, and by very little: {fmt(event.mae, 4)} against{" "}
-            {fmt(best.mae, 4)} for {MODEL_LABELS[best.model] ?? best.model}, which is{" "}
-            <span className="data">
-              {(((best.mae! - event.mae!) / best.mae!) * 100).toFixed(2)}%
-            </span>
-            . A model that decomposes into goals, assists, clean sheets and minutes earns
-            about half a percent over taking a player&rsquo;s recent average. That is the
-            result; the value of the decomposition is that you can see <em>where</em> a
-            projection comes from, not that it is dramatically more accurate.
+            {marginSentence(event.mae, best.mae, MODEL_LABELS[best.model] ?? best.model)} The
+            decomposition also shows <em>where</em> a projection comes from — the panels below
+            break the error down by what happened and by head.
           </p>
         )}
       </section>
@@ -241,6 +236,14 @@ export function Scorecard() {
           unit="MAE, points"
         />
       </section>
+
+      {scorecard.error_by_return && scorecard.error_by_return.length > 0 && best && (
+        <ByReturn
+          rows={scorecard.error_by_return}
+          eventModel={scorecard.event_model}
+          baseline={best.model}
+        />
+      )}
 
       <section className={styles.panel}>
         <h2 className={styles.panelTitle}>Which head is wrong</h2>
@@ -324,6 +327,86 @@ function BoardAccuracy({ board }: { board: BoardFile }) {
 }
 
 /** Within-position Spearman, because a pooled rho flatters (§5.7.1). */
+const RETURN_LABELS: Record<string, string> = {
+  zero: "Did not play",
+  blank: "Played, 0–2 points",
+  ticker: "3–4 points",
+  hauler: "5+ points",
+};
+
+/**
+ * Error by the size of the return — OpenFPL's four groups, so the numbers
+ * can be set beside theirs. A pooled MAE is mostly the thousands of
+ * players who did not play; the haulers are few, and they are where ranks
+ * move. The mean-prediction column is there because a hauler's error is
+ * almost all under-prediction, which RMSE alone does not say.
+ */
+function ByReturn({
+  rows,
+  eventModel,
+  baseline,
+}: {
+  rows: ReturnGroupError[];
+  eventModel: string;
+  baseline: string;
+}) {
+  const groups = Object.keys(RETURN_LABELS);
+  const byModel = (model: string, group: string) =>
+    rows.find((row) => row.model === model && row.group === group);
+
+  return (
+    <section className={styles.panel}>
+      <h2 className={styles.panelTitle}>By size of return</h2>
+      <p className={styles.panelSub}>
+        RMSE in points for each kind of gameweek a player had, against{" "}
+        {MODEL_LABELS[baseline] ?? baseline}. The groups are OpenFPL&rsquo;s, so these can be
+        read beside its published numbers.
+      </p>
+      <div className={styles.tableScroll}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th scope="col" className={styles.left}>
+                Return
+              </th>
+              <th scope="col">Model RMSE</th>
+              <th scope="col">Baseline RMSE</th>
+              <th scope="col">Predicted, on average</th>
+              <th scope="col">Scored, on average</th>
+              <th scope="col">n</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map((group) => {
+              const model = byModel(eventModel, group);
+              const base = byModel(baseline, group);
+              if (!model) return null;
+              const better =
+                model.rmse != null && base?.rmse != null ? model.rmse < base.rmse : null;
+              return (
+                <tr key={group}>
+                  <th scope="row" className={styles.left}>
+                    {RETURN_LABELS[group]}
+                  </th>
+                  <td className="data">
+                    <span className={better === null ? undefined : better ? styles.better : styles.worse}>
+                      {fmt(model.rmse, 3)}
+                    </span>
+                  </td>
+                  <td className="data">{fmt(base?.rmse, 3)}</td>
+                  <td className="data">{fmt(model.mean_prediction, 2)}</td>
+                  <td className="data">{fmt(model.mean_actual, 2)}</td>
+                  <td className={`data ${styles.muted}`}>{model.n.toLocaleString()}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function ByPosition({ rows, eventModel }: { rows: ScorecardRow[]; eventModel: string }) {
   const event = rows.find((row) => row.model === eventModel);
   if (!event || event.spearman_by_position.length === 0) return null;
@@ -540,6 +623,15 @@ function Stat({
 }
 
 /** §5.3.3: a null is an em dash. */
+/** The headline margin, worded by its size rather than asserted. */
+function marginSentence(eventMae: number, baselineMae: number, baselineLabel: string): string {
+  const pct = ((baselineMae - eventMae) / baselineMae) * 100;
+  const figures = `${eventMae.toFixed(4)} against ${baselineMae.toFixed(4)} for ${baselineLabel}`;
+  if (pct <= 0) return `The event model does not beat the best baseline on MAE: ${figures}, ${Math.abs(pct).toFixed(2)}% worse.`;
+  if (pct < 2) return `The event model wins, and by very little: ${figures}, ${pct.toFixed(2)}%.`;
+  return `The event model beats the best baseline by ${pct.toFixed(1)}% on MAE: ${figures}.`;
+}
+
 function fmt(value: number | null | undefined, digits: number): string {
   if (value === null || value === undefined) return "—";
   return value.toFixed(digits);

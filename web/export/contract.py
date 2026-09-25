@@ -266,6 +266,27 @@ class EventErrorBucket(_Strict):
     mae: float | None
 
 
+class ReturnGroupError(_Strict):
+    """Error split by the size of the return, pooled over every season.
+
+    The groups are OpenFPL's (Groos 2025): `zero` did not play, `blank`
+    played for 0-2 points, `ticker` scored 3-4, `hauler` 5 or more. A
+    single MAE is dominated by the thousands of players who did not play,
+    which any model predicts well; ranks are gained and lost among the
+    haulers, and this is where that shows. RMSE alongside MAE because
+    OpenFPL reports RMSE first, so the two can be read side by side, and
+    the mean prediction because a hauler's error is mostly under-prediction.
+    """
+
+    model: str
+    group: str
+    n: int
+    mae: float | None
+    rmse: float | None
+    mean_prediction: float | None
+    mean_actual: float | None
+
+
 class ComponentError(_Strict):
     """The event model's true per-component decomposition: predicted point
     contribution against the realized one, per scoring bucket."""
@@ -306,6 +327,10 @@ class ScorecardFile(_Strict):
     error_by_event: list[EventErrorBucket]
     component_decomposition: list[ComponentError]
     minutes_head: MinutesHead
+
+    # --- added after 5D, contract_version unchanged ---------------------
+    # Optional with a default, for the reason Header.current_season gives.
+    error_by_return: list[ReturnGroupError] = []
 
 
 class FixtureRow(_Strict):
@@ -765,6 +790,14 @@ class PaperTradePlayerLevelGw(_Strict):
     n: int
     mae: float | None
     spearman_mean: float | None
+
+    # --- added after 5D, contract_version unchanged ---------------------
+    # FPL's ep_next, frozen with our projections and scored the same way
+    # over the players it published a figure for. Null for a freeze
+    # written before the benchmark was recorded.
+    fpl_n: int | None = None
+    fpl_mae: float | None = None
+    fpl_spearman_mean: float | None = None
 
 
 class PaperTradeLeakageCheck(_Strict):

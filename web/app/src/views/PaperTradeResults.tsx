@@ -274,7 +274,9 @@ function PlayerLevel({ file }: { file: PaperTradeFile }) {
       <p className={styles.panelSub}>
         The frozen projection against the real result, per evaluated gameweek. Unlike the
         squad-level comparison above, this pools every player each week rather than one
-        team&rsquo;s fifteen, so it carries real statistical weight far sooner.
+        team&rsquo;s fifteen, so it carries real statistical weight far sooner. FPL&rsquo;s
+        own expected points, published at the same moment the freeze was taken, are scored
+        beside it as an outside benchmark.
       </p>
 
       {file.player_level.length === 0 ? (
@@ -305,6 +307,8 @@ function PlayerLevel({ file }: { file: PaperTradeFile }) {
                 <th scope="col">n</th>
                 <th scope="col">MAE</th>
                 <th scope="col">Spearman</th>
+                <th scope="col">FPL MAE</th>
+                <th scope="col">FPL Spearman</th>
               </tr>
             </thead>
             <tbody>
@@ -317,6 +321,12 @@ function PlayerLevel({ file }: { file: PaperTradeFile }) {
                   <td className="data">{row.mae === null ? "—" : row.mae.toFixed(4)}</td>
                   <td className="data">
                     {row.spearman_mean === null ? "—" : row.spearman_mean.toFixed(4)}
+                  </td>
+                  <td className="data" title={row.fpl_n != null ? `n=${row.fpl_n.toLocaleString()}` : undefined}>
+                    {row.fpl_mae == null ? "—" : row.fpl_mae.toFixed(4)}
+                  </td>
+                  <td className="data">
+                    {row.fpl_spearman_mean == null ? "—" : row.fpl_spearman_mean.toFixed(4)}
                   </td>
                 </tr>
               ))}
