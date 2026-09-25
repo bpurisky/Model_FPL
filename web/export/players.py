@@ -40,12 +40,14 @@ of thing a decomposition panel exists to expose.
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
 
 import polars as pl
 
-from analytics.evaluate import SEASON_SCORING_CONFIG
 from analytics.carryover import prior_history
+from analytics.deltas import state_as_of
+from analytics.evaluate import SEASON_SCORING_CONFIG
 from analytics.projections import (
     DEFAULT_MINUTES_WINDOW,
     DEFAULT_WINDOW,
@@ -144,8 +146,11 @@ def target_roster(frame: pl.DataFrame, season: str, gameweek: int) -> pl.DataFra
     return roster
 
 
+DISTILLED_DIR = Path("data/distilled")
+
+
 def project(
-    frame: pl.DataFrame, season: str, gameweek: int, target_gw: int
+    frame: pl.DataFrame, season: str, gameweek: int, target_gw: int, as_of: datetime | None = None
 ) -> tuple[dict[int, PlayerProjection], bool]:
     """Per-component projections and the minutes distribution, for every
     player in the latest gameweek's roster.
@@ -168,6 +173,7 @@ def project(
     projected = project_event_vectors(
         train, roster, target_gw, config, DEFAULT_WINDOW, DEFAULT_MINUTES_WINDOW,
         prior_history=prior_history(season, roster),
+        availability=_availability(season, as_of),
     )
 
     out: dict[int, PlayerProjection] = {}
@@ -183,6 +189,18 @@ def project(
             p_full=json_safe(row.get("p_full")),
         )
     return out, fixture_known
+
+
+def _availability(season: str, as_of: datetime | None) -> pl.DataFrame | None:
+    """FPL's injury flags as the collector last saw them at `as_of`, for the
+    live season only: an archived season is over, and its flags were never
+    collected. Read at a stated moment rather than "latest" so a rebuild at
+    the file's own `generated_at` reproduces it exactly, however many
+    hourly snapshots have landed since."""
+    if as_of is None or (HISTORICAL_DIR / f"{season}.parquet").exists():
+        return None
+    state = state_as_of(DISTILLED_DIR, as_of)
+    return state.select("element_id", "chance_of_playing_next_round") if state.height else None
 
 
 def season_to_date(frame: pl.DataFrame, season: str, gameweek: int) -> pl.DataFrame:
@@ -234,8 +252,14 @@ def build_players(
     panel: pl.DataFrame | None = None,
     panel_path: Path = PANEL_PATH,
     historical_dir: Path = HISTORICAL_DIR,
+    as_of: datetime | None = None,
 ) -> PlayersFile:
-    """One row per element in the latest gameweek."""
+    """One row per element in the latest gameweek.
+
+    `as_of` is when the injury flags are read (see `_availability`) and
+    becomes the header's `generated_at`; now, unless a caller is
+    reproducing an earlier build."""
+    as_of = as_of or datetime.now(timezone.utc)
     if panel is None:
         if not panel_path.exists():
             raise FileNotFoundError(
@@ -248,7 +272,7 @@ def build_players(
     season, gameweek = latest_gameweek(panel)
     target_gw = gameweek + 1
 
-    projections, fixture_known = project(frame, season, gameweek, target_gw)
+    projections, fixture_known = project(frame, season, gameweek, target_gw, as_of)
 
     # `model_frame` reads `data/current_season/` itself rather than taking
     # the injected panel, so the two can disagree about which season is
@@ -321,6 +345,7 @@ def build_players(
             rows=len(rows),
             source_gameweek=gameweek,
             normalization_basis=load_frontend_config()["normalization"]["basis"],
+            generated_at=as_of,
         ),
         season=season,
         gameweek=gameweek,

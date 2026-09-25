@@ -99,7 +99,9 @@ async def cmd_recommend(args: argparse.Namespace) -> None:
     live = await fetch_live_data(cfg, entry_id, horizon=horizon)
     horizon = horizon or [live.next_event, live.next_event + 1, live.next_event + 2]
 
-    projections = build_projections(live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon)
+    projections = build_projections(
+        live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon, availability=live.availability
+    )
     result = optimize_squad(
         live.squad, live.pool, projections, horizon=horizon, free_transfers=live.free_transfers,
         max_transfers=args.max_transfers, hit_cost=args.hit_cost,

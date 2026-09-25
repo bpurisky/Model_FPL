@@ -34,6 +34,7 @@ from collector.config import CollectorConfig
 from collector.schemas import parse_bootstrap_static, parse_entry_picks, parse_fixtures, resolve_next_event
 from backtest.leakage import assert_no_leakage
 from squad.live import (
+    build_availability,
     build_difficulty_table,
     build_player_pool,
     build_projections,
@@ -401,7 +402,9 @@ async def run_freeze(
 
     difficulty_table = build_difficulty_table(bootstrap, fixtures_raw, horizon)
     scoring_config = load_scoring_config(Path(scoring_config_path))
-    projections = build_projections(train_df, target_roster, scoring_config, difficulty_table, horizon)
+    projections = build_projections(
+        train_df, target_roster, scoring_config, difficulty_table, horizon, availability=build_availability(bootstrap)
+    )
 
     # Cap transfers at the free allowance while the history is too thin for
     # the model to be paying hits on it (see HIT_ELIGIBILITY_GWS). Recorded

@@ -165,3 +165,22 @@ def test_prior_history_extends_scoring_rates_but_not_minutes():
     assert with_prior["expected_goals_trailing"] == pytest.approx(0.75)
     # last season's closing blank does not count against him
     assert with_prior["p_blank"] == pytest.approx(0.0)
+
+
+def test_availability_flag_scales_chance_of_playing_and_with_it_every_rate():
+    """A nailed starter flagged 50% keeps his per-appearance rates but plays
+    half as often; flagged 0% he projects nothing but the blank; an
+    unflagged team-mate is untouched."""
+    train_df = pl.DataFrame(
+        [_row(1, gw, xg=0.4, position="FWD") for gw in range(1, 4)]
+        + [_row(2, gw, xg=0.4, position="FWD") for gw in range(1, 4)]
+        + [_row(3, gw, xg=0.4, position="FWD") for gw in range(1, 4)]
+    )
+    roster = pl.DataFrame([_roster_row(1, "FWD"), _roster_row(2, "FWD"), _roster_row(3, "FWD")])
+    flags = pl.DataFrame({"element_id": [1, 2, 3], "chance_of_playing_next_round": [50, 0, None]},
+                         schema={"element_id": pl.Int64, "chance_of_playing_next_round": pl.Int64})
+    out = {r["element_id"]: r for r in project_event_vectors(train_df, roster, target_gw=4, config=CONFIG_2025_26, availability=flags).to_dicts()}
+    assert out[1]["p_full"] == pytest.approx(0.5) and out[1]["p_blank"] == pytest.approx(0.5)
+    assert out[1]["expected_goals_trailing"] == pytest.approx(0.2)
+    assert out[2]["p_blank"] == pytest.approx(1.0) and out[2]["expected_goals_trailing"] == pytest.approx(0.0)
+    assert out[3]["p_full"] == pytest.approx(1.0) and out[3]["expected_goals_trailing"] == pytest.approx(0.4)

@@ -139,6 +139,7 @@ def project_event_vectors(
     window: int = DEFAULT_WINDOW,
     minutes_window: int = DEFAULT_MINUTES_WINDOW,
     prior_history: pl.DataFrame | None = None,
+    availability: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """target_roster needs: element_id, position, team, is_promoted_club,
     and (optionally) custom_difficulty — see project_points, which joins
@@ -163,6 +164,14 @@ def project_event_vectors(
     minutes describe a role the player may no longer have (carrying them
     cost 0.02 of early-season Spearman in the walk-forward), and the
     pooled prior is still built from this season's train_df.
+
+    `availability` is FPL's own flag as it stood before the deadline:
+    element_id -> chance_of_playing_next_round (0/25/50/75/100, null when
+    the player carries no flag). A flagged player's chances of a short and
+    of a full appearance are both scaled by it, and the difference goes to
+    P(blank) — the trailing minutes window can only learn an injury after
+    the games it costs, and the flag knows before the first one. An
+    unflagged player is left to his minutes history.
     """
     rate_df = train_df
     if prior_history is not None and prior_history.height > 0:
@@ -179,6 +188,14 @@ def project_event_vectors(
         pl.col("p_short").fill_null(0.2),
         pl.col("p_full").fill_null(0.3),
     )
+    if availability is not None:
+        chance = (pl.col("chance_of_playing_next_round").cast(pl.Float64) / 100).fill_null(1.0)
+        df = (
+            df.join(availability.select("element_id", "chance_of_playing_next_round"), on="element_id", how="left")
+            .with_columns((pl.col("p_short") * chance).alias("p_short"), (pl.col("p_full") * chance).alias("p_full"))
+            .with_columns((1 - pl.col("p_short") - pl.col("p_full")).alias("p_blank"))
+            .drop("chance_of_playing_next_round")
+        )
 
     # Per appearance, then scaled by this week's P(plays) — see the module
     # docstring. `{col}_trailing` stays a per-gameweek expectation, so
@@ -284,6 +301,7 @@ def project_points(
     goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
     on_projection: Callable[[int, pl.DataFrame], None] | None = None,
     prior_history: pl.DataFrame | None = None,
+    availability: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """The full model, in the same (train_df, target_roster, target_gw) ->
     DataFrame[element_id, prediction] shape as backtest.baselines' three
@@ -303,7 +321,7 @@ def project_points(
     gw_difficulty = difficulty_table.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
     roster = target_roster.join(gw_difficulty, on="team", how="left").with_columns(pl.col("custom_difficulty").fill_null(3.0))
 
-    projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window, prior_history)
+    projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window, prior_history, availability)
     if on_projection is not None:
         on_projection(target_gw, projected)
     predictions = [
