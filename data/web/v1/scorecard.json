@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-25T02:20:21.809965Z",
+    "generated_at": "2026-09-25T02:34:36.884085Z",
     "source_gameweek": 38,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "ac02fdcf72beaab7baa393ff06f9adc9367720df",
+    "model_git_sha": "98409bde7aa1b18ef227c7f357754bd94039d75c",
     "normalization_basis": "walk_forward_within_position",
     "rows": 460,
     "current_season": "2026-27"
@@ -16487,5 +16487,151 @@
     "brier_full": 0.100717916809,
     "mae_expected_minutes": 12.8388872162,
     "n": 83035
-  }
+  },
+  "error_by_return": [
+    {
+      "model": "event_model",
+      "group": "zero",
+      "n": 50065,
+      "mae": 0.291801082748,
+      "rmse": 0.803944116054,
+      "mean_prediction": 0.29146631839,
+      "mean_actual": -0.000119844202537
+    },
+    {
+      "model": "event_model",
+      "group": "blank",
+      "n": 22381,
+      "mae": 1.27805064957,
+      "rmse": 1.65076672505,
+      "mean_prediction": 2.14512943033,
+      "mean_actual": 1.23265269648
+    },
+    {
+      "model": "event_model",
+      "group": "ticker",
+      "n": 3544,
+      "mae": 1.28176933346,
+      "rmse": 1.65228886895,
+      "mean_prediction": 2.84402557971,
+      "mean_actual": 3.32618510158
+    },
+    {
+      "model": "event_model",
+      "group": "hauler",
+      "n": 7045,
+      "mae": 4.71079169836,
+      "rmse": 5.54952817345,
+      "mean_prediction": 3.16545851385,
+      "mean_actual": 7.80979418027
+    },
+    {
+      "model": "fixture_adjusted_trailing_mean",
+      "group": "zero",
+      "n": 50065,
+      "mae": 0.306072436208,
+      "rmse": 0.879431006694,
+      "mean_prediction": 0.304199021647,
+      "mean_actual": -0.000119844202537
+    },
+    {
+      "model": "fixture_adjusted_trailing_mean",
+      "group": "blank",
+      "n": 22381,
+      "mae": 1.39959796731,
+      "rmse": 1.96188197697,
+      "mean_prediction": 2.14051956791,
+      "mean_actual": 1.23265269648
+    },
+    {
+      "model": "fixture_adjusted_trailing_mean",
+      "group": "ticker",
+      "n": 3544,
+      "mae": 1.64549283085,
+      "rmse": 2.03841912903,
+      "mean_prediction": 2.81175698104,
+      "mean_actual": 3.32618510158
+    },
+    {
+      "model": "fixture_adjusted_trailing_mean",
+      "group": "hauler",
+      "n": 7045,
+      "mae": 4.86722840445,
+      "rmse": 5.76800812416,
+      "mean_prediction": 3.11642040085,
+      "mean_actual": 7.80979418027
+    },
+    {
+      "model": "fpl_form_approx",
+      "group": "zero",
+      "n": 50065,
+      "mae": 0.290314558123,
+      "rmse": 0.868328952695,
+      "mean_prediction": 0.287713938928,
+      "mean_actual": -0.000119844202537
+    },
+    {
+      "model": "fpl_form_approx",
+      "group": "blank",
+      "n": 22381,
+      "mae": 1.44727877141,
+      "rmse": 2.05701197841,
+      "mean_prediction": 2.17189218107,
+      "mean_actual": 1.23265269648
+    },
+    {
+      "model": "fpl_form_approx",
+      "group": "ticker",
+      "n": 3544,
+      "mae": 1.70714044075,
+      "rmse": 2.1144229739,
+      "mean_prediction": 2.83581478875,
+      "mean_actual": 3.32618510158
+    },
+    {
+      "model": "fpl_form_approx",
+      "group": "hauler",
+      "n": 7045,
+      "mae": 4.9035130634,
+      "rmse": 5.81318077862,
+      "mean_prediction": 3.10116637828,
+      "mean_actual": 7.80979418027
+    },
+    {
+      "model": "trailing_mean",
+      "group": "zero",
+      "n": 50065,
+      "mae": 0.305761810029,
+      "rmse": 0.876417316803,
+      "mean_prediction": 0.303894237873,
+      "mean_actual": -0.000119844202537
+    },
+    {
+      "model": "trailing_mean",
+      "group": "blank",
+      "n": 22381,
+      "mae": 1.40842810939,
+      "rmse": 1.97761425639,
+      "mean_prediction": 2.15517487621,
+      "mean_actual": 1.23265269648
+    },
+    {
+      "model": "trailing_mean",
+      "group": "ticker",
+      "n": 3544,
+      "mae": 1.63622716009,
+      "rmse": 2.02797423538,
+      "mean_prediction": 2.79920361493,
+      "mean_actual": 3.32618510158
+    },
+    {
+      "model": "trailing_mean",
+      "group": "hauler",
+      "n": 7045,
+      "mae": 4.90082794393,
+      "rmse": 5.80314594578,
+      "mean_prediction": 3.0656920466,
+      "mean_actual": 7.80979418027
+    }
+  ]
 }
