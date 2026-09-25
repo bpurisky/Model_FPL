@@ -22,6 +22,20 @@ Minutes get their own three-way P(blank)/P(short)/P(60+) distribution
 (analytics.features.minutes_distribution) rather than a single mean-minutes
 figure thresholded after the fact — see that function's docstring for why
 (Jensen's inequality on a step function).
+
+Every other head is a rate *per appearance*, multiplied by this week's
+P(plays) from the minutes head. Averaging per gameweek instead folds
+availability into ability: a starter back from a month out ranks as a
+quarter of himself, and last season's games (analytics.carryover) would
+bring last season's role with them — his old club, his end-of-season
+rotation. Split, availability comes only from the recent minutes window
+and ability from the long one, which is what lets the ability window reach
+back into last season at all. Goals and assists trail xG and xA rather
+than realized counts. Walk-forward, 2024-25 and 2025-26 pooled, against the
+per-gameweek, realized-count, five-game model this replaced: MAE 1.0506 ->
+0.9938, RMSE 2.1185 -> 1.9844, within-position Spearman 0.7287 -> 0.7515
+(per gameweek and position, averaged); 2023-24, which has no previous
+season to carry, improves on all three as well.
 """
 
 from __future__ import annotations
@@ -32,7 +46,13 @@ import polars as pl
 
 from analytics import features
 
-DEFAULT_WINDOW = 5
+# Games of per-appearance history behind every scoring rate, reaching back
+# into last season when this one is short. The walk-forward flattens out
+# between 10 and 20 (MAE 0.9967 / 0.9938 / 0.9931, Spearman 0.7510 /
+# 0.7515 / 0.7517); 15 is the middle of it, and the best of the three on
+# 5+ point returns. The minutes window stays short — see
+# project_event_vectors.
+DEFAULT_WINDOW = 15
 DEFAULT_MINUTES_WINDOW = 3
 DIFFICULTY_SCALE_STEP = 0.075  # matches backtest.baselines' constant
 
@@ -62,6 +82,13 @@ DIFFICULTY_SCALE_STEP = 0.075  # matches backtest.baselines' constant
 # 0.028 MAE gain. But the trade is real, monotone in both directions, and
 # now on screen rather than in this paragraph.
 #
+# (The figures above are the per-gameweek, realized-goals, five-game model.
+# On the per-appearance xG model with carryover every point of the 0.0-1.0
+# sweep clears all three bars, DEF alone included — 0.6359 at 0.7 against
+# the baseline's 0.6055 — so the stricter reading no longer disagrees. The
+# trade itself remains: MAE still falls and Spearman still falls as the
+# weight rises. shrinkage.json has the current numbers.)
+#
 # Every caller that does not name a shrinkage gets this one, so the
 # published model is exactly the model these numbers were measured on.
 # The parameter exists for one reason: §5.4.7 wants the plateau *on
@@ -77,6 +104,12 @@ _TRAILING_COLUMNS = [
     "goals_scored", "assists", "clean_sheets", "goals_conceded", "saves",
     "bonus", "yellow_cards", "red_cards", "own_goals", "penalties_missed", "penalties_saved",
 ]
+
+# The goals and assists heads read these instead of goals_scored/assists:
+# a realized goal count is mostly finishing variance, and xG is the part of
+# it that repeats. Every season in the archive and the live store carry
+# them.
+_XG_COLUMNS = ["expected_goals", "expected_assists"]
 
 
 def _favorable_scale(difficulty: float) -> float:
@@ -105,6 +138,7 @@ def project_event_vectors(
     config: dict[str, Any],
     window: int = DEFAULT_WINDOW,
     minutes_window: int = DEFAULT_MINUTES_WINDOW,
+    prior_history: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """target_roster needs: element_id, position, team, is_promoted_club,
     and (optionally) custom_difficulty — see project_points, which joins
@@ -122,7 +156,19 @@ def project_event_vectors(
     though it doesn't move MAE much, exactly the signature of smoothing
     away exactly the information that separates "nailed on" from "rotation
     risk" among otherwise-similar scorers.
+
+    `prior_history` is last season's rows re-keyed to this season
+    (analytics.carryover), placed before gw1. They extend the scoring-rate
+    windows only: minutes are this season's alone, since last season's
+    minutes describe a role the player may no longer have (carrying them
+    cost 0.02 of early-season Spearman in the walk-forward), and the
+    pooled prior is still built from this season's train_df.
     """
+    rate_df = train_df
+    if prior_history is not None and prior_history.height > 0:
+        shared = [c for c in train_df.columns if c in prior_history.columns]
+        rate_df = pl.concat([prior_history.select(shared), train_df.select(shared)], how="vertical_relaxed")
+
     minutes_dist = features.minutes_distribution(train_df, target_gw - 1, minutes_window)
     df = target_roster.join(minutes_dist, on="element_id", how="left")
     # A player with zero prior history (first ever gameweek in the dataset,
@@ -134,11 +180,18 @@ def project_event_vectors(
         pl.col("p_full").fill_null(0.3),
     )
 
-    for col in _TRAILING_COLUMNS:
-        df = features.trailing_feature(train_df, df, target_gw, window, col)
+    # Per appearance, then scaled by this week's P(plays) — see the module
+    # docstring. `{col}_trailing` stays a per-gameweek expectation, so
+    # everything downstream reads it exactly as before.
+    rate_cols = _TRAILING_COLUMNS + _XG_COLUMNS
+    appearances = rate_df.filter(pl.col("minutes") > 0)
+    pool = train_df.filter(pl.col("minutes") > 0)
+    for col in rate_cols:
+        df = features.trailing_feature(appearances, df, target_gw, window, col, pool_df=pool)
+    df = df.with_columns([(pl.col(f"{c}_trailing") * (1 - pl.col("p_blank"))).alias(f"{c}_trailing") for c in rate_cols])
 
     dc_cfg = config.get("defensive_contribution")
-    dc_source = train_df.filter(pl.col("defensive_contribution").is_not_null()) if dc_cfg else None
+    dc_source = rate_df.filter(pl.col("defensive_contribution").is_not_null()) if dc_cfg else None
     if dc_cfg and dc_source is not None and dc_source.height > 0:
         dc_source = dc_source.with_columns(_dc_threshold_met_expr(dc_cfg["thresholds"]).alias("dc_threshold_met"))
         dc_rate = features.trailing_mean(dc_source, target_gw - 1, window, "dc_threshold_met")
@@ -175,8 +228,8 @@ def expected_points_by_component(
 
     components = {
         "minutes": row["p_blank"] * minutes_cfg["none"] + row["p_short"] * minutes_cfg["short"] + row["p_full"] * minutes_cfg["full"],
-        "goals": row["goals_scored_trailing"] * fav * config["goals_scored"][position],
-        "assists": row["assists_trailing"] * fav * config["assists"][position],
+        "goals": row["expected_goals_trailing"] * fav * config["goals_scored"][position],
+        "assists": row["expected_assists_trailing"] * fav * config["assists"][position],
         "clean_sheets": row["clean_sheets_trailing"] * fav * config["clean_sheets"][position],
         "goals_conceded": 0.0,
         "saves": 0.0,
@@ -230,6 +283,7 @@ def project_points(
     minutes_window: int = DEFAULT_MINUTES_WINDOW,
     goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
     on_projection: Callable[[int, pl.DataFrame], None] | None = None,
+    prior_history: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """The full model, in the same (train_df, target_roster, target_gw) ->
     DataFrame[element_id, prediction] shape as backtest.baselines' three
@@ -249,7 +303,7 @@ def project_points(
     gw_difficulty = difficulty_table.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
     roster = target_roster.join(gw_difficulty, on="team", how="left").with_columns(pl.col("custom_difficulty").fill_null(3.0))
 
-    projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window)
+    projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window, prior_history)
     if on_projection is not None:
         on_projection(target_gw, projected)
     predictions = [

@@ -211,7 +211,7 @@ def write_reference(reference_dir: Path, bootstrap: BootstrapStatic, fixtures: l
         reference_dir / "teams.parquet"
     )
     pl.DataFrame(
-        [el.model_dump(include={"id", "web_name", "team", "element_type"}) for el in bootstrap.elements]
+        [el.model_dump(include={"id", "code", "web_name", "team", "element_type"}) for el in bootstrap.elements]
     ).write_parquet(reference_dir / "players.parquet")
     pl.DataFrame(
         [e.model_dump(include={"id", "name", "deadline_time", "finished", "is_current", "is_next"}) for e in bootstrap.events]

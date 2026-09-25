@@ -48,8 +48,8 @@ def _row() -> dict:
         "p_blank": 0.0,
         "p_short": 0.0,
         "p_full": 1.0,
-        "goals_scored_trailing": 0.0,
-        "assists_trailing": 0.0,
+        "expected_goals_trailing": 0.0,
+        "expected_assists_trailing": 0.0,
         "clean_sheets_trailing": 0.0,
         "goals_conceded_trailing": 2.0,
         "own_goals_trailing": 0.0,
@@ -114,19 +114,20 @@ def test_focus_position_is_where_the_ablation_says_the_damage_is():
     not Path("data/web/v1/shrinkage.json").exists(),
     reason="shrinkage.json is built by `python -m web.export shrinkage`",
 )
-def test_the_committed_sweep_reports_both_readings_and_they_disagree():
+def test_the_committed_default_clears_both_readings():
     """The point of the panel, asserted against the committed file.
 
     §4.4's criterion as written is the mean within-position rank
-    correlation, and on that reading the shipped 0.7 clears both bars. The
-    ablation comment in `analytics/projections.py` frames the same trade
-    on DEF alone, and on *that* reading 0.7 is past the range. Both are
-    true of different measurements, and a panel that rendered only the
-    flattering one would be choosing a measurement to suit a constant.
+    correlation. The ablation comment in `analytics/projections.py` frames
+    the same trade on DEF alone. Under the per-gameweek, realized-goals
+    model the two disagreed — 0.7 cleared the first and sat just past the
+    second — and this test asserted the disagreement so the panel's copy
+    could not outlive it. The per-appearance xG model with carryover clears
+    both, and ShrinkagePanel now words the DEF-only sentence from
+    `beats_focus_bar` rather than assuming either answer.
 
-    If this ever stops failing to agree — if the two readings converge —
-    the panel's copy needs rewriting, so the disagreement is asserted
-    rather than assumed.
+    If the DEF-only reading ever falls back below its bar, the panel says
+    so on its own; this test fails so that it is noticed.
     """
     file = json.load(io.open("data/web/v1/shrinkage.json", encoding="utf-8"))
     points = {p["shrinkage"]: p for p in file["points"]}
@@ -134,14 +135,14 @@ def test_the_committed_sweep_reports_both_readings_and_they_disagree():
 
     assert default["beats_mae_bar"], "the shipped default must clear the MAE bar"
     assert default["beats_spearman_bar"], "and §4.4's criterion as stated"
-    assert not default["beats_focus_bar"], (
-        "the DEF-only reading is the stricter one and 0.7 sits past it; "
-        "if that changed, the panel copy is now wrong"
+    assert default["beats_focus_bar"], (
+        "the DEF-only reading is the stricter one and 0.7 used to sit past it; "
+        "it has again — check the panel copy and the comment on GOALS_CONCEDED_SHRINKAGE"
     )
 
     stated = [s for s, p in points.items() if p["beats_mae_bar"] and p["beats_spearman_bar"]]
     focus = [s for s, p in points.items() if p["beats_mae_bar"] and p["beats_focus_bar"]]
-    assert len(stated) > len(focus), "the DEF reading must be the stricter one"
+    assert len(stated) >= len(focus), "the DEF reading is never the looser one"
 
     # Monotone in both directions is what makes it a trade rather than an
     # optimum, and it is the sentence the panel leads with.

@@ -51,6 +51,7 @@ SEASONS = ["2023-24", "2024-25", "2025-26"]
 
 RAW_CACHE_DIR = Path("data/historical/raw")
 NORMALIZED_DIR = Path("data/historical")
+PLAYER_CODES_PATH = NORMALIZED_DIR / "player_codes.parquet"
 PROMOTED_CLUBS_CONFIG = Path("config/promoted_clubs.yaml")
 
 # Columns kept from merged_gw.csv. Deliberately excludes:
@@ -374,10 +375,45 @@ def backfill_season(season: str, client: httpx.Client | None = None) -> Path:
     return out_path
 
 
+def backfill_player_codes(seasons: list[str] | None = None, client: httpx.Client | None = None) -> Path:
+    """`element_id` -> FPL's `code`, per season, into PLAYER_CODES_PATH.
+
+    element_id is reassigned every season; `code` is the one identifier FPL
+    keeps for a player across seasons (bootstrap-static carries it too, so
+    the live path can join on the same key). Names are not a substitute:
+    between 2024-25 and 2025-26, vaastav's `name` changed format for dozens
+    of regulars ("David Raya Martín", "Pedro Porro Sauceda"), so a name join
+    silently loses a quarter of the players worth carrying over.
+
+    A separate file rather than a column on the season parquets, so adding
+    it does not mean re-normalizing (and re-downloading) the committed
+    per-gameweek history the backtest's published numbers were measured on.
+    """
+    seasons = seasons or SEASONS
+    owns_client = client is None
+    client = client or httpx.Client()
+    try:
+        frames = []
+        for season in seasons:
+            path = _download(client, f"{VAASTAV_RAW}/{season}/players_raw.csv", RAW_CACHE_DIR / season / "players_raw.csv")
+            frames.append(
+                pl.read_csv(path, columns=["id", "code"])
+                .select(pl.lit(season).alias("season"), pl.col("id").alias("element_id"), "code")
+            )
+    finally:
+        if owns_client:
+            client.close()
+    PLAYER_CODES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    pl.concat(frames).write_parquet(PLAYER_CODES_PATH)
+    return PLAYER_CODES_PATH
+
+
 def backfill_all(seasons: list[str] | None = None) -> list[Path]:
     seasons = seasons or SEASONS
     with httpx.Client() as client:
-        return [backfill_season(season, client) for season in seasons]
+        paths = [backfill_season(season, client) for season in seasons]
+        paths.append(backfill_player_codes(seasons, client))
+        return paths
 
 
 if __name__ == "__main__":

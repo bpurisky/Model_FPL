@@ -134,6 +134,9 @@ class Element(_LenientModel):
     """A player. FPL serialises several numeric fields as strings."""
 
     id: int
+    # Stable across seasons, unlike `id` — analytics.carryover joins last
+    # season's history on it.
+    code: int
     web_name: str
     team: int
     element_type: int
