@@ -184,7 +184,10 @@ def test_the_trend_buckets_do_not_exist_until_the_window_is_full(early):
     board = build_board(panel=panel_three)
     assert board.trend_window == 3
     later = collections.Counter(p.bucket for p in board.players)
-    assert later["rising"] > 0, "the trend window is full and nothing is rising"
+    # Declining, not Rising: Rising is a growing role (minutes_reliability
+    # up, 60'+ every week), and nobody's role changes in this synthetic
+    # season. `test_export_board` covers the Rising rule itself.
+    assert later["declining"] > 0, "the trend window is full and nothing is declining"
 
 
 @pytest.mark.parametrize("gameweeks", [1, 3])

@@ -523,8 +523,8 @@ class BoardBucketAccuracy(_Strict):
     surface cannot show the bucket without being able to show the number.
 
     `lift` is the bucket's mean forward points minus everyone else's over
-    the same gameweeks. It is negative for `rising`, and that is the
-    finding rather than a bug.
+    the same gameweeks. It is negative for `declining`, which is the right
+    sign for a warning.
     """
 
     bucket: str

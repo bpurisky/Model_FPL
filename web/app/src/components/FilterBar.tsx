@@ -16,6 +16,8 @@
  */
 
 import type { PanelFacets, PanelFilters } from "../query/panel";
+import { useId, useState } from "react";
+import { useNarrow } from "../design/useNarrow";
 import styles from "./FilterBar.module.css";
 import { count } from "../design/text";
 
@@ -49,189 +51,221 @@ export function FilterBar({
     return Number.isFinite(parsed) ? Math.round(parsed * 10) : null;
   };
 
-  return (
-    <div className={styles.bar}>
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Position</legend>
-        <div className={styles.chips}>
-          {facets.positions.map((position) => (
-            <button
-              key={position}
-              type="button"
-              className={styles.chip}
-              data-on={filters.positions.includes(position) || undefined}
-              aria-pressed={filters.positions.includes(position)}
-              onClick={() => onChange({ positions: toggle(filters.positions, position) })}
-            >
-              {position}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+  /*
+   * On a phone the full bar is a screen of controls before any data. It
+   * starts collapsed there behind one button that says how many filters
+   * are on, so the chart is the first thing seen. On a wider screen it is
+   * always open and the button does not exist.
+   */
+  const narrow = useNarrow();
+  const [open, setOpen] = useState(false);
+  const barId = useId();
+  const active =
+    filters.positions.length +
+    filters.seasons.length +
+    filters.teams.length +
+    (filters.priceMin !== null || filters.priceMax !== null ? 1 : 0) +
+    (filters.gwMin !== null || filters.gwMax !== null ? 1 : 0) +
+    (filters.minutesFloor !== null ? 1 : 0);
 
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Season</legend>
-        <div className={styles.chips}>
-          {facets.seasons.map((season) => {
-            /*
-             * The current season is offered whether or not it has data
-             * yet — it is the one the reader cares about most, and a
-             * filter that hides it until September is a filter that is
-             * wrong about the only question anyone is asking in August.
-             *
-             * `empty` earns amber rather than a disabled chip. §5.8.2
-             * reserves amber for statements about how far a number can be
-             * trusted, and "this season has recorded no gameweeks yet" is
-             * exactly that. Disabling it would be worse: the reader could
-             * not select it to see the explanation, and would be left
-             * guessing whether the season exists at all.
-             */
-            const empty = season.rows === 0;
-            const on = filters.seasons.includes(season.season);
-            return (
+  return (
+    <div className={styles.wrap}>
+      {narrow && (
+        <button
+          type="button"
+          className={styles.disclosure}
+          aria-expanded={open}
+          aria-controls={barId}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span>Filters</span>
+          {active > 0 && <span className={styles.activeCount}>{active} on</span>}
+          <span className={styles.caret} aria-hidden="true" data-open={open || undefined} />
+        </button>
+      )}
+      <div className={styles.bar} id={barId} hidden={narrow && !open}>
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Position</legend>
+          <div className={styles.chips}>
+            {facets.positions.map((position) => (
               <button
-                key={season.season}
+                key={position}
                 type="button"
                 className={styles.chip}
-                data-on={on || undefined}
-                data-empty={empty || undefined}
-                data-current={season.current || undefined}
-                aria-pressed={on}
-                title={
-                  empty
-                    ? `${season.season} has no completed gameweeks in the panel yet. It fills in as the collector records them.`
-                    : `${season.season} — ${count(season.gameweeks, "gameweek")}, ${count(season.rows, "player-gameweek")}.`
-                }
-                onClick={() => onChange({ seasons: toggle(filters.seasons, season.season) })}
+                data-on={filters.positions.includes(position) || undefined}
+                aria-pressed={filters.positions.includes(position)}
+                onClick={() => onChange({ positions: toggle(filters.positions, position) })}
               >
-                {season.season}
-                {empty && <span className={styles.chipFlag}>no data yet</span>}
-                {!empty && season.current && (
-                  <span className={styles.chipFlag}>gw{season.gameweeks}</span>
-                )}
+                {position}
               </button>
-            );
-          })}
-        </div>
-      </fieldset>
+            ))}
+          </div>
+        </fieldset>
 
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Team</legend>
-        <select
-          className={styles.select}
-          multiple
-          size={4}
-          value={filters.teams}
-          onChange={(event) =>
-            onChange({
-              teams: [...event.target.selectedOptions].map((option) => option.value),
-            })
-          }
-        >
-          {facets.teams.map((team) => (
-            <option key={team} value={team}>
-              {team}
-            </option>
-          ))}
-        </select>
-      </fieldset>
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Season</legend>
+          <div className={styles.chips}>
+            {facets.seasons.map((season) => {
+              /*
+               * The current season is offered whether or not it has data
+               * yet — it is the one the reader cares about most, and a
+               * filter that hides it until September is a filter that is
+               * wrong about the only question anyone is asking in August.
+               *
+               * `empty` earns amber rather than a disabled chip. §5.8.2
+               * reserves amber for statements about how far a number can be
+               * trusted, and "this season has recorded no gameweeks yet" is
+               * exactly that. Disabling it would be worse: the reader could
+               * not select it to see the explanation, and would be left
+               * guessing whether the season exists at all.
+               */
+              const empty = season.rows === 0;
+              const on = filters.seasons.includes(season.season);
+              return (
+                <button
+                  key={season.season}
+                  type="button"
+                  className={styles.chip}
+                  data-on={on || undefined}
+                  data-empty={empty || undefined}
+                  data-current={season.current || undefined}
+                  aria-pressed={on}
+                  title={
+                    empty
+                      ? `${season.season} has no completed gameweeks in the panel yet. It fills in as the collector records them.`
+                      : `${season.season} — ${count(season.gameweeks, "gameweek")}, ${count(season.rows, "player-gameweek")}.`
+                  }
+                  onClick={() => onChange({ seasons: toggle(filters.seasons, season.season) })}
+                >
+                  {season.season}
+                  {empty && <span className={styles.chipFlag}>no data yet</span>}
+                  {!empty && season.current && (
+                    <span className={styles.chipFlag}>gw{season.gameweeks}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
 
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Price £m</legend>
-        <div className={styles.range}>
-          <input
-            type="number"
-            className={styles.number}
-            step="0.1"
-            min={facets.priceMin / 10}
-            max={facets.priceMax / 10}
-            placeholder={pounds(facets.priceMin)}
-            value={pounds(filters.priceMin)}
-            aria-label="Minimum price"
-            onChange={(event) => onChange({ priceMin: tenths(event.target.value) })}
-          />
-          <span className={styles.dash}>–</span>
-          <input
-            type="number"
-            className={styles.number}
-            step="0.1"
-            min={facets.priceMin / 10}
-            max={facets.priceMax / 10}
-            placeholder={pounds(facets.priceMax)}
-            value={pounds(filters.priceMax)}
-            aria-label="Maximum price"
-            onChange={(event) => onChange({ priceMax: tenths(event.target.value) })}
-          />
-        </div>
-      </fieldset>
-
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Gameweek</legend>
-        <div className={styles.range}>
-          <input
-            type="number"
-            className={styles.number}
-            min={facets.gwMin}
-            max={facets.gwMax}
-            placeholder={String(facets.gwMin)}
-            value={filters.gwMin ?? ""}
-            aria-label="First gameweek"
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Team</legend>
+          <select
+            className={styles.select}
+            multiple
+            size={4}
+            value={filters.teams}
             onChange={(event) =>
-              onChange({ gwMin: event.target.value === "" ? null : Number(event.target.value) })
+              onChange({
+                teams: [...event.target.selectedOptions].map((option) => option.value),
+              })
+            }
+          >
+            {facets.teams.map((team) => (
+              <option key={team} value={team}>
+                {team}
+              </option>
+            ))}
+          </select>
+        </fieldset>
+
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Price £m</legend>
+          <div className={styles.range}>
+            <input
+              type="number"
+              className={styles.number}
+              step="0.1"
+              min={facets.priceMin / 10}
+              max={facets.priceMax / 10}
+              placeholder={pounds(facets.priceMin)}
+              value={pounds(filters.priceMin)}
+              aria-label="Minimum price"
+              onChange={(event) => onChange({ priceMin: tenths(event.target.value) })}
+            />
+            <span className={styles.dash}>–</span>
+            <input
+              type="number"
+              className={styles.number}
+              step="0.1"
+              min={facets.priceMin / 10}
+              max={facets.priceMax / 10}
+              placeholder={pounds(facets.priceMax)}
+              value={pounds(filters.priceMax)}
+              aria-label="Maximum price"
+              onChange={(event) => onChange({ priceMax: tenths(event.target.value) })}
+            />
+          </div>
+        </fieldset>
+
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Gameweek</legend>
+          <div className={styles.range}>
+            <input
+              type="number"
+              className={styles.number}
+              min={facets.gwMin}
+              max={facets.gwMax}
+              placeholder={String(facets.gwMin)}
+              value={filters.gwMin ?? ""}
+              aria-label="First gameweek"
+              onChange={(event) =>
+                onChange({ gwMin: event.target.value === "" ? null : Number(event.target.value) })
+              }
+            />
+            <span className={styles.dash}>–</span>
+            <input
+              type="number"
+              className={styles.number}
+              min={facets.gwMin}
+              max={facets.gwMax}
+              placeholder={String(facets.gwMax)}
+              value={filters.gwMax ?? ""}
+              aria-label="Last gameweek"
+              onChange={(event) =>
+                onChange({ gwMax: event.target.value === "" ? null : Number(event.target.value) })
+              }
+            />
+          </div>
+        </fieldset>
+
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Minutes played</legend>
+          <input
+            type="number"
+            className={styles.number}
+            min={0}
+            step={90}
+            placeholder="any"
+            value={filters.minutesFloor ?? ""}
+            aria-label="Minimum season-to-date minutes"
+            title="Season-to-date minutes, so a rotation week is not dropped from a regular starter's series."
+            onChange={(event) =>
+              onChange({
+                minutesFloor: event.target.value === "" ? null : Number(event.target.value),
+              })
             }
           />
-          <span className={styles.dash}>–</span>
-          <input
-            type="number"
-            className={styles.number}
-            min={facets.gwMin}
-            max={facets.gwMax}
-            placeholder={String(facets.gwMax)}
-            value={filters.gwMax ?? ""}
-            aria-label="Last gameweek"
-            onChange={(event) =>
-              onChange({ gwMax: event.target.value === "" ? null : Number(event.target.value) })
-            }
-          />
-        </div>
-      </fieldset>
+        </fieldset>
 
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Minutes played</legend>
-        <input
-          type="number"
-          className={styles.number}
-          min={0}
-          step={90}
-          placeholder="any"
-          value={filters.minutesFloor ?? ""}
-          aria-label="Minimum season-to-date minutes"
-          title="Season-to-date minutes, so a rotation week is not dropped from a regular starter's series."
-          onChange={(event) =>
-            onChange({
-              minutesFloor: event.target.value === "" ? null : Number(event.target.value),
-            })
-          }
-        />
-      </fieldset>
-
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Units</legend>
-        <label className={styles.toggle} title={normalizedReason}>
-          <input
-            type="checkbox"
-            checked={normalized}
-            onChange={(event) => onNormalized(event.target.checked)}
-          />
-          <span>Within position</span>
-        </label>
-        {/*
-         * §5.7.4: a normalized number renders its basis. The toggle's own
-         * label is where the basis belongs when the toggle is what put it
-         * there.
-         */}
-        <p className={styles.basis}>{normalizedReason}</p>
-      </fieldset>
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Units</legend>
+          <label className={styles.toggle} title={normalizedReason}>
+            <input
+              type="checkbox"
+              checked={normalized}
+              onChange={(event) => onNormalized(event.target.checked)}
+            />
+            <span>Within position</span>
+          </label>
+          {/*
+           * §5.7.4: a normalized number renders its basis. The toggle's own
+           * label is where the basis belongs when the toggle is what put it
+           * there.
+           */}
+          <p className={styles.basis}>{normalizedReason}</p>
+        </fieldset>
+      </div>
     </div>
   );
 }

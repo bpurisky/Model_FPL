@@ -29,6 +29,22 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --locked
+      # The freeze's difficulty table seeds Elo from last season's results
+      # (squad/live.py:build_elo_final_for_current_teams), which it reads
+      # from data/historical/raw/ -- a gitignored cache a fresh checkout
+      # never has. Without this step every run *inside* a freeze window
+      # crashed with FileNotFoundError on data/historical/raw/2025-26/
+      # fixtures.csv, which cost gw3, gw4 and gw5 2026-27. Runs outside
+      # the window exit before reaching that code, so the workflow still
+      # looked green most of the time. Same cache key as web.yml, so the
+      # two workflows share one download.
+      - id: raw-cache
+        uses: actions/cache@v4
+        with:
+          path: data/historical/raw
+          key: historical-raw-${{ hashFiles('backtest/backfill.py') }}
+      - if: steps.raw-cache.outputs.cache-hit != 'true'
+        run: uv run python -m backtest.backfill
       # record-actuals BEFORE freeze, not after: squad/live.py:build_train_df
       # now trains on data/current_season/, and drops the latest gameweek
       # entirely if an earlier one is missing from that store. A gameweek
@@ -38,7 +54,7 @@ jobs:
       - run: uv run python -m papertrade freeze
       # §6.3-6.5 made legible (§5.16 D14) -- runs after freeze so the export
       # sees this run's own freeze, and its own schedule (this workflow's,
-      # not `web.export all`'s hourly one) is deliberate: see
+      # not `web.export all`'s six-hourly one) is deliberate: see
       # web/export/__main__.py:cmd_papertrade's docstring.
       - run: uv run pytest tests/test_export_papertrade.py -q
       - run: uv run python -m web.export papertrade

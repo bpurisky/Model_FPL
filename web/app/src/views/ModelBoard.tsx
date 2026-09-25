@@ -56,7 +56,7 @@ type Bucket = (typeof BUCKETS)[number];
 
 const BUCKET_BLURB: Record<Bucket, string> = {
   optimal: "Highest composite inside the position, right now.",
-  rising: "Underlying metrics trending up across the window, whether or not points have followed.",
+  rising: "Upper half of the position and earning a bigger role: minutes reliability up, 60+ minutes every week of the window.",
   declining: "Underlying metrics trending down, whether or not points have fallen.",
   neutral: "No trend the model is willing to call either way.",
 };
@@ -218,7 +218,7 @@ export function ModelBoard() {
           {/*
            * Early in a season this is the *normal* state for two of the
            * four buckets, not a filter mistake: `rising` and `declining`
-           * are slope calls, and a slope needs the whole trend window
+           * are trend calls, and a trend needs the whole trend window
            * before it exists at all. Saying "no player in that
            * combination" alone would read as an empty database.
            */}
@@ -226,7 +226,7 @@ export function ModelBoard() {
           board.gameweek < board.trend_window ? (
             <>
               Nothing is <span className="data">{bucket}</span> yet.{" "}
-              {board.season} is {count(board.gameweek, "gameweek")} old and a slope needs{" "}
+              {board.season} is {count(board.gameweek, "gameweek")} old and a trend needs{" "}
               <span className="data">{board.trend_window}</span> before the model will call one.
               The <span className="data">optimal</span> and{" "}
               <span className="data">neutral</span> buckets rank on level rather than slope, so
@@ -346,11 +346,12 @@ function Card({ player, board, label, onExplain }: CardProps) {
  * §5.4.7's requirement, rendered above the players rather than below
  * them.
  *
- * The numbers are not flattering and that is the point. Two of the four
- * buckets have **negative** lift: a player the model called rising went
- * on to score 0.077 fewer points per gameweek than the players he was
- * picked out from, and declining 0.144 fewer. `neutral` — the bucket that
- * means "no trend the model will call" — outperforms both.
+ * The numbers are not all flattering and that is the point. Rising was
+ * redefined on 2026-09-23 after the old rule (composite up every week)
+ * measured −0.077 raw and −0.274 against same-level peers. It is now a
+ * growing role among upper-half players, worth about +0.57 raw, but most
+ * of that is the level floor. Its trend beat same-level peers by only
+ * +0.10. Declining's negative lift is the right sign for a warning.
  *
  * §5.14.14 forbids shipping placeholder data, and §5.4.6 requires the
  * buckets, so hiding this was never available. Rendering it is the
@@ -411,11 +412,12 @@ function Accuracy({ board }: { board: BoardFile }) {
       </ul>
 
       <p className={styles.finding}>
-        Read this before reading the cards. <span className="data">Rising</span> and{" "}
-        <span className="data">declining</span> both measured worse than the players they were
-        picked out from, and <span className="data">neutral</span> beat them — the trend
-        buckets carry no edge in this data. <span className="data">Optimal</span>, which ranks
-        on level rather than slope, is the one that does.
+        Read this before reading the cards. <span className="data">Optimal</span>, which ranks
+        on level, carries the edge. <span className="data">Rising</span> means a player already
+        in the upper half whose minutes are growing: most of its lift comes from that level,
+        not the trend, which beat same-level peers by only about 0.1 points a gameweek.{" "}
+        <span className="data">Declining</span> scoring below its peers is what a warning
+        should do.
       </p>
     </section>
   );

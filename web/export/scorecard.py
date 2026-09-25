@@ -181,16 +181,13 @@ def build_scorecard(
     """
     from backtest.report import component_decomposition_mae, minutes_head_metrics
 
-    if results is None:
-        from analytics.evaluate import run_comparison
+    if results is None or decomposition is None:
+        from analytics.evaluate import run_evaluation
 
-        logger.info("running walk-forward comparison (this takes ~15s)")
-        results = run_comparison()
-    if decomposition is None:
-        from analytics.evaluate import run_component_decomposition
-
-        logger.info("running component decomposition (this takes ~11s)")
-        decomposition = run_component_decomposition()
+        logger.info("running walk-forward comparison and component decomposition (one pass, ~15s)")
+        fresh_results, fresh_decomposition = run_evaluation()
+        results = fresh_results if results is None else results
+        decomposition = fresh_decomposition if decomposition is None else decomposition
 
     components = component_decomposition_mae(
         decomposition["predicted_components"], decomposition["actual_components"]

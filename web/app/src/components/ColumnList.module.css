@@ -130,7 +130,7 @@
 .role {
   font-family: var(--font-data);
   font-size: 9px;
-  color: var(--rule);
+  color: var(--muted);
   flex: none;
 }
 

@@ -299,8 +299,8 @@ export const PositionWeights = z.object({
 });
 
 /**
- * What a bucket was actually worth. `lift` is negative for `rising`, and
- * that is the finding rather than a bug — the surface must not present a
+ * What a bucket was actually worth. `lift` is negative for `declining`,
+ * which is the right sign for a warning. The surface must not present a
  * bucket without being able to show this alongside it.
  */
 export const BoardBucketAccuracy = z.object({

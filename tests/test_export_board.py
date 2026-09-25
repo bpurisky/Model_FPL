@@ -25,6 +25,7 @@ def _rows(rows: list[dict]) -> pl.DataFrame:
         "season": pl.Utf8, "gw": pl.Int64, "element_id": pl.Int64, "name": pl.Utf8,
         "team": pl.Utf8, "position": pl.Utf8, "total_points": pl.Int64,
         "xg_per90_z_pos": pl.Float64, "xa_per90_z_pos": pl.Float64,
+        "minutes": pl.Int64, "minutes_reliability": pl.Float64,
     }
     for row in rows:
         unknown = set(row) - set(columns)
@@ -32,12 +33,23 @@ def _rows(rows: list[dict]) -> pl.DataFrame:
     return pl.DataFrame({c: [r.get(c) for r in rows] for c in columns}, schema=columns)
 
 
-def _player(element_id, gw, xg, xa=0.0, *, position="MID", points=2, season="2025-26"):
+def _player(
+    element_id, gw, xg, xa=0.0, *, position="MID", points=2, season="2025-26",
+    minutes=90, reliability=0.5,
+):
     return {
         "season": season, "gw": gw, "element_id": element_id, "name": f"P{element_id}",
         "team": "Alpha", "position": position, "total_points": points,
         "xg_per90_z_pos": xg, "xa_per90_z_pos": xa,
+        "minutes": minutes, "minutes_reliability": reliability,
     }
+
+
+RISING = {"reliability_gain": 0.10, "min_minutes": 60}
+
+
+def _momentum(df, window=3):
+    return with_momentum(df, window, **RISING)
 
 
 # --- the composite ---------------------------------------------------------
@@ -77,25 +89,88 @@ def test_each_position_is_scored_with_its_own_profile():
 # --- momentum --------------------------------------------------------------
 
 
-def test_rising_requires_a_rise_in_every_gameweek_of_the_window():
+def test_declining_requires_a_fall_in_every_gameweek_of_the_window():
     """Consistent means monotone, not a fitted slope. A slope can be
-    positive while the series zig-zags, and the brief asked for a rise
-    across three games."""
-    steady = [_player(1, gw, xg=x) for gw, x in enumerate([0.1, 0.2, 0.3], start=1)]
-    zigzag = [_player(2, gw, xg=x) for gw, x in enumerate([0.1, 0.9, 0.3], start=1)]
+    negative while the series zig-zags."""
+    steady = [_player(1, gw, xg=x) for gw, x in enumerate([0.3, 0.2, 0.1], start=1)]
+    zigzag = [_player(2, gw, xg=x) for gw, x in enumerate([0.3, 0.0, 0.1], start=1)]
 
-    out = with_momentum(with_composite(_rows(steady + zigzag), {"MID": {"xg_per90": 1.0}}), 3)
+    out = _momentum(with_composite(_rows(steady + zigzag), {"MID": {"xg_per90": 1.0}}))
+    last = out.filter(pl.col("gw") == 3)
+    flags = dict(zip(last["element_id"].to_list(), last["is_declining"].to_list()))
+
+    assert flags[1] is True
+    assert flags[2] is False, "down then up is not a consistent fall"
+
+
+def test_rising_is_a_gain_in_role_not_a_run_of_composite_rises():
+    """The monotone composite rule measured -0.274 against same-level
+    peers. Rising is now minutes_reliability growing while the player
+    plays every week of the window."""
+    role = [_player(1, gw, xg=0.0, reliability=r) for gw, r in enumerate([0.4, 0.5, 0.6], start=1)]
+    form_only = [_player(2, gw, xg=x) for gw, x in enumerate([0.1, 0.2, 0.3], start=1)]
+
+    out = _momentum(with_composite(_rows(role + form_only), {"MID": {"xg_per90": 1.0}}))
     last = out.filter(pl.col("gw") == 3)
     flags = dict(zip(last["element_id"].to_list(), last["is_rising"].to_list()))
 
     assert flags[1] is True
-    assert flags[2] is False, "up then down is not a consistent rise"
+    assert flags[2] is False, "a rising composite with a flat role is not Rising"
+
+
+def test_rising_needs_minutes_in_every_gameweek_of_the_window():
+    """A reliability gain that includes a cameo is noise from few minutes,
+    which is exactly what skewed the old rule toward weak players."""
+    rows = [
+        _player(1, gw, xg=0.0, reliability=r, minutes=m)
+        for gw, r, m in zip([1, 2, 3], [0.4, 0.5, 0.6], [90, 20, 90])
+    ]
+
+    out = _momentum(with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}}))
+
+    assert out.filter(pl.col("gw") == 3)["is_rising"][0] is False
+
+
+def test_rising_needs_a_real_gain_not_any_gain():
+    rows = [
+        _player(1, gw, xg=0.0, reliability=r)
+        for gw, r in zip([1, 2, 3], [0.50, 0.52, 0.55])
+    ]
+
+    out = _momentum(with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}}))
+
+    assert out.filter(pl.col("gw") == 3)["is_rising"][0] is False
+
+
+def test_rising_is_confined_to_the_upper_half_of_the_position():
+    """Every Rising rule without a level floor landed on weak players. With
+    it, Rising is the band just below Optimal."""
+    climbing = [0.4, 0.5, 0.6]
+    low = [_player(1, gw, xg=-5.0, reliability=r) for gw, r in zip([1, 2, 3], climbing)]
+    mid = [_player(2, gw, xg=5.5, reliability=r) for gw, r in zip([1, 2, 3], climbing)]
+    rest = [_player(i, gw, xg=float(i)) for i in range(3, 10) for gw in (1, 2, 3)]
+
+    out = classify(
+        _momentum(with_composite(_rows(low + mid + rest), {"MID": {"xg_per90": 1.0}})), 0.75, 0.5
+    )
+    last = out.filter(pl.col("gw") == 3)
+    buckets = dict(zip(last["element_id"].to_list(), last["bucket"].to_list()))
+    percentiles = dict(zip(last["element_id"].to_list(), last["percentile"].to_list()))
+
+    assert percentiles[1] < 0.5 and buckets[1] == "neutral"
+    assert percentiles[2] >= 0.5 and buckets[2] == "rising"
+
+
+def test_a_frame_without_minutes_cannot_be_called_rising():
+    df = _rows([_player(1, gw, xg=0.0) for gw in (1, 2, 3)]).drop("minutes")
+
+    out = _momentum(with_composite(df, {"MID": {"xg_per90": 1.0}}))
+
+    assert out["is_rising"].to_list() == [False, False, False]
 
 
 def test_a_player_without_enough_history_is_not_classified_as_rising():
-    out = with_momentum(
-        with_composite(_rows([_player(1, 1, xg=0.5)]), {"MID": {"xg_per90": 1.0}}), 3
-    )
+    out = _momentum(with_composite(_rows([_player(1, 1, xg=0.5)]), {"MID": {"xg_per90": 1.0}}))
 
     assert out["is_rising"][0] is False
     assert out["is_declining"][0] is False
@@ -112,10 +187,9 @@ def test_rank_is_within_position_and_gameweek():
     rows += [_player(i + 10, 1, xg=float(i), position="FWD") for i in range(1, 4)]
 
     out = classify(
-        with_momentum(
-            with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}, "FWD": {"xg_per90": 1.0}}), 3
-        ),
+        _momentum(with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}, "FWD": {"xg_per90": 1.0}})),
         0.75,
+        0.5,
     )
 
     for position, expected in (("MID", 5), ("FWD", 3)):
@@ -126,7 +200,7 @@ def test_rank_is_within_position_and_gameweek():
 def test_percentile_spans_the_position_group():
     rows = [_player(i, 1, xg=float(i)) for i in range(1, 11)]
 
-    out = classify(with_momentum(with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}}), 3), 0.75)
+    out = classify(_momentum(with_composite(_rows(rows), {"MID": {"xg_per90": 1.0}})), 0.75, 0.5)
 
     assert out["percentile"].min() == pytest.approx(0.0)
     assert out["percentile"].max() == pytest.approx(1.0)
@@ -135,12 +209,13 @@ def test_percentile_spans_the_position_group():
 def test_optimal_wins_over_a_momentum_bucket_when_both_apply():
     """A card can only say one thing, and Optimal is the classification
     with measured edge."""
-    best = [_player(1, gw, xg=x) for gw, x in enumerate([1.0, 2.0, 9.0], start=1)]
+    best = [
+        _player(1, gw, xg=x, reliability=r)
+        for gw, x, r in zip([1, 2, 3], [1.0, 2.0, 9.0], [0.4, 0.5, 0.6])
+    ]
     others = [_player(i, gw, xg=0.0) for i in range(2, 6) for gw in (1, 2, 3)]
 
-    out = classify(
-        with_momentum(with_composite(_rows(best + others), {"MID": {"xg_per90": 1.0}}), 3), 0.75
-    )
+    out = classify(_momentum(with_composite(_rows(best + others), {"MID": {"xg_per90": 1.0}})), 0.75, 0.5)
     top = out.filter((pl.col("gw") == 3) & (pl.col("element_id") == 1))
 
     assert top["is_rising"][0] is True
@@ -184,9 +259,9 @@ def test_the_optimal_bucket_actually_outperforms():
 
 
 def test_the_rising_bucket_is_reported_honestly_however_it_measures():
-    """No definition tried has made Rising predict, so this asserts the
-    reporting rather than the direction: whatever it is worth travels
-    with it."""
+    """Rising's raw lift is now positive, but most of it is the level
+    floor (see the module docstring), so this asserts the reporting rather
+    than the direction: whatever it is worth travels with it."""
     file = build_board()
     rising = next(b for b in file.bucket_accuracy if b.bucket == "rising")
 

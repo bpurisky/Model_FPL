@@ -75,13 +75,8 @@ const HEAD_LABELS: Record<string, string> = {
 
 const HEAD_ORDER = Object.keys(HEAD_LABELS);
 
-/** One colour per player, sampled off the diverging poles (§5.8.2). */
-const PLAYER_COLORS = [
-  "var(--rho-neg)",
-  "var(--rho-pos)",
-  "color-mix(in oklch, var(--rho-neg) 55%, var(--paper))",
-  "color-mix(in oklch, var(--rho-pos) 55%, var(--paper))",
-];
+/** One colour per player, from the series tokens (see tokens.css). */
+const PLAYER_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)", "var(--series-4)"];
 
 export function Comparison() {
   const { state, dispatch } = useApp();

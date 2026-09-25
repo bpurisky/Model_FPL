@@ -89,7 +89,7 @@
 .tick {
   font-family: var(--font-data);
   font-size: 10px;
-  font-variant-numeric: tabular-nums slashed-zero;
+  font-variant-numeric: tabular-nums;
   fill: var(--muted);
 }
 
@@ -108,7 +108,7 @@
 }
 
 .bar {
-  fill: var(--rho-neg);
+  fill: var(--series-1);
 }
 
 .line {
@@ -121,7 +121,7 @@
 .cellValue {
   font-family: var(--font-data);
   font-size: 10px;
-  font-variant-numeric: tabular-nums slashed-zero;
+  font-variant-numeric: tabular-nums;
   fill: var(--paper);
   pointer-events: none;
 }
@@ -133,4 +133,18 @@
   margin: 0;
   padding: var(--space-5) 0;
   max-inline-size: 60ch;
+}
+
+/* The drawing is 520 units wide and scales to its container, so on a
+ * phone every label shrinks to about two thirds. Larger text in drawing
+ * units comes out at a readable size on screen. */
+@media (max-width: 760px) {
+  .tick,
+  .cellValue {
+    font-size: 15px;
+  }
+
+  .axisLabel {
+    font-size: 16px;
+  }
 }

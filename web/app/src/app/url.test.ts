@@ -83,7 +83,7 @@ describe("the link stays readable", () => {
     // The point of the omission: a link to the hero surface with nothing
     // selected must not be forty parameters spelling out that nothing is
     // set.
-    expect(toSearch({ ...DEFAULT_STATE, view: "correlations" })).toBe("");
+    expect(toSearch({ ...DEFAULT_STATE, view: "board" })).toBe("");
     expect(toSearch({ ...DEFAULT_STATE, view: "graph" })).toBe("?view=graph");
   });
 
@@ -121,7 +121,7 @@ describe("the link stays readable", () => {
 
 describe("URLs from other builds", () => {
   it("falls back to the hero surface for an unknown view", () => {
-    expect(parseUrl("?view=nonesuch").view).toBe("correlations");
+    expect(parseUrl("?view=nonesuch").view).toBe("board");
   });
 
   it("ignores an unknown aggregate rather than failing", () => {

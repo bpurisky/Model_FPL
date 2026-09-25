@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import functools
 from pathlib import Path
+from typing import Callable
 
 import polars as pl
 
@@ -41,90 +42,57 @@ def build_difficulty_table(season: str) -> pl.DataFrame:
     return team_gameweek_difficulty(matches, teams)
 
 
-def build_season_baselines(season: str) -> dict:
+def build_season_baselines(season: str, on_projection: Callable[[int, pl.DataFrame], None] | None = None) -> dict:
     config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
     difficulty_table = build_difficulty_table(season)
-    model_fn = functools.partial(project_points, config=config, difficulty_table=difficulty_table)
+    model_fn = functools.partial(
+        project_points, config=config, difficulty_table=difficulty_table, on_projection=on_projection
+    )
     return {**BASELINES, "event_model": model_fn}
 
 
-def run_comparison(seasons: list[str] | None = None) -> pl.DataFrame:
+def _decompose_gameweek(projected: pl.DataFrame, target_df: pl.DataFrame, config: dict, out: dict[str, list]) -> None:
+    """Predicted and actual points per component for one gameweek, plus the
+    minutes head's predicted distribution against actual minutes — the
+    detail backtest.report's component_decomposition_mae /
+    minutes_head_metrics need (§4.4)."""
+    actual_by_id = {row["element_id"]: row for row in target_df.select(_ACTUAL_EVENT_COLUMNS).to_dicts()}
+    for row in projected.to_dicts():
+        actual_row = actual_by_id.get(row["element_id"])
+        if actual_row is None:
+            continue
+        out["predicted_components"].append(expected_points_by_component(row, config))
+        actual_event = EventVector(**{c: actual_row[c] for c in _ACTUAL_EVENT_COLUMNS if c != "element_id"})
+        out["actual_components"].append(compute_points_by_component(actual_event, config))
+        out["predicted_minutes_dist"].append({"p_blank": row["p_blank"], "p_short": row["p_short"], "p_full": row["p_full"]})
+        out["actual_minutes"].append(actual_row["minutes"])
+
+
+def run_evaluation(seasons: list[str] | None = None) -> tuple[pl.DataFrame, dict[str, list]]:
     """Walk-forward results for the three Phase 1 baselines plus the event
-    model, across the given seasons (default: all three backtest seasons),
-    in the same shape backtest.report.build_report expects."""
-    seasons = seasons or list(SEASON_SCORING_CONFIG)
-    batches = []
-    for season in seasons:
-        season_df = pl.read_parquet(NORMALIZED_DIR / f"{season}.parquet")
-        baselines = build_season_baselines(season)
-        batches.append(walk_forward(season_df, season, baselines))
-    non_empty = [b for b in batches if b.height > 0]
-    return pl.concat(non_empty) if non_empty else pl.DataFrame()
+    model (in the shape backtest.report.build_report expects), and the
+    event model's component decomposition, from a single walk-forward.
 
-
-def run_component_decomposition(seasons: list[str] | None = None) -> dict[str, list]:
-    """Walks forward like run_comparison, but for the event model only,
-    capturing the full per-component breakdown (predicted and actual) and
-    the minutes-head's own predicted-vs-actual — the detail backtest.report's
-    component_decomposition_mae / minutes_head_metrics need (§4.4) that the
-    generic walk_forward loop's [element_id, prediction] shape doesn't carry.
+    The decomposition used to walk every season again just to recover the
+    event vectors the event model had already projected. Now the event
+    model hands them over through `project_points(on_projection=...)`, so
+    each gameweek is projected once. The vectors are the same ones the
+    points prediction was made from, so the two halves cannot disagree.
     """
     seasons = seasons or list(SEASON_SCORING_CONFIG)
-    predicted_components: list[dict] = []
-    actual_components: list[dict] = []
-    predicted_minutes_dist: list[dict] = []
-    actual_minutes: list[int] = []
-
+    batches = []
+    decomposition: dict[str, list] = {
+        "predicted_components": [], "actual_components": [],
+        "predicted_minutes_dist": [], "actual_minutes": [],
+    }
     for season in seasons:
         season_df = pl.read_parquet(NORMALIZED_DIR / f"{season}.parquet")
         config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
-        difficulty_table = build_difficulty_table(season)
-        max_gw = season_df["gw"].max()
-        if max_gw is None:
-            continue
+        projections: dict[int, pl.DataFrame] = {}
+        baselines = build_season_baselines(season, on_projection=projections.__setitem__)
+        batches.append(walk_forward(season_df, season, baselines))
+        for target_gw, projected in sorted(projections.items()):
+            _decompose_gameweek(projected, season_df.filter(pl.col("gw") == target_gw), config, decomposition)
 
-        for target_gw in range(2, max_gw + 1):
-            train_df = season_df.filter(pl.col("gw") < target_gw)
-            target_df = season_df.filter(pl.col("gw") == target_gw)
-            if target_df.height == 0:
-                continue
-
-            gw_difficulty = difficulty_table.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
-            roster = target_df.select(ROSTER_COLUMNS).join(gw_difficulty, on="team", how="left").with_columns(
-                pl.col("custom_difficulty").fill_null(3.0)
-            )
-            projected = project_event_vectors(train_df, roster, target_gw, config)
-
-            actual_by_id = {row["element_id"]: row for row in target_df.select(_ACTUAL_EVENT_COLUMNS).to_dicts()}
-
-            for row in projected.to_dicts():
-                actual_row = actual_by_id.get(row["element_id"])
-                if actual_row is None:
-                    continue
-                predicted_components.append(expected_points_by_component(row, config))
-                actual_event = EventVector(
-                    position=actual_row["position"],
-                    minutes=actual_row["minutes"],
-                    goals_scored=actual_row["goals_scored"],
-                    assists=actual_row["assists"],
-                    clean_sheets=actual_row["clean_sheets"],
-                    goals_conceded=actual_row["goals_conceded"],
-                    own_goals=actual_row["own_goals"],
-                    penalties_saved=actual_row["penalties_saved"],
-                    penalties_missed=actual_row["penalties_missed"],
-                    yellow_cards=actual_row["yellow_cards"],
-                    red_cards=actual_row["red_cards"],
-                    saves=actual_row["saves"],
-                    bonus=actual_row["bonus"],
-                    defensive_contribution=actual_row["defensive_contribution"],
-                )
-                actual_components.append(compute_points_by_component(actual_event, config))
-                predicted_minutes_dist.append({"p_blank": row["p_blank"], "p_short": row["p_short"], "p_full": row["p_full"]})
-                actual_minutes.append(actual_row["minutes"])
-
-    return {
-        "predicted_components": predicted_components,
-        "actual_components": actual_components,
-        "predicted_minutes_dist": predicted_minutes_dist,
-        "actual_minutes": actual_minutes,
-    }
+    non_empty = [b for b in batches if b.height > 0]
+    return (pl.concat(non_empty) if non_empty else pl.DataFrame()), decomposition

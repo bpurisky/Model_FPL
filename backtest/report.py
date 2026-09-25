@@ -264,7 +264,7 @@ def component_decomposition_mae(predicted_components: list[dict[str, float]], ac
     scalar-only baselines that have no per-component prediction to compare
     against) now that analytics/projections.py exists to predict one.
     Requires `predicted_components`/`actual_components` from
-    analytics.evaluate.run_component_decomposition — same length, same
+    the decomposition half of analytics.evaluate.run_evaluation — same length, same
     bucket keys, row-aligned.
     """
     if not predicted_components:

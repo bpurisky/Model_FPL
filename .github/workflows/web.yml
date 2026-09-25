@@ -6,13 +6,12 @@ name: web
 # regenerated them. `fixtures.json` already drifted once inside a single
 # day as gameweek 1's matches were played and Elo moved with them.
 on:
-  # After the collector, not on a clock of its own: every input that moves
-  # hourly (fixtures, prices, ownership) moves because the collector moved
-  # it, so its completion is the real signal that there is anything new to
-  # export.
-  workflow_run:
-    workflows: ["collect"]
-    types: [completed]
+  # Every six hours, not after every hourly collector run: the site is read
+  # a few times a day, and the collector keeps its hourly cadence so no
+  # snapshot is lost -- each refresh exports everything collected since the
+  # last one. :20 lands after the collector's :05 run has usually finished.
+  schedule:
+    - cron: "20 */6 * * *"
   push:
     branches: [main]
     # Code changes that cannot change the numbers should not rebuild them.
@@ -38,9 +37,6 @@ concurrency:
 
 jobs:
   export:
-    # A failed collector run has nothing new to say, and re-exporting on it
-    # would republish the same numbers under a fresh timestamp.
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,9 +63,28 @@ jobs:
       # -- confirmed by reproducing the exact FileNotFoundError in a clean
       # worktree at data/historical/raw/2023-24/fixtures.csv. Re-running the
       # backfill here is exactly what the module was already designed for.
-      - run: uv run python -m backtest.backfill
+      #
+      # The archive it restores never changes, so it is cached rather than
+      # downloaded again on every run. The key follows backfill.py, the only
+      # thing that could change what it writes.
+      - id: raw-cache
+        uses: actions/cache@v4
+        with:
+          path: data/historical/raw
+          key: historical-raw-${{ hashFiles('backtest/backfill.py') }}
+      - if: steps.raw-cache.outputs.cache-hit != 'true'
+        run: uv run python -m backtest.backfill
 
+      # Only what the current season can move. `all` excludes scorecard.
       - run: uv run python -m web.export all
+
+      # The scorecard is a walk-forward over the three archive seasons
+      # only (~15s, and most of the export's time), so a scheduled run
+      # would recompute an unchanged file. It rebuilds when the model, the
+      # backtest or the archive changes -- the push paths above -- and on
+      # a manual run.
+      - if: github.event_name != 'schedule'
+        run: uv run python -m web.export scorecard
 
       # panel.parquet and timeseries.parquet are build artifacts (§5.3.4).
       # Published for the routes that need them rather than committed —
@@ -89,6 +104,10 @@ jobs:
           # (see __main__.write_json), so a no-op run stages nothing and
           # this commits nothing rather than churning five files an hour.
           git diff --staged --quiet || git commit -m "web/export: refresh $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # On a clock rather than after the collector, so the collector
+          # may have pushed in the meantime. Its commits never touch
+          # data/web/v1, so the rebase cannot conflict.
+          git pull --rebase origin main
           git push
 
   # §5.12: "run the export, build, and publish to GitHub Pages."
