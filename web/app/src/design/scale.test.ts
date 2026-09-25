@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import { cellTextColor, divergingColor, formatRho, legendStops } from "./scale";
 
 describe("the diverging scale", () => {
-  it("interpolates in oklch, not sRGB", () => {
+  it("interpolates in a perceptual space, not sRGB", () => {
     // §5.8.8: sRGB interpolation between teal and rose passes through a
     // desaturated grey-mud midpoint that makes near-zero correlations look
     // like rendering artifacts. This is the assertion that keeps the
-    // implementation honest if someone reaches for a hex ramp.
-    expect(divergingColor(0.5)).toContain("in oklch");
+    // implementation honest if someone reaches for a hex ramp. OKLab, not
+    // OKLCH: OKLCH's hue interpolation bends a pole toward blue on its way
+    // to the purple-tinted card colour (see scale.ts).
+    expect(divergingColor(0.5)).toContain("in oklab");
   });
 
   it("sends the poles to the tokens rather than to literal colours", () => {

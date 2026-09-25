@@ -1,5 +1,5 @@
 .builder {
-  padding: var(--space-4) var(--space-5) var(--space-6);
+  padding: var(--space-5) var(--gutter) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -35,7 +35,8 @@
 
 .side {
   position: sticky;
-  inset-block-start: 64px;
+  /* Clear the header band and page strip (see Shell.module.css). */
+  inset-block-start: calc(var(--chrome-h) + var(--space-3));
   min-inline-size: 0;
 }
 
@@ -158,7 +159,7 @@
 
 .provenance {
   margin: 0;
-  color: var(--rule);
+  color: var(--muted);
   font-size: var(--text-xs);
   max-inline-size: 88ch;
   line-height: 1.5;
@@ -205,6 +206,19 @@
 
   .side {
     position: static;
+  }
+}
+
+/* On a phone the full column list is two screens long before the chart.
+ * Cap it and let it scroll, so the drop zones are one swipe away. */
+@media (max-width: 760px) {
+  .side {
+    max-block-size: 40dvh;
+    overflow-y: auto;
+    border: var(--hairline) solid var(--rule);
+    border-radius: var(--radius-card);
+    padding: var(--space-2) var(--space-3);
+    background: var(--panel);
   }
 }
 

@@ -48,7 +48,7 @@ import {
   type DifficultyBasis,
   type TeamFixture,
 } from "../data/fixtures";
-import { divergingColor } from "../design/scale";
+import { cellTextColor, outcomeColor } from "../design/scale";
 import { count } from "../design/text";
 import styles from "./FixtureTicker.module.css";
 
@@ -301,10 +301,9 @@ function Cell({ entry, basis }: { entry: TeamFixture; basis: Basis }) {
   const value = basis === "fpl" ? entry.difficulty : entry.custom;
 
   /*
-   * The §5.8.2 scale, oriented so a hard fixture reads as the negative
-   * pole. Difficulty runs 1 to 5 with 3 as neutral, so the midpoint of
-   * the ramp is 3 and the sign is inverted — low is good here, which is
-   * exactly what `lower_is_better` means elsewhere in the app.
+   * FPL's own convention: an easy fixture green, a hard one red.
+   * Difficulty runs 1 to 5 with 3 as neutral, so the midpoint of the ramp
+   * is 3 and the sign is inverted, because low difficulty is good.
    */
   const scaled = value === null ? null : (3 - value) / 2;
 
@@ -312,7 +311,11 @@ function Cell({ entry, basis }: { entry: TeamFixture; basis: Basis }) {
     <span
       className={styles.fixture}
       data-played={entry.played || undefined}
-      style={scaled === null ? undefined : { background: divergingColor(scaled) }}
+      style={
+        scaled === null
+          ? undefined
+          : { background: outcomeColor(scaled), color: cellTextColor(scaled) }
+      }
       title={
         `${entry.home ? "vs" : "at"} ${entry.opponent}, gameweek ${entry.gw}` +
         (entry.difficulty === null ? "" : ` — FPL ${entry.difficulty}`) +

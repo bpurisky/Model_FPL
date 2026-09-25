@@ -46,7 +46,7 @@ import { useBoard } from "../data/useBoard";
 import { byTeam, gameweekShape } from "../data/fixtures";
 import { useFixtures } from "../data/fixtures";
 import type { BoardFile, ColumnsFile, ColumnSpec } from "../data/schema";
-import { divergingColor, type Direction } from "../design/scale";
+import { divergingColor, outcomeColor, type Direction } from "../design/scale";
 import { reduce } from "../query/reduce";
 import { facets as loadFacets, select, type PanelFacets } from "../query/panel";
 import { openSession, PanelMissingError, type Session } from "../query/session";
@@ -338,9 +338,15 @@ export function FormMatrix() {
     (column) => column.role === "quantitative",
   );
 
+  /*
+   * Points carry no direction in the registry (they are a context column,
+   * not one of the sixteen metrics), but more FPL points is better by
+   * definition. Treating the points unit as higher-is-better is what lets
+   * the default view read green for a haul, as every FPL site does.
+   */
   const direction: Direction =
     spec?.higher_is_better === false ? "lower_is_better"
-    : spec?.higher_is_better === true ? "higher_is_better"
+    : spec?.higher_is_better === true || spec?.unit === "points" ? "higher_is_better"
     : "neutral";
 
 
@@ -617,7 +623,12 @@ function Grid({
                     style={
                       state === "value"
                         ? {
-                            background: divergingColor(cell!.value! / extreme, direction),
+                            // Good/bad green-red when the metric has a direction;
+                            // the relationship scale when it has none.
+                            background:
+                              direction === "neutral"
+                                ? divergingColor(cell!.value! / extreme, direction)
+                                : outcomeColor(cell!.value! / extreme, direction),
                             color:
                               Math.abs(cell!.value! / extreme) > 0.55
                                 ? "var(--ground)"

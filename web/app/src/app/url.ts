@@ -41,7 +41,7 @@ export const VIEWS = [
 ] as const;
 export type View = (typeof VIEWS)[number];
 
-export const DEFAULT_VIEW: View = "correlations";
+export const DEFAULT_VIEW: View = "board";
 
 export interface AppUrlState {
   view: View;

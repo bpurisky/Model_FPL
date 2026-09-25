@@ -23,6 +23,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { useNarrow } from "../design/useNarrow";
 import { useApp } from "../app/state";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, type LoadProgress } from "../data/load";
@@ -221,12 +222,12 @@ export function TrendExplorer() {
 }
 
 const COLORS = [
-  "var(--rho-neg)",
-  "var(--rho-pos)",
-  "var(--paper)",
-  "color-mix(in oklch, var(--rho-neg) 55%, var(--paper))",
-  "color-mix(in oklch, var(--rho-pos) 55%, var(--paper))",
-  "var(--muted)",
+  "var(--series-1)",
+  "var(--series-2)",
+  "var(--series-3)",
+  "var(--series-4)",
+  "var(--series-5)",
+  "var(--series-6)",
 ];
 
 interface OverlayProps {
@@ -240,9 +241,15 @@ interface OverlayProps {
 }
 
 function Overlay({ rows, ids, players, metric, label, format, onRemove }: OverlayProps) {
-  const W = 900;
-  const H = 340;
-  const PAD = { top: 14, right: 16, bottom: 40, left: 62 };
+  /*
+   * The SVG scales to its container, so on a phone a 900-wide drawing is
+   * shown at about a third of its size and the axis text shrinks with it.
+   * A narrower drawing on a narrow screen keeps the labels readable.
+   */
+  const narrow = useNarrow();
+  const W = narrow ? 380 : 900;
+  const H = narrow ? 280 : 340;
+  const PAD = { top: 14, right: 12, bottom: 40, left: narrow ? 54 : 62 };
 
   const lines = ids.map((id) => ({
     id,

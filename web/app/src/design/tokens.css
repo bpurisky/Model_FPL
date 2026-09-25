@@ -1,37 +1,77 @@
 /*
- * §5.8's design system, authored rather than invented.
+ * The design system.
  *
- * §5.8.8 is explicit that the OKLCH values are the implementation and the
- * hex in §5.8.2 is documentation of intent. That is not fashion: the
- * diverging scale is the product's central visual, and sRGB interpolation
- * between teal and rose passes through a desaturated grey-mud midpoint
- * that makes near-zero correlations look like rendering artifacts. OKLCH
- * holds perceived lightness across the ramp, so equal steps in rho read as
- * equal visual steps.
+ * Every view styles itself through these tokens and nothing else. There
+ * are no hard-coded colours anywhere in the app, and that discipline is
+ * what let the whole look change here without touching the views. Keep it:
+ * a colour that lives in a component is a colour the theme cannot reach.
  *
- * The app is dark-only by §5.8.1. There is no light theme and no
- * `light-dark()`; a measuring instrument has one housing.
+ * Two themes over one set of names. Light is the default, as it is on the
+ * FPL sites people already read. Dark follows the system setting, or the
+ * toggle in the header, which stamps `data-theme` on <html>. Names are
+ * semantic, not literal: `--ground` is the page, `--panel` a raised card,
+ * `--paper` the ink. In the light theme "paper" is dark, and that is fine.
+ *
+ * The diverging correlation scale stays in OKLCH. sRGB interpolation
+ * between teal and rose passes through a grey-mud midpoint that makes
+ * near-zero correlations look like rendering artifacts; OKLCH holds
+ * perceived lightness across the ramp.
  */
 
 :root {
-  /* --- §5.8.2 palette ------------------------------------------------ */
-  --ground: oklch(0.27 0.02 230); /* #212C33 app background */
-  --panel: oklch(0.32 0.02 230); /* #2C3A43 raised surfaces */
-  --rule: oklch(0.41 0.02 230); /* #3E4F5A hairlines, grid, axes */
-  --paper: oklch(0.93 0.01 220); /* #E6EDF0 primary text */
-  --muted: oklch(0.71 0.02 225); /* #93A5AF secondary text */
-  --rho-neg: oklch(0.66 0.1 195); /* #1F9E9E teal */
-  --rho-pos: oklch(0.56 0.16 10); /* #C4456B rose */
+  /* --- light palette (default) --------------------------------------- */
+  --ground: oklch(0.965 0.006 310); /* #F4F2F6 page */
+  --panel: oklch(1 0 0); /* #FFFFFF cards */
+  --panel-2: oklch(0.975 0.005 310); /* #F8F6FA inset wells, table heads */
+  --rule: oklch(0.905 0.012 310); /* #E3DEE8 hairlines, grid, axes */
+  --paper: oklch(0.2 0.05 320); /* #210B28 primary text */
+  --muted: oklch(0.5 0.03 315); /* #6D6176 secondary text */
+  --rho-neg: oklch(0.6 0.11 195); /* teal */
+  --rho-pos: oklch(0.57 0.19 8); /* rose */
+
+  /* The Premier League purple, and the electric green that lives on it.
+   * `--accent` is for fills on purple or as a highlight bar; on white it
+   * fails contrast as text, which is what `--accent-ink` is for. */
+  --brand: oklch(0.26 0.12 330); /* #37003C */
+  --brand-2: oklch(0.33 0.14 330); /* stripes and hover on the band */
+  --on-brand: oklch(0.99 0 0);
+  --accent: oklch(0.88 0.2 155); /* #00FF87 */
+  --accent-ink: oklch(0.52 0.14 155); /* green that reads on white */
+
+  /* Better or worse, in FPL's own convention: green up, red down. Kept
+   * apart from the teal/rose correlation poles, which say direction of
+   * a relationship, not whether it is good. */
+  --good: oklch(0.55 0.15 155);
+  --bad: oklch(0.58 0.2 22);
+
+  /* Series colours, for telling players apart on one chart. Taken from
+   * the FPL family (purple, green, cyan, magenta) and spread around the
+   * hue wheel so four lines stay distinct, colour-blind included. */
+  --series-1: oklch(0.45 0.18 320);
+  --series-2: oklch(0.62 0.16 160);
+  --series-3: oklch(0.62 0.13 220);
+  --series-4: oklch(0.62 0.22 0);
+  --series-5: oklch(0.72 0.15 75);
+  --series-6: var(--muted);
 
   /*
-   * Amber is reserved exclusively for epistemic warnings — low sample
-   * size, stale export, provisional values, mixed-position cautions. It
-   * never appears decoratively. When the user sees amber, something about
-   * the trustworthiness of a number is being flagged.
+   * Amber is reserved for epistemic warnings: low sample size, a stale
+   * export, provisional values, mixed-position cautions. It never appears
+   * decoratively. When the user sees amber, something about whether a
+   * number can be trusted is being flagged. Darker in the light theme so
+   * it still reads as text on white.
    */
-  --flag: oklch(0.78 0.13 78); /* #E0A83C */
+  /* A selected toggle or tab: filled with the brand in light, with the
+   * green in dark, where the brand purple would vanish into the page. */
+  --selected-bg: var(--brand);
+  --selected-ink: var(--on-brand);
 
-  /* --- §5.8.8 spacing: 4px base, six steps, no arbitrary values ------ */
+  --flag: oklch(0.6 0.14 65);
+  --flag-soft: oklch(0.96 0.04 85);
+
+  --shadow: 0 1px 2px oklch(0.2 0.05 320 / 0.06), 0 2px 8px oklch(0.2 0.05 320 / 0.04);
+
+  /* --- spacing: 4px base, six steps, no arbitrary values -------------- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -39,57 +79,104 @@
   --space-5: 1.5rem;
   --space-6: 2.5rem;
 
-  /* --- §5.8.8 type: one ratio each, clamp() throughout --------------- */
-  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+  /* --- type ------------------------------------------------------------ */
+  /* Barlow Condensed for headlines and the big numbers: the narrow, tall
+   * figures of a kit number or a scoreboard. Barlow for everything else,
+   * including data, with tabular figures so columns align. */
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-data: "Barlow", ui-sans-serif, system-ui, sans-serif;
 
-  /* 1.2 minor third for data-dense contexts */
-  --text-xs: clamp(0.69rem, 0.67rem + 0.1vw, 0.75rem);
-  --text-sm: clamp(0.83rem, 0.8rem + 0.12vw, 0.9rem);
+  --text-xs: clamp(0.75rem, 0.73rem + 0.1vw, 0.8rem);
+  --text-sm: clamp(0.875rem, 0.85rem + 0.12vw, 0.94rem);
   --text-md: clamp(1rem, 0.96rem + 0.15vw, 1.08rem);
-  /* 1.333 for display */
-  --text-lg: clamp(1.33rem, 1.2rem + 0.5vw, 1.6rem);
-  --text-xl: clamp(1.77rem, 1.5rem + 1vw, 2.37rem);
+  --text-lg: clamp(1.4rem, 1.25rem + 0.5vw, 1.75rem);
+  --text-xl: clamp(2rem, 1.6rem + 1.6vw, 3rem);
 
-  /* --- §5.8.8 radius: instruments are crisp -------------------------- */
-  --radius-control: 4px; /* interactive controls only */
-  --radius-data: 0; /* matrix cells, table rows, plot areas */
+  /* --- radius: hierarchy, not one value for everything ----------------- */
+  --radius-card: 14px; /* panels and cards */
+  --radius-control: 8px; /* buttons, inputs, chips */
+  --radius-pill: 999px; /* segmented toggles and badges */
+  --radius-data: 2px; /* matrix cells, bars, plot areas */
 
-  /* --- §5.8.8 motion: two durations, one easing, nothing else -------- */
+  /* --- motion: two durations, one easing ------------------------------- */
   --ease: cubic-bezier(0.2, 0, 0, 1);
-  --dur-state: 120ms; /* hover, focus, selection */
-  --dur-reveal: 320ms; /* the §5.8.4 load reveal */
+  --dur-state: 140ms; /* hover, focus, selection */
+  --dur-reveal: 320ms; /* the load reveal */
 
-  /* --- §5.8.8 hairlines at one true device pixel --------------------- */
   --hairline: 1px;
+  --elevation: var(--shadow);
 
-  /* §5.8.5: a single elevation step, and no shadow beyond it. */
-  --elevation: 0 1px 0 oklch(0.2 0.02 230);
+  /* Layout chrome. The bottom bar only exists on phones; views pad their
+   * end by this so the last row is never hidden behind it. */
+  --bar-h: 0px;
+  --content-max: 1320px;
+  --gutter: clamp(1rem, 0.6rem + 1.6vw, 2rem);
+  --card-pad: clamp(0.85rem, 0.6rem + 1vw, 1.25rem) clamp(0.85rem, 0.5rem + 1.4vw, 1.5rem);
+
+  color-scheme: light;
 }
 
-/*
- * sRGB fallback per §5.8.8. Authored as the @supports *negative* so the
- * OKLCH values above stay the implementation rather than the override.
- */
-@supports not (color: oklch(0.5 0.1 200)) {
-  :root {
-    --ground: #212c33;
-    --panel: #2c3a43;
-    --rule: #3e4f5a;
-    --paper: #e6edf0;
-    --muted: #93a5af;
-    --rho-neg: #1f9e9e;
-    --rho-pos: #c4456b;
-    --flag: #e0a83c;
+/* Dark: purple-black rather than grey, so the brand still reads in it. */
+:root[data-theme="dark"] {
+  --selected-bg: var(--accent-ink);
+  --selected-ink: oklch(0.2 0.05 320);
+  --series-1: oklch(0.72 0.16 320);
+  --series-2: oklch(0.8 0.17 160);
+  --series-3: oklch(0.8 0.12 215);
+  --series-4: oklch(0.72 0.2 0);
+  --series-5: oklch(0.82 0.14 80);
+  --good: oklch(0.78 0.17 155);
+  --bad: oklch(0.7 0.18 22);
+  --ground: oklch(0.17 0.03 320);
+  --panel: oklch(0.22 0.035 320);
+  --panel-2: oklch(0.2 0.03 320);
+  --rule: oklch(0.32 0.04 320);
+  --paper: oklch(0.95 0.01 320);
+  --muted: oklch(0.72 0.03 315);
+  --rho-neg: oklch(0.7 0.11 195);
+  --rho-pos: oklch(0.64 0.17 8);
+  --brand: oklch(0.24 0.1 330);
+  --brand-2: oklch(0.29 0.11 330);
+  --accent-ink: oklch(0.84 0.18 155);
+  --flag: oklch(0.8 0.13 78);
+  --flag-soft: oklch(0.3 0.05 78);
+  --shadow: 0 1px 2px oklch(0 0 0 / 0.3);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --selected-bg: var(--accent-ink);
+    --selected-ink: oklch(0.2 0.05 320);
+    --series-1: oklch(0.72 0.16 320);
+    --series-2: oklch(0.8 0.17 160);
+    --series-3: oklch(0.8 0.12 215);
+    --series-4: oklch(0.72 0.2 0);
+    --series-5: oklch(0.82 0.14 80);
+    --good: oklch(0.78 0.17 155);
+    --bad: oklch(0.7 0.18 22);
+    --ground: oklch(0.17 0.03 320);
+    --panel: oklch(0.22 0.035 320);
+    --panel-2: oklch(0.2 0.03 320);
+    --rule: oklch(0.32 0.04 320);
+    --paper: oklch(0.95 0.01 320);
+    --muted: oklch(0.72 0.03 315);
+    --rho-neg: oklch(0.7 0.11 195);
+    --rho-pos: oklch(0.64 0.17 8);
+    --brand: oklch(0.24 0.1 330);
+    --brand-2: oklch(0.29 0.11 330);
+    --accent-ink: oklch(0.84 0.18 155);
+    --flag: oklch(0.8 0.13 78);
+    --flag-soft: oklch(0.3 0.05 78);
+    --shadow: 0 1px 2px oklch(0 0 0 / 0.3);
+    color-scheme: dark;
   }
 }
 
-@media (min-resolution: 2dppx) {
+@media (max-width: 760px) {
   :root {
-    /* A 1px CSS border reads heavy against dense data on HiDPI and
-     * coarsens the whole matrix. */
-    --hairline: 0.5px;
+    --bar-h: calc(64px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -107,7 +194,7 @@
 }
 
 html {
-  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -116,28 +203,25 @@ body {
   color: var(--paper);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  line-height: 1.45;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/*
- * §5.8.3: every numeral in a table, matrix cell or axis uses the data
- * face. Proportional figures in a stats table are a defect, not a
- * preference — columns of numbers must align on the decimal.
- */
+/* Every numeral in a table, matrix cell or axis uses tabular figures:
+ * columns of numbers must align. */
 .tabular,
 .data {
   font-family: var(--font-data);
-  font-variant-numeric: tabular-nums slashed-zero;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* §5.8.8: focus is designed, not defaulted. `outline: none` never appears. */
 :focus-visible {
-  outline: 2px solid var(--paper);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
-/* §5.8.8: custom scrollbars styled to --rule, thin, never hidden. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--rule) transparent;
@@ -150,13 +234,28 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--rule);
+  border-radius: var(--radius-pill);
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.1;
   margin: 0;
+}
+
+h1 {
+  font-size: var(--text-xl);
+}
+
+img,
+svg {
+  max-inline-size: 100%;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
 }
