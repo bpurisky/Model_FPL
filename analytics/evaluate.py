@@ -6,15 +6,15 @@ and error decomposition, per season and pooled.
 
 from __future__ import annotations
 
-import functools
 from pathlib import Path
 from typing import Callable
 
 import polars as pl
 
-from analytics.carryover import prior_history, season_start_roster
+from analytics.carryover import previous_season, prior_history, season_start_roster
 from analytics.fdr import team_gameweek_difficulty
-from analytics.projections import expected_points_by_component, project_event_vectors, project_points
+from analytics.projections import GOALS_CONCEDED_SHRINKAGE, expected_points_by_component, project_event_vectors, project_points
+from analytics.scoreline import scoreline_table, strengths_before
 from analytics.scoring import EventVector, compute_points_by_component, load_scoring_config
 from backtest.backfill import NORMALIZED_DIR, RAW_CACHE_DIR, load_match_results, load_teams
 from backtest.baselines import BASELINES
@@ -50,14 +50,53 @@ def season_prior_history(season: str) -> pl.DataFrame | None:
     return prior_history(season, season_start_roster(season_df))
 
 
-def build_season_baselines(season: str, on_projection: Callable[[int, pl.DataFrame], None] | None = None) -> dict:
+def season_fixtures(season: str) -> pl.DataFrame | None:
+    """gw, team_h, team_a (names) for an archived season's played fixtures;
+    None when the season isn't in the raw cache."""
+    fixtures_path, teams_path = RAW_CACHE_DIR / season / "fixtures.csv", RAW_CACHE_DIR / season / "teams.csv"
+    if not fixtures_path.exists() or not teams_path.exists():
+        return None
+    names = dict(zip(*load_teams(teams_path).select("id", "name").get_columns()))
+    return load_match_results(fixtures_path).select(
+        pl.col("event").alias("gw"),
+        pl.col("team_h").replace_strict(names).alias("team_h"),
+        pl.col("team_a").replace_strict(names).alias("team_a"),
+    )
+
+
+def event_model(
+    season: str,
+    on_projection: Callable[[int, pl.DataFrame], None] | None = None,
+    goals_conceded_shrinkage: float = GOALS_CONCEDED_SHRINKAGE,
+) -> Callable[[pl.DataFrame, pl.DataFrame, int], pl.DataFrame]:
+    """The event model for an archived season, in walk_forward's
+    (train_df, target_roster, target_gw) shape: last season carried forward
+    (analytics.carryover) and each gameweek's fixtures read through the
+    scoreline model (analytics.scoreline), with team strengths measured
+    from `train_df` — gameweeks before the target — alone."""
     config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
     difficulty_table = build_difficulty_table(season)
-    model_fn = functools.partial(
-        project_points, config=config, difficulty_table=difficulty_table, on_projection=on_projection,
-        prior_history=season_prior_history(season),
-    )
-    return {**BASELINES, "event_model": model_fn}
+    prior = season_prior_history(season)
+    fixtures = season_fixtures(season)
+    prev = previous_season(season)
+    prev_path = NORMALIZED_DIR / f"{prev}.parquet"
+    prev_df = pl.read_parquet(prev_path) if prev_path.exists() else None
+
+    def model(train_df: pl.DataFrame, target_roster: pl.DataFrame, target_gw: int) -> pl.DataFrame:
+        strengths = strengths_before(train_df, fixtures, prev_df, target_gw)
+        return project_points(
+            train_df, target_roster, target_gw, config, difficulty_table,
+            on_projection=on_projection,
+            prior_history=prior,
+            scoreline=scoreline_table(fixtures, strengths, target_gw),
+            goals_conceded_shrinkage=goals_conceded_shrinkage,
+        )
+
+    return model
+
+
+def build_season_baselines(season: str, on_projection: Callable[[int, pl.DataFrame], None] | None = None) -> dict:
+    return {**BASELINES, "event_model": event_model(season, on_projection)}
 
 
 def _decompose_gameweek(projected: pl.DataFrame, target_df: pl.DataFrame, config: dict, out: dict[str, list]) -> None:

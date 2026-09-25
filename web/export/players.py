@@ -45,15 +45,17 @@ from pathlib import Path
 
 import polars as pl
 
-from analytics.carryover import prior_history
+from analytics.carryover import previous_season, prior_history
 from analytics.deltas import state_as_of
-from analytics.evaluate import SEASON_SCORING_CONFIG
+from analytics.evaluate import SEASON_SCORING_CONFIG, season_fixtures
 from analytics.projections import (
     DEFAULT_MINUTES_WINDOW,
     DEFAULT_WINDOW,
     expected_points_by_component,
     project_event_vectors,
+    with_scoreline,
 )
+from analytics.scoreline import scoreline_table, strengths_before
 from analytics.scoring import load_scoring_config
 from web.export.columns import MATRIX_METRICS, companion_keys
 from web.export.contract import (
@@ -147,6 +149,8 @@ def target_roster(frame: pl.DataFrame, season: str, gameweek: int) -> pl.DataFra
 
 
 DISTILLED_DIR = Path("data/distilled")
+REFERENCE_FIXTURES = Path("data/reference/fixtures.parquet")
+REFERENCE_TEAMS = Path("data/reference/teams.parquet")
 
 
 def project(
@@ -165,10 +169,17 @@ def project(
 
     difficulty = difficulty_table(season_rows)
     for_gw = difficulty.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
-    fixture_known = for_gw.height > 0
     roster = roster.join(for_gw, on="team", how="left").with_columns(
         pl.col("custom_difficulty").fill_null(3.0)
     )
+    # The scoreline model reads the fixture when the fixture list has the
+    # target gameweek; otherwise the projection stays fixture-neutral.
+    fixtures = _season_fixtures(season)
+    fixture_known = fixtures is not None and fixtures.filter(pl.col("gw") == target_gw).height > 0
+    if fixture_known:
+        prev = HISTORICAL_DIR / f"{previous_season(season)}.parquet"
+        strengths = strengths_before(train, fixtures, pl.read_parquet(prev) if prev.exists() else None, target_gw)
+        roster = with_scoreline(roster, scoreline_table(fixtures, strengths, target_gw))
 
     projected = project_event_vectors(
         train, roster, target_gw, config, DEFAULT_WINDOW, DEFAULT_MINUTES_WINDOW,
@@ -189,6 +200,22 @@ def project(
             p_full=json_safe(row.get("p_full")),
         )
     return out, fixture_known
+
+
+def _season_fixtures(season: str) -> pl.DataFrame | None:
+    """gw, team_h, team_a (names): the archive's raw fixtures for a finished
+    season, the collector's committed reference table for the live one."""
+    if (HISTORICAL_DIR / f"{season}.parquet").exists():
+        return season_fixtures(season)
+    if not REFERENCE_FIXTURES.exists() or not REFERENCE_TEAMS.exists():
+        return None
+    teams = pl.read_parquet(REFERENCE_TEAMS)
+    names = dict(zip(teams["id"].to_list(), teams["name"].to_list()))
+    return pl.read_parquet(REFERENCE_FIXTURES).filter(pl.col("event").is_not_null()).select(
+        pl.col("event").cast(pl.Int64).alias("gw"),
+        pl.col("team_h").replace_strict(names, return_dtype=pl.Utf8).alias("team_h"),
+        pl.col("team_a").replace_strict(names, return_dtype=pl.Utf8).alias("team_a"),
+    )
 
 
 def _availability(season: str, as_of: datetime | None) -> pl.DataFrame | None:

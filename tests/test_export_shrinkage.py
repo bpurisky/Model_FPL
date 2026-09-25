@@ -35,8 +35,13 @@ def test_the_default_shrinkage_has_not_moved():
     The parameter added for the sweep is only safe because the default is
     untouched; a changed default would silently restate the scorecard,
     the board and the paper trade.
+
+    Moved once, deliberately, from 0.7 to 1.0 when goals conceded became a
+    Poisson expectation from the scoreline model (analytics.scoreline) —
+    see the comment on the constant. The scorecard, sweep and players
+    exports were regenerated in the same change.
     """
-    assert GOALS_CONCEDED_SHRINKAGE == 0.7
+    assert GOALS_CONCEDED_SHRINKAGE == 1.0
 
 
 def _row() -> dict:
@@ -144,12 +149,16 @@ def test_the_committed_default_clears_both_readings():
     focus = [s for s, p in points.items() if p["beats_mae_bar"] and p["beats_focus_bar"]]
     assert len(stated) >= len(focus), "the DEF reading is never the looser one"
 
-    # Monotone in both directions is what makes it a trade rather than an
-    # optimum, and it is the sentence the panel leads with.
+    # The panel leads with one of two sentences: a trade (DEF rho falls
+    # steadily as MAE improves) or flat ranking (DEF rho spans under a
+    # thousandth). Under the scoreline model it is the second; whichever
+    # it is, MAE must improve monotonically for either sentence to hold.
     maes = [points[s]["mae"] for s in sorted(points)]
     focuses = [points[s]["spearman_focus"] for s in sorted(points)]
     assert maes == sorted(maes, reverse=True), "MAE should improve monotonically"
-    assert focuses == sorted(focuses, reverse=True), "DEF rho should degrade monotonically"
+    assert max(focuses) - min(focuses) < 0.001 or focuses == sorted(focuses, reverse=True), (
+        "DEF rho is neither flat nor falling steadily; neither of the panel's sentences describes it"
+    )
 
 
 def test_build_shrinkage_runs_over_an_injected_frame():

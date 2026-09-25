@@ -41,13 +41,12 @@ exactly the model every other number in the repo was measured on.
 
 from __future__ import annotations
 
-import functools
 import logging
 from pathlib import Path
 
 import polars as pl
 
-from analytics.projections import GOALS_CONCEDED_SHRINKAGE, project_points
+from analytics.projections import GOALS_CONCEDED_SHRINKAGE
 from web.export.contract import ShrinkageFile, ShrinkagePoint, build_header, json_safe
 
 logger = logging.getLogger("web.export.shrinkage")
@@ -74,18 +73,9 @@ def _season_frames() -> dict[str, pl.DataFrame]:
 
 def _event_model_at(season: str, shrinkage: float):
     """The event model with one term reweighted, and nothing else moved."""
-    from analytics.evaluate import build_difficulty_table, season_prior_history, SEASON_SCORING_CONFIG
-    from analytics.scoring import load_scoring_config
+    from analytics.evaluate import event_model
 
-    config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
-    difficulty_table = build_difficulty_table(season)
-    return functools.partial(
-        project_points,
-        config=config,
-        difficulty_table=difficulty_table,
-        goals_conceded_shrinkage=shrinkage,
-        prior_history=season_prior_history(season),
-    )
+    return event_model(season, goals_conceded_shrinkage=shrinkage)
 
 
 def _metrics(results: pl.DataFrame, model: str) -> tuple[float, float, float, int]:

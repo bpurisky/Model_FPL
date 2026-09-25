@@ -261,9 +261,10 @@ def test_the_committed_scorecard_is_structurally_complete():
 
 def test_the_committed_scorecard_agrees_with_the_published_headline():
     """The event model's pooled figures are quoted in the project's own
-    records (MAE 0.9849, RMSE 2.0014, within-position Spearman 0.7435 —
-    the per-appearance xG model with carryover; the per-gameweek model
-    before it read 1.0395 / 2.1215 / 0.7202). If the export ever reshapes
+    records (MAE 0.9748, RMSE 1.9631, within-position Spearman 0.7477 —
+    the scoreline model on per-appearance xG with carryover; before the
+    scoreline 0.9849 / 2.0014 / 0.7435, and the per-gameweek model before
+    that 1.0395 / 2.1215 / 0.7202). If the export ever reshapes
     its way to different numbers, that is the single most visible thing
     it could get wrong."""
     path = Path("data/web/v1/scorecard.json")
@@ -277,9 +278,9 @@ def test_the_committed_scorecard_agrees_with_the_published_headline():
     ][0]
 
     assert pooled["n"] == 83035
-    assert pooled["mae"] == pytest.approx(0.9849, abs=5e-5)
-    assert pooled["rmse"] == pytest.approx(2.0014, abs=5e-5)
-    assert pooled["spearman_mean"] == pytest.approx(0.7435, abs=5e-5)
+    assert pooled["mae"] == pytest.approx(0.9748, abs=5e-5)
+    assert pooled["rmse"] == pytest.approx(1.9631, abs=5e-5)
+    assert pooled["spearman_mean"] == pytest.approx(0.7477, abs=5e-5)
 
 
 def test_the_committed_scorecard_beats_every_baseline_on_mae():

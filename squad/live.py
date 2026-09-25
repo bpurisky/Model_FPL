@@ -38,11 +38,12 @@ from typing import Any
 
 import polars as pl
 
+from analytics.carryover import previous_season, prior_history
 from analytics.fdr import compute_elo_ratings, upcoming_team_difficulty
-from analytics.carryover import prior_history
 from analytics.projections import project_points
+from analytics.scoreline import scoreline_table, strengths_before
 from analytics.scoring import load_scoring_config
-from backtest.backfill import RAW_CACHE_DIR, load_match_results, load_teams
+from backtest.backfill import NORMALIZED_DIR, RAW_CACHE_DIR, load_match_results, load_teams
 from backtest.leakage import Feature
 from collector.client import FPLClient
 from collector.config import CollectorConfig
@@ -187,6 +188,8 @@ class LiveData:
     history_gws: int
     # FPL's injury/suspension flags as fetched — see build_availability.
     availability: pl.DataFrame | None = None
+    # gw -> analytics.scoreline table — see build_scoreline.
+    scoreline: dict[int, pl.DataFrame] | None = None
 
 
 def live_data_caveat(live: LiveData) -> str:
@@ -513,6 +516,25 @@ def build_difficulty_table(bootstrap: BootstrapStatic, fixtures_raw: list[dict[s
     return upcoming_team_difficulty(elo_final, fixtures_df, teams_df)
 
 
+def build_scoreline(
+    bootstrap: BootstrapStatic, fixtures_raw: list[dict[str, Any]], train_df: pl.DataFrame, horizon: list[int]
+) -> dict[int, pl.DataFrame]:
+    """gw -> analytics.scoreline table for each gameweek of `horizon`,
+    from team strengths as they stand before its first gameweek: this
+    season's recorded xG (train_df), anchored to last season's archived
+    rates. A team with no fixture in a horizon gameweek is absent from
+    that gameweek's table, which projects its players to zero."""
+    names = {t.id: t.name for t in bootstrap.teams}
+    fixtures = pl.DataFrame(
+        [{"gw": f["event"], "team_h": names[f["team_h"]], "team_a": names[f["team_a"]]} for f in fixtures_raw if f["event"] is not None],
+        schema={"gw": pl.Int64, "team_h": pl.Utf8, "team_a": pl.Utf8},
+    )
+    prev_path = NORMALIZED_DIR / f"{previous_season(LIVE_SEASON)}.parquet"
+    prev_df = pl.read_parquet(prev_path) if prev_path.exists() else None
+    strengths = strengths_before(train_df, fixtures, prev_df, min(horizon))
+    return {gw: scoreline_table(fixtures, strengths, gw) for gw in horizon}
+
+
 async def fetch_live_data(
     cfg: CollectorConfig,
     entry_id: int,
@@ -587,6 +609,7 @@ async def fetch_live_data(
         teams_total=len(gw_teams),
         history_gws=train_df["gw"].n_unique(),
         availability=build_availability(bootstrap),
+        scoreline=build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
     )
 
 
@@ -597,6 +620,7 @@ def build_projections(
     difficulty_table: pl.DataFrame,
     horizon: list[int],
     availability: pl.DataFrame | None = None,
+    scoreline: dict[int, pl.DataFrame] | None = None,
 ) -> dict[int, dict[int, float]]:
     """Split out of `LiveData` on purpose — `papertrade/freeze.py` needs to
     project points for the shadow team's own state, which has no `LiveData`
@@ -605,10 +629,14 @@ def build_projections(
     Last season's history (analytics.carryover) is joined on the roster's
     bootstrap-static `code`, so it needs nothing the caller doesn't already
     have. `availability` is build_availability's output, when the caller
-    has a live bootstrap to read it from."""
+    has a live bootstrap to read it from, and `scoreline` build_scoreline's;
+    without it a gameweek falls back to the Elo difficulty scaling."""
     prior = prior_history(LIVE_SEASON, target_roster, codes=target_roster.select("element_id", "code"))
     projections: dict[int, dict[int, float]] = {}
     for gw in horizon:
-        df = project_points(train_df, target_roster, gw, scoring_config, difficulty_table, prior_history=prior, availability=availability)
+        df = project_points(
+            train_df, target_roster, gw, scoring_config, difficulty_table,
+            prior_history=prior, availability=availability, scoreline=scoreline.get(gw) if scoreline else None,
+        )
         projections[gw] = dict(zip(df["element_id"].to_list(), df["prediction"].to_list()))
     return projections

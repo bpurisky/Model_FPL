@@ -6,6 +6,12 @@
 # defaults — change them here, not in code, once real values are known.
 # Everything else is unit-tested directly against the documented rule text
 # (analytics/scoring.py's tests), not against real results.
+#
+# Since checked against real results: over 2026/27 gw1-5 this file
+# reproduces FPL's official total exactly for 100% of FWD/MID and 98.3% of
+# DEF appearances (the same as scoring_2025_26.yaml, whose residual is
+# documented in validate_against_actual). The GK save change it described
+# did not happen — see `saves` below.
 
 minutes:
   none: 0
@@ -36,15 +42,17 @@ goals_conceded:
   points: -1
   positions: [GK, DEF]
 
-# Changed for 2026/27: flat rate per save (not per-3), plus stacking bonuses
-# for save difficulty. `close_range_saves` / `big_chance_saves` are counts
-# of the *subset* of `saves` that qualify for each bonus tier — a save can
-# count toward both. PROVISIONAL VALUES — see module docstring above.
+# Still one point per three saves, as in 2025/26. This file used to carry
+# the spec's described change — a flat point per save plus bonuses for
+# close-range and big-chance saves — at provisional values. Against the
+# 100 goalkeeper appearances of 2026/27 gw1-5 that matched FPL's official
+# total 7% of the time and overstated it by 2.28 points an appearance; the
+# per-3 rule matches 100%. `flat_plus_bonus` stays in analytics/scoring.py
+# for the day the change does arrive.
 saves:
-  mode: flat_plus_bonus
-  flat_rate: 1
-  close_range_bonus: 1
-  big_chance_bonus: 1
+  mode: per_n
+  n: 3
+  points: 1
 
 own_goals: -2
 penalties_missed: -2
