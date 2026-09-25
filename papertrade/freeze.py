@@ -38,6 +38,7 @@ from squad.live import (
     build_difficulty_table,
     build_player_pool,
     build_projections,
+    build_scoreline,
     build_target_roster,
     build_train_df,
     training_feature_availability,
@@ -403,7 +404,9 @@ async def run_freeze(
     difficulty_table = build_difficulty_table(bootstrap, fixtures_raw, horizon)
     scoring_config = load_scoring_config(Path(scoring_config_path))
     projections = build_projections(
-        train_df, target_roster, scoring_config, difficulty_table, horizon, availability=build_availability(bootstrap)
+        train_df, target_roster, scoring_config, difficulty_table, horizon,
+        availability=build_availability(bootstrap),
+        scoreline=build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
     )
 
     # Cap transfers at the free allowance while the history is too thin for

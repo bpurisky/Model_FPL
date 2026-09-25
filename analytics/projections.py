@@ -96,7 +96,17 @@ DIFFICULTY_SCALE_STEP = 0.075  # matches backtest.baselines' constant
 # re-runs the walk-forward across the range to draw it. A sweep that
 # edited the module constant would be a sweep that changed the model for
 # everyone who imported it mid-run.
-GOALS_CONCEDED_SHRINKAGE = 0.7
+#
+# Superseded by the scoreline model (analytics.scoreline). Goals conceded
+# is now a Poisson expectation from team strengths, not a defender's own
+# trailing mean, so the noise the shrinkage damped is no longer there, and
+# the weight is 1.0: the expectation itself. The walk-forward has no
+# optimum to offer in its place: MAE keeps falling past 1.0 (0.9825 at
+# 1.0, 0.9749 at 1.3) only because a heavier deduction drags every
+# projection toward the skewed distribution's median, while 5+ point
+# returns get worse (RMSE 5.454 -> 5.491) and Spearman doesn't move. The
+# sweep on screen still runs 0.0-1.0.
+GOALS_CONCEDED_SHRINKAGE = 1.0
 
 # Columns projected as simple trailing means (via analytics.features.trailing_feature,
 # which includes the promoted-club pooled-prior fallback for missing history).
@@ -237,6 +247,8 @@ def expected_points_by_component(
     per-season config compute_points does, so a rule change affects the
     model exactly the way it affects the ground truth it's validated
     against."""
+    if row.get("n_fixtures") is not None:
+        return _scoreline_components(row, config, goals_conceded_shrinkage)
     position = row["position"]
     difficulty = row.get("custom_difficulty") or 3.0
     fav = _favorable_scale(difficulty)
@@ -281,6 +293,59 @@ def expected_points_by_component(
     return components
 
 
+def _scoreline_components(
+    row: dict[str, Any],
+    config: dict[str, Any],
+    goals_conceded_shrinkage: float,
+) -> dict[str, float]:
+    """expected_points_by_component with the fixture read from
+    analytics.scoreline instead of the Elo difficulty: the row carries its
+    team's n_fixtures, attack_mult, defence_mult, expected_cs and
+    expected_gc_deductions for the target gameweek.
+
+    Every `{col}_trailing` is one ordinary match's expectation. Rates the
+    fixture moves (goals, assists, saves) are scaled by the multiplier,
+    which already sums over a double gameweek; the ones it doesn't (minutes,
+    bonus, cards, defensive contribution) by n_fixtures. Clean sheets and
+    goals conceded are the Poisson expectations themselves, earned only by
+    a player who stays on — P(60+) per match.
+    """
+    position = row["position"]
+    n = row["n_fixtures"]
+    minutes_cfg = config["minutes"]
+    components = {
+        "minutes": n * (row["p_blank"] * minutes_cfg["none"] + row["p_short"] * minutes_cfg["short"] + row["p_full"] * minutes_cfg["full"]),
+        "goals": row["expected_goals_trailing"] * row["attack_mult"] * config["goals_scored"][position],
+        "assists": row["expected_assists_trailing"] * row["attack_mult"] * config["assists"][position],
+        "clean_sheets": row["p_full"] * row["expected_cs"] * config["clean_sheets"][position],
+        "goals_conceded": 0.0,
+        "saves": 0.0,
+        "cards_and_other": n * (
+            row["own_goals_trailing"] * config["own_goals"]
+            + row["penalties_missed_trailing"] * config["penalties_missed"]
+            + row["penalties_saved_trailing"] * config["penalties_saved"]
+            + row["yellow_cards_trailing"] * config["yellow_cards"]
+            + row["red_cards_trailing"] * config["red_cards"]
+        ),
+        "defensive_contribution": 0.0,
+        "bonus": n * row["bonus_trailing"],
+    }
+    gc_cfg = config["goals_conceded"]
+    if position in gc_cfg["positions"]:
+        components["goals_conceded"] = goals_conceded_shrinkage * row["p_full"] * row["expected_gc_deductions"] * gc_cfg["points"]
+    if position == "GK":
+        saves_cfg = config["saves"]
+        expected_saves = row["saves_trailing"] * row["defence_mult"]
+        if saves_cfg["mode"] == "per_n":
+            components["saves"] = (expected_saves / saves_cfg["n"]) * saves_cfg["points"]
+        else:
+            components["saves"] = expected_saves * saves_cfg["flat_rate"]
+    dc_cfg = config.get("defensive_contribution")
+    if dc_cfg:
+        components["defensive_contribution"] = n * row.get("p_dc_threshold_trailing", 0.0) * dc_cfg["points"]
+    return components
+
+
 def expected_points_from_projection(
     row: dict[str, Any],
     config: dict[str, Any],
@@ -288,6 +353,15 @@ def expected_points_from_projection(
 ) -> float:
     """The projected total: sum(expected_points_by_component(...).values())."""
     return sum(expected_points_by_component(row, config, goals_conceded_shrinkage).values())
+
+
+def with_scoreline(roster: pl.DataFrame, scoreline: pl.DataFrame) -> pl.DataFrame:
+    """`roster` with its team's analytics.scoreline columns for the target
+    gameweek, which expected_points_by_component then reads the fixture
+    from. A team missing from the table has no fixture that gameweek."""
+    return roster.join(scoreline, on="team", how="left").with_columns(
+        pl.col("n_fixtures", "attack_mult", "defence_mult", "expected_cs", "expected_gc_deductions").fill_null(0)
+    )
 
 
 def project_points(
@@ -302,6 +376,7 @@ def project_points(
     on_projection: Callable[[int, pl.DataFrame], None] | None = None,
     prior_history: pl.DataFrame | None = None,
     availability: pl.DataFrame | None = None,
+    scoreline: pl.DataFrame | None = None,
 ) -> pl.DataFrame:
     """The full model, in the same (train_df, target_roster, target_gw) ->
     DataFrame[element_id, prediction] shape as backtest.baselines' three
@@ -320,6 +395,8 @@ def project_points(
     """
     gw_difficulty = difficulty_table.filter(pl.col("gw") == target_gw).select("team", "custom_difficulty")
     roster = target_roster.join(gw_difficulty, on="team", how="left").with_columns(pl.col("custom_difficulty").fill_null(3.0))
+    if scoreline is not None:
+        roster = with_scoreline(roster, scoreline)
 
     projected = project_event_vectors(train_df, roster, target_gw, config, window, minutes_window, prior_history, availability)
     if on_projection is not None:

@@ -64,6 +64,9 @@ function buildCurve(points: ShrinkagePoint[], values: (number | null)[], baselin
   return { path, py, lo, hi };
 }
 
+/** Below this spread in DEF Spearman across the sweep, ranking is called flat. */
+const RANKING_FLAT_SPREAD = 0.001;
+
 function formatRange(points: ShrinkagePoint[]): string {
   if (points.length === 0) return "nothing";
   return `${points[0]!.shrinkage.toFixed(2)}–${points[points.length - 1]!.shrinkage.toFixed(2)}`;
@@ -207,14 +210,21 @@ export function ShrinkagePanel({ file }: { file: ShrinkageFile }) {
   const stated = file.points.filter((point) => point.beats_mae_bar && point.beats_spearman_bar);
   const focus = file.points.filter((point) => point.beats_mae_bar && point.beats_focus_bar);
   const atDefault = file.points.find((point) => point.shrinkage === file.default);
+  // Whether ranking moves across the sweep at all. Under the old trailing
+  // goals-conceded term it fell steadily as the weight rose; under the
+  // scoreline model it spans less than a thousandth.
+  const focusValues = file.points.flatMap((point) => (point.spearman_focus == null ? [] : [point.spearman_focus]));
+  const rankingFlat =
+    focusValues.length > 0 && Math.max(...focusValues) - Math.min(...focusValues) < RANKING_FLAT_SPREAD;
 
   return (
     <section className={styles.panel}>
       <h2 className={styles.panelTitle}>The goals-conceded shrinkage</h2>
       <p className={styles.panelSub}>
-        Goals conceded is shared across a whole back line and swamped by single-match variance,
-        so the model down-weights it. This is the sweep behind that constant, re-run across the
-        full range — shaded where both §4.4 bars clear, with the shipped{" "}
+        {file.default < 1
+          ? "Goals conceded is shared across a whole back line and swamped by single-match variance, so the model down-weights it."
+          : "Goals conceded used to be down-weighted, because a defender's own trailing count is mostly single-match noise; it now comes from the scoreline model's Poisson expectation, at full weight."}{" "}
+        This is the sweep behind that constant, re-run across the full range — shaded where both §4.4 bars clear, with the shipped{" "}
         <span className="data">{file.default}</span> marked.
       </p>
 
@@ -244,8 +254,10 @@ export function ShrinkagePanel({ file }: { file: ShrinkageFile }) {
       </div>
 
       <p className={styles.finding}>
-        The two metrics move in opposite directions across the whole range, so this is a trade
-        rather than an optimum. On §4.4&rsquo;s criterion as written — within-position rank
+        {rankingFlat
+          ? "MAE improves across the whole range while ranking barely moves, so the weight is chosen on what it means rather than on either curve."
+          : "The two metrics move in opposite directions across the whole range, so this is a trade rather than an optimum."}{" "}
+        On §4.4&rsquo;s criterion as written — within-position rank
         correlation, meaning the mean across positions — both bars clear from{" "}
         <span className="data">{formatRange(stated)}</span>, and the shipped{" "}
         <span className="data">{file.default}</span> sits inside it. Measured on{" "}
