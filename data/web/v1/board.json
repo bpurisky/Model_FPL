@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-09-21T19:28:49.817446Z",
+    "generated_at": "2026-09-25T11:52:55.347196Z",
     "source_gameweek": 5,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "026ce6e6030d8cc10eff24b8bfc89768c16a23ac",
+    "model_git_sha": "a7adcfebfaf40908546adf983c77b0873539b78a",
     "normalization_basis": "within_position_season_to_date",
     "rows": 227,
     "current_season": "2026-27"
@@ -79,27 +79,27 @@
     },
     {
       "bucket": "rising",
-      "n": 1810,
+      "n": 857,
       "comparison": "other non-optimal players",
-      "forward_points": 2.52937384899,
-      "forward_points_other": 2.61529423997,
-      "lift": -0.0859203909796
+      "forward_points": 3.14099572151,
+      "forward_points_other": 2.57960902079,
+      "lift": 0.561386700724
     },
     {
       "bucket": "declining",
-      "n": 3811,
+      "n": 3759,
       "comparison": "other non-optimal players",
-      "forward_points": 2.47787107496,
-      "forward_points_other": 2.64154014304,
-      "lift": -0.163669068079
+      "forward_points": 2.45801188259,
+      "forward_points_other": 2.64623724641,
+      "lift": -0.188225363815
     },
     {
       "bucket": "neutral",
-      "n": 12219,
+      "n": 13224,
       "comparison": "other non-optimal players",
-      "forward_points": 2.65815533186,
-      "forward_points_other": 2.49445531637,
-      "lift": 0.163700015487
+      "forward_points": 2.61417372454,
+      "forward_points_other": 2.58481369151,
+      "lift": 0.0293600330334
     }
   ],
   "players": [
@@ -565,7 +565,7 @@
       "composite": 0.127259581896,
       "percentile": 0.689655172414,
       "rank": 28,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob",
@@ -599,7 +599,7 @@
       "composite": 0.102931156494,
       "percentile": 0.666666666667,
       "rank": 30,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob",
@@ -734,7 +734,7 @@
       "composite": 0.0447736170777,
       "percentile": 0.574712643678,
       "rank": 38,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "defensive_contribution_per90",
@@ -768,7 +768,7 @@
       "composite": 0.00454339877597,
       "percentile": 0.551724137931,
       "rank": 40,
-      "bucket": "neutral",
+      "bucket": "rising",
       "drivers": [
         "minutes_reliability",
         "cbi_per90",
@@ -887,7 +887,7 @@
       "composite": -0.0386344350633,
       "percentile": 0.471264367816,
       "rank": 47,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "cbi_per90",
@@ -1760,7 +1760,7 @@
       "composite": 0.0000296109897398,
       "percentile": 0.52380952381,
       "rank": 11,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "bps_per90",
@@ -1845,7 +1845,7 @@
       "composite": -0.290265559469,
       "percentile": 0.285714285714,
       "rank": 16,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgi_per90",
@@ -2250,7 +2250,7 @@
       "composite": -0.454927423069,
       "percentile": 0.105263157895,
       "rank": 18,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "xgc_per90",
         "goals_conceded_per90",
@@ -2911,7 +2911,7 @@
       "composite": 0.0474751922459,
       "percentile": 0.625,
       "rank": 37,
-      "bucket": "neutral",
+      "bucket": "rising",
       "drivers": [
         "minutes_reliability",
         "goals_per90",
@@ -2928,7 +2928,7 @@
       "composite": 0.0379983895762,
       "percentile": 0.614583333333,
       "rank": 38,
-      "bucket": "neutral",
+      "bucket": "rising",
       "drivers": [
         "minutes_reliability",
         "clean_sheet_prob",
@@ -3047,7 +3047,7 @@
       "composite": -0.0106605076496,
       "percentile": 0.541666666667,
       "rank": 45,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3064,7 +3064,7 @@
       "composite": -0.0250500970256,
       "percentile": 0.53125,
       "rank": 46,
-      "bucket": "neutral",
+      "bucket": "rising",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3098,7 +3098,7 @@
       "composite": -0.0471358093193,
       "percentile": 0.510416666667,
       "rank": 48,
-      "bucket": "neutral",
+      "bucket": "rising",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3132,7 +3132,7 @@
       "composite": -0.0680123708886,
       "percentile": 0.489583333333,
       "rank": 50,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xa_per90",
@@ -3149,7 +3149,7 @@
       "composite": -0.0683611644876,
       "percentile": 0.479166666667,
       "rank": 51,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3336,7 +3336,7 @@
       "composite": -0.157658478948,
       "percentile": 0.364583333333,
       "rank": 62,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3421,7 +3421,7 @@
       "composite": -0.220825856154,
       "percentile": 0.3125,
       "rank": 67,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3472,7 +3472,7 @@
       "composite": -0.283457204429,
       "percentile": 0.28125,
       "rank": 70,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xg_per90",
@@ -3540,7 +3540,7 @@
       "composite": -0.397224899422,
       "percentile": 0.239583333333,
       "rank": 74,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "bps_per90",
@@ -3724,7 +3724,7 @@
       "composite": -0.581433507843,
       "percentile": 0.125,
       "rank": 85,
-      "bucket": "rising",
+      "bucket": "neutral",
       "drivers": [
         "minutes_reliability",
         "xgi_per90",
