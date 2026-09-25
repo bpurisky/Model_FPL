@@ -791,6 +791,14 @@ class PaperTradePlayerLevelGw(_Strict):
     mae: float | None
     spearman_mean: float | None
 
+    # --- added after 5D, contract_version unchanged ---------------------
+    # FPL's ep_next, frozen with our projections and scored the same way
+    # over the players it published a figure for. Null for a freeze
+    # written before the benchmark was recorded.
+    fpl_n: int | None = None
+    fpl_mae: float | None = None
+    fpl_spearman_mean: float | None = None
+
 
 class PaperTradeLeakageCheck(_Strict):
     """Not every freeze that records `ran`/`passed`/`n_features` also

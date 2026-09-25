@@ -455,6 +455,9 @@ export const PaperTradePlayerLevelGw = z.object({
   n: z.number().int(),
   mae: z.number().nullable(),
   spearman_mean: z.number().nullable(),
+  fpl_n: z.number().int().nullable().optional(),
+  fpl_mae: z.number().nullable().optional(),
+  fpl_spearman_mean: z.number().nullable().optional(),
 });
 
 export const PaperTradeLeakageCheck = z.object({

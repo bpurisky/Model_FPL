@@ -455,6 +455,11 @@ async def run_freeze(
         # gameweek's squad reconstruction ran untouched.
         "manual_correction": manual_correction,
         "projections": {str(g): {str(eid): pts for eid, pts in p.items()} for g, p in projections.items()},
+        # FPL's own expected points for this gameweek, as published when the
+        # freeze was taken: the outside benchmark papertrade/evaluate.py
+        # scores alongside ours. Read from the same bootstrap, so the two
+        # were made with the same information.
+        "fpl_ep_next": {str(e.id): float(e.ep_next) for e in bootstrap.elements if e.ep_next not in (None, "")},
         "now_cost_snapshot": now_cost_by_id,
         "shadow_recommendation": {
             "transfers_out": sorted(result.transfers_out),

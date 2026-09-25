@@ -48,6 +48,26 @@ def test_evaluate_gw_player_level_computes_mae(tmp_path):
     assert result["mae"] == pytest.approx((abs(5.0 - 7) + abs(3.0 - 3)) / 2)
 
 
+def test_fpl_ep_next_is_scored_beside_the_projections(tmp_path):
+    write_freeze(
+        2,
+        {"projections": {"2": {"101": 5.0, "102": 3.0}}, "fpl_ep_next": {"101": 6.0, "102": 1.0}},
+        freezes_dir=tmp_path,
+    )
+    actuals = pl.DataFrame([_actual_row(2, 101, "MID", 7), _actual_row(2, 102, "DEF", 3)], schema=_SCHEMA)
+
+    benchmark = evaluate_gw_player_level(2, freezes_dir=tmp_path, actuals=actuals)["fpl_benchmark"]
+
+    assert benchmark["n"] == 2
+    assert benchmark["mae"] == pytest.approx((abs(6.0 - 7) + abs(1.0 - 3)) / 2)
+
+
+def test_a_freeze_without_the_benchmark_reports_none(tmp_path):
+    write_freeze(2, {"projections": {"2": {"101": 5.0}}}, freezes_dir=tmp_path)
+    actuals = pl.DataFrame([_actual_row(2, 101, "MID", 7)], schema=_SCHEMA)
+    assert evaluate_gw_player_level(2, freezes_dir=tmp_path, actuals=actuals)["fpl_benchmark"] is None
+
+
 def test_evaluate_gw_player_level_raises_without_actuals(tmp_path):
     write_freeze(2, {"projections": {"2": {"101": 5.0}}}, freezes_dir=tmp_path)
     empty_actuals = pl.DataFrame(schema=_SCHEMA)

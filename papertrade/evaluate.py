@@ -208,12 +208,27 @@ def evaluate_gw_player_level(gw: int, freezes_dir: Path = FREEZES_DIR, actuals: 
         "mae": mae(results),
         "spearman_within_position": spearman_within_position(results),
         "calibration": calibration_curve(results),
+        "fpl_benchmark": _fpl_benchmark(freeze, gw_actuals),
         # Computed and returned even when degenerate, rather than raising:
         # the metrics for a null observation are still worth being able to
         # look at, and it is `evaluate_player_level` that decides what to
         # do about them. Raising here would make the failure invisible.
         "degeneracy": freeze_degeneracy(gw, freezes_dir, freeze=freeze),
     }
+
+
+def _fpl_benchmark(freeze: dict[str, Any], gw_actuals: pl.DataFrame) -> dict[str, Any] | None:
+    """FPL's own ep_next, frozen alongside our projections, scored against
+    the same gameweek's actuals the same way. None for a freeze written
+    before the field existed."""
+    ep_next = freeze.get("fpl_ep_next")
+    if not ep_next:
+        return None
+    fpl = pl.DataFrame({"element_id": [int(k) for k in ep_next], "prediction": list(ep_next.values())})
+    results = gw_actuals.join(fpl, on="element_id", how="inner").with_columns(
+        (pl.col("prediction") - pl.col("total_points")).alias("error")
+    )
+    return {"n": results.height, "mae": mae(results), "spearman_within_position": spearman_within_position(results)}
 
 
 def evaluate_player_level(

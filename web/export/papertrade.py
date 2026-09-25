@@ -102,6 +102,16 @@ def _criteria(raw: dict[str, dict]) -> dict[str, PaperTradeGateCriterion]:
     return {key: PaperTradeGateCriterion(status=value["status"], detail=value["detail"]) for key, value in raw.items()}
 
 
+def _fpl_fields(benchmark: dict | None) -> dict:
+    if not benchmark:
+        return {}
+    return {
+        "fpl_n": benchmark["n"],
+        "fpl_mae": json_safe(benchmark["mae"]),
+        "fpl_spearman_mean": json_safe(benchmark["spearman_within_position"].get("mean")),
+    }
+
+
 def build_papertrade(
     *,
     real_points_by_gw: dict[int, int],
@@ -134,6 +144,7 @@ def build_papertrade(
             n=evaluation["n"],
             mae=json_safe(evaluation["mae"]),
             spearman_mean=json_safe(evaluation["spearman_within_position"].get("mean")),
+            **_fpl_fields(evaluation.get("fpl_benchmark")),
         )
         for gw, evaluation in sorted(player_level["included"].items())
     ]
