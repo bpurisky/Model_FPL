@@ -192,7 +192,9 @@ async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:
     live = await fetch_live_data(cfg, payload.entry_id, horizon=payload.horizon)
     horizon = payload.horizon or [live.next_event, live.next_event + 1, live.next_event + 2]
 
-    projections = build_projections(live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon)
+    projections = build_projections(
+        live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon, availability=live.availability
+    )
     result = optimize_squad(
         live.squad,
         live.pool,

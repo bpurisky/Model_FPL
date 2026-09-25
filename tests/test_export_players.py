@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 
@@ -25,8 +26,8 @@ PLAYERS_PATH = Path("data/web/v1/players.json")
 
 
 @lru_cache(maxsize=1)
-def _built() -> PlayersFile:
-    return build_players()
+def _built(as_of: datetime | None = None) -> PlayersFile:
+    return build_players(as_of=as_of)
 
 
 def _committed() -> dict | None:
@@ -205,7 +206,10 @@ def test_the_committed_file_matches_a_fresh_build():
     if payload is None:  # pragma: no cover
         pytest.skip("players.json not generated yet -- run `python -m web.export players`")
 
-    current = json.loads(_built().model_dump_json())
+    # Rebuilt at the committed file's own moment, so the injury flags are
+    # the ones it read, not whatever the collector has seen since.
+    generated_at = datetime.fromisoformat(payload["header"]["generated_at"].replace("Z", "+00:00"))
+    current = json.loads(_built(generated_at).model_dump_json())
     for p in (payload, current):
         del p["header"]
 
