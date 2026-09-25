@@ -144,9 +144,9 @@ def _live_bootstrap() -> BootstrapStatic:
         events=[Event(id=1, name="Gameweek 1", deadline_time=datetime(2026, 8, 21, tzinfo=timezone.utc), finished=True)],
         teams=[Team(id=1, name="Team A", short_name="TMA"), Team(id=7, name="Coventry City", short_name="COV")],
         elements=[
-            Element(id=101, web_name="P101", team=1, element_type=3, now_cost=50,
+            Element(id=101, code=900101, web_name="P101", team=1, element_type=3, now_cost=50,
                     selected_by_percent="1.0", transfers_in_event=0, transfers_out_event=0, form="0.0", status="a"),
-            Element(id=102, web_name="P102", team=7, element_type=2, now_cost=45,
+            Element(id=102, code=900102, web_name="P102", team=7, element_type=2, now_cost=45,
                     selected_by_percent="1.0", transfers_in_event=0, transfers_out_event=0, form="0.0", status="a"),
         ],
     )

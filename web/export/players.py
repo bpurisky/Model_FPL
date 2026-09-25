@@ -45,6 +45,7 @@ from pathlib import Path
 import polars as pl
 
 from analytics.evaluate import SEASON_SCORING_CONFIG
+from analytics.carryover import prior_history
 from analytics.projections import (
     DEFAULT_MINUTES_WINDOW,
     DEFAULT_WINDOW,
@@ -165,7 +166,8 @@ def project(
     )
 
     projected = project_event_vectors(
-        train, roster, target_gw, config, DEFAULT_WINDOW, DEFAULT_MINUTES_WINDOW
+        train, roster, target_gw, config, DEFAULT_WINDOW, DEFAULT_MINUTES_WINDOW,
+        prior_history=prior_history(season, roster),
     )
 
     out: dict[int, PlayerProjection] = {}

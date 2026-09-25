@@ -250,9 +250,10 @@ export function ShrinkagePanel({ file }: { file: ShrinkageFile }) {
         <span className="data">{formatRange(stated)}</span>, and the shipped{" "}
         <span className="data">{file.default}</span> sits inside it. Measured on{" "}
         <span className="data">{file.focus_position}</span> alone, where the model&rsquo;s own
-        ablation comment says the damage is concentrated, the range is only{" "}
+        ablation comment says the damage is concentrated, the range is{" "}
         <span className="data">{formatRange(focus)}</span> and{" "}
-        <span className="data">{file.default}</span> is just past it
+        <span className="data">{file.default}</span>{" "}
+        {atDefault?.beats_focus_bar ? "sits inside that too" : "is just past it"}
         {atDefault?.spearman_focus != null && file.baseline_spearman_focus != null ? (
           <>
             {" "}
@@ -261,8 +262,10 @@ export function ShrinkagePanel({ file }: { file: ShrinkageFile }) {
             <span className="data">{file.baseline_spearman_focus.toFixed(4)}</span>
           </>
         ) : null}
-        . Both are true of different measurements; the panel shows both rather than the one
-        that flatters the constant.
+        .{" "}
+        {atDefault?.beats_focus_bar
+          ? "The stricter reading used to put the constant outside its range; it no longer does."
+          : "Both are true of different measurements; the panel shows both rather than the one that flatters the constant."}
       </p>
     </section>
   );

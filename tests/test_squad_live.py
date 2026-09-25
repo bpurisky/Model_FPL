@@ -61,7 +61,7 @@ def _team(team_id: int, name: str, short_name: str) -> Team:
 
 def _element(eid: int, team: int, element_type: int = 4, now_cost: int = 100) -> Element:
     return Element(
-        id=eid, web_name=f"P{eid}", team=team, element_type=element_type, now_cost=now_cost,
+        id=eid, code=900000 + eid, web_name=f"P{eid}", team=team, element_type=element_type, now_cost=now_cost,
         selected_by_percent="10.0", transfers_in_event=0, transfers_out_event=0, form="0.0", status="a",
     )
 

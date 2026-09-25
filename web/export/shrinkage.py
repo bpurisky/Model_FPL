@@ -74,7 +74,7 @@ def _season_frames() -> dict[str, pl.DataFrame]:
 
 def _event_model_at(season: str, shrinkage: float):
     """The event model with one term reweighted, and nothing else moved."""
-    from analytics.evaluate import build_difficulty_table, SEASON_SCORING_CONFIG
+    from analytics.evaluate import build_difficulty_table, season_prior_history, SEASON_SCORING_CONFIG
     from analytics.scoring import load_scoring_config
 
     config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
@@ -84,6 +84,7 @@ def _event_model_at(season: str, shrinkage: float):
         config=config,
         difficulty_table=difficulty_table,
         goals_conceded_shrinkage=shrinkage,
+        prior_history=season_prior_history(season),
     )
 
 

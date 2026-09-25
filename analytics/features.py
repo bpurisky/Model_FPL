@@ -66,13 +66,25 @@ def fill_missing_with_pooled_prior(
     return out.drop("pool_mean", "all_pool_mean")
 
 
-def trailing_feature(df: pl.DataFrame, target_roster: pl.DataFrame, target_gw: int, window: int, value_col: str) -> pl.DataFrame:
+def trailing_feature(
+    df: pl.DataFrame,
+    target_roster: pl.DataFrame,
+    target_gw: int,
+    window: int,
+    value_col: str,
+    pool_df: pl.DataFrame | None = None,
+) -> pl.DataFrame:
     """The full pipeline for one column: trailing mean, joined onto the
     target roster, with the pooled prior filling gaps. Returns
-    `target_roster` plus one new column: `{value_col}_trailing`."""
+    `target_roster` plus one new column: `{value_col}_trailing`.
+
+    `pool_df`, if given, is what the pooled prior is built from instead of
+    `df` — so a `df` extended backwards with last season's rows
+    (analytics.carryover) trails over them without also pulling last
+    season's promoted-club peers into this season's pool."""
     trailing = trailing_mean(df, target_gw - 1, window, value_col).drop("n_games")
     joined = target_roster.join(trailing, on="element_id", how="left")
-    return fill_missing_with_pooled_prior(joined, df, target_gw, value_col)
+    return fill_missing_with_pooled_prior(joined, df if pool_df is None else pool_df, target_gw, value_col)
 
 
 def trailing_minutes_reliability(

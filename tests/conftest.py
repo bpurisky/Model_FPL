@@ -46,6 +46,7 @@ def _base_bootstrap_payload() -> dict:
         "elements": [
             {
                 "id": 101,
+                "code": 900101,
                 "web_name": "Saka",
                 "team": 1,
                 "element_type": 3,
@@ -61,6 +62,7 @@ def _base_bootstrap_payload() -> dict:
             },
             {
                 "id": 102,
+                "code": 900102,
                 "web_name": "Calvert-Lewin",
                 "team": 2,
                 "element_type": 4,

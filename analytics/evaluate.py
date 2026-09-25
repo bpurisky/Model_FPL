@@ -12,6 +12,7 @@ from typing import Callable
 
 import polars as pl
 
+from analytics.carryover import prior_history, season_start_roster
 from analytics.fdr import team_gameweek_difficulty
 from analytics.projections import expected_points_by_component, project_event_vectors, project_points
 from analytics.scoring import EventVector, compute_points_by_component, load_scoring_config
@@ -42,11 +43,19 @@ def build_difficulty_table(season: str) -> pl.DataFrame:
     return team_gameweek_difficulty(matches, teams)
 
 
+def season_prior_history(season: str) -> pl.DataFrame | None:
+    """The previous archived season, re-keyed to `season` (analytics.carryover).
+    None for the first season in the archive, which has nothing to carry."""
+    season_df = pl.read_parquet(NORMALIZED_DIR / f"{season}.parquet")
+    return prior_history(season, season_start_roster(season_df))
+
+
 def build_season_baselines(season: str, on_projection: Callable[[int, pl.DataFrame], None] | None = None) -> dict:
     config = load_scoring_config(Path(SEASON_SCORING_CONFIG[season]))
     difficulty_table = build_difficulty_table(season)
     model_fn = functools.partial(
-        project_points, config=config, difficulty_table=difficulty_table, on_projection=on_projection
+        project_points, config=config, difficulty_table=difficulty_table, on_projection=on_projection,
+        prior_history=season_prior_history(season),
     )
     return {**BASELINES, "event_model": model_fn}
 

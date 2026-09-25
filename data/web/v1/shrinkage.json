@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-24T14:50:01.043330Z",
+    "generated_at": "2026-09-25T01:27:06.839468Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "0c1f146d3ae4a3d779310a5c41b1a545bfdde0b5",
+    "model_git_sha": "738a29af6e1916b84b2eaba43db3c3e8d275a5af",
     "normalization_basis": "walk_forward_within_position",
     "rows": 10,
     "current_season": "2026-27"
@@ -19,39 +19,39 @@
   "points": [
     {
       "shrinkage": 0.0,
-      "mae": 1.06243109702,
-      "spearman_mean": 0.727210425361,
-      "spearman_focus": 0.624084298127,
+      "mae": 1.01485577864,
+      "spearman_mean": 0.744804628621,
+      "spearman_focus": 0.640670875474,
       "n": 83035,
-      "beats_mae_bar": false,
+      "beats_mae_bar": true,
       "beats_spearman_bar": true,
       "beats_focus_bar": true
     },
     {
       "shrinkage": 0.2,
-      "mae": 1.05487089669,
-      "spearman_mean": 0.724736992431,
-      "spearman_focus": 0.615048781856,
+      "mae": 1.0055166488,
+      "spearman_mean": 0.744606063551,
+      "spearman_focus": 0.639925116167,
       "n": 83035,
-      "beats_mae_bar": false,
+      "beats_mae_bar": true,
       "beats_spearman_bar": true,
       "beats_focus_bar": true
     },
     {
       "shrinkage": 0.4,
-      "mae": 1.04798504548,
-      "spearman_mean": 0.723154430354,
-      "spearman_focus": 0.611894712951,
+      "mae": 0.996774916389,
+      "spearman_mean": 0.74436215519,
+      "spearman_focus": 0.639026413347,
       "n": 83035,
-      "beats_mae_bar": false,
+      "beats_mae_bar": true,
       "beats_spearman_bar": true,
       "beats_focus_bar": true
     },
     {
       "shrinkage": 0.5,
-      "mae": 1.04487738455,
-      "spearman_mean": 0.722495321285,
-      "spearman_focus": 0.609802418226,
+      "mae": 0.992628489024,
+      "spearman_mean": 0.74421442465,
+      "spearman_focus": 0.638501168499,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
@@ -59,9 +59,9 @@
     },
     {
       "shrinkage": 0.6,
-      "mae": 1.04205514245,
-      "spearman_mean": 0.721630903079,
-      "spearman_focus": 0.607178195922,
+      "mae": 0.988661044292,
+      "spearman_mean": 0.743902930412,
+      "spearman_focus": 0.637332075704,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
@@ -69,53 +69,53 @@
     },
     {
       "shrinkage": 0.7,
-      "mae": 1.03952198298,
-      "spearman_mean": 0.72020292004,
-      "spearman_focus": 0.602829873821,
+      "mae": 0.9848811379,
+      "spearman_mean": 0.743513396892,
+      "spearman_focus": 0.635878195283,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
-      "beats_focus_bar": false
+      "beats_focus_bar": true
     },
     {
       "shrinkage": 0.8,
-      "mae": 1.03733229295,
-      "spearman_mean": 0.719366246859,
-      "spearman_focus": 0.599657547393,
+      "mae": 0.981328785663,
+      "spearman_mean": 0.743235938582,
+      "spearman_focus": 0.634888397166,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
-      "beats_focus_bar": false
+      "beats_focus_bar": true
     },
     {
       "shrinkage": 0.85,
-      "mae": 1.03635350279,
-      "spearman_mean": 0.718811799328,
-      "spearman_focus": 0.59753456601,
+      "mae": 0.979650176478,
+      "spearman_mean": 0.742966268035,
+      "spearman_focus": 0.633871497379,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
-      "beats_focus_bar": false
+      "beats_focus_bar": true
     },
     {
       "shrinkage": 0.9,
-      "mae": 1.03546215115,
-      "spearman_mean": 0.71833336748,
-      "spearman_focus": 0.595698251819,
+      "mae": 0.978032034686,
+      "spearman_mean": 0.742834951765,
+      "spearman_focus": 0.633420202647,
       "n": 83035,
       "beats_mae_bar": true,
       "beats_spearman_bar": true,
-      "beats_focus_bar": false
+      "beats_focus_bar": true
     },
     {
       "shrinkage": 1.0,
-      "mae": 1.03397742316,
-      "spearman_mean": 0.716740912149,
-      "spearman_focus": 0.589841951396,
+      "mae": 0.975001010155,
+      "spearman_mean": 0.742176210981,
+      "spearman_focus": 0.630905790097,
       "n": 83035,
       "beats_mae_bar": true,
-      "beats_spearman_bar": false,
-      "beats_focus_bar": false
+      "beats_spearman_bar": true,
+      "beats_focus_bar": true
     }
   ]
 }

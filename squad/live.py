@@ -39,6 +39,7 @@ from typing import Any
 import polars as pl
 
 from analytics.fdr import compute_elo_ratings, upcoming_team_difficulty
+from analytics.carryover import prior_history
 from analytics.projections import project_points
 from analytics.scoring import load_scoring_config
 from backtest.backfill import RAW_CACHE_DIR, load_match_results, load_teams
@@ -71,6 +72,10 @@ POSITION_BY_ELEMENT_TYPE = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
 PROMOTED_CLUB_SHORT_NAMES = {"COV", "HUL", "IPS"}
 
 _ELO_BOOTSTRAP_SEASON = "2025-26"
+
+# The season bootstrap-static describes; analytics.carryover reaches back
+# from it to the archive's previous season.
+LIVE_SEASON = "2026-27"
 
 # Per-gw stat columns. Read straight off bootstrap-static's raw element
 # dicts when a gameweek has to be reconstructed (the trimmed `Element`
@@ -214,10 +219,12 @@ def _team_short_name(bootstrap: BootstrapStatic, team_id: int) -> str:
 
 def build_target_roster(bootstrap: BootstrapStatic) -> pl.DataFrame:
     """element_id, position, team (name), is_promoted_club — the shape
-    analytics/projections.py's target_roster needs."""
+    analytics/projections.py's target_roster needs — plus `code`, which
+    build_projections uses to reach last season's history."""
     rows = [
         {
             "element_id": e.id,
+            "code": e.code,
             "position": POSITION_BY_ELEMENT_TYPE[e.element_type],
             "team": _team_name(bootstrap, e.team),
             "is_promoted_club": _team_short_name(bootstrap, e.team) in PROMOTED_CLUB_SHORT_NAMES,
@@ -572,9 +579,14 @@ def build_projections(
 ) -> dict[int, dict[int, float]]:
     """Split out of `LiveData` on purpose — `papertrade/freeze.py` needs to
     project points for the shadow team's own state, which has no `LiveData`
-    of its own (that struct is specific to the real, live-fetched entry)."""
+    of its own (that struct is specific to the real, live-fetched entry).
+
+    Last season's history (analytics.carryover) is joined on the roster's
+    bootstrap-static `code`, so it needs nothing the caller doesn't already
+    have."""
+    prior = prior_history(LIVE_SEASON, target_roster, codes=target_roster.select("element_id", "code"))
     projections: dict[int, dict[int, float]] = {}
     for gw in horizon:
-        df = project_points(train_df, target_roster, gw, scoring_config, difficulty_table)
+        df = project_points(train_df, target_roster, gw, scoring_config, difficulty_table, prior_history=prior)
         projections[gw] = dict(zip(df["element_id"].to_list(), df["prediction"].to_list()))
     return projections
