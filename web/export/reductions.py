@@ -69,7 +69,6 @@ from web.export.contract import (
     GoldenReductionsFile,
     ReductionCase,
     build_header,
-    json_safe,
 )
 from web.export.correlations import PANEL_PATH, correlation_basis
 from web.export.golden import PRECISION, stride_sample
@@ -131,6 +130,23 @@ def present(values: list[float | None]) -> list[float]:
     kept = [float(v) for v in values if v is not None and math.isfinite(v)]
     kept.sort()
     return kept
+
+
+def _unrounded(value: float | None) -> float | None:
+    """json_safe's null for NaN and infinity, without its rounding.
+
+    json_safe rounds to twelve significant digits to absorb the jitter of
+    polars' parallel summation. These answers have none — `apply` adds a
+    sorted list sequentially — and rounding them breaks the fixture's own
+    1e-12 tolerance for any value of 10 or more, where twelve significant
+    digits only resolve to 1e-10. That is what failed the site build from
+    2026-09-25, when a refresh first sampled a minutes mean of 28.34. JSON
+    carries a double exactly, so the TypeScript side reads back the same
+    number Python computed.
+    """
+    if value is None or not math.isfinite(value):
+        return None
+    return float(value)
 
 
 def apply(values: list[float | None], fn: str, q: float | None = None) -> float | None:
@@ -222,7 +238,7 @@ def build_golden_reductions(
                     column=name,
                     fn=fn,
                     q=None,
-                    value=json_safe(apply(values, fn)),
+                    value=_unrounded(apply(values, fn)),
                     n=n,
                 )
             )
@@ -232,7 +248,7 @@ def build_golden_reductions(
                     column=name,
                     fn="quantile",
                     q=q,
-                    value=json_safe(apply(values, "quantile", q)),
+                    value=_unrounded(apply(values, "quantile", q)),
                     n=n,
                 )
             )
