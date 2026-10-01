@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-01T19:20:47.976068Z",
+    "generated_at": "2026-10-01T23:47:14.945844Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "e31bd0f24b658dc6722ce4e88bab9a593a2476af",
+    "model_git_sha": "766acbdd453e1653fe8cfdaa9155fdb568e81d16",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 0,
     "current_season": "2026-27"
@@ -45,15 +45,15 @@
       },
       "price_change_model_reports_hit_rate_with_ci": {
         "status": "FAIL",
-        "detail": "hit_rate=0.01 (95% CI [0.00, 0.01]) over 544 predicted move(s) of 667 evaluated -- see analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate carries little weight regardless of which side of 0.5 it lands on."
+        "detail": "hit_rate=0.00 (95% CI [0.00, 0.00]) over 479 predicted move(s) of 667 evaluated -- see analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate carries little weight regardless of which side of 0.5 it lands on."
       }
     }
   },
   "price_eval": {
     "n": 667,
-    "n_moves_predicted": 544,
-    "hit_rate": 0.00735294117647,
-    "ci_low": 0.000173731837249,
-    "ci_high": 0.0145321505157
+    "n_moves_predicted": 479,
+    "hit_rate": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0
   }
 }
