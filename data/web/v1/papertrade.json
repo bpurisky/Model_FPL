@@ -1,17 +1,38 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-08T23:07:04.405765Z",
-    "source_gameweek": null,
+    "generated_at": "2026-10-09T12:52:10.374683Z",
+    "source_gameweek": 6,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "1ba26989a7796c70ab142dfc44331bc7fb28a265",
+    "model_git_sha": "d5bc8a32195301ec893495e450842ecc8b3f8b97",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 0,
     "current_season": "2026-27"
   },
   "player_level": [],
   "player_level_excluded": [],
-  "player_level_skipped": [],
+  "player_level_skipped": [
+    {
+      "gw": 1,
+      "reason": "[Errno 2] No such file or directory: 'papertrade/freezes/gw1.json'"
+    },
+    {
+      "gw": 2,
+      "reason": "[Errno 2] No such file or directory: 'papertrade/freezes/gw2.json'"
+    },
+    {
+      "gw": 3,
+      "reason": "[Errno 2] No such file or directory: 'papertrade/freezes/gw3.json'"
+    },
+    {
+      "gw": 4,
+      "reason": "[Errno 2] No such file or directory: 'papertrade/freezes/gw4.json'"
+    },
+    {
+      "gw": 5,
+      "reason": "[Errno 2] No such file or directory: 'papertrade/freezes/gw5.json'"
+    }
+  ],
   "squad_level": {
     "n_gameweeks": 0,
     "per_gw": [],
