@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-09T22:40:09.311488Z",
+    "generated_at": "2026-10-10T21:46:12.472708Z",
     "source_gameweek": 5,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "08e00e2d21c6e569d407a5532623d85fc6ba2673",
+    "model_git_sha": "2c346a3622004f349ddbe978546c33d46d9b0610",
     "normalization_basis": "within_position_season_to_date",
     "rows": 667,
     "current_season": "2026-27"
@@ -1580,20 +1580,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 0.081649999658,
-          "assists": 0.316904061173,
-          "clean_sheets": 0.354245624375,
+          "minutes": 2.0,
+          "goals": 0.108866666211,
+          "assists": 0.42253874823,
+          "clean_sheets": 0.472327499167,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.1,
+          "cards_and_other": -0.133333333333,
           "defensive_contribution": 0.4,
-          "bonus": 0.1
+          "bonus": 0.133333333333
         },
-        "total": 2.65279968521,
-        "p_blank": 0.25,
+        "total": 3.40373291361,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
@@ -3088,20 +3088,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 1.01654249574,
-          "assists": 0.151562811865,
+          "minutes": 2.0,
+          "goals": 1.35538999432,
+          "assists": 0.202083749154,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.1,
+          "cards_and_other": -0.133333333333,
           "defensive_contribution": 0.0,
-          "bonus": 0.25
+          "bonus": 0.333333333333
         },
-        "total": 2.81810530761,
-        "p_blank": 0.25,
+        "total": 3.75747374348,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
@@ -3668,20 +3668,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 0.235764374012,
-          "assists": 0.018371249923,
-          "clean_sheets": 1.4169824975,
-          "goals_conceded": -0.135610992401,
+          "minutes": 2.0,
+          "goals": 0.314352498683,
+          "assists": 0.0244949998974,
+          "clean_sheets": 1.88930999667,
+          "goals_conceded": -0.180814656535,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.133333333333,
           "bonus": 0.0
         },
-        "total": 3.16884046237,
-        "p_blank": 0.25,
+        "total": 4.18067617205,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
@@ -4016,19 +4016,19 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.25,
-          "goals": 0.123699035134,
-          "assists": 0.0115653569434,
+          "minutes": 0.333333333333,
+          "goals": 0.164932046845,
+          "assists": 0.0154204759245,
           "clean_sheets": 0.0,
           "goals_conceded": -0.0,
           "saves": 0.0,
-          "cards_and_other": -0.05,
+          "cards_and_other": -0.0666666666667,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 0.335264392077,
-        "p_blank": 0.75,
-        "p_short": 0.25,
+        "total": 0.447019189436,
+        "p_blank": 0.666666666667,
+        "p_short": 0.333333333333,
         "p_full": 0.0
       }
     },
@@ -5988,20 +5988,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.33333333333,
-          "goals": 0.079017966694,
-          "assists": 0.0732712054799,
-          "clean_sheets": 0.0537789550782,
+          "minutes": 1.0,
+          "goals": 0.0592634750205,
+          "assists": 0.0549534041099,
+          "clean_sheets": 0.0403342163087,
           "goals_conceded": 0.0,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 1.53940146059,
-        "p_blank": 5.55111512313e-17,
-        "p_short": 0.666666666667,
-        "p_full": 0.333333333333
+        "total": 1.15455109544,
+        "p_blank": 0.25,
+        "p_short": 0.5,
+        "p_full": 0.25
       }
     },
     {
@@ -6104,19 +6104,19 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.5,
-          "goals": 0.039508983347,
-          "assists": 0.0107751772765,
+          "minutes": 0.666666666667,
+          "goals": 0.0526786444626,
+          "assists": 0.0143669030353,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.0714285714286,
+          "cards_and_other": -0.0952380952381,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 0.478855589195,
-        "p_blank": 0.5,
-        "p_short": 0.5,
+        "total": 0.638474118926,
+        "p_blank": 0.333333333333,
+        "p_short": 0.666666666667,
         "p_full": 0.0
       }
     },
@@ -10860,20 +10860,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 2.0,
-          "goals": 0.206509044661,
-          "assists": 0.557574420585,
-          "clean_sheets": 1.24611107544,
-          "goals_conceded": -0.357395787247,
+          "minutes": 1.5,
+          "goals": 0.154881783496,
+          "assists": 0.418180815439,
+          "clean_sheets": 0.934583306582,
+          "goals_conceded": -0.268046840435,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 1.2,
-          "bonus": 1.0
+          "bonus": 0.75
         },
-        "total": 5.85279875344,
-        "p_blank": 0.0,
+        "total": 4.68959906508,
+        "p_blank": 0.25,
         "p_short": 0.0,
-        "p_full": 1.0
+        "p_full": 0.75
       }
     },
     {
@@ -10976,20 +10976,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 2.0,
-          "goals": 1.39049423405,
-          "assists": 0.119775245903,
-          "clean_sheets": 0.311527768861,
+          "minutes": 1.5,
+          "goals": 1.04287067554,
+          "assists": 0.0898314344275,
+          "clean_sheets": 0.233645826646,
           "goals_conceded": 0.0,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.0,
-          "bonus": 0.4
+          "bonus": 0.3
         },
-        "total": 4.22179724881,
-        "p_blank": 0.0,
+        "total": 3.16634793661,
+        "p_blank": 0.25,
         "p_short": 0.0,
-        "p_full": 1.0
+        "p_full": 0.75
       }
     },
     {
@@ -16544,20 +16544,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.33333333333,
-          "goals": 0.128414369097,
-          "assists": 0.171219158796,
-          "clean_sheets": 0.689990718949,
-          "goals_conceded": -0.295127088665,
+          "minutes": 1.0,
+          "goals": 0.0963107768229,
+          "assists": 0.128414369097,
+          "clean_sheets": 0.517493039212,
+          "goals_conceded": -0.221345316499,
           "saves": 0.0,
-          "cards_and_other": -0.0888888888889,
+          "cards_and_other": -0.0666666666667,
           "defensive_contribution": 0.0,
-          "bonus": 0.133333333333
+          "bonus": 0.1
         },
-        "total": 2.07227493595,
-        "p_blank": 0.333333333333,
+        "total": 1.55420620197,
+        "p_blank": 0.5,
         "p_short": 0.0,
-        "p_full": 0.666666666667
+        "p_full": 0.5
       }
     },
     {
@@ -30232,19 +30232,19 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.5,
-          "goals": 0.138532182359,
-          "assists": 0.0589391466762,
+          "minutes": 0.666666666667,
+          "goals": 0.184709576478,
+          "assists": 0.0785855289016,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.0666666666667,
+          "cards_and_other": -0.0888888888889,
           "defensive_contribution": 0.0,
-          "bonus": 0.166666666667
+          "bonus": 0.222222222222
         },
-        "total": 0.797471329035,
-        "p_blank": 0.5,
-        "p_short": 0.5,
+        "total": 1.06329510538,
+        "p_blank": 0.333333333333,
+        "p_short": 0.666666666667,
         "p_full": 0.0
       }
     },
@@ -36612,20 +36612,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.0,
-          "goals": 0.0,
-          "assists": 0.0,
-          "clean_sheets": 0.0,
+          "minutes": 2.0,
+          "goals": 0.194307771314,
+          "assists": 0.761229268793,
+          "clean_sheets": 0.20715927675,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": 0.0,
+          "cards_and_other": -1.0,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 0.0,
-        "p_blank": 1.0,
+        "total": 2.16269631686,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.0
+        "p_full": 1.0
       }
     },
     {
@@ -38120,20 +38120,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.0,
-          "goals": 0.292938525977,
-          "assists": 0.0452997720583,
-          "clean_sheets": 0.227195230196,
-          "goals_conceded": -0.125969302816,
+          "minutes": 0.0,
+          "goals": 0.0,
+          "assists": 0.0,
+          "clean_sheets": 0.0,
+          "goals_conceded": -0.0,
           "saves": 0.0,
-          "cards_and_other": -0.15,
+          "cards_and_other": 0.0,
           "defensive_contribution": 0.266666666667,
-          "bonus": 0.05
+          "bonus": 0.0
         },
-        "total": 1.60613089208,
-        "p_blank": 0.25,
-        "p_short": 0.5,
-        "p_full": 0.25
+        "total": 0.266666666667,
+        "p_blank": 1.0,
+        "p_short": 0.0,
+        "p_full": 0.0
       }
     },
     {
@@ -49836,20 +49836,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 0.617890658501,
-          "assists": 0.204379217812,
-          "clean_sheets": 0.304158087452,
+          "minutes": 2.0,
+          "goals": 0.823854211335,
+          "assists": 0.272505623749,
+          "clean_sheets": 0.405544116602,
           "goals_conceded": 0.0,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 2.62642796376,
-        "p_blank": 0.25,
+        "total": 3.50190395169,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
@@ -50184,20 +50184,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 0.161074060549,
-          "assists": 0.188535867594,
-          "clean_sheets": 0.304158087452,
+          "minutes": 2.0,
+          "goals": 0.214765414066,
+          "assists": 0.251381156792,
+          "clean_sheets": 0.405544116602,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.1,
+          "cards_and_other": -0.133333333333,
           "defensive_contribution": 1.2,
-          "bonus": 0.2
+          "bonus": 0.266666666667
         },
-        "total": 3.45376801559,
-        "p_blank": 0.25,
+        "total": 4.20502402079,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
@@ -62828,20 +62828,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 2.0,
-          "goals": 0.438359060719,
-          "assists": 0.373894492966,
-          "clean_sheets": 0.636571971149,
-          "goals_conceded": -0.675307700642,
+          "minutes": 1.5,
+          "goals": 0.328769295539,
+          "assists": 0.280420869724,
+          "clean_sheets": 0.477428978362,
+          "goals_conceded": -0.506480775482,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 2.77351782419,
-        "p_blank": 0.0,
+        "total": 2.08013836814,
+        "p_blank": 0.25,
         "p_short": 0.0,
-        "p_full": 1.0
+        "p_full": 0.75
       }
     },
     {
@@ -69208,20 +69208,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.0,
-          "goals": 0.0402273284987,
-          "assists": 0.0134091094996,
-          "clean_sheets": 0.215115820313,
-          "goals_conceded": -0.222879260211,
+          "minutes": 0.75,
+          "goals": 0.0301704963741,
+          "assists": 0.0100568321247,
+          "clean_sheets": 0.161336865235,
+          "goals_conceded": -0.167159445158,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.4,
           "bonus": 0.0
         },
-        "total": 1.4458729981,
-        "p_blank": 0.333333333333,
-        "p_short": 0.333333333333,
-        "p_full": 0.333333333333
+        "total": 1.18440474858,
+        "p_blank": 0.5,
+        "p_short": 0.25,
+        "p_full": 0.25
       }
     },
     {
@@ -75240,7 +75240,7 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.25,
+          "minutes": 0.333333333333,
           "goals": 0.0,
           "assists": 0.0,
           "clean_sheets": 0.0,
@@ -75250,9 +75250,9 @@
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 0.25,
-        "p_blank": 0.75,
-        "p_short": 0.25,
+        "total": 0.333333333333,
+        "p_blank": 0.666666666667,
+        "p_short": 0.333333333333,
         "p_full": 0.0
       }
     },
