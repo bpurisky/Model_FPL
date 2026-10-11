@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-10T21:46:12.472708Z",
+    "generated_at": "2026-10-11T05:49:25.054636Z",
     "source_gameweek": 5,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "2c346a3622004f349ddbe978546c33d46d9b0610",
+    "model_git_sha": "7a3dd4c8069ca634e74f40744e968d631d81368b",
     "normalization_basis": "within_position_season_to_date",
     "rows": 667,
     "current_season": "2026-27"
@@ -59928,20 +59928,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 2.0,
-          "goals": 0.0938878205862,
-          "assists": 0.0580397436351,
-          "clean_sheets": 0.142884688199,
+          "minutes": 0.0,
+          "goals": 0.0,
+          "assists": 0.0,
+          "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.2,
+          "cards_and_other": 0.0,
           "defensive_contribution": 0.8,
-          "bonus": 0.0666666666667
+          "bonus": 0.0
         },
-        "total": 2.96147891909,
-        "p_blank": 0.0,
+        "total": 0.8,
+        "p_blank": 1.0,
         "p_short": 0.0,
-        "p_full": 1.0
+        "p_full": 0.0
       }
     },
     {
