@@ -1,15 +1,25 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-11T23:30:51.877338Z",
+    "generated_at": "2026-10-13T15:43:58.985609Z",
     "source_gameweek": 6,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "7d7cc896927b2a65f39382081a9f44c6351a7a91",
+    "model_git_sha": "cb11548f80158afe019552f299958083bb4138ab",
     "normalization_basis": "raw_points_not_normalized",
-    "rows": 0,
+    "rows": 1,
     "current_season": "2026-27"
   },
-  "player_level": [],
+  "player_level": [
+    {
+      "gw": 6,
+      "n": 667,
+      "mae": 1.10239407705,
+      "spearman_mean": 0.753641004151,
+      "fpl_n": 667,
+      "fpl_mae": 1.18695652174,
+      "fpl_spearman_mean": 0.732660038783
+    }
+  ],
   "player_level_excluded": [],
   "player_level_skipped": [
     {
@@ -34,35 +44,56 @@
     }
   ],
   "squad_level": {
-    "n_gameweeks": 0,
-    "per_gw": [],
+    "n_gameweeks": 1,
+    "per_gw": [
+      {
+        "gw": 6,
+        "real_points": 76,
+        "shadow_points": 38
+      }
+    ],
     "excluded_gameweeks": [],
-    "cumulative_real_points": 0,
-    "cumulative_shadow_points": 0,
-    "shadow_minus_real": 0,
+    "cumulative_real_points": 76,
+    "cumulative_shadow_points": 38,
+    "shadow_minus_real": -38,
     "warning": "Squad-level comparison stays a handful of observations for a long stretch of the season, dominated by variance (§6.3): a genuinely good model can sit at a bad rank early on because one captain blanked twice. Treat this as a log, not a verdict -- do not overhaul the model on the basis of these numbers alone."
   },
   "launch_gate": {
     "ready_to_launch": false,
-    "gameweeks_evaluated": 0,
+    "gameweeks_evaluated": 1,
     "gameweeks_excluded": [],
-    "freeze_provenance": [],
+    "freeze_provenance": [
+      {
+        "gw": 6,
+        "leakage_check": {
+          "ran": true,
+          "passed": true,
+          "n_features": 3216,
+          "latest_feature_available_at": "2026-09-20T17:30:00Z",
+          "deadline": "2026-10-10T10:00:00Z"
+        },
+        "leakage_verified": true,
+        "manual_correction": null,
+        "records_manual_correction_field": true,
+        "model_git_sha": "d5bc8a32195301ec893495e450842ecc8b3f8b97"
+      }
+    ],
     "criteria": {
       "beats_fixture_adjusted_trailing_mean_mae": {
-        "status": "insufficient data",
-        "detail": "0 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
+        "status": "not wired to live baselines yet",
+        "detail": "1 gameweek evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
       },
       "beats_baselines_on_rank_correlation": {
-        "status": "insufficient data",
-        "detail": "0 gameweeks evaluated; same live-baseline gap as above."
+        "status": "not wired to live baselines yet",
+        "detail": "1 gameweek evaluated; same live-baseline gap as above."
       },
       "no_leakage_assertion_fired": {
-        "status": "insufficient data",
-        "detail": "no freezes on disk to report a leakage check for."
+        "status": "PASS",
+        "detail": "1 gameweek evaluated; all 1 freeze(s) record a leakage assertion that ran and passed at freeze time."
       },
       "squad_reconstruction_ran_without_manual_correction": {
-        "status": "insufficient data",
-        "detail": "0 gameweeks have both a freeze and recorded actuals; no freezes to inspect."
+        "status": "PASS",
+        "detail": "1 gameweek; all 1 freeze(s) declare no manual correction."
       },
       "price_change_model_reports_hit_rate_with_ci": {
         "status": "insufficient data",
