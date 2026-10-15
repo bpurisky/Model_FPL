@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-14T17:12:36.264849Z",
+    "generated_at": "2026-10-15T21:24:52.731151Z",
     "source_gameweek": 6,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "58f1004b84e4873f61b6b9ba4e53289c0d9ec826",
+    "model_git_sha": "f93d3746c0909042f8fd48b3f41296cd5389d82a",
     "normalization_basis": "within_position_season_to_date",
     "rows": 667,
     "current_season": "2026-27"
@@ -64104,20 +64104,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.0,
-          "goals": 0.0,
-          "assists": 0.0,
+          "minutes": 1.33333333333,
+          "goals": 0.933041475321,
+          "assists": 0.0528136684144,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": 0.0,
+          "cards_and_other": -0.222222222222,
           "defensive_contribution": 0.0,
-          "bonus": 0.0
+          "bonus": 0.311111111111
         },
-        "total": 0.0,
-        "p_blank": 1.0,
+        "total": 2.40807736596,
+        "p_blank": 0.333333333333,
         "p_short": 0.0,
-        "p_full": 0.0
+        "p_full": 0.666666666667
       }
     },
     {
@@ -64220,20 +64220,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.33333333333,
-          "goals": 0.613958895318,
-          "assists": 0.0528136684144,
+          "minutes": 0.666666666667,
+          "goals": 0.306979447659,
+          "assists": 0.0264068342072,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
           "cards_and_other": 0.0,
           "defensive_contribution": 0.0,
-          "bonus": 0.2
+          "bonus": 0.1
         },
-        "total": 2.20010589707,
-        "p_blank": 5.55111512313e-17,
-        "p_short": 0.666666666667,
-        "p_full": 0.333333333333
+        "total": 1.10005294853,
+        "p_blank": 0.5,
+        "p_short": 0.333333333333,
+        "p_full": 0.166666666667
       }
     },
     {
