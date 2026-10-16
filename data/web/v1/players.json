@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-15T21:24:52.731151Z",
+    "generated_at": "2026-10-16T04:34:18.218853Z",
     "source_gameweek": 6,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "f93d3746c0909042f8fd48b3f41296cd5389d82a",
+    "model_git_sha": "c09472292d21065b7f03afdaef391fa30fd684fc",
     "normalization_basis": "within_position_season_to_date",
     "rows": 667,
     "current_season": "2026-27"
@@ -8192,20 +8192,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.5,
-          "goals": 0.269263598338,
-          "assists": 0.0527307880079,
-          "clean_sheets": 0.0832706803148,
+          "minutes": 0.666666666667,
+          "goals": 0.359018131118,
+          "assists": 0.0703077173439,
+          "clean_sheets": 0.111027573753,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.0666666666667,
+          "cards_and_other": -0.0888888888889,
           "defensive_contribution": 0.0,
-          "bonus": 0.05
+          "bonus": 0.0666666666667
         },
-        "total": 0.888598399994,
-        "p_blank": 0.75,
+        "total": 1.18479786666,
+        "p_blank": 0.666666666667,
         "p_short": 0.0,
-        "p_full": 0.25
+        "p_full": 0.333333333333
       }
     },
     {
@@ -74660,9 +74660,9 @@
       },
       "projection": {
         "components": {
-          "minutes": 0.333333333333,
-          "goals": 0.246871250767,
-          "assists": 0.00457168982901,
+          "minutes": 0.0,
+          "goals": 0.0,
+          "assists": 0.0,
           "clean_sheets": 0.0,
           "goals_conceded": -0.0,
           "saves": 0.0,
@@ -74670,9 +74670,9 @@
           "defensive_contribution": 0.0,
           "bonus": 0.0
         },
-        "total": 0.584776273929,
-        "p_blank": 0.666666666667,
-        "p_short": 0.333333333333,
+        "total": 0.0,
+        "p_blank": 1.0,
+        "p_short": 0.0,
         "p_full": 0.0
       }
     },
