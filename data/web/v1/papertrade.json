@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-16T03:52:29.710136Z",
-    "source_gameweek": 6,
+    "generated_at": "2026-10-16T14:40:09.349147Z",
+    "source_gameweek": 7,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "7e68a35f35428d0ab9fd733b12282f91e9388da1",
+    "model_git_sha": "f6dfc9cb98e041bba46e568e8d0ea5a6a0e48705",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 1,
     "current_season": "2026-27"
