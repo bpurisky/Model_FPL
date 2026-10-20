@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-20T17:09:25.131174Z",
+    "generated_at": "2026-10-20T21:38:45.205287Z",
     "source_gameweek": 7,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "a25dedee368a07f2a1d98614842ed3cdc5d3b7e0",
+    "model_git_sha": "2ab990776479457ba97ee908276e751952747130",
     "normalization_basis": "within_position_season_to_date",
     "rows": 668,
     "current_season": "2026-27"
@@ -43804,20 +43804,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.66666666667,
-          "goals": 0.551967201077,
-          "assists": 0.141934423134,
-          "clean_sheets": 0.158581955782,
+          "minutes": 1.25,
+          "goals": 0.413975400808,
+          "assists": 0.106450817351,
+          "clean_sheets": 0.118936466837,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.142857142857,
+          "cards_and_other": -0.107142857143,
           "defensive_contribution": 0.0,
-          "bonus": 0.285714285714
+          "bonus": 0.214285714286
         },
-        "total": 2.66200738952,
-        "p_blank": 1.11022302463e-16,
-        "p_short": 0.333333333333,
-        "p_full": 0.666666666667
+        "total": 1.99650554214,
+        "p_blank": 0.25,
+        "p_short": 0.25,
+        "p_full": 0.5
       }
     },
     {
@@ -47748,20 +47748,20 @@
       },
       "projection": {
         "components": {
-          "minutes": 1.5,
-          "goals": 2.13208919683,
-          "assists": 0.265527713628,
+          "minutes": 2.0,
+          "goals": 2.84278559578,
+          "assists": 0.354036951504,
           "clean_sheets": 0.0,
           "goals_conceded": 0.0,
           "saves": 0.0,
-          "cards_and_other": -0.05,
+          "cards_and_other": -0.0666666666667,
           "defensive_contribution": 0.0,
-          "bonus": 1.05
+          "bonus": 1.4
         },
-        "total": 4.89761691046,
-        "p_blank": 0.25,
+        "total": 6.53015588062,
+        "p_blank": 0.0,
         "p_short": 0.0,
-        "p_full": 0.75
+        "p_full": 1.0
       }
     },
     {
