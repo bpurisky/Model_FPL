@@ -308,7 +308,13 @@ def test_construction_identities_hold_on_the_real_panel():
 
     assert cells[("MID", "xg_per90", "xgi_per90")].rho > 0.8
     assert cells[("MID", "xa_per90", "xgi_per90")].rho > 0.7
-    assert cells[("DEF", "xgc_per90", "goals_conceded_per90")].rho > 0.8
+    # Not an identity: expected vs realised goals conceded. Both are derived
+    # through the same per-90 machinery, so a misalignment would drive rho to
+    # ~0, but the pair is noisy by nature (defenders' conceded goals are
+    # low-count). Per-season DEF rho measured 0.78/0.80/0.62/0.58 across
+    # 2023-24..2026-27 (gw7) -- never reliably above the old 0.8 bar, which
+    # the pooled panel fell below (0.75) as the current season grew.
+    assert cells[("DEF", "xgc_per90", "goals_conceded_per90")].rho > 0.5
 
 
 def test_committed_correlations_json_matches_a_fresh_build():

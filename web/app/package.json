@@ -7,7 +7,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
     "hyparquet": "^1.29.1",

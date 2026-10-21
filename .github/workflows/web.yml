@@ -154,6 +154,11 @@ jobs:
           done
           echo "contract v$app across $(ls data/web/v1/*.json | wc -l) committed files"
 
+      # `vite build` strips types without checking them, so without this
+      # a type error ships as long as it happens to run.
+      - run: npm run typecheck
+        working-directory: web/app
+
       - run: npx vitest run
         working-directory: web/app
 

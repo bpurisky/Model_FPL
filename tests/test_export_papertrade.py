@@ -163,3 +163,90 @@ def test_a_nan_mae_serializes_as_null_not_a_nan_token(tmp_path):
     assert file.player_level[0].mae is None
     assert file.player_level[0].spearman_mean is None
     assert "NaN" not in file.model_dump_json()
+
+
+def _score(mae: float, spearman_mean: float | None, n: int = 20) -> dict:
+    return {"n": n, "mae": mae, "spearman_within_position": {"mean": spearman_mean}}
+
+
+def _fake_player_level(baselines: dict | None, *, model_mae: float = 1.0, model_spearman: float = 0.5):
+    """Stand-in for `evaluate_player_level` returning one included gw3 whose
+    eval carries (or omits) the live `baselines` key -- the real function needs
+    the reference data store, which these tests must not depend on."""
+
+    def _fake(candidate_gws, freezes_dir=None, actuals=None):
+        evaluation = {"gw": 3, **_score(model_mae, model_spearman), "calibration": [], "fpl_benchmark": None}
+        if baselines is not None:
+            evaluation["baselines"] = baselines
+        return {"included": {3: evaluation}, "excluded": [], "skipped": []}
+
+    return _fake
+
+
+def _build_gw3(tmp_path, monkeypatch, baselines: dict | None, **kwargs) -> PaperTradeFile:
+    monkeypatch.setattr("web.export.papertrade.evaluate_player_level", _fake_player_level(baselines, **kwargs))
+    write_freeze(3, {**_real_freeze(3), "shadow_state_after": squad_state_to_dict(_squad_state())}, freezes_dir=tmp_path)
+    actuals = pl.DataFrame([_actual_row(3, eid, "MID", 4) for eid in range(1, 21)], schema=_SCHEMA)
+    return build_papertrade(
+        real_points_by_gw={3: 44}, freezes_dir=tmp_path, actuals=actuals, price_eval=_ZERO_PRICE_EVAL,
+    )
+
+
+_BASELINES = {
+    "trailing_mean": _score(1.5, 0.20),
+    "fpl_form_approx": _score(1.6, 0.25),
+    "fixture_adjusted_trailing_mean": _score(1.4, 0.30),
+}
+
+
+def test_baseline_fields_carry_each_baselines_mae_and_spearman(tmp_path, monkeypatch):
+    row = _build_gw3(tmp_path, monkeypatch, _BASELINES).player_level[0]
+
+    assert row.baseline_trailing_mean_mae == 1.5
+    assert row.baseline_trailing_mean_spearman_mean == 0.20
+    assert row.baseline_fpl_form_mae == 1.6
+    assert row.baseline_fpl_form_spearman_mean == 0.25
+    assert row.baseline_fixture_adj_mae == 1.4
+    assert row.baseline_fixture_adj_spearman_mean == 0.30
+
+
+def test_an_older_eval_without_baselines_exports_null_baseline_fields(tmp_path, monkeypatch):
+    file = _build_gw3(tmp_path, monkeypatch, None)
+
+    row = file.player_level[0]
+    for field in (
+        "baseline_trailing_mean_mae", "baseline_trailing_mean_spearman_mean",
+        "baseline_fpl_form_mae", "baseline_fpl_form_spearman_mean",
+        "baseline_fixture_adj_mae", "baseline_fixture_adj_spearman_mean",
+    ):
+        assert getattr(row, field) is None
+    assert PaperTradeFile.model_validate_json(file.model_dump_json()) == file
+
+
+def test_a_nan_baseline_metric_serializes_as_null(tmp_path, monkeypatch):
+    baselines = {**_BASELINES, "trailing_mean": _score(float("nan"), float("nan"))}
+    file = _build_gw3(tmp_path, monkeypatch, baselines)
+
+    assert file.player_level[0].baseline_trailing_mean_mae is None
+    assert file.player_level[0].baseline_trailing_mean_spearman_mean is None
+    assert "NaN" not in file.model_dump_json()
+
+
+def test_the_gate_criteria_detail_reflects_the_exported_baseline_numbers(tmp_path, monkeypatch):
+    file = _build_gw3(tmp_path, monkeypatch, _BASELINES, model_mae=1.0, model_spearman=0.5)
+
+    mae_criterion = file.launch_gate.criteria["beats_fixture_adjusted_trailing_mean_mae"]
+    assert mae_criterion.status == "PASS"
+    assert "model MAE 1.000 vs fixture-adjusted trailing mean 1.400" in mae_criterion.detail
+
+    rank_criterion = file.launch_gate.criteria["beats_baselines_on_rank_correlation"]
+    assert rank_criterion.status == "PASS"
+    assert "model mean Spearman 0.500" in rank_criterion.detail
+    assert "fixture_adjusted_trailing_mean 0.300" in rank_criterion.detail
+
+
+def test_the_gate_is_insufficient_without_baselines(tmp_path, monkeypatch):
+    file = _build_gw3(tmp_path, monkeypatch, None)
+
+    for key in ("beats_fixture_adjusted_trailing_mean_mae", "beats_baselines_on_rank_correlation"):
+        assert file.launch_gate.criteria[key].status == "insufficient data"
