@@ -1,0 +1,70 @@
+name: tests
+
+# The whole suite, on every code change. web.yml and papertrade.yml each
+# run only the handful of tests that guard their own export, so the rest
+# (the model, backtest, squad optimizer, service) went unchecked unless
+# someone ran pytest locally.
+on:
+  push:
+    branches: [main]
+    # Data-only commits (collector, papertrade, web export) cannot break
+    # code, and they land many times a day.
+    paths:
+      - "**.py"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "config/**"
+      - "web/app/**"
+      - ".github/workflows/tests.yml"
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      # The service group brings fastapi for tests/test_service.py.
+      - run: uv sync --locked --group service
+
+      # Same gitignored raw cache, and same key, as web.yml and
+      # papertrade.yml -- several exports read it directly.
+      - id: raw-cache
+        uses: actions/cache@v4
+        with:
+          path: data/historical/raw
+          key: historical-raw-${{ hashFiles('backtest/backfill.py') }}
+      - if: steps.raw-cache.outputs.cache-hit != 'true'
+        run: uv run --no-sync python -m backtest.backfill
+
+      # panel.parquet is a build artifact (§5.3.4), not committed, and the
+      # board/players/reductions tests build from it.
+      - run: uv run --no-sync python -m web.export panel
+
+      - run: uv run --no-sync pytest -q
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/app/package-lock.json
+      - run: npm ci
+        working-directory: web/app
+      - run: npm run typecheck
+        working-directory: web/app
+      - run: npx vitest run
+        working-directory: web/app
