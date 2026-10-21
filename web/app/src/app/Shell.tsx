@@ -70,6 +70,10 @@ const PriceWatch = lazy(() =>
   import("../views/PriceWatch").then((module) => ({ default: module.PriceWatch })),
 );
 
+const EliteOwnership = lazy(() =>
+  import("../views/EliteOwnership").then((module) => ({ default: module.EliteOwnership })),
+);
+
 const Scorecard = lazy(() =>
   import("../views/Scorecard").then((module) => ({ default: module.Scorecard })),
 );
@@ -267,6 +271,11 @@ function Shell() {
         {state.view === "prices" && (
           <Suspense fallback={<PageLoading />}>
             <PriceWatch />
+          </Suspense>
+        )}
+        {state.view === "ownership" && (
+          <Suspense fallback={<PageLoading />}>
+            <EliteOwnership />
           </Suspense>
         )}
         {state.view === "optimizer" && (

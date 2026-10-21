@@ -1078,6 +1078,58 @@ class PricesFile(_Strict):
     track_record: PriceTrackRecord
 
 
+class OwnershipPlayer(_Strict):
+    """One player's elite ownership against the overall field.
+
+    All percentages are 0-100. `top_pct` is the share of the top-N managers
+    holding him in their 15; `top_start_pct` the share starting him
+    (multiplier > 0); `captain_pct` the share captaining him; `eo_pct`
+    effective ownership, `sum(multiplier) / n_managers * 100` (a captain
+    counts 2, a triple captain 3, bench 0), so it can exceed 100.
+    `overall_pct` is the field-wide `selected_by_percent` from the latest
+    distilled snapshot at or before `fetched_at`, null when none exists;
+    `delta_pct` is `top_pct - overall_pct` (null with it). Descriptive only.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    now_cost: int | None
+    overall_pct: float | None
+    top_pct: float
+    top_start_pct: float
+    captain_pct: float
+    eo_pct: float
+    delta_pct: float | None
+
+
+class OwnershipChip(_Strict):
+    """Managers among the top N who played `chip` that gameweek."""
+
+    chip: str
+    count: int
+
+
+class OwnershipFile(_Strict):
+    """`ownership.json` -- Elite Ownership: the top-N managers' ownership and
+    effective ownership for the latest gameweek the collector has picks for.
+
+    `status` is "ok" or "no_data"; with "no_data" (no `top_picks.parquet`
+    anywhere yet) `gw`, `n_managers` and `fetched_at` are null, `players`
+    and `chips` are empty, and the surface shows a "no data yet" state.
+    Added after 5D, contract_version unchanged.
+    """
+
+    header: Header
+    status: Literal["ok", "no_data"]
+    gw: int | None
+    n_managers: int
+    fetched_at: datetime | None
+    chips: list[OwnershipChip]
+    players: list[OwnershipPlayer]
+
+
 def build_header(
     *,
     rows: int,
@@ -1196,6 +1248,7 @@ def contract_shape() -> dict[str, Any]:
         PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,
         PaperTradeGateCriterion, PaperTradeLaunchGate, PaperTradePriceEval, PaperTradeFile,
         PriceWatchPlayer, PriceInSampleFit, PriceCycleOutcome, PriceTrackRecord, PricesFile,
+        OwnershipPlayer, OwnershipChip, OwnershipFile,
     )
     for model in models:
         fields = {}
@@ -1268,6 +1321,9 @@ __all__ = [
     "PlayerRow",
     "PlayersFile",
     "ObservationRow",
+    "OwnershipChip",
+    "OwnershipFile",
+    "OwnershipPlayer",
     "ObservationsFile",
     "PaperTradeFile",
     "PaperTradeFreezeProvenance",

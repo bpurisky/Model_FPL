@@ -18,7 +18,7 @@ import polars as pl
 
 from collector.client import FPLClient, in_deadline_blackout
 from collector.config import CollectorConfig, load_config
-from collector import entry, snapshot
+from collector import entry, snapshot, top_picks
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("collector.main")
@@ -105,12 +105,26 @@ async def cmd_entry(cfg: CollectorConfig) -> None:
     logger.info("entry snapshot complete for entry_id=%s", cfg.own_entry_id)
 
 
+async def cmd_top_picks(cfg: CollectorConfig, top_n: int = top_picks.DEFAULT_TOP_N, force: bool = False) -> None:
+    gw = top_picks.current_gameweek(Path(cfg.storage.reference_dir) / "events.parquet")
+    if gw is None:
+        logger.info("no gameweek has passed its deadline yet, skipping top picks")
+        return
+    async with FPLClient(**cfg.api.client_kwargs()) as client:
+        try:
+            await top_picks.run_top_picks(client, Path(cfg.storage.distilled_dir), gw, top_n=top_n, force=force)
+        except top_picks.TopPicksFailure as exc:
+            logger.error("%s", exc)
+            sys.exit(1)
+
+
 COMMANDS = {
     "bootstrap": cmd_bootstrap,
     "element-summary": cmd_element_summary,
     "live": cmd_live,
     "prune": cmd_prune,
     "entry": cmd_entry,
+    "top-picks": cmd_top_picks,
 }
 
 # Blackout applies to polling the live API; pruning only touches local disk.
@@ -121,6 +135,8 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="python -m collector")
     parser.add_argument("command", choices=sorted(COMMANDS))
     parser.add_argument("--config", default="config/collector.yaml")
+    parser.add_argument("--top-n", type=int, default=top_picks.DEFAULT_TOP_N, help="top-picks: managers to read (default 1000)")
+    parser.add_argument("--force", action="store_true", help="top-picks: refetch even if the gw file exists")
     args = parser.parse_args(argv)
 
     cfg = load_config(Path(args.config))
@@ -131,7 +147,10 @@ def main(argv: list[str] | None = None) -> None:
             logger.info("within deadline blackout window (deadline=%s); skipping run", deadline)
             return
 
-    asyncio.run(COMMANDS[args.command](cfg))
+    if args.command == "top-picks":
+        asyncio.run(cmd_top_picks(cfg, top_n=args.top_n, force=args.force))
+    else:
+        asyncio.run(COMMANDS[args.command](cfg))
 
 
 if __name__ == "__main__":

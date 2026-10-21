@@ -41,6 +41,7 @@ export const VIEWS = [
   "papertrade",
   "data",
   "prices",
+  "ownership",
 ] as const;
 export type View = (typeof VIEWS)[number];
 

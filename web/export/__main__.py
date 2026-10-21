@@ -31,6 +31,7 @@ from web.export.fixtures import build_fixtures
 from web.export.golden import build_golden_spearman
 from web.export.normalize import normalization_basis
 from web.export.observations import build_observations
+from web.export.ownership import build_ownership
 from web.export.panel import build_panel, write_panel
 from web.export.papertrade import build_papertrade
 from web.export.reductions import build_golden_reductions
@@ -317,6 +318,20 @@ def cmd_prices(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_ownership(args: argparse.Namespace) -> None:
+    """Elite Ownership: top-N managers' ownership and EO for the latest
+    gameweek with a `top_picks.parquet` (collector `top-picks`). Committed,
+    and a pure local-file transform, so it is part of `all`. With no picks
+    yet it writes a `no_data` file rather than failing. See
+    `web/export/ownership.py`."""
+    file = build_ownership()
+    path, changed = write_json(rounded_json(file), "ownership.json", Path(args.out))
+    logger.info(
+        "%s status %s, gw %s, %d managers, %d players -> %s",
+        "wrote" if changed else "unchanged:", file.status, file.gw, file.n_managers, len(file.players), path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -330,6 +345,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_projections(args)
     cmd_observations(args)
     cmd_prices(args)
+    cmd_ownership(args)
     # `scorecard`, `shrinkage` and `papertrade` are deliberately excluded.
     # The scorecard is a walk-forward over the archive seasons only, so
     # nothing the current season does can change it, and it was ~95% of
@@ -359,6 +375,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("projections").set_defaults(func=cmd_projections)
     subparsers.add_parser("observations").set_defaults(func=cmd_observations)
     subparsers.add_parser("prices").set_defaults(func=cmd_prices)
+    subparsers.add_parser("ownership").set_defaults(func=cmd_ownership)
 
     papertrade_parser = subparsers.add_parser("papertrade")
     papertrade_parser.add_argument("--config", default="config/collector.yaml")

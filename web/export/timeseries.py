@@ -80,6 +80,8 @@ def load_distilled(distilled_dir: Path = DISTILLED_DIR) -> pl.DataFrame:
 
     frames = []
     for path in sorted(distilled_dir.glob("**/*.parquet")):
+        if path.name == "top_picks.parquet":  # a different table (collector top-picks)
+            continue
         gw = shard_gameweek(path)
         if gw is None:
             logger.warning("skipping shard outside a gw directory: %s", path)

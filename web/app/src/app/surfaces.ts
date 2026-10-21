@@ -134,6 +134,14 @@ export const SURFACES: Surface[] = [
     milestone: "5I",
   },
   {
+    view: "ownership",
+    section: "players",
+    label: "Elite Ownership",
+    blurb: "What the top managers own, start and captain against the field, with effective ownership.",
+    status: "live",
+    milestone: "5J",
+  },
+  {
     view: "fixtures",
     section: "fixtures",
     label: "Fixtures",

@@ -180,14 +180,17 @@ class PriceCycle:
 def load_distilled_history(distilled_dir: Path) -> pl.DataFrame:
     """Every distilled row, read once. The backtest needs player state at
     hundreds of timestamps, and `state_as_of` re-scans every shard per call."""
-    pattern = str(distilled_dir / "gw*" / "*.parquet").replace("\\", "/")
+    shards = sorted(
+        str(p).replace("\\", "/") for p in distilled_dir.glob("gw*/*.parquet") if p.name != "top_picks.parquet"
+    ) if distilled_dir.exists() else []
+    pattern = "[" + ", ".join(repr(p) for p in shards) + "]"
     columns = ["element_id", "snapshot_ts", *NUMERIC_DELTA_COLUMNS]
-    if not distilled_dir.exists() or not any(distilled_dir.glob("gw*/*.parquet")):
+    if not shards:
         return pl.DataFrame(schema={c: (pl.Datetime("us", "UTC") if c == "snapshot_ts" else pl.Float64) for c in columns})
     con = duckdb.connect()
     try:
         con.execute("SET TimeZone='UTC'")
-        return con.execute(f"SELECT {', '.join(columns)} FROM read_parquet('{pattern}')").pl().sort("snapshot_ts")
+        return con.execute(f"SELECT {', '.join(columns)} FROM read_parquet({pattern})").pl().sort("snapshot_ts")
     finally:
         con.close()
 
