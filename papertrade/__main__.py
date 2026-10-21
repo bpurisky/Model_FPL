@@ -25,6 +25,7 @@ from collector.config import load_config
 from papertrade.actuals import append_actuals, fetch_gw_actuals, fetch_missing_gw_actuals, load_actuals
 from papertrade.evaluate import (
     collect_freeze_provenance,
+    evaluate_captaincy,
     evaluate_player_level,
     evaluate_squad_level,
     fetch_real_gw_points,
@@ -90,6 +91,8 @@ async def cmd_evaluate(args: argparse.Namespace) -> None:
     player_level = evaluate_player_level(candidate_gws, actuals=actuals)
     player_eval_by_gw = player_level["included"]
 
+    captaincy_eval = evaluate_captaincy(candidate_gws, actuals=actuals)
+
     real_points_by_gw = await fetch_real_gw_points(cfg, entry_id)
     squad_eval = evaluate_squad_level(real_points_by_gw, actuals=actuals)
     price_eval = run_price_model_for_gate()
@@ -107,6 +110,7 @@ async def cmd_evaluate(args: argparse.Namespace) -> None:
         "player_level_excluded": player_level["excluded"],
         "player_level_skipped": player_level["skipped"],
         "squad_level": squad_eval,
+        "captaincy": captaincy_eval,
         "launch_gate": gate,
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
@@ -121,6 +125,10 @@ async def cmd_evaluate(args: argparse.Namespace) -> None:
     print(f"\nSquad level ({squad_eval['n_gameweeks']} gameweek(s)): real={squad_eval['cumulative_real_points']} "
           f"shadow={squad_eval['cumulative_shadow_points']} (shadow - real = {squad_eval['shadow_minus_real']:+d})")
     print(f"  {squad_eval['warning']}")
+    cap = captaincy_eval["summary"]
+    print(f"\nCaptaincy ({cap['n_gameweeks']} gameweek(s) scored, {len(captaincy_eval['skipped'])} skipped): "
+          f"mean pick x2 = {cap['mean_pick_points_x2']}, most-owned x2 = {cap['mean_most_owned_points_x2']}, "
+          f"Brier = {cap['calibration']['brier']} (climatology {cap['calibration']['brier_climatology']})")
     print(f"\nLaunch gate: {'READY' if gate['ready_to_launch'] else 'NOT READY'} ({gate['gameweeks_evaluated']}/13 gameweeks)")
     for name, c in gate["criteria"].items():
         print(f"  [{c['status']}] {name}: {c['detail']}")

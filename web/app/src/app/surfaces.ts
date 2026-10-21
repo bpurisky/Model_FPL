@@ -78,6 +78,14 @@ export const SURFACES: Surface[] = [
     milestone: "5I",
   },
   {
+    view: "captaincy",
+    section: "model",
+    label: "Captaincy",
+    blurb: "The model's captain candidates for the next gameweek, with the public record of every pick it has made.",
+    status: "live",
+    milestone: "6",
+  },
+  {
     view: "scorecard",
     section: "model",
     label: "Scorecard",

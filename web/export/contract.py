@@ -1078,6 +1078,121 @@ class PricesFile(_Strict):
     track_record: PriceTrackRecord
 
 
+class CaptaincyCandidate(_Strict):
+    """One row of the captaincy table: a player the model ranks among the
+    next gameweek's top 20 by xP.
+
+    `opponents` is the club's fixtures that gameweek (two in a double).
+    `xp` is the gameweek total, summed over a double. `p_haul` is
+    P(points >= `CaptaincyFile.haul_threshold`) and `p_low` P(points <= 2),
+    both from `analytics.haul`'s exact enumeration of the same model's
+    components. `ownership` is FPL's selected-by percentage at the
+    collector's latest snapshot, null if there is none.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    opponents: list[ProjectionFixture]
+    xp: float
+    p_haul: float
+    p_low: float
+    ownership: float | None
+
+
+class CaptaincyPick(_Strict):
+    """A frozen pick: who, and what the model said when it froze him."""
+
+    element_id: int
+    name: str | None
+    team: str | None
+    xp: float
+    p_haul: float
+
+
+class CaptaincyOwned(_Strict):
+    """The highest-owned player at freeze time, the template-captain baseline."""
+
+    element_id: int
+    name: str | None
+    ownership: float | None
+
+
+class CaptaincyGw(_Strict):
+    """One scored gameweek. Points are raw gameweek points and the `_x2`
+    fields apply the captain's multiplier. `best_of_shortlist` is the
+    best result among the frozen top five, hindsight and an upper bound for
+    the shortlist, not a pick anyone could have made in advance."""
+
+    gw: int
+    pick: CaptaincyPick
+    pick_points: int
+    pick_points_x2: int
+    pick_hauled: bool
+    most_owned: CaptaincyOwned | None
+    most_owned_points: int | None
+    most_owned_points_x2: int | None
+    best_of_shortlist: CaptaincyOwned
+    best_of_shortlist_points: int
+    best_of_shortlist_points_x2: int
+    shortlist_size: int
+
+
+class CaptaincyCalibration(_Strict):
+    """P(haul) scored pooled across every frozen candidate in every scored
+    gameweek: Brier score beside the climatological Brier (always predict
+    the pooled haul rate), the number it has to beat. All null when
+    nothing is scored."""
+
+    n: int
+    brier: float | None
+    brier_climatology: float | None
+    mean_p_haul: float | None
+    haul_rate: float | None
+
+
+class CaptaincySkipped(_Strict):
+    gw: int
+    reason: str
+
+
+class CaptaincyTrackRecord(_Strict):
+    """Every frozen captaincy pick, scored on the real results the way the
+    paper trade scores everything else (`papertrade.evaluate.evaluate_captaincy`).
+    `skipped` lists freezes that cannot be scored and why: those written
+    before the captaincy record existed (freezes are immutable, so they
+    stay without one) and any gameweek whose results are not in yet."""
+
+    n_gameweeks: int
+    mean_pick_points_x2: float | None
+    mean_most_owned_points_x2: float | None
+    mean_best_of_shortlist_points_x2: float | None
+    pick_haul_rate: float | None
+    calibration: CaptaincyCalibration
+    gameweeks: list[CaptaincyGw]
+    skipped: list[CaptaincySkipped]
+
+
+class CaptaincyFile(_Strict):
+    """`captaincy.json` — the model's captaincy table for the next gameweek
+    and its public record (§5.16 D18).
+
+    `gameweek` is the gameweek being captained (the one after the last
+    played, `header.source_gameweek`). `candidates` are the top 20 by xP,
+    best first; the first is the model's pick. This crosses §5.0.2 on the
+    condition that every pick is scored: `track_record` is that score.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    haul_threshold: int
+    method: str
+    candidates: list[CaptaincyCandidate]
+    track_record: CaptaincyTrackRecord
+
+
 def build_header(
     *,
     rows: int,
@@ -1196,6 +1311,8 @@ def contract_shape() -> dict[str, Any]:
         PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,
         PaperTradeGateCriterion, PaperTradeLaunchGate, PaperTradePriceEval, PaperTradeFile,
         PriceWatchPlayer, PriceInSampleFit, PriceCycleOutcome, PriceTrackRecord, PricesFile,
+        CaptaincyCandidate, CaptaincyPick, CaptaincyOwned, CaptaincyGw, CaptaincyCalibration,
+        CaptaincySkipped, CaptaincyTrackRecord, CaptaincyFile,
     )
     for model in models:
         fields = {}

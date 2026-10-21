@@ -712,6 +712,7 @@ def build_projections(
     horizon: list[int],
     availability: pl.DataFrame | None = None,
     scoreline: dict[int, pl.DataFrame] | None = None,
+    on_projection: Callable[[int, pl.DataFrame], None] | None = None,
 ) -> dict[int, dict[int, float]]:
     """Split out of `LiveData` on purpose — `papertrade/freeze.py` needs to
     project points for the shadow team's own state, which has no `LiveData`
@@ -728,6 +729,7 @@ def build_projections(
         df = project_points(
             train_df, target_roster, gw, scoring_config, difficulty_table,
             prior_history=prior, availability=availability, scoreline=scoreline.get(gw) if scoreline else None,
+            on_projection=on_projection,
         )
         projections[gw] = dict(zip(df["element_id"].to_list(), df["prediction"].to_list()))
     return projections

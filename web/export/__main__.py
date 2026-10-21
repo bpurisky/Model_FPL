@@ -36,6 +36,7 @@ from web.export.papertrade import build_papertrade
 from web.export.reductions import build_golden_reductions
 from web.export.players import build_players
 from web.export.projections import build_projections
+from web.export.captaincy import build_captaincy
 from web.export.prices import build_prices
 from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
@@ -317,6 +318,20 @@ def cmd_prices(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_captaincy(args: argparse.Namespace) -> None:
+    """The captaincy table for the next gameweek and the frozen picks'
+    public record (5.16 D18). Committed per 5.3.4. A pure local-file
+    transform (the freezes and actuals it scores are committed), so it is
+    part of `all`; the live calls belong to `papertrade.yml`."""
+    file = build_captaincy(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(rounded_json(file), "captaincy.json", Path(args.out))
+    logger.info(
+        "%s %d candidates for %s gw%d, %d pick(s) scored -> %s",
+        "wrote" if changed else "unchanged:", len(file.candidates), file.season, file.gameweek,
+        file.track_record.n_gameweeks, path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -328,6 +343,7 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_board(args)
     cmd_players(args)
     cmd_projections(args)
+    cmd_captaincy(args)
     cmd_observations(args)
     cmd_prices(args)
     # `scorecard`, `shrinkage` and `papertrade` are deliberately excluded.
@@ -359,6 +375,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("projections").set_defaults(func=cmd_projections)
     subparsers.add_parser("observations").set_defaults(func=cmd_observations)
     subparsers.add_parser("prices").set_defaults(func=cmd_prices)
+    subparsers.add_parser("captaincy").set_defaults(func=cmd_captaincy)
 
     papertrade_parser = subparsers.add_parser("papertrade")
     papertrade_parser.add_argument("--config", default="config/collector.yaml")
