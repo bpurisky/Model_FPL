@@ -70,6 +70,14 @@ export const SURFACES: Surface[] = [
     milestone: "5E",
   },
   {
+    view: "projections",
+    section: "model",
+    label: "Projections",
+    blurb: "Expected points for every player over the next six gameweeks, with the fixtures behind them.",
+    status: "live",
+    milestone: "5I",
+  },
+  {
     view: "scorecard",
     section: "model",
     label: "Scorecard",

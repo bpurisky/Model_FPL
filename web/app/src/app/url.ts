@@ -34,6 +34,7 @@ export const VIEWS = [
   "compare",
   "explorer",
   "board",
+  "projections",
   "scorecard",
   "trend",
   "optimizer",
