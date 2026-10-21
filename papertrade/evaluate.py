@@ -395,6 +395,15 @@ def evaluate_squad_level(
     }
 
 
+def price_gate_status(price_eval: PriceModelEvaluation) -> str:
+    """Criterion 5's status string: "insufficient data" until
+    `MIN_GATE_PREDICTED_MOVES` rise calls exist, then PASS iff the hit rate
+    beats 0.5. Shared with the Price Watch export so the two cannot disagree."""
+    if price_eval.hit_rate is None or price_eval.n_moves_predicted < MIN_GATE_PREDICTED_MOVES:
+        return "insufficient data"
+    return "PASS" if price_eval.hit_rate > 0.5 else "FAIL"
+
+
 def run_price_model_for_gate(
     distilled_dir: Path = DISTILLED_DIR,
     events_path: Path = EVENTS_PATH,
@@ -635,15 +644,14 @@ def launch_gate_report(
         "Scores rise calls only: falls are excluded because they are not predictable from this data "
         "(fall AUC <= 0.80, precision <= 0.25 in the 2026-10-21 investigation)."
     )
-    if price_eval.hit_rate is None or price_eval.n_moves_predicted < MIN_GATE_PREDICTED_MOVES:
-        price_status = "insufficient data"
+    price_status = price_gate_status(price_eval)
+    if price_status == "insufficient data":
         price_detail = (
             f"{price_eval.n_moves_predicted} rise call(s) so far over {price_eval.n_cycles or 0} out-of-sample "
             f"cycle(s) after config/price_model.yaml's fit_cutoff ({price_eval.n} player-cycle(s) scored); "
             f"{MIN_GATE_PREDICTED_MOVES} are needed before a hit rate is reported. {scope}"
         )
     else:
-        price_status = "PASS" if price_eval.hit_rate > 0.5 else "FAIL"
         price_detail = (
             f"hit_rate={price_eval.hit_rate:.2f} (95% CI [{price_eval.ci_low:.2f}, {price_eval.ci_high:.2f}]) "
             f"over {price_eval.n_moves_predicted} rise call(s) of {price_eval.n} player-cycle(s){window}. "

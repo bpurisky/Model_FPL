@@ -1,0 +1,254 @@
+/*
+ * Flat, not walled (§5.8.6) -- it reports a rule's reading of the numbers
+ * on disk, so it sits on `--ground` like Scorecard. The honesty block is
+ * the one thing that is boxed, because it is what the rest is read against.
+ */
+
+.priceWatch {
+  padding: var(--space-5) var(--gutter) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-inline-size: 1100px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
+  max-inline-size: 72ch;
+}
+
+/* --- the honesty header --------------------------------------------------- */
+
+.honesty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--flag-soft);
+  border: var(--hairline) solid var(--rule);
+  border-inline-start: 4px solid var(--flag);
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
+  color: var(--paper);
+}
+
+.honesty[data-scored] {
+  border-inline-start-color: var(--accent-ink);
+}
+
+.honestyTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.honestyLead {
+  margin: 0;
+  font-size: var(--text-sm);
+  max-inline-size: 80ch;
+  line-height: 1.5;
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-lg);
+}
+
+.honesty .note {
+  color: var(--paper);
+  opacity: 0.8;
+}
+
+/* --- panels ----------------------------------------------------------------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  padding: var(--card-pad);
+}
+
+.panelTitle {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.panelSub,
+.note {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: 0;
+  max-inline-size: 84ch;
+  line-height: 1.5;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  max-inline-size: 76ch;
+  line-height: 1.55;
+}
+
+/* --- filters ------------------------------------------------------------------ */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.group {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chip {
+  font: inherit;
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--selected-bg);
+  color: var(--selected-ink);
+  border-color: var(--selected-bg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+}
+
+.fieldLabel {
+  color: var(--muted);
+}
+
+.field select,
+.field input {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-2);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--panel);
+  color: var(--paper);
+}
+
+.more {
+  align-self: flex-start;
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--panel-2);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+/* --- table ---------------------------------------------------------------------- */
+
+.tableScroll {
+  overflow-x: auto;
+  max-inline-size: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+  inline-size: 100%;
+}
+
+.table th,
+.table td {
+  padding: var(--space-1) var(--space-3);
+  text-align: end;
+  border-block-end: var(--hairline) solid var(--rule);
+  white-space: nowrap;
+}
+
+.table thead th {
+  color: var(--muted);
+  font-weight: 400;
+  font-family: var(--font-body);
+}
+
+.table td {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.left {
+  text-align: start !important;
+  font-weight: 400;
+}
+
+/* An ineligible player stays visible, greyed: his progress is real, he just cannot be called. */
+.table tr[data-ineligible] {
+  color: var(--muted);
+}
+
+.table tr[data-ineligible] .fill {
+  background: var(--muted);
+  opacity: 0.45;
+}
+
+.progress {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bar {
+  display: inline-block;
+  inline-size: 7rem;
+  block-size: 0.5rem;
+  background: var(--panel-2);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-data);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  block-size: 100%;
+  background: var(--series-1);
+}
+
+.call[data-call="rise"] {
+  color: var(--good);
+  font-weight: 700;
+}
+
+.call[data-call="stable"] {
+  color: var(--muted);
+}
+
+.reason {
+  font-style: italic;
+}
