@@ -112,6 +112,24 @@ def _fpl_fields(benchmark: dict | None) -> dict:
     }
 
 
+# export field infix -> papertrade.evaluate baseline name
+_BASELINE_FIELDS = {
+    "trailing_mean": "trailing_mean",
+    "fpl_form": "fpl_form_approx",
+    "fixture_adj": "fixture_adjusted_trailing_mean",
+}
+
+
+def _baseline_fields(baselines: dict | None) -> dict:
+    if not baselines:
+        return {}
+    out = {}
+    for short, name in _BASELINE_FIELDS.items():
+        out[f"baseline_{short}_mae"] = json_safe(baselines[name]["mae"])
+        out[f"baseline_{short}_spearman_mean"] = json_safe(baselines[name]["spearman_within_position"].get("mean"))
+    return out
+
+
 def build_papertrade(
     *,
     real_points_by_gw: dict[int, int],
@@ -145,6 +163,7 @@ def build_papertrade(
             mae=json_safe(evaluation["mae"]),
             spearman_mean=json_safe(evaluation["spearman_within_position"].get("mean")),
             **_fpl_fields(evaluation.get("fpl_benchmark")),
+            **_baseline_fields(evaluation.get("baselines")),
         )
         for gw, evaluation in sorted(player_level["included"].items())
     ]

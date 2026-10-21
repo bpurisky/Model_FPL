@@ -111,17 +111,81 @@ def test_evaluate_squad_level_skips_gameweeks_missing_a_freeze_or_actuals(tmp_pa
     assert result["per_gw"] == []
 
 
-def test_launch_gate_report_reports_baseline_gap_as_soon_as_any_live_data_exists():
-    """The gate has no fixed gameweek minimum any more -- one real gameweek
-    is enough for a criterion to report its real answer. The baseline
-    criteria specifically never reach PASS regardless of gameweek count
-    (backtest/baselines.py isn't wired to live data yet), but they still
-    move off "insufficient data" the moment there is any live evidence."""
-    report = launch_gate_report({2: {}}, {"n_gameweeks": 1})
+def _gw_eval(n: int, mae: float, spearman: float, baselines: dict[str, tuple[float, float]] | None) -> dict:
+    return {
+        "n": n, "mae": mae, "spearman_within_position": {"mean": spearman},
+        "baselines": None if baselines is None else {
+            name: {"n": n, "mae": b_mae, "spearman_within_position": {"mean": b_rho}}
+            for name, (b_mae, b_rho) in baselines.items()
+        },
+    }
+
+
+_BEATEN = {"trailing_mean": (1.3, 0.60), "fpl_form_approx": (1.4, 0.55), "fixture_adjusted_trailing_mean": (1.2, 0.62)}
+
+
+def test_baseline_criteria_pass_when_the_model_beats_every_baseline():
+    report = launch_gate_report({6: _gw_eval(600, 1.1, 0.70, _BEATEN)}, {"n_gameweeks": 1})
+
+    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "PASS"
+    assert report["criteria"]["beats_baselines_on_rank_correlation"]["status"] == "PASS"
+
+
+def test_rank_criterion_fails_when_any_single_baseline_matches_or_beats_the_model():
+    baselines = {**_BEATEN, "fpl_form_approx": (1.4, 0.70)}  # a tie is not a win
+    report = launch_gate_report({6: _gw_eval(600, 1.1, 0.70, baselines)}, {"n_gameweeks": 1})
+
+    criterion = report["criteria"]["beats_baselines_on_rank_correlation"]
+    assert criterion["status"] == "FAIL"
+    assert "fpl_form_approx" in criterion["detail"]
+
+
+def test_mae_criterion_is_pooled_by_rows_not_averaged_per_gameweek():
+    """gw6 (1000 rows) the model wins by 0.1; gw7 (10 rows) it loses by 0.5.
+    A mean of per-gw means says the model loses; the pooled rows say it wins."""
+    report = launch_gate_report(
+        {
+            6: _gw_eval(1000, 1.0, 0.7, {**_BEATEN, "fixture_adjusted_trailing_mean": (1.1, 0.6)}),
+            7: _gw_eval(10, 1.5, 0.7, {**_BEATEN, "fixture_adjusted_trailing_mean": (1.0, 0.6)}),
+        },
+        {"n_gameweeks": 2},
+    )
+    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "PASS"
+
+
+def test_a_gameweek_without_a_live_baseline_is_named_not_counted():
+    report = launch_gate_report(
+        {1: _gw_eval(600, 1.1, 0.7, None), 6: _gw_eval(600, 1.1, 0.7, _BEATEN)}, {"n_gameweeks": 2}
+    )
+    detail = report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["detail"]
+    assert detail.startswith("1 gameweek pooled")
+    assert "gw1" in detail
+
+
+def test_baseline_criteria_report_insufficient_data_with_no_comparable_gameweek():
+    report = launch_gate_report({1: _gw_eval(600, 1.1, 0.7, None)}, {"n_gameweeks": 1})
 
     assert report["ready_to_launch"] is False
-    assert report["gameweeks_evaluated"] == 1
-    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "not wired to live baselines yet"
+    assert report["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["status"] == "insufficient data"
+    assert report["criteria"]["beats_baselines_on_rank_correlation"]["status"] == "insufficient data"
+
+
+def test_evaluate_gw_player_level_scores_baselines_over_the_models_own_players(tmp_path):
+    """Player 103 has actuals but no projection: the model can't score it,
+    so the baselines mustn't either."""
+    from papertrade.baselines import load_reference
+
+    write_freeze(6, {"projections": {"6": {"101": 5.0, "102": 3.0}}}, freezes_dir=tmp_path)
+    rows = [_actual_row(gw, eid, "MID", pts) for gw in range(1, 7) for eid, pts in ((101, 6), (102, 2), (103, 9))]
+    actuals = pl.DataFrame(rows, schema=_SCHEMA)
+
+    result = evaluate_gw_player_level(6, freezes_dir=tmp_path, actuals=actuals, reference=load_reference())
+
+    assert result["n"] == 2
+    assert set(result["baselines"]) == {"trailing_mean", "fpl_form_approx", "fixture_adjusted_trailing_mean"}
+    assert all(b["n"] == 2 for b in result["baselines"].values())
+    # trailing mean of a constant history is that constant -> zero error
+    assert result["baselines"]["trailing_mean"]["mae"] == pytest.approx(0.0)
 
 
 def test_launch_gate_report_never_fabricates_a_pass_with_no_data():
@@ -263,7 +327,7 @@ def test_excluded_gameweeks_do_not_count_toward_the_evaluated_total(tmp_path):
     assert gate["gameweeks_evaluated"] == 1  # gw3 only, not gw2
     assert gate["gameweeks_excluded"] == excluded
     detail = gate["criteria"]["beats_fixture_adjusted_trailing_mean_mae"]["detail"]
-    assert "gw2" in detail and "1 gameweek evaluated" in detail
+    assert "Excluded as null observations: gw2" in detail
 
 
 def test_evaluate_squad_level_excludes_a_degenerate_gameweek(tmp_path):

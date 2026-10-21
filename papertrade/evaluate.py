@@ -33,11 +33,10 @@ the exclusion in the gate rather than quietly shrinking the denominator.
 no fixed gameweek count a criterion must wait for before it can report
 PASS/FAIL — as soon as one real gameweek exists, a criterion that only
 needs that gameweek's data reports its real answer, not a placeholder.
-Two of the five (baseline comparison on live data) are still flagged as
-not wired up regardless of gameweek count — building the
-opponent-difficulty/kickoff-time-decorated live equivalent of
-`backtest/baselines.py`'s inputs is real, separate plumbing beyond this
-module's current scope. The fifth (§6.4's price-change hit rate) now calls
+Two of the five (baseline comparison on live data) score the three
+`backtest/baselines.py` baselines against the same live actuals, over the
+same players, via `papertrade/baselines.py` — retroactive but still
+point-in-time; see that module's docstring for why. The fifth (§6.4's price-change hit rate) now calls
 `analytics/price_model.py` directly — built alongside this module rather
 than left as a permanent gap — but its own module docstring is explicit
 that a hit rate this early is near-meaningless (unfitted thresholds, ~a
@@ -48,28 +47,38 @@ exist.
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import statistics
 from collections import Counter
 from collections.abc import Mapping
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import polars as pl
 
-from analytics.price_model import PriceModelEvaluation, run_price_model_evaluation
+from analytics.price_model import (
+    PriceModelEvaluation,
+    PriceThresholds,
+    cycle_observations,
+    daily_cycles,
+    evaluate_observations,
+    load_distilled_history,
+    load_thresholds,
+)
 from backtest.report import calibration_curve, mae, spearman_within_position
 from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import parse_entry_history
 from papertrade.actuals import ACTUALS_PATH, load_actuals
+from papertrade.baselines import LiveReference, baseline_predictions, live_panel, load_reference
 from papertrade.freeze import FREEZES_DIR, load_freeze
 from squad.reconstruct import squad_state_from_dict
 from squad.shadow import realized_points
 
 DISTILLED_DIR = Path("data/distilled")
-PRICE_MODEL_HORIZON_HOURS = 24  # FPL price changes land roughly once a day
+EVENTS_PATH = Path("data/reference/events.parquet")
 
 logger = logging.getLogger("papertrade.evaluate")
 
@@ -180,10 +189,19 @@ def freeze_degeneracy(gw: int, freezes_dir: Path = FREEZES_DIR, freeze: dict[str
     return projection_degeneracy(freeze.get("projections", {}).get(str(gw), {}))
 
 
-def evaluate_gw_player_level(gw: int, freezes_dir: Path = FREEZES_DIR, actuals: pl.DataFrame | None = None) -> dict[str, Any]:
+def evaluate_gw_player_level(
+    gw: int,
+    freezes_dir: Path = FREEZES_DIR,
+    actuals: pl.DataFrame | None = None,
+    reference: LiveReference | None = None,
+) -> dict[str, Any]:
     """MAE, within-position Spearman, and calibration for gw's frozen
     projections against its real results. Requires both a freeze file for
     `gw` and gw's actuals to already be recorded (`papertrade/actuals.py`).
+
+    `actuals` must be the whole store, not just gw's rows: the live
+    baselines (`papertrade/baselines.py`) build their trailing means from
+    the gameweeks before it.
     """
     freeze = load_freeze(gw, freezes_dir)
     # ValueError, not the bare KeyError this used to raise: `evaluate_player_level`
@@ -209,6 +227,7 @@ def evaluate_gw_player_level(gw: int, freezes_dir: Path = FREEZES_DIR, actuals: 
         "spearman_within_position": spearman_within_position(results),
         "calibration": calibration_curve(results),
         "fpl_benchmark": _fpl_benchmark(freeze, gw_actuals),
+        "baselines": _live_baselines(gw, actuals, results, reference),
         # Computed and returned even when degenerate, rather than raising:
         # the metrics for a null observation are still worth being able to
         # look at, and it is `evaluate_player_level` that decides what to
@@ -231,6 +250,28 @@ def _fpl_benchmark(freeze: dict[str, Any], gw_actuals: pl.DataFrame) -> dict[str
     return {"n": results.height, "mae": mae(results), "spearman_within_position": spearman_within_position(results)}
 
 
+def _live_baselines(
+    gw: int, actuals: pl.DataFrame, results: pl.DataFrame, reference: LiveReference | None
+) -> dict[str, dict[str, Any]] | None:
+    """§6.5 criteria 1-2's comparison set: each `backtest/baselines.py`
+    baseline for gw, scored over exactly the players in `results` (the
+    model's own scored rows) so a baseline can't win or lose on a
+    different denominator. None when gw has no earlier gameweek to build a
+    trailing mean from."""
+    reference = load_reference() if reference is None else reference
+    predictions = baseline_predictions(live_panel(actuals, reference), gw, reference)
+    if predictions is None:
+        return None
+    scored_rows = results.select("element_id", "position", "total_points")
+    out: dict[str, dict[str, Any]] = {}
+    for name, prediction in predictions.items():
+        scored = scored_rows.join(prediction, on="element_id", how="inner").with_columns(
+            (pl.col("prediction") - pl.col("total_points")).alias("error")
+        )
+        out[name] = {"n": scored.height, "mae": mae(scored), "spearman_within_position": spearman_within_position(scored)}
+    return out
+
+
 def evaluate_player_level(
     candidate_gws: list[int], freezes_dir: Path = FREEZES_DIR, actuals: pl.DataFrame | None = None
 ) -> dict[str, Any]:
@@ -249,13 +290,14 @@ def evaluate_player_level(
     was a freeze and it carried no signal.
     """
     actuals = load_actuals() if actuals is None else actuals
+    reference = load_reference() if candidate_gws else None
     included: dict[int, dict[str, Any]] = {}
     excluded: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
 
     for gw in sorted(candidate_gws):
         try:
-            evaluation = evaluate_gw_player_level(gw, freezes_dir=freezes_dir, actuals=actuals)
+            evaluation = evaluate_gw_player_level(gw, freezes_dir=freezes_dir, actuals=actuals, reference=reference)
         except (FileNotFoundError, ValueError) as exc:
             skipped.append({"gw": gw, "reason": str(exc)})
             logger.info("skipping gw%d player-level eval: %s", gw, exc)
@@ -350,13 +392,34 @@ def evaluate_squad_level(
 
 
 def run_price_model_for_gate(
-    distilled_dir: Path = DISTILLED_DIR, now: datetime | None = None, horizon_hours: int = PRICE_MODEL_HORIZON_HOURS
+    distilled_dir: Path = DISTILLED_DIR,
+    events_path: Path = EVENTS_PATH,
+    thresholds: PriceThresholds | None = None,
 ) -> PriceModelEvaluation:
-    """Predicts from pressure `horizon_hours` ago, checks the real outcome
-    now — the launch-gate's live invocation of `analytics/price_model.py`.
+    """The launch gate's live invocation of `analytics/price_model.py`: the
+    fitted thresholds, scored over every overnight price-change cycle
+    *after* their `fit_cutoff` and pooled — never a cycle the fit saw, and
+    never just the one 24h slice that happens to end when this runs.
+
+    Unfitted thresholds (no `config/price_model.yaml`) have no
+    out-of-sample span, so they report zero cycles rather than scoring
+    the whole history as if it were held out.
     """
-    now = now or datetime.now(timezone.utc)
-    return run_price_model_evaluation(distilled_dir, now - timedelta(hours=horizon_hours), now)
+    thresholds = thresholds or load_thresholds()
+    empty = PriceModelEvaluation(n=0, n_moves_predicted=0, hit_rate=None, ci_low=None, ci_high=None, n_cycles=0)
+    if thresholds.fit_cutoff is None:
+        return empty
+    history = load_distilled_history(distilled_dir)
+    if history.height == 0:
+        return empty
+    deadlines = pl.read_parquet(events_path)["deadline_time"].drop_nulls().to_list()
+    cutoff = datetime.combine(thresholds.fit_cutoff, datetime.min.time(), tzinfo=timezone.utc)
+    cycles = [c for c in daily_cycles(history["snapshot_ts"].unique().to_list(), deadlines) if c.prediction_ts >= cutoff]
+    if not cycles:
+        return empty
+    evaluation = evaluate_observations(cycle_observations(history, cycles), thresholds.rise, thresholds.fall)
+    span = f"{cycles[0].prediction_ts.date()} to {cycles[-1].prediction_ts.date()}"
+    return dataclasses.replace(evaluation, n_cycles=len(cycles), span=span)
 
 
 def collect_freeze_provenance(gws: list[int], freezes_dir: Path = FREEZES_DIR) -> list[dict[str, Any]]:
@@ -446,6 +509,84 @@ def _manual_correction_criterion(
     }
 
 
+FIXTURE_ADJUSTED_BASELINE = "fixture_adjusted_trailing_mean"
+
+
+def _with_note(criterion: dict[str, str], note: str) -> dict[str, str]:
+    return {**criterion, "detail": criterion["detail"] + note}
+
+
+def _pooled_mae(evaluations: list[dict[str, Any]]) -> float | None:
+    """n-weighted across gameweeks -- the MAE of every scored player-row
+    pooled, not a mean of per-gameweek means that would let a thin
+    gameweek count as much as a full one."""
+    rows = [(e["n"], e["mae"]) for e in evaluations if e["n"] and e["mae"] == e["mae"]]
+    total = sum(n for n, _ in rows)
+    return sum(n * m for n, m in rows) / total if total else None
+
+
+def _mean_spearman(evaluations: list[dict[str, Any]]) -> float | None:
+    values = [e["spearman_within_position"].get("mean") for e in evaluations]
+    values = [v for v in values if v is not None and v == v]
+    return sum(values) / len(values) if values else None
+
+
+def _baseline_comparison_gws(player_eval_by_gw: dict[int, dict]) -> tuple[list[int], list[int]]:
+    """(gws with a live baseline to compare against, gws without one).
+    A gameweek with no earlier actuals has no trailing mean, so it can't
+    be compared -- reported, not silently dropped."""
+    compared = [gw for gw, e in sorted(player_eval_by_gw.items()) if e.get("baselines")]
+    missing = [gw for gw in sorted(player_eval_by_gw) if gw not in compared]
+    return compared, missing
+
+
+def _missing_note(missing: list[int]) -> str:
+    if not missing:
+        return ""
+    return f" No live baseline for gw{', gw'.join(str(g) for g in missing)} (no earlier gameweek recorded), so not compared."
+
+
+def _baseline_mae_criterion(player_eval_by_gw: dict[int, dict]) -> dict[str, str]:
+    """§6.5 criterion 1: the model's pooled live MAE strictly below the
+    fixture-adjusted trailing mean's, over the same players and gameweeks."""
+    compared, missing = _baseline_comparison_gws(player_eval_by_gw)
+    if not compared:
+        return {"status": "insufficient data", "detail": f"0 gameweeks with a live baseline to compare against.{_missing_note(missing)}"}
+    model = _pooled_mae([player_eval_by_gw[gw] for gw in compared])
+    baseline = _pooled_mae([player_eval_by_gw[gw]["baselines"][FIXTURE_ADJUSTED_BASELINE] for gw in compared])
+    if model is None or baseline is None:
+        return {"status": "insufficient data", "detail": f"no scorable rows across gw{', gw'.join(map(str, compared))}."}
+    gw_word = "gameweek" if len(compared) == 1 else "gameweeks"
+    return {
+        "status": "PASS" if model < baseline else "FAIL",
+        "detail": (
+            f"{len(compared)} {gw_word} pooled: model MAE {model:.3f} vs fixture-adjusted trailing mean "
+            f"{baseline:.3f}.{_missing_note(missing)}"
+        ),
+    }
+
+
+def _baseline_rank_criterion(player_eval_by_gw: dict[int, dict]) -> dict[str, str]:
+    """§6.5 criterion 2: mean within-position Spearman strictly above
+    *every* baseline's -- losing to any one of the three is a FAIL."""
+    compared, missing = _baseline_comparison_gws(player_eval_by_gw)
+    if not compared:
+        return {"status": "insufficient data", "detail": f"0 gameweeks with a live baseline to compare against.{_missing_note(missing)}"}
+    model = _mean_spearman([player_eval_by_gw[gw] for gw in compared])
+    names = sorted(player_eval_by_gw[compared[0]]["baselines"])
+    baselines = {name: _mean_spearman([player_eval_by_gw[gw]["baselines"][name] for gw in compared]) for name in names}
+    if model is None or any(v is None for v in baselines.values()):
+        return {"status": "insufficient data", "detail": f"rank correlation undefined across gw{', gw'.join(map(str, compared))}."}
+    lost_to = [name for name, value in baselines.items() if not model > value]
+    listed = ", ".join(f"{name} {value:.3f}" for name, value in baselines.items())
+    gw_word = "gameweek" if len(compared) == 1 else "gameweeks"
+    verdict = f" Does not beat: {', '.join(lost_to)}." if lost_to else ""
+    return {
+        "status": "FAIL" if lost_to else "PASS",
+        "detail": f"{len(compared)} {gw_word}: model mean Spearman {model:.3f} vs {listed}.{verdict}{_missing_note(missing)}",
+    }
+
+
 def launch_gate_report(
     player_eval_by_gw: dict[int, dict],
     squad_eval: dict[str, Any],
@@ -481,32 +622,28 @@ def launch_gate_report(
         exclusion_note = f" Excluded as null observations: {listed}. {DEGENERATE_FREEZE_POLICY}"
     price_eval = price_eval or PriceModelEvaluation(n=0, n_moves_predicted=0, hit_rate=None, ci_low=None, ci_high=None)
 
+    window = (
+        f" across {price_eval.n_cycles} out-of-sample overnight cycle(s), {price_eval.span}"
+        if price_eval.n_cycles else ""
+    )
     if price_eval.hit_rate is None:
         price_status = "insufficient data"
         price_detail = (
-            f"analytics/price_model.py ran against {price_eval.n} player(s) but predicted zero actual moves "
-            "(rise/fall) to score — either too little distilled history has accumulated yet, or pressure "
-            "never crossed the model's (unfitted) thresholds in this window."
+            f"analytics/price_model.py scored {price_eval.n} player-cycle(s){window} but predicted zero "
+            "moves (rise/fall) to score -- either no cycle after the thresholds' fit_cutoff has completed "
+            "yet, or config/price_model.yaml is missing and there is no out-of-sample span at all."
         )
     else:
         price_status = "PASS" if price_eval.hit_rate > 0.5 else "FAIL"
         price_detail = (
             f"hit_rate={price_eval.hit_rate:.2f} (95% CI [{price_eval.ci_low:.2f}, {price_eval.ci_high:.2f}]) "
-            f"over {price_eval.n_moves_predicted} predicted move(s) of {price_eval.n} evaluated -- see "
-            "analytics/price_model.py's module docstring: thresholds are unfitted and this early a hit rate "
-            "carries little weight regardless of which side of 0.5 it lands on."
+            f"over {price_eval.n_moves_predicted} predicted move(s) of {price_eval.n} player-cycle(s){window}. "
+            "Thresholds are fitted on cycles before config/price_model.yaml's fit_cutoff and scored only after it."
         )
 
-    gw_word = "gameweek" if n_gws == 1 else "gameweeks"
     criteria = {
-        "beats_fixture_adjusted_trailing_mean_mae": {
-            "status": "insufficient data" if not sufficient else "not wired to live baselines yet",
-            "detail": f"{n_gws} {gw_word} evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count.{exclusion_note}",
-        },
-        "beats_baselines_on_rank_correlation": {
-            "status": "insufficient data" if not sufficient else "not wired to live baselines yet",
-            "detail": f"{n_gws} {gw_word} evaluated; same live-baseline gap as above.{exclusion_note}",
-        },
+        "beats_fixture_adjusted_trailing_mean_mae": _with_note(_baseline_mae_criterion(player_eval_by_gw), exclusion_note),
+        "beats_baselines_on_rank_correlation": _with_note(_baseline_rank_criterion(player_eval_by_gw), exclusion_note),
         "no_leakage_assertion_fired": _leakage_criterion(freeze_provenance, n_gws, sufficient),
         "squad_reconstruction_ran_without_manual_correction": _manual_correction_criterion(
             freeze_provenance, squad_eval, sufficient
