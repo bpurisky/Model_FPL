@@ -4,11 +4,23 @@ on:
   schedule:
     # Hourly: bootstrap-static + fixtures + element-summary (§2.1, §2.5).
     # Actions cron is best-effort and can drift 5-15 min under load — fine
-    # for hourly trend data, not for live-match polling (separate job below).
+    # for hourly trend data.
     - cron: "5 * * * *"
-    # Every 5 minutes: event-live, gated internally on whether any fixture
-    # is currently in its live window (collector/__main__.py cmd_live).
-    - cron: "*/5 * * * *"
+    # Price windows: bootstrap-static only, three extra times an hour.
+    # 18:xx gives analytics/price_model.py a fresh snapshot just before its
+    # 19:00 UTC cycle boundary (with ~4-5 snapshots a day its prediction
+    # landed anywhere from 13:00 to 18:30, and its 24h window drifted with
+    # it); 22:00-02:59 brackets FPL's nightly change (observed 2026-27:
+    # ~22:30-02:00 UTC) tightly. bootstrap is the only endpoint the price
+    # model reads, and it takes seconds where element-summary takes ~11
+    # minutes.
+    - cron: "20,35,50 18,22,23,0,1,2 * * *"
+    # There used to be a */5 event-live cron here. It wrote raw payloads to
+    # the throwaway runner and never committed or uploaded them
+    # (papertrade/actuals.py fetches /event/{gw}/live/ itself after the
+    # fact), and 288 scheduled runs a day is the kind of load GitHub
+    # throttles — by 2026-10 only ~10 runs a day were firing, about half
+    # of them that no-op, so ~4-5 snapshots a day reached the repo.
   workflow_dispatch: {}
 
 # Prevent overlapping runs from racing on the same Parquet shards / commits.
@@ -41,11 +53,20 @@ jobs:
           git config user.name "fpl-trends-collector"
           git config user.email "actions@users.noreply.github.com"
           git add data/reference data/distilled
-          git diff --staged --quiet || git commit -m "collector: hourly snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push
+          git diff --staged --quiet && exit 0
+          git commit -m "collector: hourly snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # The run takes ~11 minutes, and web.yml, papertrade.yml or a
+          # code push often lands on main meanwhile; a bare push was then
+          # rejected and the snapshot lost. Shards are timestamp-named, so
+          # rebasing onto anyone else's commit never conflicts.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((attempt * 10))
+          done
+          exit 1
 
-  live:
-    if: github.event.schedule == '*/5 * * * *'
+  prices:
+    if: github.event.schedule == '20,35,50 18,22,23,0,1,2 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,4 +74,16 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run python -m collector live
+      - run: uv run python -m collector bootstrap
+      - name: Commit snapshot
+        run: |
+          git config user.name "fpl-trends-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/reference data/distilled
+          git diff --staged --quiet && exit 0
+          git commit -m "collector: price-window snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((attempt * 10))
+          done
+          exit 1
