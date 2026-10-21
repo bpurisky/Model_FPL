@@ -347,35 +347,6 @@
 
 /* --- states --------------------------------------------------------- */
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  max-inline-size: 420px;
-}
-
-.track {
-  block-size: 2px;
-  background: var(--rule);
-}
-
-.fill {
-  block-size: 100%;
-  background: var(--paper);
-  transition: inline-size var(--dur-state) var(--ease);
-}
-
-.failure {
-  padding-inline-start: var(--space-3);
-  border-inline-start: 2px solid var(--flag);
-  max-inline-size: 68ch;
-}
-
-.failureHead {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-md);
-}
-
 @media (max-width: 760px) {
   .barRow {
     grid-template-columns: minmax(0, 1fr) 64px;

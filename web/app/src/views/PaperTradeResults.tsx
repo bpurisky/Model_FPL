@@ -29,6 +29,8 @@
  */
 
 import { useEffect, useState } from "react";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { Provenance } from "../components/Provenance";
 import { loadPaperTrade, type LoadProgress } from "../data/load";
 import type { PaperTradeFile, PaperTradeFreezeProvenance } from "../data/schema";
@@ -90,8 +92,24 @@ export function PaperTradeResults() {
     };
   }, []);
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.paperTrade}
+      title="Paper Trade Results"
+      file="papertrade.json"
+      label="Loading paper trade results"
+      progress={data.progress}
+    />
+  );
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.paperTrade}
+      title="Paper Trade Results"
+      heading="papertrade.json did not load."
+      command="papertrade"
+      error={data.error}
+    />
+  );
 
   const { file } = data;
 
@@ -423,50 +441,5 @@ function ProvenanceRow({ row }: { row: PaperTradeFreezeProvenance }) {
         )}
       </td>
     </tr>
-  );
-}
-
-// --- states ----------------------------------------------------------------
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.paperTrade}>
-      <h1 className={styles.title}>Paper Trade Results</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading paper trade results"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `papertrade.json — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting papertrade.json"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.paperTrade}>
-      <h1 className={styles.title}>Paper Trade Results</h1>
-      <div className={styles.failure} role="alert">
-        <p className={styles.failureHead}>papertrade.json did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
-        <p className={styles.sub}>
-          Run <code className="data">python -m web.export papertrade</code> and reload.
-        </p>
-      </div>
-    </main>
   );
 }

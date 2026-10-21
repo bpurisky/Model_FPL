@@ -16,7 +16,10 @@ import argparse
 import asyncio
 import json
 import logging
+import math
 from pathlib import Path
+
+from pydantic import BaseModel
 
 from collector.config import load_config
 from papertrade.evaluate import fetch_real_gw_points
@@ -55,6 +58,30 @@ def _body(payload: str) -> str:
     return json.dumps(data, sort_keys=True)
 
 
+# Significant figures kept for the two big, UI-facing files. The app shows
+# at most three decimals of any of these, so 12-digit floats are pure weight.
+# Applied here, in the export layer, and never to the golden files.
+ROUND_SIG_FIGS = 6
+
+
+def _round_floats(value: object, sig: int) -> object:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, float):
+        return float(f"{value:.{sig}g}") if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {k: _round_floats(v, sig) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_round_floats(v, sig) for v in value]
+    return value
+
+
+def rounded_json(file: BaseModel, sig: int = ROUND_SIG_FIGS) -> str:
+    """Compact JSON of `file` with every float rounded to `sig` significant figures."""
+    data = _round_floats(file.model_dump(mode="json"), sig)
+    return json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+
+
 def write_json(payload: str, name: str, out_dir: Path) -> tuple[Path, bool]:
     """Write only if the numbers actually changed.
 
@@ -87,7 +114,7 @@ def cmd_columns(args: argparse.Namespace) -> None:
         ),
         columns=REGISTRY,
     )
-    path, changed = write_json(file.model_dump_json(indent=2), "columns.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "columns.json", Path(args.out))
     logger.info("%s %d column entries -> %s", "wrote" if changed else "unchanged:", len(REGISTRY), path)
 
 
@@ -107,7 +134,7 @@ def cmd_correlations(args: argparse.Namespace) -> None:
     from `panel.parquet`, which is not committed, so this runs after
     `panel` rather than standing alone."""
     file = build_correlations(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "correlations.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "correlations.json", Path(args.out))
     hatched = sum(1 for c in file.cells if c.n < file.min_n_cell)
     logger.info(
         "%s %d cells over %d metrics x %d groups (%d below n=%d) -> %s",
@@ -122,7 +149,7 @@ def cmd_scorecard(args: argparse.Namespace) -> None:
     `data/historical/`, which is committed, so this one stands alone.
     """
     file = build_scorecard()
-    path, changed = write_json(file.model_dump_json(indent=2), "scorecard.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "scorecard.json", Path(args.out))
     logger.info(
         "%s %d rows over %d models x %d seasons -> %s",
         "wrote" if changed else "unchanged:", len(file.rows), len(file.models), len(file.seasons), path,
@@ -133,7 +160,7 @@ def cmd_fixtures(args: argparse.Namespace) -> None:
     """Elo difficulty beside FPL's static rating (§4.3). Committed per
     §5.3.4, and independent of `panel.parquet`."""
     file = build_fixtures()
-    path, changed = write_json(file.model_dump_json(indent=2), "fixtures.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "fixtures.json", Path(args.out))
     played = sum(1 for f in file.fixtures if f.played)
     logger.info(
         "%s %d fixtures (%d played) from %d elo matches seeded by %s -> %s",
@@ -146,7 +173,7 @@ def cmd_golden(args: argparse.Namespace) -> None:
     self-contained: it embeds the values its answers were computed over,
     because the TypeScript side cannot read the gitignored panel."""
     file = build_golden_spearman(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "golden_spearman.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "golden_spearman.json", Path(args.out))
     computable = sum(1 for p in file.pairs if p.rho is not None)
     logger.info(
         "%s %d golden pairs (%d computable) over %d samples -> %s",
@@ -160,7 +187,7 @@ def cmd_reductions(args: argparse.Namespace) -> None:
     seasons predating the 2025-26 defensive metrics, so the empty-set
     rule is covered by real absence rather than a constructed blank."""
     file = build_golden_reductions(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "golden_reductions.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "golden_reductions.json", Path(args.out))
     absent = len({c.column for c in file.cases if c.n == 0})
     logger.info(
         "%s %d reduction cases over %d columns x %d rows (%d absent) -> %s",
@@ -175,7 +202,7 @@ def cmd_shrinkage(args: argparse.Namespace) -> None:
     changes when a gameweek lands — and it costs one walk-forward per
     sweep point. Run it when the model changes."""
     file = build_shrinkage()
-    path, changed = write_json(file.model_dump_json(indent=2), "shrinkage.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "shrinkage.json", Path(args.out))
     both = sum(1 for p in file.points if p.beats_mae_bar and p.beats_spearman_bar)
     logger.info(
         "%s %d sweep points, %d clearing both bars, default %.2f -> %s",
@@ -199,7 +226,7 @@ def cmd_board(args: argparse.Namespace) -> None:
     """The Model Board (§5.4.6): a ranked list and three buckets over one
     composite, with each bucket's measured worth attached."""
     file = build_board(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "board.json", Path(args.out))
+    path, changed = write_json(rounded_json(file), "board.json", Path(args.out))
     logger.info(
         "%s %d players at %s gw%d -> %s",
         "wrote" if changed else "unchanged:", len(file.players), file.season, file.gameweek, path,
@@ -210,7 +237,7 @@ def cmd_players(args: argparse.Namespace) -> None:
     """Per-player current state and projection (§5.3.2). Committed per
     §5.3.4, so a fresh clone renders Comparison and Explorer."""
     file = build_players(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "players.json", Path(args.out))
+    path, changed = write_json(rounded_json(file), "players.json", Path(args.out))
     logger.info(
         "%s %d players at %s gw%d, projecting gw%d (%s) -> %s",
         "wrote" if changed else "unchanged:", len(file.players), file.season,
@@ -222,7 +249,7 @@ def cmd_observations(args: argparse.Namespace) -> None:
     """The values behind the matrix (§5.6.1). Committed, and loaded by the
     app only when the reader changes the season selection."""
     file = build_observations(panel_path=Path(args.out) / "panel.parquet")
-    path, changed = write_json(file.model_dump_json(indent=2), "observations.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "observations.json", Path(args.out))
     logger.info(
         "%s %d player-seasons over %d metrics (%s) -> %s",
         "wrote" if changed else "unchanged:", len(file.rows), len(file.metrics),
@@ -250,7 +277,7 @@ def cmd_papertrade(args: argparse.Namespace) -> None:
     real_points_by_gw = asyncio.run(_fetch(entry_id, cfg))
 
     file = build_papertrade(real_points_by_gw=real_points_by_gw)
-    path, changed = write_json(file.model_dump_json(indent=2), "papertrade.json", Path(args.out))
+    path, changed = write_json(file.model_dump_json(), "papertrade.json", Path(args.out))
     logger.info(
         "%s squad-level %d gw(s), player-level %d gw(s), gate %s -> %s",
         "wrote" if changed else "unchanged:", file.squad_level.n_gameweeks,

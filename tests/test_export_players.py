@@ -18,6 +18,7 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from web.export.__main__ import ROUND_SIG_FIGS, _round_floats
 from web.export.contract import PlayersFile
 from web.export.current import load_current_actuals
 from web.export.players import ACTUAL_TOTALS, build_players
@@ -212,5 +213,9 @@ def test_the_committed_file_matches_a_fresh_build():
     current = json.loads(_built(generated_at).model_dump_json())
     for p in (payload, current):
         del p["header"]
+    # players.json is written rounded (web.export.__main__.rounded_json), so
+    # compare at that precision; rounding is idempotent on already-rounded data.
+    payload = _round_floats(payload, ROUND_SIG_FIGS)
+    current = _round_floats(current, ROUND_SIG_FIGS)
 
     assert payload == current, "data/web/v1/players.json is stale -- regenerate it"

@@ -38,6 +38,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "../app/state";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { BucketBadge } from "../components/BucketBadge";
 import { FilterBar } from "../components/FilterBar";
 import { Provenance } from "../components/Provenance";
@@ -330,9 +332,27 @@ export function FormMatrix() {
     return Math.max(reduce(magnitudes, "quantile", 0.95) ?? 1, 1e-9);
   }, [data]);
 
-  if (engine.status === "opening") return <Opening progress={engine.progress} />;
+  if (engine.status === "opening") return (
+    <LoadingState
+      rootClassName={styles.form}
+      title="Form Matrix"
+      file="panel.parquet"
+      label="Loading the panel"
+      progress={engine.progress}
+      unit="MB"
+      spaced
+    />
+  );
   if (engine.status === "absent") return <PanelAbsent />;
-  if (engine.status === "error") return <Failed error={engine.error} />;
+  if (engine.status === "error") return (
+    <ErrorState
+      rootClassName={styles.form}
+      title="Form Matrix"
+      heading="The panel did not load."
+      variant="quiet"
+      error={engine.error}
+    />
+  );
 
   const metricColumns = engine.columns.columns.filter(
     (column) => column.role === "quantitative",
@@ -781,34 +801,6 @@ function Key() {
   );
 }
 
-function Opening({ progress }: { progress: LoadProgress | null }) {
-  const mb = (bytes: number) => `${(bytes / 1_048_576).toFixed(1)} MB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.form}>
-      <h1 className={styles.title}>Form Matrix</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading the panel"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `panel.parquet — ${mb(progress.received)}${progress.total ? ` of ${mb(progress.total)}` : ""}`
-            : "requesting panel.parquet"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
 /** §5.14.8's explanatory empty state. */
 function PanelAbsent() {
   return (
@@ -823,18 +815,6 @@ function PanelAbsent() {
         <p className={styles.sub}>
           Run <code className="data">python -m web.export panel</code> and reload.
         </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.form}>
-      <h1 className={styles.title}>Form Matrix</h1>
-      <div className={styles.absent} role="alert">
-        <p className={styles.absentHead}>The panel did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
       </div>
     </main>
   );

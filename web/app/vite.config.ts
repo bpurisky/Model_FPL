@@ -41,6 +41,9 @@ function committedExports(): Plugin {
       mkdirSync(out, { recursive: true });
       for (const name of readdirSync(EXPORT_DIR)) {
         if (!name.endsWith(".json")) continue;
+        // Test fixtures (frontend golden tests, Python parity tests): kept
+        // committed, but the app never fetches them, so they do not ship.
+        if (name.startsWith("golden_")) continue;
         copyFileSync(join(EXPORT_DIR, name), join(out, name));
       }
     },

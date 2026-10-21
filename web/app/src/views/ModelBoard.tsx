@@ -39,6 +39,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "../app/state";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { Provenance } from "../components/Provenance";
 import { loadBoard, loadColumns, type LoadProgress } from "../data/load";
 import type { BoardFile, BoardPlayer, ColumnsFile, ColumnSpec } from "../data/schema";
@@ -100,8 +102,24 @@ export function ModelBoard() {
       .filter((player) => bucket === "all" || player.bucket === bucket);
   }, [data, position, bucket]);
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.board}
+      title="Model Board"
+      file="board.json"
+      label="Loading the board"
+      progress={data.progress}
+    />
+  );
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.board}
+      title="Model Board"
+      heading="board.json did not load."
+      command="board"
+      error={data.error}
+    />
+  );
 
   const { board } = data;
   const label = (key: string) => columnIndex.get(key)?.label ?? key;
@@ -494,50 +512,5 @@ function Weights({ board, label }: { board: BoardFile; label: (key: string) => s
         </>
       )}
     </section>
-  );
-}
-
-// --- states ------------------------------------------------------------
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.board}>
-      <h1 className={styles.title}>Model Board</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading the board"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `board.json — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting board.json"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.board}>
-      <h1 className={styles.title}>Model Board</h1>
-      <div className={styles.failure} role="alert">
-        <p className={styles.failureHead}>board.json did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
-        <p className={styles.sub}>
-          Run <code className="data">python -m web.export board</code> and reload.
-        </p>
-      </div>
-    </main>
   );
 }
