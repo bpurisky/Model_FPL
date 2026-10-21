@@ -1,12 +1,12 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-08-24T02:35:04.994006Z",
+    "generated_at": "2026-10-21T16:02:26.949060Z",
     "source_gameweek": null,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "a4f5cdc4f9b6dd7e75a701dd90d8ba6472b4bcb7",
+    "model_git_sha": "0aad7a06033851ca3f0c96f478be36cbaf44b520",
     "normalization_basis": "within_position_season_to_date_min45_per_fixture",
-    "rows": 33,
+    "rows": 36,
     "current_season": "2026-27"
   },
   "columns": [
@@ -301,6 +301,69 @@
         "FWD": "context"
       },
       "higher_is_better": null,
+      "available_from_season": null,
+      "available_to_season": null
+    },
+    {
+      "key": "penalties_order",
+      "label": "Penalties",
+      "role": "ordinal",
+      "unit": null,
+      "format": "d",
+      "definition": "FPL's penalty-taker rank for the player: 1 is first choice, 2 the backup. Null when FPL lists him as nobody's taker. Current season only.",
+      "source": "fpl_api",
+      "grain": "player",
+      "normalizable": false,
+      "normalized_key": null,
+      "position_relevance": {
+        "GK": "context",
+        "DEF": "context",
+        "MID": "context",
+        "FWD": "context"
+      },
+      "higher_is_better": false,
+      "available_from_season": null,
+      "available_to_season": null
+    },
+    {
+      "key": "corners_order",
+      "label": "Corners",
+      "role": "ordinal",
+      "unit": null,
+      "format": "d",
+      "definition": "FPL's rank for corners and indirect free kicks: 1 is first choice. Null when FPL lists him as nobody's taker. Current season only.",
+      "source": "fpl_api",
+      "grain": "player",
+      "normalizable": false,
+      "normalized_key": null,
+      "position_relevance": {
+        "GK": "context",
+        "DEF": "context",
+        "MID": "context",
+        "FWD": "context"
+      },
+      "higher_is_better": false,
+      "available_from_season": null,
+      "available_to_season": null
+    },
+    {
+      "key": "direct_freekicks_order",
+      "label": "Direct FKs",
+      "role": "ordinal",
+      "unit": null,
+      "format": "d",
+      "definition": "FPL's rank for direct free kicks: 1 is first choice. Null when FPL lists him as nobody's taker. Current season only.",
+      "source": "fpl_api",
+      "grain": "player",
+      "normalizable": false,
+      "normalized_key": null,
+      "position_relevance": {
+        "GK": "context",
+        "DEF": "context",
+        "MID": "context",
+        "FWD": "context"
+      },
+      "higher_is_better": false,
       "available_from_season": null,
       "available_to_season": null
     },

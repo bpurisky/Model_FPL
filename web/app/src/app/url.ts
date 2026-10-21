@@ -38,6 +38,7 @@ export const VIEWS = [
   "trend",
   "optimizer",
   "papertrade",
+  "data",
 ] as const;
 export type View = (typeof VIEWS)[number];
 

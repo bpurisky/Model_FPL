@@ -204,14 +204,22 @@ def write_distilled_shard(distilled_dir: Path, event_id: int, changed_df: pl.Dat
 # --------------------------------------------------------------------------
 
 
+SET_PIECE_FIELDS = ("penalties_order", "corners_and_indirect_freekicks_order", "direct_freekicks_order")
+_PLAYER_REFERENCE_FIELDS = {"id", "code", "web_name", "team", "element_type", *SET_PIECE_FIELDS}
+
+
 def write_reference(reference_dir: Path, bootstrap: BootstrapStatic, fixtures: list[Fixture]) -> None:
     reference_dir.mkdir(parents=True, exist_ok=True)
 
     pl.DataFrame([t.model_dump(include={"id", "name", "short_name", "strength"}) for t in bootstrap.teams]).write_parquet(
         reference_dir / "teams.parquet"
     )
+    # The three set-piece orders were dropped here until they were wanted by
+    # the Explorer; explicit Int64 so an all-null column (nobody listed) is
+    # not written as the Null type, which polars cannot join or cast later.
     pl.DataFrame(
-        [el.model_dump(include={"id", "code", "web_name", "team", "element_type"}) for el in bootstrap.elements]
+        [el.model_dump(include=_PLAYER_REFERENCE_FIELDS) for el in bootstrap.elements],
+        schema_overrides={f: pl.Int64 for f in SET_PIECE_FIELDS},
     ).write_parquet(reference_dir / "players.parquet")
     pl.DataFrame(
         [e.model_dump(include={"id", "name", "deadline_time", "finished", "is_current", "is_next"}) for e in bootstrap.events]

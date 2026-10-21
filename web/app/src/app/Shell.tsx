@@ -70,6 +70,10 @@ const SquadOptimizer = lazy(() =>
   import("../views/SquadOptimizer").then((module) => ({ default: module.SquadOptimizer })),
 );
 
+const DataApi = lazy(() =>
+  import("../views/DataApi").then((module) => ({ default: module.DataApi })),
+);
+
 export function App() {
   return (
     <AppState>
@@ -250,6 +254,11 @@ function Shell() {
         {state.view === "optimizer" && (
           <Suspense fallback={<PageLoading />}>
             <SquadOptimizer />
+          </Suspense>
+        )}
+        {state.view === "data" && (
+          <Suspense fallback={<PageLoading />}>
+            <DataApi />
           </Suspense>
         )}
         {current.status !== "live" && <Planned surface={current} />}

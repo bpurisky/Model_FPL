@@ -380,6 +380,11 @@ export const PlayerRow = z.object({
   actuals: z.record(z.string(), z.number().nullable()),
   metrics: z.record(z.string(), PlayerMetric),
   projection: PlayerProjection.nullable(),
+  // Added after 5D, contract_version unchanged: set-piece taker rank,
+  // 1 = first choice. Absent in a file built before the collector kept them.
+  penalties_order: z.number().int().nullable().optional(),
+  corners_order: z.number().int().nullable().optional(),
+  direct_freekicks_order: z.number().int().nullable().optional(),
 });
 
 export const ProjectionBasis = z.enum(["next_fixture", "fixture_neutral"]);

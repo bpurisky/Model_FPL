@@ -251,3 +251,30 @@ def test_reference_fixtures_carry_fpl_difficulty(tmp_path: Path, bootstrap_paylo
 
     row = pl.read_parquet(tmp_path / "fixtures.parquet").row(0, named=True)
     assert (row["team_h_difficulty"], row["team_a_difficulty"]) == (2, 4)
+
+
+def test_reference_players_keep_set_piece_orders(tmp_path: Path, bootstrap_payload, fixtures_payload):
+    """FPL's penalty / corner / free-kick taker ranks used to be dropped on
+    the way into players.parquet. They are kept, null for a player FPL lists
+    as nobody's taker, and an all-null column keeps an Int64 dtype so the
+    exporter can still cast and join it."""
+    import polars as pl
+
+    from collector.schemas import parse_fixtures
+    from collector.snapshot import SET_PIECE_FIELDS, write_reference
+
+    bootstrap_payload["elements"][0].update(
+        {"penalties_order": 1, "corners_and_indirect_freekicks_order": 2, "direct_freekicks_order": None}
+    )
+    bootstrap = parse_bootstrap_static(bootstrap_payload, logging.getLogger("test"))
+    fixtures = parse_fixtures(fixtures_payload, logging.getLogger("test"))
+
+    write_reference(tmp_path, bootstrap, fixtures)
+
+    players = pl.read_parquet(tmp_path / "players.parquet")
+    first = players.row(0, named=True)
+    assert (first["penalties_order"], first["corners_and_indirect_freekicks_order"]) == (1, 2)
+    assert first["direct_freekicks_order"] is None
+    # Absent from the payload entirely (older / synthetic) -> null, not an error.
+    assert all(players.row(1, named=True)[f] is None for f in SET_PIECE_FIELDS)
+    assert players.schema["direct_freekicks_order"] == pl.Int64
