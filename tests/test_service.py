@@ -228,7 +228,18 @@ def test_shape_response_pairs_transfers_and_marks_the_captain():
         history_gws=3,
     )
 
-    body = app_module.shape_response(999, live, result, [4])
+    rating = {"current_xi_xp": 40.0, "recommended_xp": 44.123, "optimum_xp": 50.0, "team_rating": 80.0}
+    chips = {
+        "chips": [{"chip": "bboost", "gw": 4, "gain": 6.4567, "available": True}],
+        "best_gw": {"bboost": 4},
+    }
+    body = app_module.shape_response(999, live, result, [4], rating, chips)
+
+    assert body["team_rating"] == 80.0
+    assert body["recommended_xp"] == 44.12
+    assert body["chips"] == [{"chip": "bboost", "gw": 4, "gain": 6.46, "available": True}]
+    assert body["chip_best_gw"] == {"bboost": 4}
+    assert "team_rating" not in app_module.shape_response(999, live, result, [4])
 
     assert body["entry_id"] == 999
     assert body["transfers"] == [{"out": {"element_id": 1, "name": "Keeper1", "position": "GK", "club": "ARS", "now_cost": 50}, "in": {"element_id": 2, "name": "Keeper2", "position": "GK", "club": "LIV", "now_cost": 55}}]
