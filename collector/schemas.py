@@ -36,6 +36,10 @@ __all__ = [
     "EntryTransfer",
     "EntryPick",
     "EntryPicksPayload",
+    "StandingsEntry",
+    "StandingsPage",
+    "LeagueStandings",
+    "parse_league_standings",
     "resolve_current_event",
     "resolve_next_event",
     "parse_bootstrap_static",
@@ -460,6 +464,33 @@ def parse_entry_picks(raw: dict[str, Any], logger: logging.Logger) -> EntryPicks
     payload = EntryPicksPayload.model_validate(raw)
     warn_on_extra_fields(payload, "entry-picks", logger)
     _warn_all(payload.picks, "entry-picks.picks", logger)
+    return payload
+
+
+# --------------------------------------------------------------------------
+# classic league standings (the overall league, for top-N picks)
+# --------------------------------------------------------------------------
+
+
+class StandingsEntry(_LenientModel):
+    entry: int
+    rank: int
+
+
+class StandingsPage(_LenientModel):
+    results: list[StandingsEntry]
+    has_next: bool = False
+    page: int = 1
+
+
+class LeagueStandings(_LenientModel):
+    standings: StandingsPage
+
+
+def parse_league_standings(raw: dict[str, Any], logger: logging.Logger) -> LeagueStandings:
+    payload = LeagueStandings.model_validate(raw)
+    warn_on_extra_fields(payload, "league-standings", logger)
+    _warn_all(payload.standings.results, "league-standings.results", logger)
     return payload
 
 

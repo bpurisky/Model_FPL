@@ -21,12 +21,14 @@
 
 import {
   loadBoard,
+  loadCaptaincy,
   loadColumns,
   loadCorrelations,
   loadFixtures,
   loadObservations,
   loadPaperTrade,
   loadPlayers,
+  loadOwnership,
   loadPrices,
   loadProjections,
   loadScorecard,
@@ -86,12 +88,28 @@ export const DATA_FILES: readonly DataFile[] = [
     loadHeader: loadProjections,
   },
   {
+    name: "captaincy.json",
+    format: "json",
+    description:
+      "The model's top 20 captaincy candidates for the next gameweek (xP, chance of a haul, ownership), and the scored record of every captain pick it has frozen.",
+    cadence: "every_6h",
+    loadHeader: loadCaptaincy,
+  },
+  {
     name: "prices.json",
     format: "json",
     description:
       "The current price cycle: each player's 24h net transfers against the fitted rise threshold, eligibility and the rise-only call, with the rule's out-of-sample track record.",
     cadence: "every_6h",
     loadHeader: loadPrices,
+  },
+  {
+    name: "ownership.json",
+    format: "json",
+    description:
+      "Elite ownership: for the latest gameweek with collected picks, each player's ownership among the top managers, starting and captain share, effective ownership, and the gap to the whole field.",
+    cadence: "every_6h",
+    loadHeader: loadOwnership,
   },
   {
     name: "fixtures.json",

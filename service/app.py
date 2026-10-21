@@ -53,6 +53,7 @@ from squad.live import (
     fetch_gameweek_context,
     live_data_caveat,
 )
+from squad.rating import chip_comparison, team_rating
 from squad.optimize import OptimizationResult, Player, pair_transfers_by_position, optimize_squad, prune_pool, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -156,7 +157,12 @@ def _player_json(live: LiveData, pool_by_id: dict[int, Player], element_id: int)
 
 
 def shape_response(
-    entry_id: int, live: LiveData, result: OptimizationResult, horizon: list[int]
+    entry_id: int,
+    live: LiveData,
+    result: OptimizationResult,
+    horizon: list[int],
+    rating: dict[str, float] | None = None,
+    chips: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """`OptimizationResult` -> the JSON contract `data/optimizer.ts` parses.
     Deliberately flat and explicit rather than a dataclass `asdict()` --
@@ -164,6 +170,11 @@ def shape_response(
     here is what keeps the two able to disagree loudly instead of
     silently, the same argument `web/export/contract.py` makes for the
     static exports.
+
+    `rating` (squad/rating.py:team_rating) and `chips`
+    (squad/rating.py:chip_comparison) are projections of the same xP, shown
+    only when given: `current_xi_xp`, `recommended_xp`, `optimum_xp`,
+    `team_rating` (0-100), and `chips` / `best_gw`.
     """
     pool_by_id = {p.element_id: p for p in live.pool}
     current_ids = {sp.element_id for sp in live.squad.players}
@@ -209,7 +220,15 @@ def shape_response(
         for week in result.plan
     ]
 
+    extras: dict[str, Any] = {}
+    if rating is not None:
+        extras.update({k: round(v, 2) for k, v in rating.items()})
+    if chips is not None:
+        extras["chips"] = [{**row, "gain": round(float(row["gain"]), 2)} for row in chips["chips"]]
+        extras["chip_best_gw"] = chips["best_gw"]
+
     return {
+        **extras,
         "entry_id": entry_id,
         "data_gw": live.data_gw,
         "history_gws": live.history_gws,
@@ -273,9 +292,10 @@ def _solve(ctx: GameweekContext, entry: EntryData, payload: RecommendRequest) ->
             availability=live.availability, scoreline=live.scoreline,
         ),
     )
+    pool = prune_pool(live.squad, live.pool, projections, horizon)
     result = optimize_squad(
         live.squad,
-        prune_pool(live.squad, live.pool, projections, horizon),
+        pool,
         projections,
         horizon=horizon,
         free_transfers=live.free_transfers,
@@ -283,7 +303,9 @@ def _solve(ctx: GameweekContext, entry: EntryData, payload: RecommendRequest) ->
         hit_cost=payload.hit_cost,
         max_banked=live.scoring_config["free_transfers"]["max_banked"],
     )
-    return shape_response(payload.entry_id, live, result, horizon)
+    rating = team_rating(live.squad, live.pool, projections, horizon, result, payload.hit_cost)
+    chips = chip_comparison(live.squad, live.pool, projections, horizon, result, rating, live.chips_used)
+    return shape_response(payload.entry_id, live, result, horizon, rating, chips)
 
 
 async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:

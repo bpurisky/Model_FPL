@@ -326,6 +326,120 @@ def evaluate_player_level(
     return {"included": included, "excluded": excluded, "skipped": skipped}
 
 
+CAPTAIN_MULTIPLIER = 2
+
+
+def _points_by_element(gw_actuals: pl.DataFrame) -> dict[int, int]:
+    return {int(e): int(p) for e, p in zip(gw_actuals["element_id"].to_list(), gw_actuals["total_points"].to_list())}
+
+
+def evaluate_gw_captaincy(freeze: dict[str, Any], gw_actuals: pl.DataFrame) -> dict[str, Any]:
+    """One gameweek's captaincy record: the frozen pick's real points, the
+    highest-owned player's, and the best of the frozen shortlist (an upper
+    bound on what the shortlist could have delivered, not a pick anyone
+    could have made in advance). All are raw gameweek points; the `_x2`
+    fields apply the captain's multiplier. A player with no actuals row is
+    scored 0, which is what FPL gives a player who did not feature; the
+    vice-captain auto-substitution is not modelled."""
+    block = freeze["captaincy"]
+    points = _points_by_element(gw_actuals)
+    pick = block["pick"]
+    shortlist = block["shortlist"]
+    owned = block.get("most_owned")
+    shortlist_points = [points.get(c["element_id"], 0) for c in shortlist]
+    best_i = max(range(len(shortlist)), key=lambda i: shortlist_points[i])
+    pick_points = points.get(pick["element_id"], 0)
+    owned_points = points.get(owned["element_id"], 0) if owned else None
+    haul = block["haul_threshold"]
+    return {
+        "gw": int(freeze["gameweek"]),
+        "pick": {k: pick[k] for k in ("element_id", "name", "team", "xp", "p_haul")},
+        "pick_points": pick_points,
+        "pick_points_x2": pick_points * CAPTAIN_MULTIPLIER,
+        "pick_hauled": pick_points >= haul,
+        "most_owned": ({"element_id": owned["element_id"], "name": owned.get("name"), "ownership_pct": owned.get("ownership_pct")} if owned else None),
+        "most_owned_points": owned_points,
+        "most_owned_points_x2": owned_points * CAPTAIN_MULTIPLIER if owned_points is not None else None,
+        "best_of_shortlist": {"element_id": shortlist[best_i]["element_id"], "name": shortlist[best_i].get("name")},
+        "best_of_shortlist_points": shortlist_points[best_i],
+        "best_of_shortlist_points_x2": shortlist_points[best_i] * CAPTAIN_MULTIPLIER,
+        "shortlist_size": len(shortlist),
+        "calibration_rows": [
+            {"p_haul": float(c["p_haul"]), "hauled": points.get(c["element_id"], 0) >= haul}
+            for c in block["candidates"]
+        ],
+    }
+
+
+def brier_score(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Pooled Brier score of the frozen P(haul)s against whether each
+    candidate hauled, with the climatological Brier (always predicting the
+    pooled haul rate) beside it: the number a forecast has to beat to say
+    anything. Both None when there is nothing to score."""
+    if not rows:
+        return {"n": 0, "brier": None, "brier_climatology": None, "mean_p_haul": None, "haul_rate": None}
+    n = len(rows)
+    rate = sum(r["hauled"] for r in rows) / n
+    return {
+        "n": n,
+        "brier": sum((r["p_haul"] - r["hauled"]) ** 2 for r in rows) / n,
+        "brier_climatology": rate * (1 - rate),
+        "mean_p_haul": sum(r["p_haul"] for r in rows) / n,
+        "haul_rate": rate,
+    }
+
+
+def evaluate_captaincy(
+    candidate_gws: list[int], freezes_dir: Path = FREEZES_DIR, actuals: pl.DataFrame | None = None
+) -> dict[str, Any]:
+    """D18's scoring: every frozen captaincy pick, scored on the real
+    results, plus the pooled calibration of P(haul).
+
+    Freezes written before the field existed (or whose captaincy block is
+    null) are `skipped` with a reason, not edited and not an error: a freeze
+    is immutable. So are gameweeks with a freeze but no actuals yet.
+    Degenerate freezes are skipped as in `evaluate_player_level`, since a
+    freeze that predicted nothing picked nothing.
+    """
+    actuals = load_actuals() if actuals is None else actuals
+    per_gw: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
+    calibration: list[dict[str, Any]] = []
+    for gw in sorted(candidate_gws):
+        try:
+            freeze = load_freeze(gw, freezes_dir)
+        except FileNotFoundError:
+            skipped.append({"gw": gw, "reason": "no freeze"})
+            continue
+        if not freeze.get("captaincy") or not freeze["captaincy"].get("pick"):
+            skipped.append({"gw": gw, "reason": "freeze predates the captaincy record"})
+            continue
+        gw_actuals = actuals.filter(pl.col("gw") == gw)
+        if gw_actuals.height == 0:
+            skipped.append({"gw": gw, "reason": "no actuals recorded yet"})
+            continue
+        record = evaluate_gw_captaincy(freeze, gw_actuals)
+        calibration.extend(record.pop("calibration_rows"))
+        per_gw.append(record)
+
+    def mean(key: str) -> float | None:
+        values = [r[key] for r in per_gw if r[key] is not None]
+        return sum(values) / len(values) if values else None
+
+    return {
+        "per_gw": per_gw,
+        "skipped": skipped,
+        "summary": {
+            "n_gameweeks": len(per_gw),
+            "mean_pick_points_x2": mean("pick_points_x2"),
+            "mean_most_owned_points_x2": mean("most_owned_points_x2"),
+            "mean_best_of_shortlist_points_x2": mean("best_of_shortlist_points_x2"),
+            "pick_haul_rate": (sum(r["pick_hauled"] for r in per_gw) / len(per_gw)) if per_gw else None,
+            "calibration": brier_score(calibration),
+        },
+    }
+
+
 async def fetch_real_gw_points(cfg: CollectorConfig, entry_id: int) -> dict[int, int]:
     """gw -> the real entry's actual points that gameweek, from
     `/entry/{id}/history/`'s `current` list."""

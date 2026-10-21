@@ -1078,6 +1078,173 @@ class PricesFile(_Strict):
     track_record: PriceTrackRecord
 
 
+class OwnershipPlayer(_Strict):
+    """One player's elite ownership against the overall field.
+
+    All percentages are 0-100. `top_pct` is the share of the top-N managers
+    holding him in their 15; `top_start_pct` the share starting him
+    (multiplier > 0); `captain_pct` the share captaining him; `eo_pct`
+    effective ownership, `sum(multiplier) / n_managers * 100` (a captain
+    counts 2, a triple captain 3, bench 0), so it can exceed 100.
+    `overall_pct` is the field-wide `selected_by_percent` from the latest
+    distilled snapshot at or before `fetched_at`, null when none exists;
+    `delta_pct` is `top_pct - overall_pct` (null with it). Descriptive only.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    now_cost: int | None
+    overall_pct: float | None
+    top_pct: float
+    top_start_pct: float
+    captain_pct: float
+    eo_pct: float
+    delta_pct: float | None
+
+
+class OwnershipChip(_Strict):
+    """Managers among the top N who played `chip` that gameweek."""
+
+    chip: str
+    count: int
+
+
+class OwnershipFile(_Strict):
+    """`ownership.json` -- Elite Ownership: the top-N managers' ownership and
+    effective ownership for the latest gameweek the collector has picks for.
+
+    `status` is "ok" or "no_data"; with "no_data" (no `top_picks.parquet`
+    anywhere yet) `gw`, `n_managers` and `fetched_at` are null, `players`
+    and `chips` are empty, and the surface shows a "no data yet" state.
+    Added after 5D, contract_version unchanged.
+    """
+
+    header: Header
+    status: Literal["ok", "no_data"]
+    gw: int | None
+    n_managers: int
+    fetched_at: datetime | None
+    chips: list[OwnershipChip]
+    players: list[OwnershipPlayer]
+
+
+class CaptaincyCandidate(_Strict):
+    """One row of the captaincy table: a player the model ranks among the
+    next gameweek's top 20 by xP.
+
+    `opponents` is the club's fixtures that gameweek (two in a double).
+    `xp` is the gameweek total, summed over a double. `p_haul` is
+    P(points >= `CaptaincyFile.haul_threshold`) and `p_low` P(points <= 2),
+    both from `analytics.haul`'s exact enumeration of the same model's
+    components. `ownership` is FPL's selected-by percentage at the
+    collector's latest snapshot, null if there is none.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    opponents: list[ProjectionFixture]
+    xp: float
+    p_haul: float
+    p_low: float
+    ownership: float | None
+
+
+class CaptaincyPick(_Strict):
+    """A frozen pick: who, and what the model said when it froze him."""
+
+    element_id: int
+    name: str | None
+    team: str | None
+    xp: float
+    p_haul: float
+
+
+class CaptaincyOwned(_Strict):
+    """The highest-owned player at freeze time, the template-captain baseline."""
+
+    element_id: int
+    name: str | None
+    ownership: float | None
+
+
+class CaptaincyGw(_Strict):
+    """One scored gameweek. Points are raw gameweek points and the `_x2`
+    fields apply the captain's multiplier. `best_of_shortlist` is the
+    best result among the frozen top five, hindsight and an upper bound for
+    the shortlist, not a pick anyone could have made in advance."""
+
+    gw: int
+    pick: CaptaincyPick
+    pick_points: int
+    pick_points_x2: int
+    pick_hauled: bool
+    most_owned: CaptaincyOwned | None
+    most_owned_points: int | None
+    most_owned_points_x2: int | None
+    best_of_shortlist: CaptaincyOwned
+    best_of_shortlist_points: int
+    best_of_shortlist_points_x2: int
+    shortlist_size: int
+
+
+class CaptaincyCalibration(_Strict):
+    """P(haul) scored pooled across every frozen candidate in every scored
+    gameweek: Brier score beside the climatological Brier (always predict
+    the pooled haul rate), the number it has to beat. All null when
+    nothing is scored."""
+
+    n: int
+    brier: float | None
+    brier_climatology: float | None
+    mean_p_haul: float | None
+    haul_rate: float | None
+
+
+class CaptaincySkipped(_Strict):
+    gw: int
+    reason: str
+
+
+class CaptaincyTrackRecord(_Strict):
+    """Every frozen captaincy pick, scored on the real results the way the
+    paper trade scores everything else (`papertrade.evaluate.evaluate_captaincy`).
+    `skipped` lists freezes that cannot be scored and why: those written
+    before the captaincy record existed (freezes are immutable, so they
+    stay without one) and any gameweek whose results are not in yet."""
+
+    n_gameweeks: int
+    mean_pick_points_x2: float | None
+    mean_most_owned_points_x2: float | None
+    mean_best_of_shortlist_points_x2: float | None
+    pick_haul_rate: float | None
+    calibration: CaptaincyCalibration
+    gameweeks: list[CaptaincyGw]
+    skipped: list[CaptaincySkipped]
+
+
+class CaptaincyFile(_Strict):
+    """`captaincy.json` — the model's captaincy table for the next gameweek
+    and its public record (§5.16 D18).
+
+    `gameweek` is the gameweek being captained (the one after the last
+    played, `header.source_gameweek`). `candidates` are the top 20 by xP,
+    best first; the first is the model's pick. This crosses §5.0.2 on the
+    condition that every pick is scored: `track_record` is that score.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    haul_threshold: int
+    method: str
+    candidates: list[CaptaincyCandidate]
+    track_record: CaptaincyTrackRecord
+
+
 def build_header(
     *,
     rows: int,
@@ -1196,6 +1363,9 @@ def contract_shape() -> dict[str, Any]:
         PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,
         PaperTradeGateCriterion, PaperTradeLaunchGate, PaperTradePriceEval, PaperTradeFile,
         PriceWatchPlayer, PriceInSampleFit, PriceCycleOutcome, PriceTrackRecord, PricesFile,
+        OwnershipPlayer, OwnershipChip, OwnershipFile,
+        CaptaincyCandidate, CaptaincyPick, CaptaincyOwned, CaptaincyGw, CaptaincyCalibration,
+        CaptaincySkipped, CaptaincyTrackRecord, CaptaincyFile,
     )
     for model in models:
         fields = {}
@@ -1268,6 +1438,9 @@ __all__ = [
     "PlayerRow",
     "PlayersFile",
     "ObservationRow",
+    "OwnershipChip",
+    "OwnershipFile",
+    "OwnershipPlayer",
     "ObservationsFile",
     "PaperTradeFile",
     "PaperTradeFreezeProvenance",

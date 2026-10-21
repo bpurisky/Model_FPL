@@ -66,8 +66,16 @@ const Projections = lazy(() =>
   import("../views/Projections").then((module) => ({ default: module.Projections })),
 );
 
+const Captaincy = lazy(() =>
+  import("../views/Captaincy").then((module) => ({ default: module.Captaincy })),
+);
+
 const PriceWatch = lazy(() =>
   import("../views/PriceWatch").then((module) => ({ default: module.PriceWatch })),
+);
+
+const EliteOwnership = lazy(() =>
+  import("../views/EliteOwnership").then((module) => ({ default: module.EliteOwnership })),
 );
 
 const Scorecard = lazy(() =>
@@ -264,9 +272,19 @@ function Shell() {
             <PaperTradeResults />
           </Suspense>
         )}
+        {state.view === "captaincy" && (
+          <Suspense fallback={<PageLoading />}>
+            <Captaincy />
+          </Suspense>
+        )}
         {state.view === "prices" && (
           <Suspense fallback={<PageLoading />}>
             <PriceWatch />
+          </Suspense>
+        )}
+        {state.view === "ownership" && (
+          <Suspense fallback={<PageLoading />}>
+            <EliteOwnership />
           </Suspense>
         )}
         {state.view === "optimizer" && (

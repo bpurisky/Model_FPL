@@ -106,6 +106,31 @@ describe("backend configured", () => {
     expect(result.horizon).toEqual([4, 5, 6]);
   });
 
+  it("parses team rating and chip comparison when present", async () => {
+    const body = {
+      ...VALID_BODY,
+      current_xi_xp: 120.5,
+      recommended_xp: 131.2,
+      optimum_xp: 150,
+      team_rating: 80.3,
+      chips: [{ chip: "bboost", gw: 4, gain: 7.1, available: true }],
+      chip_best_gw: { bboost: 4 },
+    };
+    vi.stubGlobal("fetch", respond(200, true, body));
+
+    const { fetchRecommendation } = await import("./optimizer");
+    const result = await fetchRecommendation(123);
+    expect(result.team_rating).toBe(80.3);
+    expect(result.chips?.[0]?.chip).toBe("bboost");
+  });
+
+  it("rejects an unknown chip id", async () => {
+    vi.stubGlobal("fetch", respond(200, true, { ...VALID_BODY, chips: [{ chip: "magic", gw: 4, gain: 1 }] }));
+
+    const { fetchRecommendation } = await import("./optimizer");
+    await expect(fetchRecommendation(123)).rejects.toThrow(/Unexpected response shape/);
+  });
+
   it("surfaces the backend's own detail string and status on a non-2xx response", async () => {
     vi.stubGlobal("fetch", respond(404, false, { detail: "entry 999 not found on the FPL API" }));
 

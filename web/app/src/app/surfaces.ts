@@ -78,6 +78,14 @@ export const SURFACES: Surface[] = [
     milestone: "5I",
   },
   {
+    view: "captaincy",
+    section: "model",
+    label: "Captaincy",
+    blurb: "The model's captain candidates for the next gameweek, with the public record of every pick it has made.",
+    status: "live",
+    milestone: "6",
+  },
+  {
     view: "scorecard",
     section: "model",
     label: "Scorecard",
@@ -132,6 +140,14 @@ export const SURFACES: Surface[] = [
     blurb: "Who the rise-only price model calls to go up tonight, with its own out-of-sample record.",
     status: "live",
     milestone: "5I",
+  },
+  {
+    view: "ownership",
+    section: "players",
+    label: "Elite Ownership",
+    blurb: "What the top managers own, start and captain against the field, with effective ownership.",
+    status: "live",
+    milestone: "5J",
   },
   {
     view: "fixtures",

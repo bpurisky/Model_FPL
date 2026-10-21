@@ -39,13 +39,23 @@ _STATE_SCHEMA = {
 }
 
 
+def _delta_shards(distilled_dir: Path) -> list[str]:
+    """Delta shards only: `gw*/top_picks.parquet` is a different table."""
+    if not distilled_dir.exists():
+        return []
+    return sorted(
+        str(p).replace("\\", "/") for p in distilled_dir.glob("gw*/*.parquet") if p.name != "top_picks.parquet"
+    )
+
+
 def state_as_of(distilled_dir: Path, as_of: datetime) -> pl.DataFrame:
     """Every player's most recent distilled row at-or-before `as_of`,
     across all gameweeks' shards. Empty (typed) frame if nothing qualifies
     — e.g. `as_of` predates the collector's first snapshot."""
-    pattern = str(distilled_dir / "gw*" / "*.parquet").replace("\\", "/")
-    if not distilled_dir.exists() or not any(distilled_dir.glob("gw*/*.parquet")):
+    shards = _delta_shards(distilled_dir)
+    if not shards:
         return pl.DataFrame(schema=_STATE_SCHEMA)
+    pattern = "[" + ", ".join(repr(p) for p in shards) + "]"
     con = duckdb.connect()
     try:
         # DuckDB otherwise returns TIMESTAMPTZ in the host's local time
@@ -54,7 +64,7 @@ def state_as_of(distilled_dir: Path, as_of: datetime) -> pl.DataFrame:
         query = f"""
             SELECT * EXCLUDE (rn) FROM (
                 SELECT *, row_number() OVER (PARTITION BY element_id ORDER BY snapshot_ts DESC) AS rn
-                FROM read_parquet('{pattern}')
+                FROM read_parquet({pattern})
                 WHERE snapshot_ts <= ?
             ) WHERE rn = 1
         """

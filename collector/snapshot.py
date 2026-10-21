@@ -140,11 +140,24 @@ def build_distilled_rows(bootstrap: BootstrapStatic, ts: datetime) -> pl.DataFra
     return pl.DataFrame(records, schema=schema)
 
 
+# Sits beside the timestamped delta shards in `gw{n}/` but is a different
+# table (one row per manager x pick), so every shard reader must skip it.
+TOP_PICKS_FILENAME = "top_picks.parquet"
+
+
+def shard_files(gw_dir: Path) -> list[Path]:
+    """The delta shards in one gameweek directory (never `top_picks.parquet`)."""
+    if not gw_dir.exists():
+        return []
+    return sorted(p for p in gw_dir.glob("*.parquet") if p.name != TOP_PICKS_FILENAME)
+
+
 def latest_distilled_state(gw_dir: Path) -> pl.DataFrame | None:
     """The most recent row per element_id across every shard in `gw_dir`."""
-    if not gw_dir.exists() or not any(gw_dir.glob("*.parquet")):
+    shards = shard_files(gw_dir)
+    if not shards:
         return None
-    pattern = str(gw_dir / "*.parquet").replace("\\", "/")
+    pattern = "[" + ", ".join(repr(str(p).replace("\\", "/")) for p in shards) + "]"
     con = duckdb.connect()
     try:
         # DuckDB otherwise returns TIMESTAMPTZ columns in the host's local
@@ -153,7 +166,7 @@ def latest_distilled_state(gw_dir: Path) -> pl.DataFrame | None:
         query = f"""
             SELECT * EXCLUDE (rn) FROM (
                 SELECT *, row_number() OVER (PARTITION BY element_id ORDER BY snapshot_ts DESC) AS rn
-                FROM read_parquet('{pattern}')
+                FROM read_parquet({pattern})
             ) WHERE rn = 1
         """
         return con.execute(query).pl()

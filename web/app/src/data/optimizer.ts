@@ -49,7 +49,24 @@ const PlannedWeek = z.object({
   transfers: z.array(Transfer),
 });
 
+/** One chip played at one gameweek: projected extra points, not a promise. */
+const ChipGain = z.object({
+  chip: z.enum(["bboost", "3xc", "freehit", "wildcard"]),
+  gw: z.number(),
+  gain: z.number(),
+  /** False when the entry's history shows the chip already used this half-season. */
+  available: z.boolean().optional(),
+});
+
 const Recommendation = z.object({
+  // Team rating (squad/rating.py): projected xP over the horizon. Optional
+  // so a backend that predates them still parses.
+  current_xi_xp: z.number().optional(),
+  recommended_xp: z.number().optional(),
+  optimum_xp: z.number().optional(),
+  team_rating: z.number().optional(),
+  chips: z.array(ChipGain).optional(),
+  chip_best_gw: z.record(z.string(), z.number()).optional(),
   entry_id: z.number(),
   data_gw: z.number(),
   history_gws: z.number(),
@@ -74,7 +91,8 @@ export type OptimizerPlayer = z.infer<typeof Player>;
 export type OptimizerTransfer = z.infer<typeof Transfer>;
 export type OptimizerTemplateRisk = z.infer<typeof TemplateRisk>;
 export type OptimizerXiPlayer = z.infer<typeof XiPlayer>;
-export type OptimizerRecommendation = z.infer<typeof Recommendation>;
+export type OptimizerChipGain = z.infer<typeof ChipGain>;
+export type OptimizerRecommendation= z.infer<typeof Recommendation>;
 export type OptimizerPlannedWeek = z.infer<typeof PlannedWeek>;
 
 /**
