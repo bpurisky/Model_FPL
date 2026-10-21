@@ -21,6 +21,7 @@
 
 import {
   loadBoard,
+  loadCaptaincy,
   loadColumns,
   loadCorrelations,
   loadFixtures,
@@ -85,6 +86,14 @@ export const DATA_FILES: readonly DataFile[] = [
       "Expected points for every player over the next six gameweeks, each club's fixtures for those gameweeks, and the minutes split (blank / under 60 / 60+) for the first of them.",
     cadence: "every_6h",
     loadHeader: loadProjections,
+  },
+  {
+    name: "captaincy.json",
+    format: "json",
+    description:
+      "The model's top 20 captaincy candidates for the next gameweek (xP, chance of a haul, ownership), and the scored record of every captain pick it has frozen.",
+    cadence: "every_6h",
+    loadHeader: loadCaptaincy,
   },
   {
     name: "prices.json",

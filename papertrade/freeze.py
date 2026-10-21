@@ -27,6 +27,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+import polars as pl
+
+from analytics.captaincy import freeze_record, most_owned, rank_candidates
+from analytics.haul import load_bonus_model
 from analytics.projections import DEFAULT_WINDOW
 from analytics.scoring import load_scoring_config
 from collector.client import FPLClient
@@ -34,6 +38,7 @@ from collector.config import CollectorConfig
 from collector.schemas import parse_bootstrap_static, parse_entry_picks, parse_fixtures, resolve_next_event
 from backtest.leakage import assert_no_leakage
 from squad.live import (
+    LIVE_SEASON,
     build_availability,
     build_difficulty_table,
     build_player_pool,
@@ -322,6 +327,24 @@ def bootstrap_shadow_state(picks_raw: dict, deadline: datetime, now_cost_by_id: 
     return reconstruct_squad(picks, deadline, transfers=[], as_of=deadline, current_prices=now_cost_by_id)
 
 
+def captaincy_record(vectors, scoring_config: dict[str, Any], bootstrap) -> dict[str, Any] | None:
+    """The freeze's `captaincy` block from the gameweek's projected event
+    vectors, or None when the gameweek has none (nothing to rank)."""
+    if vectors is None:
+        return None
+    team_name = {t.id: t.name for t in bootstrap.teams}
+    meta = {
+        e.id: {
+            "name": e.web_name,
+            "team": team_name.get(e.team),
+            "ownership_pct": float(e.selected_by_percent) if e.selected_by_percent not in (None, "") else None,
+        }
+        for e in bootstrap.elements
+    }
+    bonus_model = load_bonus_model(LIVE_SEASON)
+    return freeze_record(rank_candidates(vectors, scoring_config, meta, bonus_model=bonus_model), most_owned(meta))
+
+
 async def run_freeze(
     cfg: CollectorConfig,
     entry_id: int,
@@ -403,11 +426,18 @@ async def run_freeze(
 
     difficulty_table = build_difficulty_table(bootstrap, fixtures_raw, horizon)
     scoring_config = load_scoring_config(Path(scoring_config_path))
+    first_gw_vectors: dict[int, pl.DataFrame] = {}
     projections = build_projections(
         train_df, target_roster, scoring_config, difficulty_table, horizon,
         availability=build_availability(bootstrap),
         scoreline=build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
+        on_projection=lambda g, vectors: first_gw_vectors.__setitem__(g, vectors),
     )
+    try:
+        captaincy = captaincy_record(first_gw_vectors.get(gw), scoring_config, bootstrap)
+    except Exception:  # a side record must not cost the gameweek its freeze
+        logger.exception("gw%d: captaincy record failed; freezing without it", gw)
+        captaincy = None
 
     # Cap transfers at the free allowance while the history is too thin for
     # the model to be paying hits on it (see HIT_ELIGIBILITY_GWS). Recorded
@@ -462,6 +492,11 @@ async def run_freeze(
         # were made with the same information.
         "fpl_ep_next": {str(e.id): float(e.ep_next) for e in bootstrap.elements if e.ep_next not in (None, "")},
         "now_cost_snapshot": now_cost_by_id,
+        # D18: the model's captaincy pick and shortlist, frozen with
+        # everything else so it is scored the same way. Freezes written
+        # before this field existed have no such block and are skipped by
+        # `papertrade.evaluate.evaluate_captaincy`, never edited.
+        "captaincy": captaincy,
         "shadow_recommendation": {
             "transfers_out": sorted(result.transfers_out),
             "transfers_in": sorted(result.transfers_in),

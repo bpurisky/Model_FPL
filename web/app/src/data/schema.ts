@@ -665,6 +665,85 @@ export const OwnershipFile = z.object({
   players: z.array(OwnershipPlayer),
 });
 
+/**
+ * `captaincy.json` (D18): the model's captaincy table for the next
+ * gameweek and the public record of its frozen picks.
+ */
+export const CaptaincyCandidate = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  opponents: z.array(ProjectionFixture),
+  xp: z.number(),
+  p_haul: z.number(),
+  p_low: z.number(),
+  ownership: z.number().nullable(),
+});
+
+export const CaptaincyPick = z.object({
+  element_id: z.number().int(),
+  name: z.string().nullable(),
+  team: z.string().nullable(),
+  xp: z.number(),
+  p_haul: z.number(),
+});
+
+export const CaptaincyOwned = z.object({
+  element_id: z.number().int(),
+  name: z.string().nullable(),
+  ownership: z.number().nullable(),
+});
+
+export const CaptaincyGw = z.object({
+  gw: z.number().int(),
+  pick: CaptaincyPick,
+  pick_points: z.number().int(),
+  pick_points_x2: z.number().int(),
+  pick_hauled: z.boolean(),
+  most_owned: CaptaincyOwned.nullable(),
+  most_owned_points: z.number().int().nullable(),
+  most_owned_points_x2: z.number().int().nullable(),
+  best_of_shortlist: CaptaincyOwned,
+  best_of_shortlist_points: z.number().int(),
+  best_of_shortlist_points_x2: z.number().int(),
+  shortlist_size: z.number().int(),
+});
+
+export const CaptaincyCalibration = z.object({
+  n: z.number().int(),
+  brier: z.number().nullable(),
+  brier_climatology: z.number().nullable(),
+  mean_p_haul: z.number().nullable(),
+  haul_rate: z.number().nullable(),
+});
+
+export const CaptaincySkipped = z.object({
+  gw: z.number().int(),
+  reason: z.string(),
+});
+
+export const CaptaincyTrackRecord = z.object({
+  n_gameweeks: z.number().int(),
+  mean_pick_points_x2: z.number().nullable(),
+  mean_most_owned_points_x2: z.number().nullable(),
+  mean_best_of_shortlist_points_x2: z.number().nullable(),
+  pick_haul_rate: z.number().nullable(),
+  calibration: CaptaincyCalibration,
+  gameweeks: z.array(CaptaincyGw),
+  skipped: z.array(CaptaincySkipped),
+});
+
+export const CaptaincyFile = z.object({
+  header: Header,
+  season: z.string(),
+  gameweek: z.number().int(),
+  haul_threshold: z.number().int(),
+  method: z.string(),
+  candidates: z.array(CaptaincyCandidate),
+  track_record: CaptaincyTrackRecord,
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -707,6 +786,10 @@ export type PaperTradeGwNote = z.infer<typeof PaperTradeGwNote>;
 export const EXPECTED_CONTRACT_VERSION = 1;
 export type OwnershipFile = z.infer<typeof OwnershipFile>;
 export type OwnershipPlayer = z.infer<typeof OwnershipPlayer>;
+export type CaptaincyCandidate = z.infer<typeof CaptaincyCandidate>;
+export type CaptaincyGw = z.infer<typeof CaptaincyGw>;
+export type CaptaincyTrackRecord = z.infer<typeof CaptaincyTrackRecord>;
+export type CaptaincyFile = z.infer<typeof CaptaincyFile>;
 export type PricesFile = z.infer<typeof PricesFile>;
 export type PriceWatchPlayer = z.infer<typeof PriceWatchPlayer>;
 export type PriceTrackRecord = z.infer<typeof PriceTrackRecord>;

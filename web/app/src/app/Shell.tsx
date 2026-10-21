@@ -66,6 +66,10 @@ const Projections = lazy(() =>
   import("../views/Projections").then((module) => ({ default: module.Projections })),
 );
 
+const Captaincy = lazy(() =>
+  import("../views/Captaincy").then((module) => ({ default: module.Captaincy })),
+);
+
 const PriceWatch = lazy(() =>
   import("../views/PriceWatch").then((module) => ({ default: module.PriceWatch })),
 );
@@ -266,6 +270,11 @@ function Shell() {
         {state.view === "papertrade" && (
           <Suspense fallback={<PageLoading />}>
             <PaperTradeResults />
+          </Suspense>
+        )}
+        {state.view === "captaincy" && (
+          <Suspense fallback={<PageLoading />}>
+            <Captaincy />
           </Suspense>
         )}
         {state.view === "prices" && (
