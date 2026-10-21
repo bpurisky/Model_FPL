@@ -19,11 +19,10 @@
  * no backend configured (`VITE_OPTIMIZER_API_URL` unset) shows an honest
  * explanation rather than a broken form or a raw network error.
  *
- * What this does *not* do: name a chip. §7.2's "My team" view also wants
- * a chip planner respecting the gameweek 19 wildcard/free-hit expiry, but
- * `squad/optimize.py` itself has no chip-strategy logic to call — nothing
- * here would be reading a real computation, and §5.14.14 forbids shipping
- * placeholder data in any state. Left as a documented gap, not invented.
+ * Team rating and chip comparison (squad/rating.py) are projections of the
+ * same xP the solver uses, not a chip planner: the chip table says what each
+ * chip would add in each horizon gameweek, and whether the entry's history
+ * shows it already used this half-season; it does not schedule chips.
  */
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -35,6 +34,7 @@ import {
   parseEntryId,
   TIMEOUT_STATUS,
   warmUp,
+  type OptimizerChipGain,
   type OptimizerRecommendation,
   type OptimizerXiPlayer,
 } from "../data/optimizer";
@@ -301,6 +301,9 @@ function Recommendation({ data }: { data: OptimizerRecommendation }) {
     <div className={styles.results}>
       <p className={styles.caveat}>{data.caveat}</p>
 
+      <TeamRating data={data} />
+      <ChipTable data={data} />
+
       <section className={styles.panel}>
         <h2 className={styles.panelTitle}>Summary</h2>
         <dl className={styles.summary}>
@@ -419,6 +422,104 @@ function Recommendation({ data }: { data: OptimizerRecommendation }) {
         players kept unsold.
       </p>
     </div>
+  );
+}
+
+const CHIP_LABELS: Record<OptimizerChipGain["chip"], string> = {
+  bboost: "Bench Boost",
+  "3xc": "Triple Captain",
+  freehit: "Free Hit",
+  wildcard: "Wildcard",
+};
+const CHIP_ORDER = ["bboost", "3xc", "freehit", "wildcard"] as const;
+
+function TeamRating({ data }: { data: OptimizerRecommendation }) {
+  if (data.team_rating === undefined || data.current_xi_xp === undefined) return null;
+  return (
+    <section className={styles.panel}>
+      <h2 className={styles.panelTitle}>Team rating</h2>
+      <div className={styles.rating}>
+        <span className={`${styles.ratingValue} data`}>{data.team_rating.toFixed(0)}</span>
+        <span className={styles.ratingScale}>/ 100</span>
+      </div>
+      <dl className={styles.summary}>
+        <div>
+          <dt>Your squad, no transfers</dt>
+          <dd className="data">{data.current_xi_xp.toFixed(1)} xP</dd>
+        </div>
+        {data.recommended_xp !== undefined && (
+          <div>
+            <dt>Recommended plan, net of hits</dt>
+            <dd className="data">{data.recommended_xp.toFixed(1)} xP</dd>
+          </div>
+        )}
+        {data.optimum_xp !== undefined && (
+          <div>
+            <dt>Best squad in budget</dt>
+            <dd className="data">{data.optimum_xp.toFixed(1)} xP</dd>
+          </div>
+        )}
+      </dl>
+      <p className={styles.sub}>
+        Projected points over gameweek {data.horizon.join(", ")}, best XI and captain each week
+        (captain counted double). The rating is your squad&rsquo;s projection as a share of the
+        best squad your budget could hold, ignoring transfer limits and hits. These are model
+        projections, not guarantees.
+      </p>
+    </section>
+  );
+}
+
+function ChipTable({ data }: { data: OptimizerRecommendation }) {
+  const chips = data.chips;
+  if (!chips || chips.length === 0) return null;
+  return (
+    <section className={styles.panel}>
+      <h2 className={styles.panelTitle}>Chip comparison</h2>
+      <p className={styles.sub}>
+        Projected extra points if the chip is played in that gameweek, against the recommended
+        plan. The best gameweek for each chip is highlighted. Wildcard is judged at the first
+        gameweek only. Estimates, not guarantees.
+      </p>
+      <div className={styles.tableWrap}>
+        <table className={styles.chipTable}>
+          <thead>
+            <tr>
+              <th scope="col">Chip</th>
+              {data.horizon.map((gw) => (
+                <th key={gw} scope="col" className="data">
+                  GW{gw}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {CHIP_ORDER.map((chip) => {
+              const rows = chips.filter((row) => row.chip === chip);
+              if (rows.length === 0) return null;
+              const best = data.chip_best_gw?.[chip];
+              const used = rows.every((row) => row.available === false);
+              return (
+                <tr key={chip} className={used ? styles.chipUsed : undefined}>
+                  <th scope="row">
+                    {CHIP_LABELS[chip]}
+                    {used && <span className={styles.chipNote}> used</span>}
+                  </th>
+                  {data.horizon.map((gw) => {
+                    const cell = rows.find((row) => row.gw === gw);
+                    return (
+                      <td key={gw} className={`data ${cell && gw === best ? styles.chipBest : ""}`}>
+                        {cell ? `${cell.gain >= 0 ? "+" : "−"}${Math.abs(cell.gain).toFixed(1)}` : "–"}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

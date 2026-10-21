@@ -195,6 +195,8 @@ class LiveData:
     availability: pl.DataFrame | None = None
     # gw -> analytics.scoreline table — see build_scoreline.
     scoreline: dict[int, pl.DataFrame] | None = None
+    # (chip name, gameweek) the entry has already played, from its history.
+    chips_used: tuple[tuple[str, int], ...] = ()
 
 
 def live_data_caveat(live: LiveData) -> str:
@@ -689,6 +691,7 @@ def assemble_live_data(
             ("scoreline", last_played_event, horizon_key),
             lambda: build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
         ),
+        chips_used=tuple((c.name, c.event) for c in entry.entry_history.chips),
     )
 
 
