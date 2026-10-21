@@ -92,6 +92,29 @@
   opacity: 0.85;
 }
 
+/* --- team ID help -------------------------------------------------- */
+
+.help {
+  font-size: var(--text-sm);
+  max-inline-size: 68ch;
+}
+
+.helpSummary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.helpSummary:hover,
+.helpSummary:focus-visible {
+  color: var(--paper);
+}
+
+.helpSteps {
+  margin: var(--space-2) 0 0;
+  padding-inline-start: var(--space-4);
+  line-height: 1.6;
+}
+
 /* --- notes and states ------------------------------------------------ */
 
 .empty {
@@ -285,4 +308,21 @@
   flex-direction: column;
   gap: var(--space-1);
   font-size: var(--text-sm);
+}
+
+.retry {
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--paper);
+  background: transparent;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-1) var(--space-3);
+  margin-block-start: var(--space-2);
+  cursor: pointer;
+}
+
+.retry:hover,
+.retry:focus-visible {
+  border-color: var(--paper);
 }

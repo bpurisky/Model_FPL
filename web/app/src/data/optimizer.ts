@@ -90,6 +90,9 @@ export const OPTIMIZER_API_URL = (import.meta.env.VITE_OPTIMIZER_API_URL as stri
   "",
 );
 
+/** `OptimizerError.status` for a client-side timeout — not an HTTP status. */
+export const TIMEOUT_STATUS = 0;
+
 export class OptimizerError extends Error {
   constructor(
     message: string,
@@ -104,6 +107,47 @@ export interface RecommendOptions {
   horizon?: number[] | undefined;
   maxTransfers?: number | undefined;
   hitCost?: number | undefined;
+  /** Overrides `RECOMMEND_TIMEOUT_MS`; tests use a short one. */
+  timeoutMs?: number | undefined;
+}
+
+/**
+ * Long enough to cover a free-tier cold start (~1 minute) plus a slow
+ * solve; short enough that a request the host or the FPL API has quietly
+ * dropped ends in an explanation and a retry button, not an endless
+ * "Solving…". Before this existed, a stalled request never ended at all.
+ */
+export const RECOMMEND_TIMEOUT_MS = 120_000;
+
+/**
+ * A team ID from whatever the reader pasted: the bare number, or any FPL
+ * URL that contains `/entry/<id>/` — which is where the ID is easiest to
+ * find (the Points page's address bar). Returns undefined for anything
+ * that doesn't yield a positive integer.
+ */
+export function parseEntryId(raw: string): number | undefined {
+  const trimmed = raw.trim();
+  const fromUrl = /\/entry\/(\d+)/.exec(trimmed);
+  const digits = fromUrl ? fromUrl[1] : /^\d+$/.test(trimmed) ? trimmed : undefined;
+  if (digits === undefined) return undefined;
+  const id = Number(digits);
+  return Number.isSafeInteger(id) && id > 0 ? id : undefined;
+}
+
+/**
+ * Pings `/api/health` so a sleeping free-tier backend starts waking while
+ * the reader is still typing their team ID. Resolves true once the
+ * backend answers, false if it can't be reached; never throws — this is
+ * a head start, not a request anyone waits on to succeed.
+ */
+export async function warmUp(): Promise<boolean> {
+  if (!OPTIMIZER_API_URL) return false;
+  try {
+    const response = await fetch(`${OPTIMIZER_API_URL}/api/health`);
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 function errorDetail(body: unknown, fallback: string): string {
@@ -124,7 +168,12 @@ export async function fetchRecommendation(
     );
   }
 
+  const timeoutMs = options.timeoutMs ?? RECOMMEND_TIMEOUT_MS;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
   let response: Response;
+  let body: unknown;
   try {
     response = await fetch(`${OPTIMIZER_API_URL}/api/recommend`, {
       method: "POST",
@@ -135,14 +184,23 @@ export async function fetchRecommendation(
         ...(options.maxTransfers != null ? { max_transfers: options.maxTransfers } : {}),
         ...(options.hitCost != null ? { hit_cost: options.hitCost } : {}),
       }),
+      signal: controller.signal,
     });
+    body = await response.json().catch(() => null);
   } catch (error) {
+    if (controller.signal.aborted) {
+      throw new OptimizerError(
+        `The optimizer didn't answer within ${Math.round(timeoutMs / 1000)} seconds. The server may still have ` +
+          "been waking up, or the FPL API was slow to respond.",
+        TIMEOUT_STATUS,
+      );
+    }
     throw new OptimizerError(
       `Could not reach the optimizer backend at ${OPTIMIZER_API_URL}: ${(error as Error).message}`,
     );
+  } finally {
+    clearTimeout(timer);
   }
-
-  const body: unknown = await response.json().catch(() => null);
 
   if (!response.ok) {
     throw new OptimizerError(errorDetail(body, response.statusText), response.status);

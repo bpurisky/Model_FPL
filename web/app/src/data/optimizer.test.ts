@@ -137,3 +137,62 @@ describe("backend configured", () => {
     await expect(fetchRecommendation(123)).rejects.toBeInstanceOf(OptimizerError);
   });
 });
+
+describe("parseEntryId", () => {
+  it("accepts a bare ID and the Points page link it is easiest to copy", async () => {
+    const { parseEntryId } = await import("./optimizer");
+    expect(parseEntryId("2986528")).toBe(2986528);
+    expect(parseEntryId("  2986528 ")).toBe(2986528);
+    expect(parseEntryId("https://fantasy.premierleague.com/entry/2986528/event/7")).toBe(2986528);
+    expect(parseEntryId("fantasy.premierleague.com/entry/2986528/history")).toBe(2986528);
+  });
+
+  it("rejects anything that does not yield a positive integer", async () => {
+    const { parseEntryId } = await import("./optimizer");
+    for (const raw of ["", "abc", "0", "-5", "12.5", "https://fantasy.premierleague.com/leagues"]) {
+      expect(parseEntryId(raw)).toBeUndefined();
+    }
+  });
+});
+
+describe("waking and timing out", () => {
+  beforeEach(() => {
+    vi.stubEnv("VITE_OPTIMIZER_API_URL", "https://optimizer.example");
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  it("warmUp pings /api/health and never throws", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal("fetch", fetchSpy);
+    const { warmUp } = await import("./optimizer");
+
+    expect(await warmUp()).toBe(true);
+    expect(fetchSpy.mock.calls[0]![0]).toBe("https://optimizer.example/api/health");
+
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    expect(await warmUp()).toBe(false);
+  });
+
+  it("gives up on a request that never answers, with a timeout status", async () => {
+    // A fetch that only settles when its signal aborts -- the stalled case.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((_url: string, init: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          init.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+        }),
+      ),
+    );
+    const { fetchRecommendation, OptimizerError, TIMEOUT_STATUS } = await import("./optimizer");
+
+    const error = await fetchRecommendation(123, { timeoutMs: 20 }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(OptimizerError);
+    expect((error as InstanceType<typeof OptimizerError>).status).toBe(TIMEOUT_STATUS);
+    expect((error as Error).message).toMatch(/didn't answer/);
+  });
+});
