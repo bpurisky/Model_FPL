@@ -149,6 +149,14 @@ export const SURFACES: Surface[] = [
     status: "live",
     milestone: "5C",
   },
+  {
+    view: "data",
+    section: "lab",
+    label: "Data & API",
+    blurb: "Every exported JSON file and the two parquet artifacts: URL, contents, refresh cadence, contract version.",
+    status: "live",
+    milestone: "5I",
+  },
 ];
 
 export const SURFACE_BY_VIEW = new Map(SURFACES.map((surface) => [surface.view, surface]));

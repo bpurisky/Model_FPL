@@ -149,6 +149,14 @@ class Element(_LenientModel):
     chance_of_playing_next_round: int | None = None
     news_added: datetime | None = None
     ep_next: str | None = None
+    # Set-piece takers, 1 = first choice. Null when FPL lists the player as
+    # nobody's taker, and absent from older payloads, hence defaulted. Kept
+    # in the reference tier only (collector/snapshot.py:write_reference):
+    # they change a few times a season, not hourly, and the distilled tier
+    # tracks a fixed field list that does not include them.
+    penalties_order: int | None = None
+    corners_and_indirect_freekicks_order: int | None = None
+    direct_freekicks_order: int | None = None
 
 
 class BootstrapStatic(_LenientModel):

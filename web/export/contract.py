@@ -670,6 +670,17 @@ class PlayerRow(_Strict):
     metrics: dict[str, PlayerMetric]
     projection: PlayerProjection | None
 
+    # --- added after 5D, contract_version unchanged ---------------------
+    # FPL's set-piece taker rank, 1 = first choice, from the collector's
+    # reference tier. Null both when FPL lists the player as nobody's taker
+    # and for any file built before the collector kept the columns or for a
+    # season whose element ids the reference does not describe -- the two
+    # nulls are not distinguishable here, which is fine: neither is a taker
+    # we know about.
+    penalties_order: int | None = None
+    corners_order: int | None = None
+    direct_freekicks_order: int | None = None
+
 
 class PlayersFile(_Strict):
     """`players.json`.
