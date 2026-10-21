@@ -1,10 +1,10 @@
 {
   "header": {
     "contract_version": 1,
-    "generated_at": "2026-10-21T07:18:32.048341Z",
+    "generated_at": "2026-10-21T13:35:44.704517Z",
     "source_gameweek": 7,
     "scoring_config": "scoring_2026_27.yaml",
-    "model_git_sha": "248ddb6cca6391777909129f4427f7cbccf981f0",
+    "model_git_sha": "32dcdd078a661fa684f1622846c885d26b8a8487",
     "normalization_basis": "raw_points_not_normalized",
     "rows": 2,
     "current_season": "2026-27"
@@ -17,7 +17,13 @@
       "spearman_mean": 0.753641004151,
       "fpl_n": 667,
       "fpl_mae": 1.18695652174,
-      "fpl_spearman_mean": 0.732660038783
+      "fpl_spearman_mean": 0.732660038783,
+      "baseline_trailing_mean_mae": 1.23143428286,
+      "baseline_trailing_mean_spearman_mean": 0.698390979414,
+      "baseline_fpl_form_mae": 1.23143428286,
+      "baseline_fpl_form_spearman_mean": 0.698390979414,
+      "baseline_fixture_adj_mae": 1.22465392304,
+      "baseline_fixture_adj_spearman_mean": 0.698789814315
     },
     {
       "gw": 7,
@@ -26,7 +32,13 @@
       "spearman_mean": 0.766160090009,
       "fpl_n": 667,
       "fpl_mae": 1.29295352324,
-      "fpl_spearman_mean": 0.721510835654
+      "fpl_spearman_mean": 0.721510835654,
+      "baseline_trailing_mean_mae": 1.22861069465,
+      "baseline_trailing_mean_spearman_mean": 0.723453814319,
+      "baseline_fpl_form_mae": 1.29235382309,
+      "baseline_fpl_form_spearman_mean": 0.703940797882,
+      "baseline_fixture_adj_mae": 1.2110882059,
+      "baseline_fixture_adj_spearman_mean": 0.723487137074
     }
   ],
   "player_level_excluded": [],
@@ -108,12 +120,12 @@
     ],
     "criteria": {
       "beats_fixture_adjusted_trailing_mean_mae": {
-        "status": "not wired to live baselines yet",
-        "detail": "2 gameweeks evaluated; live-data baseline comparison (backtest/baselines.py against papertrade/actuals.py) is not built yet regardless of gameweek count."
+        "status": "PASS",
+        "detail": "2 gameweeks pooled: model MAE 1.105 vs fixture-adjusted trailing mean 1.218."
       },
       "beats_baselines_on_rank_correlation": {
-        "status": "not wired to live baselines yet",
-        "detail": "2 gameweeks evaluated; same live-baseline gap as above."
+        "status": "PASS",
+        "detail": "2 gameweeks: model mean Spearman 0.760 vs fixture_adjusted_trailing_mean 0.711, fpl_form_approx 0.701, trailing_mean 0.711."
       },
       "no_leakage_assertion_fired": {
         "status": "PASS",
@@ -124,16 +136,16 @@
         "detail": "2 gameweeks; all 2 freeze(s) declare no manual correction."
       },
       "price_change_model_reports_hit_rate_with_ci": {
-        "status": "insufficient data",
-        "detail": "analytics/price_model.py ran against 668 player(s) but predicted zero actual moves (rise/fall) to score — either too little distilled history has accumulated yet, or pressure never crossed the model's (unfitted) thresholds in this window."
+        "status": "FAIL",
+        "detail": "hit_rate=0.09 (95% CI [0.05, 0.14]) over 158 predicted move(s) of 10005 player-cycle(s) across 15 out-of-sample overnight cycle(s), 2026-10-02 to 2026-10-19. Thresholds are fitted on cycles before config/price_model.yaml's fit_cutoff and scored only after it."
       }
     }
   },
   "price_eval": {
-    "n": 668,
-    "n_moves_predicted": 0,
-    "hit_rate": null,
-    "ci_low": null,
-    "ci_high": null
+    "n": 10005,
+    "n_moves_predicted": 158,
+    "hit_rate": 0.0949367088608,
+    "ci_low": 0.0492304043259,
+    "ci_high": 0.140643013396
   }
 }
