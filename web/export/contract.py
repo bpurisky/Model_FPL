@@ -799,6 +799,18 @@ class PaperTradePlayerLevelGw(_Strict):
     fpl_mae: float | None = None
     fpl_spearman_mean: float | None = None
 
+    # --- added for §6.5 criteria 1-2, contract_version unchanged ---------
+    # The three backtest/baselines.py baselines, computed from live actuals
+    # (papertrade/baselines.py) and scored over the same players as `mae`.
+    # Null for a gameweek with no earlier gameweek to build a trailing
+    # mean from.
+    baseline_trailing_mean_mae: float | None = None
+    baseline_trailing_mean_spearman_mean: float | None = None
+    baseline_fpl_form_mae: float | None = None
+    baseline_fpl_form_spearman_mean: float | None = None
+    baseline_fixture_adj_mae: float | None = None
+    baseline_fixture_adj_spearman_mean: float | None = None
+
 
 class PaperTradeLeakageCheck(_Strict):
     """Not every freeze that records `ran`/`passed`/`n_features` also

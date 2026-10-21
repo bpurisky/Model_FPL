@@ -458,6 +458,12 @@ export const PaperTradePlayerLevelGw = z.object({
   fpl_n: z.number().int().nullable().optional(),
   fpl_mae: z.number().nullable().optional(),
   fpl_spearman_mean: z.number().nullable().optional(),
+  baseline_trailing_mean_mae: z.number().nullable().optional(),
+  baseline_trailing_mean_spearman_mean: z.number().nullable().optional(),
+  baseline_fpl_form_mae: z.number().nullable().optional(),
+  baseline_fpl_form_spearman_mean: z.number().nullable().optional(),
+  baseline_fixture_adj_mae: z.number().nullable().optional(),
+  baseline_fixture_adj_spearman_mean: z.number().nullable().optional(),
 });
 
 export const PaperTradeLeakageCheck = z.object({

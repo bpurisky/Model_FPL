@@ -1381,7 +1381,7 @@ This section replaces the previous "Before continuing Phase 4" list, three of wh
 **Still true, and the reason to check rather than assume:**
 
 - **No git push access from a Claude Code session here** (no credential helper, no `gh`, in either shell). Commits have landed on `origin/main` anyway because the user pushes manually. Verify with `git fetch origin main` and compare against `FETCH_HEAD` — *not* `origin/main`, which a bare fetch does not necessarily update.
-- **`analytics/price_model.py`'s ±0.5 rise/fall thresholds are unfitted placeholders**, said so in the module docstring. Revisit once the launch gate has accumulated enough real predicted-move observations to mean anything.
+- **The price-change model is the one §6.5 criterion still failing (2026-10-21).** Thresholds are now fitted (`uv run python -m analytics fit-price-thresholds` -> `config/price_model.yaml`, fit on 32 overnight cycles to 2026-10-01) and the gate scores only cycles after `fit_cutoff`. Out-of-sample hit rate 0.09 (95% CI 0.05-0.14) over 158 predicted moves. Pressure is 24h net transfers / (ownership + 1); alternatives tried in the same session (net since the player's last price change, since the deadline, raw counts) were no better out of sample (0-0.22). The signal, not the thresholds, is the gap -- improving it is model work, not plumbing. The old ±0.5 placeholders were never meaningful: 24h pressure runs into the thousands.
 
 **Superseded — do not redo these:**
 
@@ -1400,7 +1400,7 @@ This section replaces the previous "Before continuing Phase 4" list, three of wh
 3. ~~`golden_spearman.json`~~, ~~`schema.ts`~~, ~~`timeseries.parquet`~~ — done in the export sprint above.
 4. ~~`players.json`~~ — done. It was never date-blocked: it describes the latest gameweek in the panel and follows it forward, exactly as `board.json` does.
 5. **Collect `total_players`** — one field from bootstrap-static into the reference tier. It is what turns the panel's `selected` from null into the squad count the registry declares, for the current season and every season after it. Small, and the longer it waits the more gameweeks are permanently missing it (§0.1).
-6. **Live baseline comparison (§6.5 criteria 1–2)** — the one genuine gate gap, and retrofittable: `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so gw2–gw13 can be computed later and still be point-in-time correct. Best built around gw4–5.
+6. ~~**Live baseline comparison (§6.5 criteria 1–2)**~~ — done 2026-10-21 (`papertrade/baselines.py`): gw6–7 pooled, model MAE 1.105 vs fixture-adjusted 1.218, Spearman 0.760 vs best baseline 0.711, both PASS. Original note: the one genuine gate gap, and retrofittable: `backtest/baselines.py` consumes only past actuals, and `data/current_season/` is append-only and complete, so gw2–gw13 can be computed later and still be point-in-time correct. Best built around gw4–5.
 7. ~~`board.json`~~ — done. Both decisions below were settled by the operator on 2026-08-23 and are recorded in the entry above.
 
 **Both decisions below are now settled and implemented — kept for the reasoning, which still constrains the surface:**
