@@ -15,7 +15,7 @@
  * every number it hands over is one the collector recorded.
  */
 
-import { DATA_BASE, type LoadProgress } from "../data/load";
+import { DATA_BASE, readWithProgress, type LoadProgress } from "../data/load";
 import type { Header } from "../data/schema";
 import { headerFromMetadata } from "./session";
 
@@ -82,30 +82,7 @@ async function read(onProgress?: (progress: LoadProgress) => void): Promise<Seri
     throw new Error(`${URL_PATH}: ${response.status} ${response.statusText}`);
   }
 
-  const header = response.headers.get("content-length");
-  const total = header ? Number(header) : null;
-
-  let bytes: Uint8Array;
-  if (!response.body || !onProgress) {
-    bytes = new Uint8Array(await response.arrayBuffer());
-  } else {
-    const reader = response.body.getReader();
-    const chunks: Uint8Array[] = [];
-    let received = 0;
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      received += value.length;
-      onProgress({ received, total });
-    }
-    bytes = new Uint8Array(received);
-    let offset = 0;
-    for (const chunk of chunks) {
-      bytes.set(chunk, offset);
-      offset += chunk.length;
-    }
-  }
+  const bytes = await readWithProgress(response, onProgress);
 
   if (bytes.length < 8 || String.fromCharCode(...bytes.slice(0, 4)) !== "PAR1") {
     throw new Error(`${URL_PATH} is not a parquet file`);

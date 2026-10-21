@@ -22,6 +22,12 @@ import type {
 } from "../data/schema";
 import styles from "./CorrelationLab.module.css";
 
+/** players.json feeds the scatter only, so it has its own lifecycle. */
+type PlayersState =
+  | { status: "loading" }
+  | { status: "failed" }
+  | { status: "ready"; file: PlayersFile };
+
 type State =
   | { status: "loading"; progress: LoadProgress | null }
   | { status: "error"; error: Error }
@@ -29,7 +35,7 @@ type State =
       status: "ready";
       correlations: CorrelationsFile;
       columns: ColumnsFile;
-      players: PlayersFile | null;
+      players: PlayersState;
     };
 
 /**
@@ -64,15 +70,21 @@ export function CorrelationLab() {
           ),
           loadColumns(),
         ]);
-        // players.json drives the scatter only, so a failure there costs
-        // the scatter rather than the hero. Loaded after, not with.
-        let players: PlayersFile | null = null;
-        try {
-          players = await loadPlayers();
-        } catch {
-          players = null;
-        }
-        if (!cancelled) setState({ status: "ready", correlations, columns, players });
+        // players.json drives the scatter only, so the hero matrix does not
+        // wait for it: the view is ready as soon as correlations and columns
+        // land, with players in a "loading" state. players.json then loads
+        // in the background and either fills the scatter or marks it
+        // failed, which costs the scatter rather than the hero.
+        if (cancelled) return;
+        setState({ status: "ready", correlations, columns, players: { status: "loading" } });
+        const settle = (players: PlayersState) => {
+          if (cancelled) return;
+          setState((prev) => (prev.status === "ready" ? { ...prev, players } : prev));
+        };
+        loadPlayers().then(
+          (file) => settle({ status: "ready", file }),
+          () => settle({ status: "failed" }),
+        );
       } catch (error) {
         if (!cancelled) {
           setState({ status: "error", error: error as Error });
@@ -235,20 +247,26 @@ export function CorrelationLab() {
         revealKey={position}
       />
 
-      {selected && selectedCell && players && (
+      {selected && selectedCell && players.status === "ready" && (
         <RankScatter
           a={selected.a}
           b={selected.b}
-          players={players.players}
+          players={players.file.players}
           columns={columnIndex}
           position={position}
-          season={players.season}
+          season={players.file.season}
           rho={selectedCell.rho}
           n={selectedCell.n}
         />
       )}
 
-      {selected && !players && (
+      {selected && selectedCell && players.status === "loading" && (
+        <p className={styles.sub} role="status">
+          Loading player data for the scatter. The matrix above is already live.
+        </p>
+      )}
+
+      {selected && players.status === "failed" && (
         <p className={styles.caution} role="note">
           The scatter needs players.json, which did not load. The matrix
           above is unaffected — it carries its own numbers.

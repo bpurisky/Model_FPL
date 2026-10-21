@@ -30,14 +30,10 @@ import { useEffect, useState } from "react";
 import { loadFixtures } from "./load";
 import type { FixturesFile, FixtureRow } from "./schema";
 
-let pending: Promise<FixturesFile | null> | null = null;
-
-function file(): Promise<FixturesFile | null> {
-  // Failing to `null` rather than throwing: a missing schedule costs the
-  // fixture columns, never the surface they sit on.
-  pending ??= loadFixtures().catch(() => null);
-  return pending;
-}
+// Failing to `null` rather than throwing: a missing schedule costs the
+// fixture columns, never the surface they sit on. The download is shared
+// by `loadFixtures`' own cache, which forgets failures and so retries.
+const file = (): Promise<FixturesFile | null> => loadFixtures().catch(() => null);
 
 export function useFixtures(): FixturesFile | null {
   const [loaded, setLoaded] = useState<FixturesFile | null>(null);

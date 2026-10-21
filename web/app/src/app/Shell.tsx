@@ -14,17 +14,16 @@
  * import of a panel-backed view anywhere in this file would pull the
  * parquet reader into the landing bundle and the budget would erode with
  * no error to notice it by.
+ *
+ * The other views are lazy too, for a different reason: bundle size. Only
+ * the landing surface (Model Board) and the Planned stub are static, so a
+ * first visit downloads the shell and the board rather than every page.
+ * Panel-backed views use EngineLoading as their fallback because that is
+ * what they wait on; the rest use PageLoading.
  */
 
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
-import { Comparison } from "../views/Comparison";
-import { CorrelationLab } from "../views/CorrelationLab";
-import { Explorer } from "../views/Explorer";
-import { FixtureTicker } from "../views/FixtureTicker";
 import { ModelBoard } from "../views/ModelBoard";
-import { PaperTradeResults } from "../views/PaperTradeResults";
-import { Scorecard } from "../views/Scorecard";
-import { SquadOptimizer } from "../views/SquadOptimizer";
 import { Planned } from "../views/Planned";
 import { AppState, useApp } from "./state";
 import { SECTIONS, SURFACES, surfacesIn, type SectionId } from "./surfaces";
@@ -41,6 +40,34 @@ const TrendExplorer = lazy(() =>
 
 const FormMatrix = lazy(() =>
   import("../views/FormMatrix").then((module) => ({ default: module.FormMatrix })),
+);
+
+const Comparison = lazy(() =>
+  import("../views/Comparison").then((module) => ({ default: module.Comparison })),
+);
+
+const CorrelationLab = lazy(() =>
+  import("../views/CorrelationLab").then((module) => ({ default: module.CorrelationLab })),
+);
+
+const Explorer = lazy(() =>
+  import("../views/Explorer").then((module) => ({ default: module.Explorer })),
+);
+
+const FixtureTicker = lazy(() =>
+  import("../views/FixtureTicker").then((module) => ({ default: module.FixtureTicker })),
+);
+
+const PaperTradeResults = lazy(() =>
+  import("../views/PaperTradeResults").then((module) => ({ default: module.PaperTradeResults })),
+);
+
+const Scorecard = lazy(() =>
+  import("../views/Scorecard").then((module) => ({ default: module.Scorecard })),
+);
+
+const SquadOptimizer = lazy(() =>
+  import("../views/SquadOptimizer").then((module) => ({ default: module.SquadOptimizer })),
 );
 
 export function App() {
@@ -174,7 +201,11 @@ function Shell() {
       )}
 
       <div className={styles.body}>
-        {state.view === "correlations" && <CorrelationLab />}
+        {state.view === "correlations" && (
+          <Suspense fallback={<PageLoading />}>
+            <CorrelationLab />
+          </Suspense>
+        )}
         {state.view === "graph" && (
           <Suspense fallback={<EngineLoading />}>
             <GraphBuilder />
@@ -185,18 +216,42 @@ function Shell() {
             <FormMatrix />
           </Suspense>
         )}
-        {state.view === "compare" && <Comparison />}
-        {state.view === "fixtures" && <FixtureTicker />}
+        {state.view === "compare" && (
+          <Suspense fallback={<PageLoading />}>
+            <Comparison />
+          </Suspense>
+        )}
+        {state.view === "fixtures" && (
+          <Suspense fallback={<PageLoading />}>
+            <FixtureTicker />
+          </Suspense>
+        )}
         {state.view === "board" && <ModelBoard />}
-        {state.view === "scorecard" && <Scorecard />}
-        {state.view === "explorer" && <Explorer />}
+        {state.view === "scorecard" && (
+          <Suspense fallback={<PageLoading />}>
+            <Scorecard />
+          </Suspense>
+        )}
+        {state.view === "explorer" && (
+          <Suspense fallback={<PageLoading />}>
+            <Explorer />
+          </Suspense>
+        )}
         {state.view === "trend" && (
           <Suspense fallback={<EngineLoading />}>
             <TrendExplorer />
           </Suspense>
         )}
-        {state.view === "papertrade" && <PaperTradeResults />}
-        {state.view === "optimizer" && <SquadOptimizer />}
+        {state.view === "papertrade" && (
+          <Suspense fallback={<PageLoading />}>
+            <PaperTradeResults />
+          </Suspense>
+        )}
+        {state.view === "optimizer" && (
+          <Suspense fallback={<PageLoading />}>
+            <SquadOptimizer />
+          </Suspense>
+        )}
         {current.status !== "live" && <Planned surface={current} />}
       </div>
 
@@ -349,6 +404,17 @@ function EngineLoading() {
     <div className={styles.pending}>
       <p className={styles.pendingText}>
         Loading the player-gameweek reader. It is fetched only on the pages that need it.
+      </p>
+    </div>
+  );
+}
+
+/** Fallback for lazy views that do not need the panel reader. */
+function PageLoading() {
+  return (
+    <div className={styles.pending}>
+      <p className={styles.pendingText} role="status">
+        Loading…
       </p>
     </div>
   );

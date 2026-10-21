@@ -24,7 +24,7 @@
  * panel is 83 columns wide and a chart never touches more than about six.
  */
 
-import { DATA_BASE, type LoadProgress } from "../data/load";
+import { DATA_BASE, readWithProgress, type LoadProgress } from "../data/load";
 import { Header } from "../data/schema";
 
 /** Thrown when `panel.parquet` is not on disk — §5.14.8's empty state. */
@@ -209,30 +209,7 @@ async function fetchPanel(onProgress?: (progress: LoadProgress) => void): Promis
     throw new Error(`${PANEL_URL}: ${response.status} ${response.statusText}`);
   }
 
-  const header = response.headers.get("content-length");
-  const total = header ? Number(header) : null;
-
-  let merged: Uint8Array;
-  if (!response.body || !onProgress) {
-    merged = new Uint8Array(await response.arrayBuffer());
-  } else {
-    const reader = response.body.getReader();
-    const chunks: Uint8Array[] = [];
-    let received = 0;
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-      received += value.length;
-      onProgress({ received, total });
-    }
-    merged = new Uint8Array(received);
-    let offset = 0;
-    for (const chunk of chunks) {
-      merged.set(chunk, offset);
-      offset += chunk.length;
-    }
-  }
+  const merged = await readWithProgress(response, onProgress);
 
   // The dev middleware serves any file in the export directory, so a
   // missing parquet arrives as a 404 above — but a *stale* one that is
