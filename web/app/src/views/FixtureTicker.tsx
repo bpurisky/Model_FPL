@@ -448,7 +448,20 @@ function RotationPairs({
                     {pick.team === null ? (
                       <span className={styles.blank}>—</span>
                     ) : (
-                      <span className={styles.pick} title={`Gameweek ${pick.gw}: ${pick.team}`}>
+                      <span
+                        className={styles.pick}
+                        title={`Gameweek ${pick.gw}: ${pick.team}`}
+                        // The grid's ramp, so a 3.0 pick reads as neutral
+                        // rather than as kind as a 2.0 one.
+                        style={
+                          pick.value === null || pick.value >= BLANK_VALUE
+                            ? undefined
+                            : {
+                                background: outcomeColor((3 - pick.value) / 2),
+                                color: cellTextColor((3 - pick.value) / 2),
+                              }
+                        }
+                      >
                         {short(pick.team)}
                         <span className={styles.venue}>
                           {pick.value === null
