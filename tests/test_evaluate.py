@@ -12,6 +12,7 @@ import pytest
 from analytics.price_model import PriceModelEvaluation
 from papertrade.actuals import _SCHEMA
 from papertrade.evaluate import (
+    MIN_GATE_PREDICTED_MOVES,
     collect_freeze_provenance,
     evaluate_gw_player_level,
     evaluate_player_level,
@@ -197,16 +198,32 @@ def test_launch_gate_report_never_fabricates_a_pass_with_no_data():
     assert report["criteria"]["price_change_model_reports_hit_rate_with_ci"]["status"] == "insufficient data"
 
 
+_PRICE_KEY = "price_change_model_reports_hit_rate_with_ci"
+
+
+def test_launch_gate_report_price_model_insufficient_data_below_the_minimum_rise_calls():
+    # a flattering hit rate over too few calls is not a verdict either way
+    price_eval = PriceModelEvaluation(
+        n=1000, n_moves_predicted=MIN_GATE_PREDICTED_MOVES - 1, hit_rate=1.0, ci_low=0.8, ci_high=1.0, n_cycles=3, span="a to b"
+    )
+    criterion = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)["criteria"][_PRICE_KEY]
+    assert criterion["status"] == "insufficient data"
+    assert f"{MIN_GATE_PREDICTED_MOVES - 1} rise call(s)" in criterion["detail"]
+    assert "3 out-of-sample cycle(s)" in criterion["detail"]
+    assert f"{MIN_GATE_PREDICTED_MOVES} are needed" in criterion["detail"]
+
+
 def test_launch_gate_report_price_model_pass_when_hit_rate_above_half():
-    price_eval = PriceModelEvaluation(n=10, n_moves_predicted=6, hit_rate=0.8, ci_low=0.5, ci_high=0.95)
-    report = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)
-    assert report["criteria"]["price_change_model_reports_hit_rate_with_ci"]["status"] == "PASS"
+    price_eval = PriceModelEvaluation(n=1000, n_moves_predicted=MIN_GATE_PREDICTED_MOVES, hit_rate=0.8, ci_low=0.5, ci_high=0.95)
+    criterion = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)["criteria"][_PRICE_KEY]
+    assert criterion["status"] == "PASS"
+    assert "rise calls only" in criterion["detail"]
 
 
 def test_launch_gate_report_price_model_fail_when_hit_rate_at_or_below_half():
-    price_eval = PriceModelEvaluation(n=10, n_moves_predicted=6, hit_rate=0.33, ci_low=0.1, ci_high=0.6)
-    report = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)
-    assert report["criteria"]["price_change_model_reports_hit_rate_with_ci"]["status"] == "FAIL"
+    price_eval = PriceModelEvaluation(n=1000, n_moves_predicted=MIN_GATE_PREDICTED_MOVES, hit_rate=0.5, ci_low=0.1, ci_high=0.6)
+    criterion = launch_gate_report({}, {"n_gameweeks": 0}, price_eval=price_eval)["criteria"][_PRICE_KEY]
+    assert criterion["status"] == "FAIL"
 
 
 # --------------------------------------------------------------------------

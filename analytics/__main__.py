@@ -20,10 +20,11 @@ import yaml
 from analytics.evaluate import run_evaluation
 from analytics.price_model import (
     PRICE_MODEL_CONFIG,
+    RECENT_MOVE_WINDOW,
     cycle_observations,
     daily_cycles,
     evaluate_observations,
-    fit_thresholds,
+    fit_rise_threshold,
     load_distilled_history,
 )
 from backtest.report import build_report, component_decomposition_mae, minutes_head_metrics, write_report
@@ -71,16 +72,18 @@ def cmd_fit_price_thresholds(args: argparse.Namespace) -> None:
     if not fit_cycles:
         raise SystemExit(f"no cycles before cutoff {cutoff}")
 
-    fitted = fit_thresholds(cycle_observations(history, fit_cycles))
-    in_sample = evaluate_observations(cycle_observations(history, fit_cycles), fitted["rise_threshold"], fitted["fall_threshold"])
+    fit_observations = cycle_observations(history, fit_cycles)
+    fitted = fit_rise_threshold(fit_observations)
+    in_sample = evaluate_observations(fit_observations, fitted["rise_threshold"])
     config = {
         "rise_threshold": round(float(fitted["rise_threshold"]), 4),
-        "fall_threshold": round(float(fitted["fall_threshold"]), 4),
+        "recent_move_hours": int(RECENT_MOVE_WINDOW.total_seconds() // 3600),
+        "score": "net_transfers_24h",
         "fit_cutoff": cutoff,
         "fit_span": f"{fit_cycles[0].prediction_ts.date()} to {fit_cycles[-1].prediction_ts.date()}",
         "fit_cycles": len(fit_cycles),
         "fit_rise_f1": round(float(fitted["rise_f1"]), 4),
-        "fit_fall_f1": round(float(fitted["fall_f1"]), 4),
+        "fit_rise_n_called": int(fitted["rise_n_called"]),
         "fit_in_sample_hit_rate": round(in_sample.hit_rate, 4) if in_sample.hit_rate is not None else None,
         "fitted_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
@@ -95,7 +98,7 @@ def cmd_fit_price_thresholds(args: argparse.Namespace) -> None:
         logger.info(
             "out-of-sample so far (%d cycle(s), informational -- the gate recomputes this every run): %s",
             len(held_out),
-            evaluate_observations(cycle_observations(history, held_out), fitted["rise_threshold"], fitted["fall_threshold"]),
+            evaluate_observations(cycle_observations(history, held_out), fitted["rise_threshold"]),
         )
 
 

@@ -38,10 +38,10 @@ Two of the five (baseline comparison on live data) score the three
 same players, via `papertrade/baselines.py` — retroactive but still
 point-in-time; see that module's docstring for why. The fifth (§6.4's price-change hit rate) now calls
 `analytics/price_model.py` directly — built alongside this module rather
-than left as a permanent gap — but its own module docstring is explicit
-that a hit rate this early is near-meaningless (unfitted thresholds, ~a
-day of distilled data, no price has necessarily moved yet): PASS still
-requires an actual computed hit rate to clear a bar, not just a number to
+than left as a permanent gap. Since 2026-10-21 it scores rise calls only,
+out-of-sample after its fit_cutoff, and reports no verdict until
+`MIN_GATE_PREDICTED_MOVES` rise calls exist: PASS still requires an actual
+computed hit rate over enough calls to clear a bar, not just a number to
 exist.
 """
 
@@ -79,6 +79,10 @@ from squad.shadow import realized_points
 
 DISTILLED_DIR = Path("data/distilled")
 EVENTS_PATH = Path("data/reference/events.parquet")
+# Criterion 5 reports no verdict on fewer rise calls than this: a hit rate over
+# a handful of calls is a coin-flip's worth of evidence, and the normal-approx
+# CI is meaningless there.
+MIN_GATE_PREDICTED_MOVES = 20
 
 logger = logging.getLogger("papertrade.evaluate")
 
@@ -397,11 +401,12 @@ def run_price_model_for_gate(
     thresholds: PriceThresholds | None = None,
 ) -> PriceModelEvaluation:
     """The launch gate's live invocation of `analytics/price_model.py`: the
-    fitted thresholds, scored over every overnight price-change cycle
-    *after* their `fit_cutoff` and pooled — never a cycle the fit saw, and
-    never just the one 24h slice that happens to end when this runs.
+    fitted rise threshold, scored over every overnight price-change cycle
+    *after* its `fit_cutoff` and pooled — never a cycle the fit saw, and
+    never just the one 24h slice that happens to end when this runs. Only
+    rise calls are scored (`n_moves_predicted` is the rise-call count).
 
-    Unfitted thresholds (no `config/price_model.yaml`) have no
+    An unfitted threshold (no `config/price_model.yaml`) has no
     out-of-sample span, so they report zero cycles rather than scoring
     the whole history as if it were held out.
     """
@@ -417,7 +422,7 @@ def run_price_model_for_gate(
     cycles = [c for c in daily_cycles(history["snapshot_ts"].unique().to_list(), deadlines) if c.prediction_ts >= cutoff]
     if not cycles:
         return empty
-    evaluation = evaluate_observations(cycle_observations(history, cycles), thresholds.rise, thresholds.fall)
+    evaluation = evaluate_observations(cycle_observations(history, cycles), thresholds.rise)
     span = f"{cycles[0].prediction_ts.date()} to {cycles[-1].prediction_ts.date()}"
     return dataclasses.replace(evaluation, n_cycles=len(cycles), span=span)
 
@@ -626,19 +631,23 @@ def launch_gate_report(
         f" across {price_eval.n_cycles} out-of-sample overnight cycle(s), {price_eval.span}"
         if price_eval.n_cycles else ""
     )
-    if price_eval.hit_rate is None:
+    scope = (
+        "Scores rise calls only: falls are excluded because they are not predictable from this data "
+        "(fall AUC <= 0.80, precision <= 0.25 in the 2026-10-21 investigation)."
+    )
+    if price_eval.hit_rate is None or price_eval.n_moves_predicted < MIN_GATE_PREDICTED_MOVES:
         price_status = "insufficient data"
         price_detail = (
-            f"analytics/price_model.py scored {price_eval.n} player-cycle(s){window} but predicted zero "
-            "moves (rise/fall) to score -- either no cycle after the thresholds' fit_cutoff has completed "
-            "yet, or config/price_model.yaml is missing and there is no out-of-sample span at all."
+            f"{price_eval.n_moves_predicted} rise call(s) so far over {price_eval.n_cycles or 0} out-of-sample "
+            f"cycle(s) after config/price_model.yaml's fit_cutoff ({price_eval.n} player-cycle(s) scored); "
+            f"{MIN_GATE_PREDICTED_MOVES} are needed before a hit rate is reported. {scope}"
         )
     else:
         price_status = "PASS" if price_eval.hit_rate > 0.5 else "FAIL"
         price_detail = (
             f"hit_rate={price_eval.hit_rate:.2f} (95% CI [{price_eval.ci_low:.2f}, {price_eval.ci_high:.2f}]) "
-            f"over {price_eval.n_moves_predicted} predicted move(s) of {price_eval.n} player-cycle(s){window}. "
-            "Thresholds are fitted on cycles before config/price_model.yaml's fit_cutoff and scored only after it."
+            f"over {price_eval.n_moves_predicted} rise call(s) of {price_eval.n} player-cycle(s){window}. "
+            f"{scope} The threshold is fitted on cycles before config/price_model.yaml's fit_cutoff and scored only after it."
         )
 
     criteria = {

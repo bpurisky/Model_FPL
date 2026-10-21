@@ -862,7 +862,7 @@ class PaperTradeLaunchGate(_Strict):
 
 class PaperTradePriceEval(_Strict):
     n: int
-    n_moves_predicted: int
+    n_moves_predicted: int  # rise calls (the model is rise-only; it never calls falls)
     hit_rate: float | None
     ci_low: float | None
     ci_high: float | None
