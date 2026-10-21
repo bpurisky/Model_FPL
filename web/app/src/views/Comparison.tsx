@@ -251,6 +251,8 @@ export function Comparison() {
 
           <Minutes players={chosen} />
 
+          <SetPieces players={chosen} columns={columnIndex} />
+
           <Rates
             players={chosen}
             columns={columnIndex}
@@ -519,6 +521,74 @@ function Minutes({ players }: { players: PlayerRow[] }) {
           );
         })}
       </div>
+    </section>
+  );
+}
+
+// --- set pieces ------------------------------------------------------
+
+const SET_PIECE_KEYS = ["penalties_order", "corners_order", "direct_freekicks_order"] as const;
+
+/** 1 -> "1st". FPL ranks takers; anything past third is not a real plan. */
+function ordinal(rank: number): string {
+  const suffix = rank === 1 ? "st" : rank === 2 ? "nd" : rank === 3 ? "rd" : "th";
+  return `${rank}${suffix}`;
+}
+
+/**
+ * Who takes the penalties, corners and free kicks, as FPL lists them.
+ *
+ * Labels and definitions come from the registry. A null is "not listed as
+ * a taker" or "the export predates the field" and renders as a dash either
+ * way (§5.3.3): never as a rank. Hidden entirely when no chosen player has
+ * a rank at all, because a panel of dashes would say more about the export
+ * than about the players.
+ */
+function SetPieces({
+  players,
+  columns,
+}: {
+  players: PlayerRow[];
+  columns: ReadonlyMap<string, ColumnSpec>;
+}) {
+  const any = players.some((player) => SET_PIECE_KEYS.some((key) => player[key] != null));
+  if (!any) return null;
+
+  return (
+    <section className={styles.panel}>
+      <header className={styles.panelHead}>
+        <h2 className={styles.panelTitle}>Set pieces</h2>
+        <p className={styles.panelSub}>
+          FPL's taker order, 1st being first choice. A dash means FPL lists him as nobody's taker.
+        </p>
+      </header>
+      <table className={styles.setPieces}>
+        <thead>
+          <tr>
+            <th scope="col">Player</th>
+            {SET_PIECE_KEYS.map((key) => (
+              <th key={key} scope="col" title={columns.get(key)?.definition}>
+                {columns.get(key)?.label ?? key}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((player) => (
+            <tr key={player.element_id}>
+              <th scope="row">{player.name}</th>
+              {SET_PIECE_KEYS.map((key) => {
+                const rank = player[key];
+                return (
+                  <td key={key} className="data">
+                    {rank == null ? "—" : ordinal(rank)}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 }

@@ -172,7 +172,9 @@ def evaluate_price_model(predictions: pl.DataFrame, actuals: pl.DataFrame) -> Pr
 class PriceCycle:
     pressure_from: datetime  # snapshot ~24h before prediction_ts
     prediction_ts: datetime  # last snapshot at or before the cycle's opening boundary
-    evaluation_ts: datetime  # last snapshot at or before the next boundary
+    # Last snapshot at or before the next boundary; None for the *current*
+    # cycle, whose outcome has not happened yet (see `current_cycle`).
+    evaluation_ts: datetime | None
 
 
 def load_distilled_history(distilled_dir: Path) -> pl.DataFrame:
@@ -235,6 +237,62 @@ def daily_cycles(snapshots: list[datetime], deadlines: list[datetime]) -> list[P
     return cycles
 
 
+@dataclass(frozen=True)
+class CurrentCycle:
+    """Where the latest snapshot sits in the daily cycle, and whether it can
+    be predicted from. `cycle` is None exactly when `status != "ok"`."""
+
+    status: str  # "ok" | "no_data" | "stale" | "insufficient_history" | "deadline_in_window"
+    detail: str | None
+    cycle: PriceCycle | None
+    boundary_ts: datetime | None  # the 19:00 UTC the cycle's prediction is (or was) taken at
+    next_boundary_ts: datetime | None  # the following 19:00, where the next cycle opens
+    locked: bool  # True once `boundary_ts` has passed: the call can no longer change
+
+
+def current_cycle(snapshots: list[datetime], deadlines: list[datetime], now: datetime) -> CurrentCycle:
+    """The cycle the latest snapshot belongs to, built from the same rules
+    `daily_cycles` applies to history — a stale or gappy cycle is reported,
+    never predicted from — but with no outcome, because it has not happened.
+
+    Before today's boundary the cycle is *open*: its prediction snapshot is
+    the latest one, so the score is a live running total that can still
+    move before the 19:00 cut. After it the cycle is *locked*: the
+    prediction snapshot is the last one at or before the boundary, exactly
+    what a scored cycle would use, and the overnight price change is
+    pending.
+
+    Staleness is measured from `now`: a latest snapshot more than
+    `MAX_SNAPSHOT_STALENESS` old (a collector outage) is not a current
+    reading of anything. The pressure window needs a snapshot ~24h before
+    the prediction and no gameweek deadline inside it, as for any cycle.
+    """
+    snapshots = sorted(snapshots)
+    if not snapshots:
+        return CurrentCycle("no_data", "no collector snapshots on disk", None, None, None, False)
+    latest = snapshots[-1]
+    boundary = datetime.combine(latest.date(), time(CYCLE_BOUNDARY_HOUR_UTC), tzinfo=timezone.utc)
+    next_boundary = boundary + timedelta(days=1)
+    locked = latest >= boundary
+
+    def unavailable(status: str, detail: str) -> CurrentCycle:
+        return CurrentCycle(status, detail, None, boundary, next_boundary, locked)
+
+    if now - latest > MAX_SNAPSHOT_STALENESS:
+        return unavailable("stale", f"latest snapshot {latest:%Y-%m-%d %H:%M} UTC is more than {MAX_SNAPSHOT_STALENESS} old")
+    prediction_ts = _last_at_or_before(snapshots, boundary) if locked else latest
+    if locked and (prediction_ts is None or boundary - prediction_ts > MAX_SNAPSHOT_STALENESS):
+        return unavailable("stale", f"no snapshot within {MAX_SNAPSHOT_STALENESS} before the {boundary:%Y-%m-%d %H:%M} UTC boundary")
+    pressure_target = prediction_ts - PRESSURE_WINDOW
+    pressure_from = _last_at_or_before(snapshots, pressure_target)
+    if pressure_from is None or pressure_target - pressure_from > MAX_SNAPSHOT_STALENESS:
+        return unavailable("insufficient_history", "no snapshot near 24h before the prediction snapshot")
+    if any(pressure_from < deadline <= prediction_ts for deadline in deadlines):
+        return unavailable("deadline_in_window", "a gameweek deadline falls inside the 24h window, which resets transfer counts")
+    cycle = PriceCycle(pressure_from=pressure_from, prediction_ts=prediction_ts, evaluation_ts=None)
+    return CurrentCycle("ok", None, cycle, boundary, next_boundary, locked)
+
+
 def cycle_observations(history: pl.DataFrame, cycles: list[PriceCycle]) -> pl.DataFrame:
     """One row per (cycle, player): `analytics.trending.price_change_pressure`
     over the cycle's 24h window (its `net_transfers` is the rise score;
@@ -254,14 +312,16 @@ def cycle_observations(history: pl.DataFrame, cycles: list[PriceCycle]) -> pl.Da
             (pl.col("transfers_in_event") - pl.col("in_past")).alias("transfers_in_event_delta_24h"),
             (pl.col("transfers_out_event") - pl.col("out_past")).alias("transfers_out_event_delta_24h"),
         )
-        after = _state_at(history, cycle.evaluation_ts).select("element_id", pl.col("now_cost").alias("cost_after"))
-        outcome = now.select("element_id", "now_cost").join(after, on="element_id", how="inner").select(
-            "element_id",
-            pl.when(pl.col("cost_after") > pl.col("now_cost")).then(pl.lit("rise"))
-            .when(pl.col("cost_after") < pl.col("now_cost")).then(pl.lit("fall"))
-            .otherwise(pl.lit("stable"))
-            .alias("actual_direction"),
-        )
+        outcome = None
+        if cycle.evaluation_ts is not None:
+            after = _state_at(history, cycle.evaluation_ts).select("element_id", pl.col("now_cost").alias("cost_after"))
+            outcome = now.select("element_id", "now_cost").join(after, on="element_id", how="inner").select(
+                "element_id",
+                pl.when(pl.col("cost_after") > pl.col("now_cost")).then(pl.lit("rise"))
+                .when(pl.col("cost_after") < pl.col("now_cost")).then(pl.lit("fall"))
+                .otherwise(pl.lit("stable"))
+                .alias("actual_direction"),
+            )
         # One filter + one group_by per cycle: a player moved recently iff his
         # now_cost is not constant across the window's snapshots.
         recent = (
@@ -269,9 +329,11 @@ def cycle_observations(history: pl.DataFrame, cycles: list[PriceCycle]) -> pl.Da
             .group_by("element_id")
             .agg((pl.col("now_cost").min() != pl.col("now_cost").max()).alias("moved_recently"))
         )
+        pressure = price_change_pressure(deltas, window="24h")
+        if outcome is not None:
+            pressure = pressure.join(outcome, on="element_id", how="inner")
         frames.append(
-            price_change_pressure(deltas, window="24h")
-            .join(outcome, on="element_id", how="inner")
+            pressure
             .join(recent, on="element_id", how="left")
             .with_columns(
                 (~pl.col("moved_recently").fill_null(False)).alias("eligible"),

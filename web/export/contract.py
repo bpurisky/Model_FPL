@@ -55,6 +55,7 @@ Role = Literal["quantitative", "categorical", "ordinal", "temporal"]
 Relevance = Literal["primary", "secondary", "context", "none"]
 Grain = Literal["player", "player_gameweek", "fixture", "metric_pair", "model_gameweek"]
 Source = Literal["fpl_api", "vaastav_archive", "derived", "model"]
+PriceWatchStatus = Literal["ok", "no_data", "stale", "insufficient_history", "deadline_in_window"]
 
 
 class _Strict(BaseModel):
@@ -670,6 +671,17 @@ class PlayerRow(_Strict):
     metrics: dict[str, PlayerMetric]
     projection: PlayerProjection | None
 
+    # --- added after 5D, contract_version unchanged ---------------------
+    # FPL's set-piece taker rank, 1 = first choice, from the collector's
+    # reference tier. Null both when FPL lists the player as nobody's taker
+    # and for any file built before the collector kept the columns or for a
+    # season whose element ids the reference does not describe -- the two
+    # nulls are not distinguishable here, which is fine: neither is a taker
+    # we know about.
+    penalties_order: int | None = None
+    corners_order: int | None = None
+    direct_freekicks_order: int | None = None
+
 
 class PlayersFile(_Strict):
     """`players.json`.
@@ -691,6 +703,74 @@ class PlayersFile(_Strict):
     # a group property rather than a player one).
     population: dict[str, dict[str, int]]
     players: list[PlayerRow]
+
+
+class ProjectionFixture(_Strict):
+    """One fixture a club plays in a projected gameweek.
+
+    `difficulty` is FPL's published 1-5 rating from this club's point of
+    view, null only if the reference table carries none for the fixture.
+    `opponent` is the opponent's three-letter short name, as the game
+    itself prints it.
+    """
+
+    opponent: str
+    home: bool
+    difficulty: int | None
+
+
+class ProjectionTeamGameweek(_Strict):
+    """A club's fixtures in one projected gameweek: none is a blank, two a
+    double. Present for every gameweek of the horizon so a blank is an
+    explicit empty list rather than an absent key."""
+
+    gw: int
+    fixtures: list[ProjectionFixture]
+
+
+class ProjectionTeam(_Strict):
+    team: str
+    short_name: str
+    gameweeks: list[ProjectionTeamGameweek]
+
+
+class ProjectionPlayer(_Strict):
+    """One element's projected points over the horizon.
+
+    `xp[i]` belongs to `ProjectionsFile.gameweeks[i]`. It is 0.0 in a blank
+    gameweek and the sum over both fixtures in a double, exactly as the
+    event model sums them. The three minutes probabilities are the minutes
+    head's distribution for the *first* projected gameweek only: FPL's
+    availability flag speaks to the next round and is applied there alone,
+    so the later gameweeks' distributions would differ and are not shipped.
+    `p_full` is P(60+ minutes). There is no P(start) -- the model has no
+    such head (see `web/export/projections.py`).
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    price: int | None
+    xp: list[float | None]
+    p_blank: float | None
+    p_short: float | None
+    p_full: float | None
+
+
+class ProjectionsFile(_Strict):
+    """`projections.json`: a player by gameweek table of expected points.
+
+    `gameweeks` is the horizon, up to six gameweeks starting at the one
+    after `gameweek`, and shorter when the season ends first.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    gameweeks: list[int]
+    teams: list[ProjectionTeam]
+    players: list[ProjectionPlayer]
 
 
 class SeasonSummary(_Strict):
@@ -900,6 +980,104 @@ class PaperTradeFile(_Strict):
     price_eval: PaperTradePriceEval
 
 
+class PriceWatchPlayer(_Strict):
+    """One player in the current price cycle.
+
+    `now_cost` is in tenths of a million, as the collector records it.
+    `net_transfers_24h` and `progress` are null only for a player with no
+    snapshot ~24h before the prediction (`ineligible_reason` is then
+    "insufficient_history"): a missing flow is not a zero flow.
+    `progress` is `net_transfers_24h / threshold`, so it is negative for a
+    net outflow and above 1 once the player is at or past the rise cut --
+    which is a *call* only if he is also `eligible`.
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    now_cost: int
+    net_transfers_24h: float | None
+    progress: float | None
+    eligible: bool
+    ineligible_reason: Literal["moved_within_72h", "insufficient_history"] | None
+    call: Literal["rise", "stable"]
+
+
+class PriceInSampleFit(_Strict):
+    """`config/price_model.yaml`'s own fit statistics. **In-sample**: the
+    threshold was chosen to maximize them over exactly these cycles, so
+    they say how well the rule can be made to fit the past and nothing
+    about how it will do next. Never the headline number."""
+
+    fit_cutoff: str | None
+    fit_span: str | None
+    fit_cycles: int | None
+    rise_f1: float | None
+    rise_n_called: int | None
+    hit_rate: float | None
+    fitted_at: str | None
+
+
+class PriceCycleOutcome(_Strict):
+    """One scored overnight cycle: the rise calls made and how many rose.
+    `out_of_sample` is False for a cycle before `fit_cutoff`, which the fit
+    saw."""
+
+    date: str
+    calls: int
+    hits: int
+    out_of_sample: bool
+
+
+class PriceTrackRecord(_Strict):
+    """The model's own out-of-sample record, as the launch gate scores it
+    (`papertrade/evaluate.py:run_price_model_for_gate`, criterion 5).
+    `status` is the gate's own string: "PASS", "FAIL" or "insufficient
+    data" (fewer than `min_calls` rise calls scored). Rise calls only."""
+
+    status: str
+    n_calls: int
+    n_cycles: int
+    min_calls: int
+    hit_rate: float | None
+    ci_low: float | None
+    ci_high: float | None
+    span: str | None
+    in_sample: PriceInSampleFit | None
+    recent_cycles: list[PriceCycleOutcome]
+
+
+class PricesFile(_Strict):
+    """`prices.json` — Price Watch: the rise-only price model's call for the
+    current daily cycle, and its own track record.
+
+    `status` is "ok" when a prediction was made; otherwise `players` is
+    empty and `status_detail` says why ("stale": the collector's latest
+    snapshot is too old to be a current reading; "insufficient_history":
+    no snapshot ~24h earlier; "deadline_in_window": a gameweek deadline
+    reset the transfer counts; "no_data").
+
+    `snapshot_ts` is the snapshot the scores are read from. `locked` is
+    False while `boundary_ts` (19:00 UTC) is still ahead -- the running
+    total can still move -- and True once the call is fixed and the
+    overnight change is pending. `next_boundary_ts` is where the next cycle
+    opens. Reports the model's call; it picks no squad and urges no transfer.
+    """
+
+    header: Header
+    status: PriceWatchStatus
+    status_detail: str | None
+    snapshot_ts: datetime | None
+    boundary_ts: datetime | None
+    next_boundary_ts: datetime | None
+    locked: bool | None
+    threshold: float
+    recent_move_hours: int
+    players: list[PriceWatchPlayer]
+    track_record: PriceTrackRecord
+
+
 def build_header(
     *,
     rows: int,
@@ -1012,10 +1190,12 @@ def contract_shape() -> dict[str, Any]:
         ShrinkagePoint, ShrinkageFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
+        ProjectionFixture, ProjectionTeamGameweek, ProjectionTeam, ProjectionPlayer, ProjectionsFile,
         SeasonSummary, ObservationRow, ObservationsFile,
         PaperTradeGwNote, PaperTradeSquadLevelGw, PaperTradeSquadLevel,
         PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,
         PaperTradeGateCriterion, PaperTradeLaunchGate, PaperTradePriceEval, PaperTradeFile,
+        PriceWatchPlayer, PriceInSampleFit, PriceCycleOutcome, PriceTrackRecord, PricesFile,
     )
     for model in models:
         fields = {}

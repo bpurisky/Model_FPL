@@ -53,6 +53,7 @@ type Source =
   | { kind: "ownership" }
   | { kind: "gameweeks" }
   | { kind: "projection" }
+  | { kind: "setpiece"; key: "penalties_order" | "corners_order" | "direct_freekicks_order" }
   | { kind: "component"; key: string }
   | { kind: "actual"; key: string }
   | { kind: "metric"; key: string }
@@ -69,6 +70,8 @@ interface Column {
   source: Source;
   /** Numeric columns sort descending first; text ascending. */
   numeric: boolean;
+  /** Rank-like columns (1 = best) sort ascending first, unlike other numerics. */
+  ascFirst?: boolean;
   format: (value: number) => string;
 }
 
@@ -335,7 +338,7 @@ export function Explorer() {
                         setSort((current) =>
                           current.id === column.id
                             ? { id: column.id, desc: !current.desc }
-                            : { id: column.id, desc: column.numeric },
+                            : { id: column.id, desc: column.numeric && !column.ascFirst },
                         )
                       }
                     >
@@ -433,6 +436,20 @@ function buildColumns(
     { id: "selected", label: "Owned", group: "Price and ownership", source: { kind: "ownership" }, numeric: true, format: int },
     { id: "projection", label: "Proj", group: "Projection", source: { kind: "projection" }, numeric: true, format: two },
   ];
+
+  // Set-piece taker ranks, labelled from the registry. Ascending first: 1 is
+  // first choice, and "who takes the penalties" is the question.
+  for (const key of ["penalties_order", "corners_order", "direct_freekicks_order"] as const) {
+    columns.push({
+      id: `setpiece:${key}`,
+      label: registry.columns.find((entry) => entry.key === key)?.label ?? key,
+      group: "Set pieces",
+      source: { kind: "setpiece", key },
+      numeric: true,
+      ascFirst: true,
+      format: int,
+    });
+  }
 
   // Projection components, in the order `players.json` carries them.
   const sample = players.players.find((player) => player.projection !== null);
@@ -533,6 +550,8 @@ function valueOf(
       return player.gameweeks;
     case "projection":
       return player.projection?.total ?? null;
+    case "setpiece":
+      return player[source.key] ?? null;
     case "component":
       return player.projection?.components[source.key] ?? null;
     case "actual":

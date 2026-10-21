@@ -151,6 +151,32 @@ _VOLUME: list[ColumnSpec] = [
 ]
 
 # --------------------------------------------------------------------------
+# set pieces — player-level, from the collector's reference tier
+# --------------------------------------------------------------------------
+
+# Player grain, current season only: the orders are FPL's live view of who
+# takes set pieces, so they are null for any archived season and for a
+# reference file that predates the collector keeping them (§5.3.3: null,
+# never a rank of zero). Lower is better -- 1 is first choice -- which is
+# why `higher_is_better` is False.
+def _set_piece(key: str, label: str, definition: str) -> ColumnSpec:
+    spec = _context(key, label, definition, role="ordinal", fmt="d", grain="player")
+    return spec.model_copy(update={"higher_is_better": False})
+
+
+_SET_PIECES: list[ColumnSpec] = [
+    _set_piece("penalties_order", "Penalties",
+               "FPL's penalty-taker rank for the player: 1 is first choice, 2 the backup. "
+               "Null when FPL lists him as nobody's taker. Current season only."),
+    _set_piece("corners_order", "Corners",
+               "FPL's rank for corners and indirect free kicks: 1 is first choice. "
+               "Null when FPL lists him as nobody's taker. Current season only."),
+    _set_piece("direct_freekicks_order", "Direct FKs",
+               "FPL's rank for direct free kicks: 1 is first choice. "
+               "Null when FPL lists him as nobody's taker. Current season only."),
+]
+
+# --------------------------------------------------------------------------
 # the sixteen metrics (§5.15 Q2)
 # --------------------------------------------------------------------------
 
@@ -229,6 +255,7 @@ _ICT: list[ColumnSpec] = [
 REGISTRY: list[ColumnSpec] = [
     *_CONTEXT,
     *_VOLUME,
+    *_SET_PIECES,
     *_ATTACKING,
     *_DEFENSIVE,
     *_INVOLVEMENT,

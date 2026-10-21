@@ -408,6 +408,31 @@
   color: var(--muted);
 }
 
+/* --- set pieces ---------------------------------------------------- */
+
+.setPieces {
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+  inline-size: 100%;
+}
+
+.setPieces th,
+.setPieces td {
+  padding: var(--space-1) var(--space-2);
+  text-align: end;
+}
+
+.setPieces th:first-child {
+  text-align: start;
+  font-weight: normal;
+}
+
+.setPieces thead th {
+  color: var(--muted);
+  font-weight: normal;
+  border-block-end: var(--hairline) solid var(--rule);
+}
+
 /* --- states -------------------------------------------------------- */
 
 @media (max-width: 720px) {

@@ -219,3 +219,55 @@ def test_the_committed_file_matches_a_fresh_build():
     current = _round_floats(current, ROUND_SIG_FIGS)
 
     assert payload == current, "data/web/v1/players.json is stale -- regenerate it"
+
+
+# --- set pieces ------------------------------------------------------------
+
+
+def _reference(path: Path, with_columns: bool) -> Path:
+    data = {"id": [1, 2], "code": [10, 20], "web_name": ["A", "B"], "team": [1, 1], "element_type": [3, 4]}
+    if with_columns:
+        data |= {
+            "penalties_order": [1, None],
+            "corners_and_indirect_freekicks_order": [None, 2],
+            "direct_freekicks_order": [3, None],
+        }
+    pl.DataFrame(data).write_parquet(path)
+    return path
+
+
+def test_set_piece_orders_map_the_reference_columns(tmp_path: Path):
+    from web.export.players import set_piece_orders
+
+    ref = _reference(tmp_path / "players.parquet", with_columns=True)
+    orders = set_piece_orders("2099-00", tmp_path, ref)
+
+    assert orders[1] == {"penalties_order": 1, "corners_order": None, "direct_freekicks_order": 3}
+    assert orders[2]["corners_order"] == 2
+
+
+def test_set_piece_orders_degrade_to_nothing_for_an_old_reference(tmp_path: Path):
+    """The committed reference predates the columns until the collector next
+    runs on CI; the export must build, with every field null."""
+    from web.export.players import set_piece_orders
+
+    ref = _reference(tmp_path / "players.parquet", with_columns=False)
+    assert set_piece_orders("2099-00", tmp_path, ref) == {}
+    assert set_piece_orders("2099-00", tmp_path, tmp_path / "missing.parquet") == {}
+
+
+def test_set_piece_orders_skip_an_archived_season(tmp_path: Path):
+    """Element ids are renumbered each season; joining on id would hang one
+    player's penalties on another."""
+    from web.export.players import set_piece_orders
+
+    ref = _reference(tmp_path / "players.parquet", with_columns=True)
+    (tmp_path / "2024-25.parquet").write_bytes(b"")
+    assert set_piece_orders("2024-25", tmp_path, ref) == {}
+
+
+def test_every_player_row_carries_the_set_piece_fields_nullable():
+    file = _built()
+    for player in file.players[:50]:
+        for field in ("penalties_order", "corners_order", "direct_freekicks_order"):
+            assert getattr(player, field) is None or getattr(player, field) >= 1

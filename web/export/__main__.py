@@ -35,6 +35,8 @@ from web.export.panel import build_panel, write_panel
 from web.export.papertrade import build_papertrade
 from web.export.reductions import build_golden_reductions
 from web.export.players import build_players
+from web.export.projections import build_projections
+from web.export.prices import build_prices
 from web.export.timeseries import build_timeseries, write_timeseries
 from web.export.scorecard import build_scorecard
 from web.export.shrinkage import build_shrinkage
@@ -245,6 +247,18 @@ def cmd_players(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_projections(args: argparse.Namespace) -> None:
+    """Expected points for each of the next six gameweeks (§5.3.2). Committed
+    per §5.3.4, like `players`, and built from the same committed data."""
+    file = build_projections(panel_path=Path(args.out) / "panel.parquet")
+    path, changed = write_json(rounded_json(file), "projections.json", Path(args.out))
+    logger.info(
+        "%s %d players x %d gw(s) after %s gw%d -> %s",
+        "wrote" if changed else "unchanged:", len(file.players), len(file.gameweeks),
+        file.season, file.gameweek, path,
+    )
+
+
 def cmd_observations(args: argparse.Namespace) -> None:
     """The values behind the matrix (§5.6.1). Committed, and loaded by the
     app only when the reader changes the season selection."""
@@ -285,6 +299,24 @@ def cmd_papertrade(args: argparse.Namespace) -> None:
     )
 
 
+def cmd_prices(args: argparse.Namespace) -> None:
+    """Price Watch: the rise-only price model's call for the current daily
+    cycle, plus its own track record. Committed per §5.3.4, and a pure
+    local-file transform over `data/distilled/`, so it is part of `all`.
+
+    `web.yml` runs `all` at :20 every 6 hours, so the 18:20 UTC run lands
+    *before* the 19:00 UTC boundary: its file is an open cycle (a running
+    total that can still move) and the 00:20 run reads the locked one.
+    `locked` in the file says which. See `web/export/prices.py`."""
+    file = build_prices()
+    path, changed = write_json(rounded_json(file), "prices.json", Path(args.out))
+    logger.info(
+        "%s status %s, %d players (%d rise), track record %s -> %s",
+        "wrote" if changed else "unchanged:", file.status, len(file.players),
+        sum(p.call == "rise" for p in file.players), file.track_record.status, path,
+    )
+
+
 def cmd_all(args: argparse.Namespace) -> None:
     cmd_columns(args)
     cmd_panel(args)
@@ -295,7 +327,9 @@ def cmd_all(args: argparse.Namespace) -> None:
     cmd_timeseries(args)
     cmd_board(args)
     cmd_players(args)
+    cmd_projections(args)
     cmd_observations(args)
+    cmd_prices(args)
     # `scorecard`, `shrinkage` and `papertrade` are deliberately excluded.
     # The scorecard is a walk-forward over the archive seasons only, so
     # nothing the current season does can change it, and it was ~95% of
@@ -322,7 +356,9 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("timeseries").set_defaults(func=cmd_timeseries)
     subparsers.add_parser("board").set_defaults(func=cmd_board)
     subparsers.add_parser("players").set_defaults(func=cmd_players)
+    subparsers.add_parser("projections").set_defaults(func=cmd_projections)
     subparsers.add_parser("observations").set_defaults(func=cmd_observations)
+    subparsers.add_parser("prices").set_defaults(func=cmd_prices)
 
     papertrade_parser = subparsers.add_parser("papertrade")
     papertrade_parser.add_argument("--config", default="config/collector.yaml")

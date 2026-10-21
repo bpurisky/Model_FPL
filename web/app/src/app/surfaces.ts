@@ -70,6 +70,14 @@ export const SURFACES: Surface[] = [
     milestone: "5E",
   },
   {
+    view: "projections",
+    section: "model",
+    label: "Projections",
+    blurb: "Expected points for every player over the next six gameweeks, with the fixtures behind them.",
+    status: "live",
+    milestone: "5I",
+  },
+  {
     view: "scorecard",
     section: "model",
     label: "Scorecard",
@@ -118,6 +126,14 @@ export const SURFACES: Surface[] = [
     milestone: "5F",
   },
   {
+    view: "prices",
+    section: "players",
+    label: "Price Watch",
+    blurb: "Who the rise-only price model calls to go up tonight, with its own out-of-sample record.",
+    status: "live",
+    milestone: "5I",
+  },
+  {
     view: "fixtures",
     section: "fixtures",
     label: "Fixtures",
@@ -148,6 +164,14 @@ export const SURFACES: Surface[] = [
     blurb: "Your own question: four channels over the player-gameweek panel.",
     status: "live",
     milestone: "5C",
+  },
+  {
+    view: "data",
+    section: "lab",
+    label: "Data & API",
+    blurb: "Every exported JSON file and the two parquet artifacts: URL, contents, refresh cadence, contract version.",
+    status: "live",
+    milestone: "5I",
   },
 ];
 

@@ -380,6 +380,11 @@ export const PlayerRow = z.object({
   actuals: z.record(z.string(), z.number().nullable()),
   metrics: z.record(z.string(), PlayerMetric),
   projection: PlayerProjection.nullable(),
+  // Added after 5D, contract_version unchanged: set-piece taker rank,
+  // 1 = first choice. Absent in a file built before the collector kept them.
+  penalties_order: z.number().int().nullable().optional(),
+  corners_order: z.number().int().nullable().optional(),
+  direct_freekicks_order: z.number().int().nullable().optional(),
 });
 
 export const ProjectionBasis = z.enum(["next_fixture", "fixture_neutral"]);
@@ -392,6 +397,50 @@ export const PlayersFile = z.object({
   projection_basis: ProjectionBasis,
   population: z.record(z.string(), z.record(z.string(), z.number().int())),
   players: z.array(PlayerRow),
+});
+
+/** One fixture a club plays in a projected gameweek. */
+export const ProjectionFixture = z.object({
+  opponent: z.string(),
+  home: z.boolean(),
+  difficulty: z.number().int().nullable(),
+});
+
+/** None is a blank, two a double. Present for every gameweek of the horizon. */
+export const ProjectionTeamGameweek = z.object({
+  gw: z.number().int(),
+  fixtures: z.array(ProjectionFixture),
+});
+
+export const ProjectionTeam = z.object({
+  team: z.string(),
+  short_name: z.string(),
+  gameweeks: z.array(ProjectionTeamGameweek),
+});
+
+/**
+ * `xp[i]` belongs to `ProjectionsFile.gameweeks[i]`. The minutes
+ * probabilities are the first projected gameweek's; `p_full` is P(60+).
+ */
+export const ProjectionPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  price: z.number().int().nullable(),
+  xp: z.array(z.number().nullable()),
+  p_blank: z.number().nullable(),
+  p_short: z.number().nullable(),
+  p_full: z.number().nullable(),
+});
+
+export const ProjectionsFile = z.object({
+  header: Header,
+  season: z.string(),
+  gameweek: z.number().int(),
+  gameweeks: z.array(z.number().int()),
+  teams: z.array(ProjectionTeam),
+  players: z.array(ProjectionPlayer),
 });
 
 /**
@@ -516,6 +565,70 @@ export const PaperTradeFile = z.object({
   price_eval: PaperTradePriceEval,
 });
 
+/** `prices.json` — Price Watch: the rise-only price model's call for the
+ * current daily cycle, and its own track record. */
+export const PriceWatchStatus = z.enum(["ok", "no_data", "stale", "insufficient_history", "deadline_in_window"]);
+
+export const PriceWatchPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  /** Tenths of a million. */
+  now_cost: z.number().int(),
+  net_transfers_24h: z.number().nullable(),
+  /** `net_transfers_24h / threshold`: negative for an outflow, above 1 past the cut. */
+  progress: z.number().nullable(),
+  eligible: z.boolean(),
+  ineligible_reason: z.enum(["moved_within_72h", "insufficient_history"]).nullable(),
+  call: z.enum(["rise", "stable"]),
+});
+
+/** `config/price_model.yaml`'s fit statistics: IN-SAMPLE, never the headline. */
+export const PriceInSampleFit = z.object({
+  fit_cutoff: z.string().nullable(),
+  fit_span: z.string().nullable(),
+  fit_cycles: z.number().int().nullable(),
+  rise_f1: z.number().nullable(),
+  rise_n_called: z.number().int().nullable(),
+  hit_rate: z.number().nullable(),
+  fitted_at: z.string().nullable(),
+});
+
+export const PriceCycleOutcome = z.object({
+  date: z.string(),
+  calls: z.number().int(),
+  hits: z.number().int(),
+  out_of_sample: z.boolean(),
+});
+
+export const PriceTrackRecord = z.object({
+  status: z.string(),
+  n_calls: z.number().int(),
+  n_cycles: z.number().int(),
+  min_calls: z.number().int(),
+  hit_rate: z.number().nullable(),
+  ci_low: z.number().nullable(),
+  ci_high: z.number().nullable(),
+  span: z.string().nullable(),
+  in_sample: PriceInSampleFit.nullable(),
+  recent_cycles: z.array(PriceCycleOutcome),
+});
+
+export const PricesFile = z.object({
+  header: Header,
+  status: PriceWatchStatus,
+  status_detail: z.string().nullable(),
+  snapshot_ts: z.string().datetime().nullable(),
+  boundary_ts: z.string().datetime().nullable(),
+  next_boundary_ts: z.string().datetime().nullable(),
+  locked: z.boolean().nullable(),
+  threshold: z.number(),
+  recent_move_hours: z.number().int(),
+  players: z.array(PriceWatchPlayer),
+  track_record: PriceTrackRecord,
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -535,6 +648,10 @@ export type BoardPlayer = z.infer<typeof BoardPlayer>;
 export type BoardFile = z.infer<typeof BoardFile>;
 export type PlayerRow = z.infer<typeof PlayerRow>;
 export type PlayersFile = z.infer<typeof PlayersFile>;
+export type ProjectionFixture = z.infer<typeof ProjectionFixture>;
+export type ProjectionTeam = z.infer<typeof ProjectionTeam>;
+export type ProjectionPlayer = z.infer<typeof ProjectionPlayer>;
+export type ProjectionsFile = z.infer<typeof ProjectionsFile>;
 export type ObservationRow = z.infer<typeof ObservationRow>;
 export type ObservationsFile = z.infer<typeof ObservationsFile>;
 export type SeasonSummary = z.infer<typeof SeasonSummary>;
@@ -552,3 +669,7 @@ export type PaperTradeGwNote = z.infer<typeof PaperTradeGwNote>;
  * field names and different meanings.
  */
 export const EXPECTED_CONTRACT_VERSION = 1;
+export type PricesFile = z.infer<typeof PricesFile>;
+export type PriceWatchPlayer = z.infer<typeof PriceWatchPlayer>;
+export type PriceTrackRecord = z.infer<typeof PriceTrackRecord>;
+export type PriceCycleOutcome = z.infer<typeof PriceCycleOutcome>;

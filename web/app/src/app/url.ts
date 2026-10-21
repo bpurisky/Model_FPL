@@ -34,10 +34,13 @@ export const VIEWS = [
   "compare",
   "explorer",
   "board",
+  "projections",
   "scorecard",
   "trend",
   "optimizer",
   "papertrade",
+  "data",
+  "prices",
 ] as const;
 export type View = (typeof VIEWS)[number];
 

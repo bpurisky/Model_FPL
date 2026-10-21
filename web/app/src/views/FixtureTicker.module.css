@@ -328,3 +328,69 @@
   font-size: 9px;
   color: var(--muted);
 }
+
+/* --- window controls, badges, rotation pairs ------------------------ */
+
+.select {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--paper);
+  background: var(--panel);
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.5rem;
+}
+
+/* Marks a gameweek where some club has two fixtures or none. Text plus
+ * structure, never hue alone. */
+.badge {
+  display: block;
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  margin-block-start: 2px;
+  padding: 0 4px;
+  border: var(--hairline) solid var(--rule);
+  border-radius: var(--radius-pill);
+  color: var(--paper);
+}
+
+.badge[data-kind="blank"] {
+  background: repeating-linear-gradient(-45deg, transparent 0 3px, var(--rule) 3px 4px);
+}
+
+.badge[data-kind="double"] {
+  border-color: var(--paper);
+}
+
+/* A club with two fixtures that week gets an outline on the whole cell. */
+.cell[data-double] {
+  box-shadow: 0 0 0 1px var(--paper);
+  border-radius: 6px;
+}
+
+.pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pairsTitle {
+  font-size: var(--text-md);
+  margin: var(--space-3) 0 0;
+}
+
+/* The club taken that gameweek. */
+.pick {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  min-inline-size: 58px;
+  padding: 0.45rem var(--space-1);
+  border-radius: 6px;
+  font-weight: 600;
+  color: var(--selected-ink);
+  background: var(--selected-bg);
+}

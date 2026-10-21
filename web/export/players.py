@@ -151,6 +151,43 @@ def target_roster(frame: pl.DataFrame, season: str, gameweek: int) -> pl.DataFra
 DISTILLED_DIR = Path("data/distilled")
 REFERENCE_FIXTURES = Path("data/reference/fixtures.parquet")
 REFERENCE_TEAMS = Path("data/reference/teams.parquet")
+REFERENCE_PLAYERS = Path("data/reference/players.parquet")
+
+# Reference column -> exported field. The reference keeps FPL's own names.
+SET_PIECE_COLUMNS = {
+    "penalties_order": "penalties_order",
+    "corners_and_indirect_freekicks_order": "corners_order",
+    "direct_freekicks_order": "direct_freekicks_order",
+}
+
+
+def set_piece_orders(
+    season: str,
+    historical_dir: Path = HISTORICAL_DIR,
+    reference_path: Path = REFERENCE_PLAYERS,
+) -> dict[int, dict[str, int | None]]:
+    """element_id -> {field: order}, for the live season only.
+
+    The reference's element ids describe the season the collector is
+    filling; an archived season numbers its elements differently, so
+    joining on id there would hang one player's penalties on another. And
+    a reference written before the collector kept these columns simply
+    lacks them, which degrades to no entries -- every field null -- rather
+    than an error: the committed reference predates the change until the
+    collector next runs on CI.
+    """
+    if (historical_dir / f"{season}.parquet").exists() or not reference_path.exists():
+        return {}
+    reference = pl.read_parquet(reference_path)
+    present = {src: dst for src, dst in SET_PIECE_COLUMNS.items() if src in reference.columns}
+    if not present:
+        return {}
+    out: dict[int, dict[str, int | None]] = {}
+    for row in reference.select("id", *present).iter_rows(named=True):
+        out[int(row["id"])] = {
+            dst: (int(row[src]) if row[src] is not None else None) for src, dst in present.items()
+        }
+    return out
 
 
 def project(
@@ -329,6 +366,7 @@ def build_players(
         identity.join(season_to_date(frame, season, gameweek), on="element_id", how="left")
         .join(season_rates(panel, season, gameweek, metrics), on="element_id", how="left")
     )
+    set_pieces = set_piece_orders(season, historical_dir)
     rows: list[PlayerRow] = []
     for row in latest.sort("element_id").iter_rows(named=True):
         element_id = int(row["element_id"])
@@ -358,6 +396,7 @@ def build_players(
                 },
                 metrics=carried,
                 projection=projections.get(element_id),
+                **set_pieces.get(element_id, {}),
             )
         )
 
