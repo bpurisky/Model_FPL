@@ -144,7 +144,7 @@ def price_at_deadline(
     earliest price known, which would be a guess about the past.
     """
     empty = pl.DataFrame(schema={"element_id": pl.Int64, "gw": pl.Int64, "value": pl.Int64})
-    shards = sorted(distilled_dir.glob("**/*.parquet")) if distilled_dir.exists() else []
+    shards = sorted(p for p in distilled_dir.glob("**/*.parquet") if p.name != "top_picks.parquet") if distilled_dir.exists() else []
     events_path = reference_dir / "events.parquet"
     if not shards or not events_path.exists():
         return empty

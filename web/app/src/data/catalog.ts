@@ -27,6 +27,7 @@ import {
   loadObservations,
   loadPaperTrade,
   loadPlayers,
+  loadOwnership,
   loadPrices,
   loadProjections,
   loadScorecard,
@@ -92,6 +93,14 @@ export const DATA_FILES: readonly DataFile[] = [
       "The current price cycle: each player's 24h net transfers against the fitted rise threshold, eligibility and the rise-only call, with the rule's out-of-sample track record.",
     cadence: "every_6h",
     loadHeader: loadPrices,
+  },
+  {
+    name: "ownership.json",
+    format: "json",
+    description:
+      "Elite ownership: for the latest gameweek with collected picks, each player's ownership among the top managers, starting and captain share, effective ownership, and the gap to the whole field.",
+    cadence: "every_6h",
+    loadHeader: loadOwnership,
   },
   {
     name: "fixtures.json",

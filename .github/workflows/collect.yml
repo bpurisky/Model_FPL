@@ -21,6 +21,12 @@ on:
     # fact), and 288 scheduled runs a day is the kind of load GitHub
     # throttles — by 2026-10 only ~10 runs a day were firing, about half
     # of them that no-op, so ~4-5 snapshots a day reached the repo.
+    # Elite ownership: the top-N managers' picks for the latest deadlined
+    # gameweek (collector/top_picks.py). Every 3h; the command is idempotent
+    # and no-ops once data/distilled/gw{n}/top_picks.parquet exists, so this
+    # just guarantees one successful run soon after each deadline. A full
+    # run is ~1000 sequential throttled calls (~17 min).
+    - cron: "40 */3 * * *"
   workflow_dispatch: {}
 
 # Prevent overlapping runs from racing on the same Parquet shards / commits.
@@ -82,6 +88,29 @@ jobs:
           git add data/reference data/distilled
           git diff --staged --quiet && exit 0
           git commit -m "collector: price-window snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((attempt * 10))
+          done
+          exit 1
+
+  top-picks:
+    if: github.event.schedule == '40 */3 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run python -m collector top-picks
+      - name: Commit snapshot
+        run: |
+          git config user.name "fpl-trends-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/distilled
+          git diff --staged --quiet && exit 0
+          git commit -m "collector: top-picks $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push && exit 0
             sleep $((attempt * 10))

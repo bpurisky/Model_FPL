@@ -629,6 +629,42 @@ export const PricesFile = z.object({
   track_record: PriceTrackRecord,
 });
 
+/** `ownership.json` — Elite Ownership: the top-N managers' ownership and
+ * effective ownership for the latest gameweek with collected picks. */
+export const OwnershipPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  /** Tenths of a million. */
+  now_cost: z.number().int().nullable(),
+  /** Field-wide selected-by %, 0-100. */
+  overall_pct: z.number().nullable(),
+  /** Share of the top N holding him in their 15, 0-100. */
+  top_pct: z.number(),
+  top_start_pct: z.number(),
+  captain_pct: z.number(),
+  /** sum(multiplier) / n_managers * 100; can exceed 100. */
+  eo_pct: z.number(),
+  /** top_pct - overall_pct. */
+  delta_pct: z.number().nullable(),
+});
+
+export const OwnershipChip = z.object({
+  chip: z.string(),
+  count: z.number().int(),
+});
+
+export const OwnershipFile = z.object({
+  header: Header,
+  status: z.enum(["ok", "no_data"]),
+  gw: z.number().int().nullable(),
+  n_managers: z.number().int(),
+  fetched_at: z.string().datetime().nullable(),
+  chips: z.array(OwnershipChip),
+  players: z.array(OwnershipPlayer),
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -669,6 +705,8 @@ export type PaperTradeGwNote = z.infer<typeof PaperTradeGwNote>;
  * field names and different meanings.
  */
 export const EXPECTED_CONTRACT_VERSION = 1;
+export type OwnershipFile = z.infer<typeof OwnershipFile>;
+export type OwnershipPlayer = z.infer<typeof OwnershipPlayer>;
 export type PricesFile = z.infer<typeof PricesFile>;
 export type PriceWatchPlayer = z.infer<typeof PriceWatchPlayer>;
 export type PriceTrackRecord = z.infer<typeof PriceTrackRecord>;

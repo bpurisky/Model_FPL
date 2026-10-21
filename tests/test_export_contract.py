@@ -201,6 +201,9 @@ def test_contract_shape_describes_each_model_for_the_schema_ts_test():
         "PriceCycleOutcome",
         "PriceTrackRecord",
         "PricesFile",
+        "OwnershipPlayer",
+        "OwnershipChip",
+        "OwnershipFile",
     }
     assert shape["Header"]["rows"] == {"required": True, "type": "int"}
     # Optional because a file written before the field existed must still
