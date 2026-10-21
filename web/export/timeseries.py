@@ -45,6 +45,8 @@ from pathlib import Path
 
 import polars as pl
 
+from web.export.contract import parquet_header_metadata
+
 logger = logging.getLogger("web.export.timeseries")
 
 DISTILLED_DIR = Path("data/distilled")
@@ -178,5 +180,5 @@ def build_timeseries(
 def write_timeseries(df: pl.DataFrame, out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "timeseries.parquet"
-    df.write_parquet(path, compression="zstd")
+    df.write_parquet(path, compression="zstd", metadata=parquet_header_metadata(df.height))
     return path

@@ -27,7 +27,7 @@ import { useNarrow } from "../design/useNarrow";
 import { useApp } from "../app/state";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, type LoadProgress } from "../data/load";
-import type { ColumnsFile } from "../data/schema";
+import type { ColumnsFile, Header } from "../data/schema";
 import { openSeries, SeriesMissingError, type SeriesPoint } from "../query/series";
 import styles from "./TrendExplorer.module.css";
 import { count, noun } from "../design/text";
@@ -36,7 +36,7 @@ type State =
   | { status: "loading"; progress: LoadProgress | null }
   | { status: "absent" }
   | { status: "error"; error: Error }
-  | { status: "ready"; rows: SeriesPoint[]; columns: ColumnsFile };
+  | { status: "ready"; rows: SeriesPoint[]; header: Header | null; columns: ColumnsFile };
 
 /** The three series §5.4.8 names, and what each is measured in. */
 const SERIES = [
@@ -66,10 +66,10 @@ export function TrendExplorer() {
     (async () => {
       try {
         const columns = await loadColumns();
-        const rows = await openSeries((progress) =>
+        const { rows, header } = await openSeries((progress) =>
           cancelled ? undefined : setData({ status: "loading", progress }),
         );
-        if (!cancelled) setData({ status: "ready", rows, columns });
+        if (!cancelled) setData({ status: "ready", rows, header, columns });
       } catch (error) {
         if (cancelled) return;
         setData(
@@ -139,7 +139,7 @@ export function TrendExplorer() {
           </p>
         </div>
         <Provenance
-          header={data.columns.header}
+          header={data.header ?? data.columns.header}
           basis={data.columns.header.normalization_basis}
         />
       </header>

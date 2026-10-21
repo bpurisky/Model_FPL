@@ -160,3 +160,21 @@ def test_available_seasons_finds_the_committed_archive():
 
     assert "2024-25" in seasons
     assert seasons == sorted(seasons)
+
+
+def test_write_panel_stamps_its_own_header(tmp_path):
+    """The surfaces reading the panel show this header's generated_at.
+    Without it they fell back to columns.json's, which only moves when a
+    column definition does and read weeks old on a fresh panel."""
+    import json
+
+    import pyarrow.parquet as pq
+
+    from web.export.contract import PARQUET_HEADER_KEY, Header
+    from web.export.panel import write_panel
+
+    path = write_panel(pl.DataFrame({"element_id": [1, 2, 3]}), tmp_path)
+    raw = pq.read_metadata(path).metadata[PARQUET_HEADER_KEY.encode()]
+    header = Header.model_validate(json.loads(raw))
+    assert header.rows == 3
+    assert header.model_git_sha

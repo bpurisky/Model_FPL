@@ -29,6 +29,7 @@ from web.export.columns import (
 from analytics.clean_sheet import clean_sheet_probability
 from analytics.features import trailing_minutes_reliability
 from analytics.projections import DEFAULT_MINUTES_WINDOW
+from web.export.contract import parquet_header_metadata
 from web.export.current import load_current_season
 from web.export.normalize import normalize
 
@@ -201,5 +202,5 @@ def write_panel(df: pl.DataFrame, out_dir: Path) -> Path:
     # `hyparquet` decodes snappy natively and needs `hyparquet-compressors`
     # for zstd, but that bundle costs a fraction of what the extra 1.3 MB
     # of parquet does. §5.9 budgets the panel route at 2.0 s cold.
-    df.write_parquet(path, compression="zstd")
+    df.write_parquet(path, compression="zstd", metadata=parquet_header_metadata(df.height))
     return path

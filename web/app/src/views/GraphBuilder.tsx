@@ -243,7 +243,10 @@ export function GraphBuilder() {
             follows the data — there is no chart-type menu.
           </p>
         </div>
-        <Provenance header={engine.columns.header} basis={engine.columns.header.normalization_basis} />
+        <Provenance
+          header={engine.session.header ?? engine.columns.header}
+          basis={engine.columns.header.normalization_basis}
+        />
       </header>
 
       <FilterBar

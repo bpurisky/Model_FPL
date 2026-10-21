@@ -169,7 +169,11 @@ jobs:
           # here makes SquadOptimizer.tsx render its "no backend configured"
           # explanation rather than a broken form (see its module docstring).
           VITE_OPTIMIZER_API_URL: ${{ vars.OPTIMIZER_API_URL }}
-        run: npx vite build
+        # The export job just ran, and this job only runs when it passed,
+        # so now is when the data was last confirmed current. Provenance
+        # measures staleness from this rather than from each file's
+        # generated_at, which only moves when that file's numbers do.
+        run: VITE_EXPORT_CHECKED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ) npx vite build
 
       # §5.12: "Parquet artifacts published from the same workflow,
       # versioned alongside the contract." Without them the Graph Builder,
