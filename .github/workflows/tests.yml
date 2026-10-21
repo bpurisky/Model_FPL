@@ -56,6 +56,15 @@ jobs:
       # board/players/reductions tests build from it.
       - run: uv run --no-sync python -m web.export panel
 
+      # players.json is built from the collector's snapshots, which land
+      # hourly, while web.yml refreshes it only every 6h. A code push in
+      # between failed test_export_players' committed-vs-fresh check on a
+      # file the push never touched (42af4d6). Rebuild it here so that test
+      # checks this commit's code; web.yml still commits the real refresh.
+      # The other committed-vs-fresh files (columns, correlations, golden)
+      # depend only on code and historical data, so they stay strict.
+      - run: uv run --no-sync python -m web.export players
+
       - run: uv run --no-sync pytest -q
 
   web:
