@@ -54,3 +54,37 @@ def test_the_body_comparison_ignores_only_the_volatile_header_fields(tmp_path):
     assert same == later
     assert same != different
     assert '"rows": 1' in same, "the rest of the header still counts"
+
+
+def test_a_format_change_alone_does_not_rewrite_the_file(tmp_path):
+    """Indented -> compact with identical numbers is unchanged (the body
+    comparison parses JSON), so a format change cannot cause perpetual rewrites."""
+    import json
+
+    indented = json.dumps(json.loads(_payload(0.5, "2026-08-23T10:00:00Z", "aaa")), indent=2)
+    compact = json.dumps(json.loads(_payload(0.5, "2026-08-24T11:00:00Z", "bbb")), separators=(",", ":"))
+    path = tmp_path / "x.json"
+    path.write_text(indented, encoding="utf-8")
+
+    _, changed = write_json(compact, "x.json", tmp_path)
+
+    assert changed is False
+    assert path.read_text(encoding="utf-8") == indented
+
+
+def test_rounded_json_is_compact_rounded_and_idempotent():
+    import json
+
+    from pydantic import BaseModel
+
+    from web.export.__main__ import rounded_json
+
+    class M(BaseModel):
+        a: float
+        b: list[float | None]
+        c: int
+
+    out = rounded_json(M(a=1.23456789012, b=[0.000123456789, float("nan"), 12345.6789], c=7))
+    assert " " not in out and chr(10) not in out
+    assert json.loads(out) == {"a": 1.23457, "b": [0.000123457, None, 12345.7], "c": 7}
+    assert rounded_json(M(**json.loads(out))) == out

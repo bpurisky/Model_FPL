@@ -30,6 +30,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "../app/state";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, loadPlayers, type LoadProgress } from "../data/load";
 import { byTeam, nextFixtures, runDifficulty, useFixtures, type TeamFixture } from "../data/fixtures";
@@ -173,8 +175,24 @@ export function Explorer() {
       : false;
   const rawNormalizableSort = !metricsNormalized && mixedPositions && sortedIsNormalizable;
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.explorer}
+      title="Explorer"
+      file="players.json"
+      label="Loading players"
+      progress={data.progress}
+    />
+  );
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.explorer}
+      title="Explorer"
+      heading="players.json did not load."
+      command="players"
+      error={data.error}
+    />
+  );
 
   const { players } = data;
   const height = viewport.current?.clientHeight ?? 640;
@@ -531,49 +549,4 @@ function valueOf(
       return entry?.difficulty ?? null;
     }
   }
-}
-
-// --- states -----------------------------------------------------------
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.explorer}>
-      <h1 className={styles.title}>Explorer</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading players"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `players.json — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting players.json"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.explorer}>
-      <h1 className={styles.title}>Explorer</h1>
-      <div className={styles.failure} role="alert">
-        <p className={styles.failureHead}>players.json did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
-        <p className={styles.sub}>
-          Run <code className="data">python -m web.export players</code> and reload.
-        </p>
-      </div>
-    </main>
-  );
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { ColumnSpec, PlayerRow } from "../data/schema";
+import { averageRanks } from "../data/spearman";
 import { formatRho } from "../design/scale";
 import styles from "./RankScatter.module.css";
 import { count } from "../design/text";
@@ -24,33 +25,6 @@ interface Point {
   y: number;
   rawX: number;
   rawY: number;
-}
-
-/**
- * Ties-averaged ranks over the plotted set.
- *
- * §5.6 forbids the browser computing "percentile ranks against a
- * population" — that is a normalization, and it ships from
- * `normalize.py`. This is the other side of §5.6.2's own distinction: it
- * orders the points the user is currently looking at, which is a
- * reduction over a filtered set rather than a position against a
- * reference group the model defines. The numbers never leave this chart
- * and are never compared against an exported z-score.
- */
-export function averageRanks(values: number[]): number[] {
-  const order = values.map((value, index) => ({ value, index }));
-  order.sort((left, right) => left.value - right.value);
-
-  const ranks = new Array<number>(values.length);
-  let i = 0;
-  while (i < order.length) {
-    let j = i;
-    while (j + 1 < order.length && order[j + 1]!.value === order[i]!.value) j += 1;
-    const shared = (i + j) / 2 + 1;
-    for (let k = i; k <= j; k += 1) ranks[order[k]!.index] = shared;
-    i = j + 1;
-  }
-  return ranks;
 }
 
 const PAD = 34;
@@ -85,6 +59,9 @@ export function RankScatter({
     );
     const xs = eligible.map((player) => player.metrics[a]!.value!);
     const ys = eligible.map((player) => player.metrics[b]!.value!);
+    // §5.6 forbids a browser-side percentile against a population; this only
+    // orders the points currently plotted (§5.6.2), and the ranks never leave
+    // this chart or get compared against an exported z-score.
     const rx = averageRanks(xs);
     const ry = averageRanks(ys);
     return eligible.map((player, index) => ({

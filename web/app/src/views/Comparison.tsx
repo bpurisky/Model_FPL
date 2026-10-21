@@ -35,6 +35,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "../app/state";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { BucketBadge } from "../components/BucketBadge";
 import { Provenance } from "../components/Provenance";
 import { useBoard } from "../data/useBoard";
@@ -148,8 +150,24 @@ export function Comparison() {
       .slice(0, 40);
   }, [data, query]);
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.compare}
+      title="Comparison"
+      file="players.json"
+      label="Loading players"
+      progress={data.progress}
+    />
+  );
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.compare}
+      title="Comparison"
+      heading="players.json did not load."
+      command="players"
+      error={data.error}
+    />
+  );
 
   const { players } = data;
 
@@ -635,49 +653,4 @@ function scaleRaw(value: number, key: string, players: PlayerRow[]): number {
     1e-9,
   );
   return (Math.abs(value) / extent) * 100;
-}
-
-// --- states -----------------------------------------------------------
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.compare}>
-      <h1 className={styles.title}>Comparison</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading players"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `players.json — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting players.json"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.compare}>
-      <h1 className={styles.title}>Comparison</h1>
-      <div className={styles.failure} role="alert">
-        <p className={styles.failureHead}>players.json did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
-        <p className={styles.sub}>
-          Run <code className="data">python -m web.export players</code> and reload.
-        </p>
-      </div>
-    </main>
-  );
 }

@@ -22,6 +22,8 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { Provenance } from "../components/Provenance";
 import { loadBoard, loadScorecard, loadShrinkage, type LoadProgress } from "../data/load";
 import type {
@@ -98,8 +100,24 @@ export function Scorecard() {
     return data.scorecard.rows.filter((row) => row.season === season && row.gw === null);
   }, [data, season]);
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.scorecard}
+      title="Model Scorecard"
+      file="scorecard.json"
+      label="Loading the scorecard"
+      progress={data.progress}
+    />
+  );
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.scorecard}
+      title="Model Scorecard"
+      heading="scorecard.json did not load."
+      command="scorecard"
+      error={data.error}
+    />
+  );
 
   const { scorecard, board, shrinkage } = data;
   const best = bestBaseline(headline, scorecard.event_model);
@@ -642,47 +660,4 @@ function bestBaseline(rows: ScorecardRow[], eventModel: string): ScorecardRow | 
   const baselines = rows.filter((row) => row.model !== eventModel && row.mae !== null);
   if (baselines.length === 0) return null;
   return baselines.reduce((best, row) => (row.mae! < best.mae! ? row : best));
-}
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.scorecard}>
-      <h1 className={styles.title}>Model Scorecard</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading the scorecard"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `scorecard.json — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting scorecard.json"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.scorecard}>
-      <h1 className={styles.title}>Model Scorecard</h1>
-      <div className={styles.failure} role="alert">
-        <p className={styles.failureHead}>scorecard.json did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
-        <p className={styles.sub}>
-          Run <code className="data">python -m web.export scorecard</code> and reload.
-        </p>
-      </div>
-    </main>
-  );
 }

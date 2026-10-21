@@ -25,6 +25,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNarrow } from "../design/useNarrow";
 import { useApp } from "../app/state";
+import { ErrorState } from "../components/ErrorState";
+import { LoadingState } from "../components/LoadingState";
 import { Provenance } from "../components/Provenance";
 import { loadColumns, type LoadProgress } from "../data/load";
 import type { ColumnsFile, Header } from "../data/schema";
@@ -104,9 +106,26 @@ export function TrendExplorer() {
       .slice(0, 30);
   }, [players, query]);
 
-  if (data.status === "loading") return <Loading progress={data.progress} />;
+  if (data.status === "loading") return (
+    <LoadingState
+      rootClassName={styles.trend}
+      title="Trend Explorer"
+      file="timeseries.parquet"
+      label="Loading the time series"
+      progress={data.progress}
+      spaced
+    />
+  );
   if (data.status === "absent") return <SeriesAbsent />;
-  if (data.status === "error") return <Failed error={data.error} />;
+  if (data.status === "error") return (
+    <ErrorState
+      rootClassName={styles.trend}
+      title="Trend Explorer"
+      heading="The time series did not load."
+      variant="quiet"
+      error={data.error}
+    />
+  );
 
   const chosen = state.selection.filter((id) => players.has(id)).slice(0, 6);
   const series = SERIES.find((entry) => entry.key === metric)!;
@@ -435,46 +454,6 @@ function SeriesAbsent() {
           Run <code className="data">python -m web.export timeseries</code> and reload. Every
           other surface except the Graph Builder and the Form Matrix works without it.
         </p>
-      </div>
-    </main>
-  );
-}
-
-function Loading({ progress }: { progress: LoadProgress | null }) {
-  const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
-  const pct =
-    progress?.total != null ? Math.round((progress.received / progress.total) * 100) : null;
-  return (
-    <main className={styles.trend}>
-      <h1 className={styles.title}>Trend Explorer</h1>
-      <div className={styles.loading}>
-        <div
-          className={styles.track}
-          role="progressbar"
-          aria-valuenow={pct ?? undefined}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Loading the time series"
-        >
-          <div className={styles.fill} style={{ inlineSize: pct === null ? "30%" : `${pct}%` }} />
-        </div>
-        <p className={`${styles.sub} data`}>
-          {progress
-            ? `timeseries.parquet — ${kb(progress.received)}${progress.total ? ` of ${kb(progress.total)}` : ""}`
-            : "requesting timeseries.parquet"}
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Failed({ error }: { error: Error }) {
-  return (
-    <main className={styles.trend}>
-      <h1 className={styles.title}>Trend Explorer</h1>
-      <div className={styles.absent} role="alert">
-        <p className={styles.absentHead}>The time series did not load.</p>
-        <p className={`${styles.sub} data`}>{error.message}</p>
       </div>
     </main>
   );
