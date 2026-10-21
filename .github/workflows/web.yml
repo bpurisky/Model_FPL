@@ -15,7 +15,10 @@ on:
   push:
     branches: [main]
     # Code changes that cannot change the numbers should not rebuild them.
+    # web/app/** is the exception: it changes what's deployed, not the
+    # numbers, and the export it also triggers rewrites nothing unchanged.
     paths:
+      - "web/app/**"
       - "web/export/**"
       - "analytics/**"
       - "backtest/**"
