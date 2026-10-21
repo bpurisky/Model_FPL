@@ -27,6 +27,8 @@ import {
   loadObservations,
   loadPaperTrade,
   loadPlayers,
+  loadPrices,
+  loadProjections,
   loadScorecard,
   loadShrinkage,
   type LoadProgress,
@@ -74,6 +76,22 @@ export const DATA_FILES: readonly DataFile[] = [
     description: "The model's ranking within position, with the bucket each player falls in.",
     cadence: "every_6h",
     loadHeader: loadBoard,
+  },
+  {
+    name: "projections.json",
+    format: "json",
+    description:
+      "Expected points for every player over the next six gameweeks, each club's fixtures for those gameweeks, and the minutes split (blank / under 60 / 60+) for the first of them.",
+    cadence: "every_6h",
+    loadHeader: loadProjections,
+  },
+  {
+    name: "prices.json",
+    format: "json",
+    description:
+      "The current price cycle: each player's 24h net transfers against the fitted rise threshold, eligibility and the rise-only call, with the rule's out-of-sample track record.",
+    cadence: "every_6h",
+    loadHeader: loadPrices,
   },
   {
     name: "fixtures.json",

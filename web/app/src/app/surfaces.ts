@@ -126,6 +126,14 @@ export const SURFACES: Surface[] = [
     milestone: "5F",
   },
   {
+    view: "prices",
+    section: "players",
+    label: "Price Watch",
+    blurb: "Who the rise-only price model calls to go up tonight, with its own out-of-sample record.",
+    status: "live",
+    milestone: "5I",
+  },
+  {
     view: "fixtures",
     section: "fixtures",
     label: "Fixtures",

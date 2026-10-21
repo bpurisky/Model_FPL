@@ -565,6 +565,70 @@ export const PaperTradeFile = z.object({
   price_eval: PaperTradePriceEval,
 });
 
+/** `prices.json` — Price Watch: the rise-only price model's call for the
+ * current daily cycle, and its own track record. */
+export const PriceWatchStatus = z.enum(["ok", "no_data", "stale", "insufficient_history", "deadline_in_window"]);
+
+export const PriceWatchPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  /** Tenths of a million. */
+  now_cost: z.number().int(),
+  net_transfers_24h: z.number().nullable(),
+  /** `net_transfers_24h / threshold`: negative for an outflow, above 1 past the cut. */
+  progress: z.number().nullable(),
+  eligible: z.boolean(),
+  ineligible_reason: z.enum(["moved_within_72h", "insufficient_history"]).nullable(),
+  call: z.enum(["rise", "stable"]),
+});
+
+/** `config/price_model.yaml`'s fit statistics: IN-SAMPLE, never the headline. */
+export const PriceInSampleFit = z.object({
+  fit_cutoff: z.string().nullable(),
+  fit_span: z.string().nullable(),
+  fit_cycles: z.number().int().nullable(),
+  rise_f1: z.number().nullable(),
+  rise_n_called: z.number().int().nullable(),
+  hit_rate: z.number().nullable(),
+  fitted_at: z.string().nullable(),
+});
+
+export const PriceCycleOutcome = z.object({
+  date: z.string(),
+  calls: z.number().int(),
+  hits: z.number().int(),
+  out_of_sample: z.boolean(),
+});
+
+export const PriceTrackRecord = z.object({
+  status: z.string(),
+  n_calls: z.number().int(),
+  n_cycles: z.number().int(),
+  min_calls: z.number().int(),
+  hit_rate: z.number().nullable(),
+  ci_low: z.number().nullable(),
+  ci_high: z.number().nullable(),
+  span: z.string().nullable(),
+  in_sample: PriceInSampleFit.nullable(),
+  recent_cycles: z.array(PriceCycleOutcome),
+});
+
+export const PricesFile = z.object({
+  header: Header,
+  status: PriceWatchStatus,
+  status_detail: z.string().nullable(),
+  snapshot_ts: z.string().datetime().nullable(),
+  boundary_ts: z.string().datetime().nullable(),
+  next_boundary_ts: z.string().datetime().nullable(),
+  locked: z.boolean().nullable(),
+  threshold: z.number(),
+  recent_move_hours: z.number().int(),
+  players: z.array(PriceWatchPlayer),
+  track_record: PriceTrackRecord,
+});
+
 export type Header = z.infer<typeof Header>;
 export type ColumnSpec = z.infer<typeof ColumnSpec>;
 export type ColumnsFile = z.infer<typeof ColumnsFile>;
@@ -605,3 +669,7 @@ export type PaperTradeGwNote = z.infer<typeof PaperTradeGwNote>;
  * field names and different meanings.
  */
 export const EXPECTED_CONTRACT_VERSION = 1;
+export type PricesFile = z.infer<typeof PricesFile>;
+export type PriceWatchPlayer = z.infer<typeof PriceWatchPlayer>;
+export type PriceTrackRecord = z.infer<typeof PriceTrackRecord>;
+export type PriceCycleOutcome = z.infer<typeof PriceCycleOutcome>;

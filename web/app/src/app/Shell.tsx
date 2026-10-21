@@ -66,6 +66,10 @@ const Projections = lazy(() =>
   import("../views/Projections").then((module) => ({ default: module.Projections })),
 );
 
+const PriceWatch = lazy(() =>
+  import("../views/PriceWatch").then((module) => ({ default: module.PriceWatch })),
+);
+
 const Scorecard = lazy(() =>
   import("../views/Scorecard").then((module) => ({ default: module.Scorecard })),
 );
@@ -258,6 +262,11 @@ function Shell() {
         {state.view === "papertrade" && (
           <Suspense fallback={<PageLoading />}>
             <PaperTradeResults />
+          </Suspense>
+        )}
+        {state.view === "prices" && (
+          <Suspense fallback={<PageLoading />}>
+            <PriceWatch />
           </Suspense>
         )}
         {state.view === "optimizer" && (

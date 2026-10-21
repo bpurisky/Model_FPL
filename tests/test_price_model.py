@@ -15,6 +15,7 @@ from analytics.price_model import (
     PriceModelEvaluation,
     PriceThresholds,
     cycle_observations,
+    current_cycle,
     daily_cycles,
     evaluate_observations,
     evaluate_price_model,
@@ -281,3 +282,51 @@ def test_gate_has_no_out_of_sample_span_without_a_fit(tmp_path):
 
     assert result.n_cycles == 0
     assert result.hit_rate is None
+
+
+# --------------------------------------------------------------------------
+# the current (outcome-less) cycle
+# --------------------------------------------------------------------------
+
+
+def test_current_cycle_before_the_boundary_is_open_and_uses_the_latest_snapshot():
+    snapshots = [_at(2, 12), _at(2, 18), _at(3, 12)]
+    current = current_cycle(snapshots, deadlines=[], now=_at(3, 13))
+
+    assert current.status == "ok" and not current.locked
+    assert current.cycle.prediction_ts == _at(3, 12)
+    assert current.cycle.pressure_from == _at(2, 12)  # the snapshot 24h before it
+    assert current.cycle.evaluation_ts is None
+    assert (current.boundary_ts, current.next_boundary_ts) == (_at(3, 19), _at(4, 19))
+
+
+def test_current_cycle_after_the_boundary_is_locked_to_the_last_snapshot_before_it():
+    snapshots = [_at(1, 18), _at(2, 18), _at(3, 18), _at(3, 21)]
+    current = current_cycle(snapshots, deadlines=[], now=_at(3, 22))
+
+    assert current.status == "ok" and current.locked
+    assert current.cycle.prediction_ts == _at(3, 18)  # not the 21:00 one
+    assert current.cycle.pressure_from == _at(2, 18)
+
+
+def test_current_cycle_refuses_a_stale_latest_snapshot():
+    current = current_cycle([_at(1, 18), _at(2, 18)], deadlines=[], now=_at(3, 6))  # 12h old
+    assert current.status == "stale" and current.cycle is None
+
+
+def test_current_cycle_needs_history_and_no_deadline_in_the_window():
+    assert current_cycle([_at(3, 12)], [], _at(3, 13)).status == "insufficient_history"
+    assert current_cycle([_at(2, 12), _at(3, 12)], [_at(3, 1)], _at(3, 13)).status == "deadline_in_window"
+    assert current_cycle([], [], _at(3, 13)).status == "no_data"
+
+
+def test_cycle_observations_without_an_outcome_keeps_every_player(tmp_path):
+    _cycle_shards(tmp_path, range(1, 5), {1: 2000, 2: 0}, {1: _rises_on(3)})
+    history = load_distilled_history(tmp_path)
+    current = current_cycle(history["snapshot_ts"].unique().to_list(), [], _at(4, 18))
+
+    observations = cycle_observations(history, [current.cycle])
+
+    assert "actual_direction" not in observations.columns
+    assert sorted(observations["element_id"].to_list()) == [1, 2]
+    assert {r["element_id"]: r["eligible"] for r in observations.to_dicts()} == {1: False, 2: True}
