@@ -929,6 +929,26 @@ def build_header(
     )
 
 
+PARQUET_HEADER_KEY = "fpl_trends_header"
+
+
+def parquet_header_metadata(rows: int) -> dict[str, str]:
+    """A header for a parquet build artifact, as parquet key-value metadata.
+
+    The JSON exports carry their header in the body. The parquet files
+    (panel, timeseries) have no body to put one in, and the surfaces that
+    read them used to borrow `columns.json`'s header instead -- which is
+    the column registry, rewritten only when a definition changes, so its
+    `generated_at` sat at the registry's last edit and announced weeks-old
+    data on a panel rebuilt every six hours. Stamped into the file itself,
+    the header is exactly as old as the bytes it describes.
+    """
+    from web.export.normalize import normalization_basis
+
+    header = build_header(rows=rows, source_gameweek=None, normalization_basis=normalization_basis())
+    return {PARQUET_HEADER_KEY: header.model_dump_json()}
+
+
 def json_safe(value: float | None) -> float | None:
     """NaN and infinity, turned into the null they actually mean.
 

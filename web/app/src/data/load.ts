@@ -198,3 +198,42 @@ export function hoursSince(generatedAt: string, now: Date = new Date()): number 
 export function isStale(generatedAt: string, now: Date = new Date()): boolean {
   return hoursSince(generatedAt, now) > STALE_AFTER_HOURS;
 }
+
+/**
+ * When the export last ran, stamped by `web.yml` at build time. Every
+ * deploy follows a successful export run, so the build time is that run.
+ * Unset in dev, where nothing has run an export on a schedule.
+ *
+ * A header's `generated_at` cannot answer this alone: `web.export`
+ * rewrites a file only when its numbers change (`__main__.write_json`),
+ * so `generated_at` is when they last *changed*. A board that didn't move
+ * between deadlines, or a scorecard over the frozen archive, would read
+ * days old on a site checked six hours ago.
+ */
+export const EXPORT_CHECKED_AT: string | undefined =
+  (import.meta.env.VITE_EXPORT_CHECKED_AT as string | undefined) || undefined;
+
+export interface Freshness {
+  /** Hours since the data was last confirmed current. */
+  age: number;
+  stale: boolean;
+  /** The numbers are older than the threshold but were rechecked since. */
+  unchanged: boolean;
+}
+
+/**
+ * §5.6.3's staleness, measured from whichever is later: the file's own
+ * `generated_at` or the last export run. Stale means the export stopped
+ * running, not that the numbers held still.
+ */
+export function freshness(
+  generatedAt: string,
+  checkedAt: string | undefined = EXPORT_CHECKED_AT,
+  now: Date = new Date(),
+): Freshness {
+  const sinceGenerated = hoursSince(generatedAt, now);
+  const sinceChecked = checkedAt ? hoursSince(checkedAt, now) : Number.POSITIVE_INFINITY;
+  const age = Math.min(sinceGenerated, sinceChecked);
+  const stale = age > STALE_AFTER_HOURS;
+  return { age, stale, unchanged: !stale && sinceGenerated > STALE_AFTER_HOURS };
+}

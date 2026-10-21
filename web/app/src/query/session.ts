@@ -25,6 +25,7 @@
  */
 
 import { DATA_BASE, type LoadProgress } from "../data/load";
+import { Header } from "../data/schema";
 
 /** Thrown when `panel.parquet` is not on disk — §5.14.8's empty state. */
 export class PanelMissingError extends Error {
@@ -45,12 +46,40 @@ export interface Session {
   readonly rows: number;
   /** Column names the file actually carries. */
   readonly names: readonly string[];
+  /**
+   * The export header stamped into the file's own metadata, or null for
+   * a file built before it was. The provenance bar shows this rather than
+   * `columns.json`'s: that is the column registry, which only changes
+   * when a definition does, so its date is not the panel's.
+   */
+  readonly header: Header | null;
   /** A decoded column, from cache after the first call. */
   column(key: string): Promise<PanelColumn>;
   close(): Promise<void>;
 }
 
 const PANEL_URL = `${DATA_BASE}/panel.parquet`;
+
+/** Must match `web/export/contract.py:PARQUET_HEADER_KEY`. */
+const PARQUET_HEADER_KEY = "fpl_trends_header";
+
+/**
+ * The header out of a parquet file's key-value metadata. Null when it is
+ * missing or fails the schema — a provenance bar with a fallback date is
+ * a smaller failure than a surface that will not open.
+ */
+export function headerFromMetadata(
+  keyValue: readonly { key: string; value?: string | undefined }[] | undefined,
+): Header | null {
+  const raw = keyValue?.find((entry) => entry.key === PARQUET_HEADER_KEY)?.value;
+  if (!raw) return null;
+  try {
+    const parsed = Header.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
 
 let pending: Promise<Session> | null = null;
 
@@ -93,6 +122,7 @@ async function create(onProgress?: (progress: LoadProgress) => void): Promise<Se
   const schema = parquetSchema(metadata);
   const names = schema.children.map((child) => child.element.name);
   const rows = Number(metadata.num_rows);
+  const header = headerFromMetadata(metadata.key_value_metadata);
 
   const cache = new Map<string, PanelColumn>();
   const inflight = new Map<string, Promise<PanelColumn>>();
@@ -120,6 +150,7 @@ async function create(onProgress?: (progress: LoadProgress) => void): Promise<Se
   return {
     rows,
     names,
+    header,
     column(key: string) {
       const cached = cache.get(key);
       if (cached) return Promise.resolve(cached);

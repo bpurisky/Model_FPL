@@ -367,7 +367,7 @@ export function FormMatrix() {
           </p>
         </div>
         <Provenance
-          header={engine.columns.header}
+          header={engine.session.header ?? engine.columns.header}
           basis={engine.columns.header.normalization_basis}
         />
       </header>

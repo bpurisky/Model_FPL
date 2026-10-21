@@ -16,6 +16,8 @@
  */
 
 import { DATA_BASE, type LoadProgress } from "../data/load";
+import type { Header } from "../data/schema";
+import { headerFromMetadata } from "./session";
 
 /** Thrown when the artifact is absent — §5.14.8's empty state. */
 export class SeriesMissingError extends Error {
@@ -55,11 +57,17 @@ const FIELDS = [
   "model_projection",
 ] as const;
 
-let pending: Promise<SeriesPoint[]> | null = null;
+export interface Series {
+  rows: SeriesPoint[];
+  /** The file's own export header; see `Session.header`. */
+  header: Header | null;
+}
+
+let pending: Promise<Series> | null = null;
 
 export function openSeries(
   onProgress?: (progress: LoadProgress) => void,
-): Promise<SeriesPoint[]> {
+): Promise<Series> {
   pending ??= read(onProgress).catch((error) => {
     pending = null;
     throw error;
@@ -67,7 +75,7 @@ export function openSeries(
   return pending;
 }
 
-async function read(onProgress?: (progress: LoadProgress) => void): Promise<SeriesPoint[]> {
+async function read(onProgress?: (progress: LoadProgress) => void): Promise<Series> {
   const response = await fetch(URL_PATH);
   if (response.status === 404) throw new SeriesMissingError();
   if (!response.ok) {
@@ -103,7 +111,7 @@ async function read(onProgress?: (progress: LoadProgress) => void): Promise<Seri
     throw new Error(`${URL_PATH} is not a parquet file`);
   }
 
-  const [{ parquetRead }, { compressors }] = await Promise.all([
+  const [{ parquetMetadataAsync, parquetRead }, { compressors }] = await Promise.all([
     import("hyparquet"),
     import("hyparquet-compressors"),
   ]);
@@ -117,9 +125,12 @@ async function read(onProgress?: (progress: LoadProgress) => void): Promise<Seri
       ) as ArrayBuffer,
   };
 
+  const metadata = await parquetMetadataAsync(file);
+
   let rows: SeriesPoint[] = [];
   await parquetRead({
     file,
+    metadata,
     compressors,
     columns: [...FIELDS],
     // Rows arrive as arrays in the order `columns` names them.
@@ -138,7 +149,7 @@ async function read(onProgress?: (progress: LoadProgress) => void): Promise<Seri
     },
   });
 
-  return rows;
+  return { rows, header: headerFromMetadata(metadata.key_value_metadata) };
 }
 
 /**

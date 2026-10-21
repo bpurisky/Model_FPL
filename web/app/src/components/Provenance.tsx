@@ -1,5 +1,5 @@
 import type { Header } from "../data/schema";
-import { hoursSince, isStale, STALE_AFTER_HOURS } from "../data/load";
+import { freshness, STALE_AFTER_HOURS } from "../data/load";
 import styles from "./Provenance.module.css";
 
 export interface ProvenanceProps {
@@ -16,8 +16,8 @@ export interface ProvenanceProps {
  * have to go looking for is one nobody checks.
  */
 export function Provenance({ header, basis }: ProvenanceProps) {
-  const stale = isStale(header.generated_at);
-  const age = Math.floor(hoursSince(header.generated_at));
+  const { stale, unchanged, age: hours } = freshness(header.generated_at);
+  const age = Math.floor(hours);
 
   return (
     <div className={styles.bar}>
@@ -32,6 +32,7 @@ export function Provenance({ header, basis }: ProvenanceProps) {
         <span className={`${stale ? styles.stale : styles.value} data`}>
           {new Date(header.generated_at).toISOString().replace("T", " ").slice(0, 16)}Z
           {stale && ` · ${age}h old, past the ${STALE_AFTER_HOURS}h threshold`}
+          {unchanged && ` · unchanged since, rechecked ${age}h ago`}
         </span>
       </span>
       <span className={styles.item}>

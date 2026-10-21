@@ -37,6 +37,7 @@ function panel(data: Record<string, PanelColumn>): Session & { read: string[] } 
   return {
     rows,
     names: Object.keys(data),
+    header: null,
     read,
     async column(key: string) {
       read.push(key);
