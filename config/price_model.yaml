@@ -1,11 +1,12 @@
 # Written by `uv run python -m analytics fit-price-thresholds` -- do not hand-edit.
 # The launch gate scores only cycles on or after fit_cutoff (see analytics/price_model.py).
-rise_threshold: 10185.6
-fall_threshold: -1804.8357
-fit_cutoff: 2026-10-02
-fit_span: 2026-08-22 to 2026-10-01
-fit_cycles: 32
-fit_rise_f1: 0.2478
-fit_fall_f1: 0.1073
-fit_in_sample_hit_rate: 0.0803
-fitted_at: '2026-10-21T12:10:14Z'
+rise_threshold: 86212.0
+recent_move_hours: 72
+score: net_transfers_24h
+fit_cutoff: 2026-10-21
+fit_span: 2026-08-22 to 2026-10-19
+fit_cycles: 47
+fit_rise_f1: 0.4
+fit_rise_n_called: 58
+fit_in_sample_hit_rate: 0.431
+fitted_at: '2026-10-21T15:24:21Z'
