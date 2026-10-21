@@ -30,13 +30,17 @@ on:
   workflow_dispatch: {}
 
 # Prevent overlapping runs from racing on the same Parquet shards / commits.
-concurrency:
-  group: collect
-  cancel-in-progress: false
+# Job-level rather than workflow-level so top-picks (~17 min when it does
+# fetch) has its own group: GitHub keeps only one pending run per group, so
+# sharing it would let a long top-picks run push a queued price-window run
+# out. top-picks writes its own file and pushes with the same rebase loop.
 
 jobs:
   hourly:
     if: github.event.schedule == '5 * * * *' || github.event_name == 'workflow_dispatch'
+    concurrency:
+      group: collect
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -73,6 +77,9 @@ jobs:
 
   prices:
     if: github.event.schedule == '20,35,50 18,22,23,0,1,2 * * *'
+    concurrency:
+      group: collect
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,6 +103,9 @@ jobs:
 
   top-picks:
     if: github.event.schedule == '40 */3 * * *'
+    concurrency:
+      group: collect-top-picks
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
