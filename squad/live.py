@@ -30,8 +30,10 @@ gameweeks into one row and defeated the trailing WINDOW itself.
 
 from __future__ import annotations
 
+import asyncio
 import logging
-from dataclasses import dataclass
+from collections.abc import Callable
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -49,6 +51,9 @@ from collector.client import FPLClient
 from collector.config import CollectorConfig
 from collector.schemas import (
     BootstrapStatic,
+    EntryHistory,
+    EntryPicksPayload,
+    EntryTransfer,
     fixture_is_played,
     parse_bootstrap_static,
     parse_entry_history,
@@ -535,53 +540,122 @@ def build_scoreline(
     return {gw: scoreline_table(fixtures, strengths, gw) for gw in horizon}
 
 
-async def fetch_live_data(
-    cfg: CollectorConfig,
-    entry_id: int,
+@dataclass
+class GameweekContext:
+    """Everything a recommendation reads that is the same for every entry
+    in a given gameweek: bootstrap-static, the fixture list, and (memoized
+    in `derived`) everything built from them -- the training frame, the
+    roster, difficulty and scoreline tables, projections.
+
+    Split out of `fetch_live_data` so `service/app.py` can hold one for a
+    few minutes and serve every user from it, instead of re-downloading a
+    ~2MB bootstrap and rebuilding identical tables per request. The CLI
+    path builds a fresh one per run, exactly as before.
+    """
+
+    bootstrap_raw: dict[str, Any]
+    bootstrap: BootstrapStatic
+    fixtures_raw: list[dict[str, Any]]
+    current_event: int
+    next_event: int
+    fetched_at: datetime
+    _derived: dict[tuple, Any] = field(default_factory=dict, repr=False)
+
+    def derived(self, key: tuple, build: Callable[[], Any]) -> Any:
+        """Memoize `build()` under `key`. Two threads racing on one key
+        both build it and one result wins -- harmless, since every builder
+        here is a pure function of this context."""
+        if key not in self._derived:
+            self._derived[key] = build()
+        return self._derived[key]
+
+
+@dataclass(frozen=True)
+class EntryData:
+    """The per-entry half: what only this team ID's own endpoints say."""
+
+    entry_history: EntryHistory
+    transfers: list[EntryTransfer]
+    picks: EntryPicksPayload
+    last_played_event: int
+
+
+async def fetch_gameweek_context(client: FPLClient) -> GameweekContext:
+    bootstrap_raw, fixtures_raw = await asyncio.gather(
+        client.get_json("/bootstrap-static/"), client.get_json("/fixtures/")
+    )
+    bootstrap = parse_bootstrap_static(bootstrap_raw, logger)
+    parse_fixtures(fixtures_raw, logger)  # validated for drift; raw dicts used below for event/team_h/team_a
+    current_event = resolve_current_event(bootstrap, bootstrap_raw)
+    next_event = resolve_next_event(bootstrap, bootstrap_raw)
+    if current_event is None or next_event is None:
+        raise RuntimeError("could not resolve current/next gameweek from bootstrap-static")
+    return GameweekContext(
+        bootstrap_raw=bootstrap_raw,
+        bootstrap=bootstrap,
+        fixtures_raw=fixtures_raw,
+        current_event=current_event,
+        next_event=next_event,
+        fetched_at=datetime.now(timezone.utc),
+    )
+
+
+async def fetch_entry_data(client: FPLClient, entry_id: int) -> EntryData:
+    """History and transfers concurrently, then picks -- which needs
+    history to know the last gameweek this entry played."""
+    entry_history_raw, transfers_raw = await asyncio.gather(
+        client.get_json(f"/entry/{entry_id}/history/"), client.get_json(f"/entry/{entry_id}/transfers/")
+    )
+    entry_history = parse_entry_history(entry_history_raw, logger)
+    transfers = parse_entry_transfers(transfers_raw, logger)
+    if not entry_history.current:
+        raise RuntimeError(f"entry {entry_id} has no gameweek history yet (has gw1's deadline passed?)")
+    last_played_event = max(h.event for h in entry_history.current)
+
+    picks_raw = await client.get_json(f"/entry/{entry_id}/event/{last_played_event}/picks/")
+    return EntryData(
+        entry_history=entry_history,
+        transfers=list(transfers),
+        picks=parse_entry_picks(picks_raw, logger),
+        last_played_event=last_played_event,
+    )
+
+
+def assemble_live_data(
+    ctx: GameweekContext,
+    entry: EntryData,
     horizon: list[int] | None = None,
     scoring_config_path: str = "config/scoring_2026_27.yaml",
 ) -> LiveData:
-    async with FPLClient(**cfg.api.client_kwargs()) as client:
-        bootstrap_raw = await client.get_json("/bootstrap-static/")
-        fixtures_raw = await client.get_json("/fixtures/")
-        entry_history_raw = await client.get_json(f"/entry/{entry_id}/history/")
-        transfers_raw = await client.get_json(f"/entry/{entry_id}/transfers/")
+    """`LiveData` for one entry. Pure CPU, no I/O -- the service runs it in
+    a worker thread. Everything that depends only on the gameweek is
+    memoized on `ctx`, keyed by what it actually depends on."""
+    bootstrap, fixtures_raw = ctx.bootstrap, ctx.fixtures_raw
+    last_played_event = entry.last_played_event
+    horizon = horizon or [ctx.next_event, ctx.next_event + 1, ctx.next_event + 2]
+    horizon_key = tuple(horizon)
 
-        bootstrap = parse_bootstrap_static(bootstrap_raw, logger)
-        parse_fixtures(fixtures_raw, logger)  # validated for drift; raw dicts used below for event/team_h/team_a
-        entry_history = parse_entry_history(entry_history_raw, logger)
-        transfers = parse_entry_transfers(transfers_raw, logger)
-
-        current_event = resolve_current_event(bootstrap, bootstrap_raw)
-        next_event = resolve_next_event(bootstrap, bootstrap_raw)
-        if current_event is None or next_event is None:
-            raise RuntimeError("could not resolve current/next gameweek from bootstrap-static")
-        if not entry_history.current:
-            raise RuntimeError(f"entry {entry_id} has no gameweek history yet (has gw1's deadline passed?)")
-        last_played_event = max(h.event for h in entry_history.current)
-
-        picks_raw = await client.get_json(f"/entry/{entry_id}/event/{last_played_event}/picks/")
-        picks = parse_entry_picks(picks_raw, logger)
-
-    now_cost_by_id = {e.id: e.now_cost for e in bootstrap.elements}
-    ownership = {e.id: float(e.selected_by_percent) for e in bootstrap.elements}
-    web_names = {e.id: e.web_name for e in bootstrap.elements}
+    now_cost_by_id, ownership, web_names = ctx.derived(("bootstrap_maps",), lambda: (
+        {e.id: e.now_cost for e in bootstrap.elements},
+        {e.id: float(e.selected_by_percent) for e in bootstrap.elements},
+        {e.id: e.web_name for e in bootstrap.elements},
+    ))
+    scoring_config = ctx.derived(("scoring_config", scoring_config_path), lambda: load_scoring_config(Path(scoring_config_path)))
 
     picks_snapshot_ts = next(ev.deadline_time for ev in bootstrap.events if ev.id == last_played_event)
     as_of = datetime.now(timezone.utc)
-    squad = reconstruct_squad(picks, picks_snapshot_ts, transfers, as_of, current_prices=now_cost_by_id)
+    squad = reconstruct_squad(entry.picks, picks_snapshot_ts, entry.transfers, as_of, current_prices=now_cost_by_id)
 
     ft_states = derive_free_transfers(
-        list(transfers), entry_history.chips, through_event=next_event,
-        max_banked=load_scoring_config(Path(scoring_config_path))["free_transfers"]["max_banked"],
+        list(entry.transfers), entry.entry_history.chips, through_event=ctx.next_event,
+        max_banked=scoring_config["free_transfers"]["max_banked"],
     )
     free_transfers = ft_states[-1].available_before if ft_states else 1
 
-    horizon = horizon or [next_event, next_event + 1, next_event + 2]
-    train_df = build_train_df(bootstrap, bootstrap_raw, fixtures_raw, gw=last_played_event)
-    target_roster = build_target_roster(bootstrap)
-    difficulty_table = build_difficulty_table(bootstrap, fixtures_raw, horizon)
-    scoring_config = load_scoring_config(Path(scoring_config_path))
+    train_df = ctx.derived(
+        ("train_df", last_played_event),
+        lambda: build_train_df(bootstrap, ctx.bootstrap_raw, fixtures_raw, gw=last_played_event),
+    )
 
     gw_teams = {t for f in fixtures_raw if f["event"] == last_played_event for t in (f["team_h"], f["team_a"])}
     played_teams = {
@@ -593,13 +667,15 @@ async def fetch_live_data(
 
     return LiveData(
         squad=squad,
-        pool=build_player_pool(bootstrap),
+        pool=ctx.derived(("pool",), lambda: build_player_pool(bootstrap)),
         free_transfers=free_transfers,
-        current_event=current_event,
-        next_event=next_event,
+        current_event=ctx.current_event,
+        next_event=ctx.next_event,
         train_df=train_df,
-        target_roster=target_roster,
-        difficulty_table=difficulty_table,
+        target_roster=ctx.derived(("target_roster",), lambda: build_target_roster(bootstrap)),
+        difficulty_table=ctx.derived(
+            ("difficulty", horizon_key), lambda: build_difficulty_table(bootstrap, fixtures_raw, horizon)
+        ),
         scoring_config=scoring_config,
         ownership=ownership,
         web_names=web_names,
@@ -608,9 +684,24 @@ async def fetch_live_data(
         teams_with_played_data=len(played_teams),
         teams_total=len(gw_teams),
         history_gws=train_df["gw"].n_unique(),
-        availability=build_availability(bootstrap),
-        scoreline=build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
+        availability=ctx.derived(("availability",), lambda: build_availability(bootstrap)),
+        scoreline=ctx.derived(
+            ("scoreline", last_played_event, horizon_key),
+            lambda: build_scoreline(bootstrap, fixtures_raw, train_df, horizon),
+        ),
     )
+
+
+async def fetch_live_data(
+    cfg: CollectorConfig,
+    entry_id: int,
+    horizon: list[int] | None = None,
+    scoring_config_path: str = "config/scoring_2026_27.yaml",
+) -> LiveData:
+    async with FPLClient(**cfg.api.client_kwargs()) as client:
+        ctx = await fetch_gameweek_context(client)
+        entry = await fetch_entry_data(client, entry_id)
+    return assemble_live_data(ctx, entry, horizon, scoring_config_path)
 
 
 def build_projections(

@@ -245,3 +245,69 @@ def test_shape_response_pairs_transfers_and_marks_the_captain():
     assert body["plan"] == []
     assert body["squad_size"] == 3
     assert body["unchanged_from_current"] == 0
+
+
+# --------------------------------------------------------------------------
+# the shared per-gameweek context cache (run_recommendation)
+# --------------------------------------------------------------------------
+
+
+class _FakeContext:
+    def __init__(self, current_event: int, fetched_at):
+        self.current_event = current_event
+        self.fetched_at = fetched_at
+
+
+class _FakeEntry:
+    def __init__(self, last_played_event: int):
+        self.last_played_event = last_played_event
+
+
+@pytest.fixture
+def cache_harness(monkeypatch):
+    """run_recommendation with the FPL calls and the solve stubbed out,
+    counting how often the shared context is actually fetched."""
+    from datetime import datetime, timezone
+
+    calls = {"context": 0, "entry_gw": 7, "context_gw": 7}
+
+    async def fake_context(client):
+        calls["context"] += 1
+        return _FakeContext(calls["context_gw"], datetime.now(timezone.utc))
+
+    async def fake_entry(client, entry_id):
+        return _FakeEntry(calls["entry_gw"])
+
+    monkeypatch.setattr(app_module, "fetch_gameweek_context", fake_context)
+    monkeypatch.setattr(app_module, "fetch_entry_data", fake_entry)
+    monkeypatch.setattr(app_module, "_solve", lambda ctx, entry, payload: {"ctx": id(ctx)})
+    monkeypatch.setattr(app_module, "_context", None)
+    return calls
+
+
+def _recommend(entry_id: int = 123) -> dict:
+    import asyncio
+
+    return asyncio.run(app_module.run_recommendation(app_module.RecommendRequest(entry_id=entry_id)))
+
+
+def test_requests_within_the_ttl_share_one_context(cache_harness):
+    first, second = _recommend(1), _recommend(2)
+    assert cache_harness["context"] == 1
+    assert first["ctx"] == second["ctx"]
+
+
+def test_an_expired_context_is_refetched(cache_harness, monkeypatch):
+    _recommend()
+    monkeypatch.setattr(app_module, "CONTEXT_TTL_SECONDS", -1)
+    _recommend()
+    assert cache_harness["context"] == 2
+
+
+def test_a_gameweek_rollover_forces_a_refetch_inside_the_ttl(cache_harness):
+    """An entry that has already played a gameweek the cached context
+    hasn't heard of means the cache is stale, however young it is."""
+    _recommend()
+    cache_harness["entry_gw"], cache_harness["context_gw"] = 8, 8
+    _recommend()
+    assert cache_harness["context"] == 2

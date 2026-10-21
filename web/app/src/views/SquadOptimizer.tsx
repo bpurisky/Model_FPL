@@ -26,12 +26,15 @@
  * placeholder data in any state. Left as a documented gap, not invented.
  */
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useApp } from "../app/state";
 import {
   fetchRecommendation,
   OPTIMIZER_API_URL,
   OptimizerError,
+  parseEntryId,
+  TIMEOUT_STATUS,
+  warmUp,
   type OptimizerRecommendation,
   type OptimizerXiPlayer,
 } from "../data/optimizer";
@@ -42,6 +45,15 @@ type ResultState =
   | { status: "loading" }
   | { status: "error"; error: Error }
   | { status: "ready"; data: OptimizerRecommendation };
+
+interface RunArgs {
+  entryId: number;
+  horizon?: number[] | undefined;
+  maxTransfers?: number | undefined;
+}
+
+/** Where the backend is, as far as the warm-up ping knows. */
+type Backend = "unknown" | "awake" | "unreachable";
 
 const POSITIONS = ["GK", "DEF", "MID", "FWD"] as const;
 
@@ -65,39 +77,64 @@ export function SquadOptimizer() {
   const [horizonInput, setHorizonInput] = useState("");
   const [maxTransfersInput, setMaxTransfersInput] = useState("");
   const [result, setResult] = useState<ResultState>({ status: "idle" });
+  const [backend, setBackend] = useState<Backend>("unknown");
+  const lastRun = useRef<RunArgs | null>(null);
 
   const configured = Boolean(OPTIMIZER_API_URL);
 
-  async function run(entryId: number, horizon?: number[], maxTransfers?: number) {
+  async function run(args: RunArgs) {
+    lastRun.current = args;
     setResult({ status: "loading" });
     try {
-      const data = await fetchRecommendation(entryId, { horizon, maxTransfers });
+      const data = await fetchRecommendation(args.entryId, { horizon: args.horizon, maxTransfers: args.maxTransfers });
+      setBackend("awake");
       setResult({ status: "ready", data });
     } catch (error) {
       setResult({ status: "error", error: error as Error });
     }
   }
 
+  // The free-tier backend sleeps after ~15 idle minutes and takes about a
+  // minute to wake. Pinging it the moment this view opens overlaps that
+  // wake-up with the reader typing their team ID, and tells the loading
+  // note whether a run is waiting on the server or on the solve.
+  //
   // A linked run (`?view=optimizer&entry=123`, §5.5) fires once on mount
   // rather than on every render — horizon/max-transfers aren't in the URL
   // (see data/optimizer.ts's contract note), so a link reproduces the
   // team ID and lets the reader re-run with whatever controls they want.
   useEffect(() => {
-    if (configured && state.entry) void run(state.entry);
+    if (!configured) return;
+    let cancelled = false;
+    void warmUp().then((awake) => {
+      if (!cancelled) setBackend(awake ? "awake" : "unreachable");
+    });
+    if (state.entry) void run({ entryId: state.entry });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    const entryId = Number(entryInput);
-    if (!Number.isFinite(entryId) || entryId <= 0) {
-      setResult({ status: "error", error: new OptimizerError("Enter a valid FPL team ID (a positive number).") });
+    const entryId = parseEntryId(entryInput);
+    if (entryId === undefined) {
+      setResult({
+        status: "error",
+        error: new OptimizerError("Enter your FPL team ID: the number, or a link to your Points page."),
+      });
       return;
     }
+    setEntryInput(String(entryId));
     dispatch({ type: "entry", entryId });
     const horizon = parseHorizon(horizonInput);
     const maxTransfers = maxTransfersInput.trim() === "" ? undefined : Number(maxTransfersInput);
-    void run(entryId, horizon, maxTransfers);
+    void run({ entryId, horizon, maxTransfers });
+  }
+
+  function retry() {
+    if (lastRun.current) void run(lastRun.current);
   }
 
   return (
@@ -123,12 +160,12 @@ export function SquadOptimizer() {
               <span className={styles.fieldLabel}>FPL team ID</span>
               <input
                 className={styles.input}
-                type="number"
+                type="text"
                 inputMode="numeric"
-                min={1}
+                autoComplete="off"
                 value={entryInput}
                 onChange={(event) => setEntryInput(event.target.value)}
-                placeholder="e.g. 2986528"
+                placeholder="e.g. 2986528, or paste your Points page link"
                 required
               />
             </label>
@@ -158,8 +195,12 @@ export function SquadOptimizer() {
             </button>
           </form>
 
-          {result.status === "loading" && <LoadingNote />}
-          {result.status === "error" && <ErrorNote error={result.error} />}
+          <TeamIdHelp />
+
+          {result.status === "loading" && <LoadingNote backend={backend} />}
+          {result.status === "error" && (
+            <ErrorNote error={result.error} onRetry={lastRun.current ? retry : undefined} />
+          )}
           {result.status === "ready" && <Recommendation data={result.data} />}
         </>
       )}
@@ -180,22 +221,58 @@ function NotConfigured() {
   );
 }
 
-function LoadingNote() {
+const TEAM_ID_EXAMPLE = "fantasy.premierleague.com/entry/2986528/event/7";
+
+function TeamIdHelp() {
   return (
-    <p className={styles.loadingNote}>
-      Requesting a live solve. This fetches your squad and transfer history from the FPL API,
-      builds this season&rsquo;s trailing rates, and runs the ILP solver — typically 5&ndash;30
-      seconds depending on how many retries the FPL API needs. No progress bar here: unlike a
-      committed export, there is no byte count to report until the solve finishes.
+    <details className={styles.help}>
+      <summary className={styles.helpSummary}>How do I find my team ID?</summary>
+      <ol className={styles.helpSteps}>
+        <li>
+          Sign in at <code className="data">fantasy.premierleague.com</code> in a web browser.
+        </li>
+        <li>
+          Open the <strong>Points</strong> tab.
+        </li>
+        <li>
+          Look at the address bar: your team ID is the number after <code className="data">/entry/</code>.
+          In <code className="data">{TEAM_ID_EXAMPLE}</code> it&rsquo;s <code className="data">2986528</code>.
+        </li>
+      </ol>
+      <p className={styles.sub}>
+        You can also paste the whole link into the box above and the ID is read out of it. The FPL
+        phone app doesn&rsquo;t show the ID, so use a browser (a phone browser works). Your ID stays
+        the same all season.
+      </p>
+    </details>
+  );
+}
+
+function LoadingNote({ backend }: { backend: Backend }) {
+  if (backend !== "awake") {
+    return (
+      <p className={styles.loadingNote} role="status">
+        Waking the optimizer server. It runs on free hosting that sleeps when nobody has used it
+        for a while, so the first request can take up to about a minute. Requests after that are
+        much faster.
+      </p>
+    );
+  }
+  return (
+    <p className={styles.loadingNote} role="status">
+      Fetching your squad and transfer history from the FPL API and running the solver. This
+      usually takes a few seconds, longer when the FPL API is busy (around a deadline, for example).
     </p>
   );
 }
 
-function ErrorNote({ error }: { error: Error }) {
+function ErrorNote({ error, onRetry }: { error: Error; onRetry?: (() => void) | undefined }) {
   const status = error instanceof OptimizerError ? error.status : undefined;
   const hint =
     status === 404
-      ? "Check the team ID — it's the number in your FPL ‘Points’ page URL, e.g. .../entry/2986528/event/1."
+      ? `Check the team ID: it's the number after /entry/ in your Points page link, e.g. ${TEAM_ID_EXAMPLE}.`
+      : status === TIMEOUT_STATUS
+      ? "Trying again usually works: the server is normally awake by now."
       : status === 422
       ? "This usually means the entry has no gameweek history yet (before gw1's deadline)."
       : status === 429
@@ -207,6 +284,11 @@ function ErrorNote({ error }: { error: Error }) {
     <div className={styles.failure} role="alert">
       <p className={styles.failureHead}>{error.message}</p>
       {hint && <p className={styles.sub}>{hint}</p>}
+      {onRetry && status !== 404 && status !== 422 && (
+        <button type="button" className={styles.retry} onClick={onRetry}>
+          Try again
+        </button>
+      )}
     </div>
   );
 }

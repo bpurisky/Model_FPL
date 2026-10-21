@@ -12,7 +12,9 @@ add a backend or a browser-side solver to the architecture". This module
 is that choice, made 2026-09-02: a small, stateless HTTP wrapper around
 the CLI path that already exists (`squad/__main__.py:cmd_recommend`) --
 no logic here beyond request validation, per-IP rate limiting, error
-mapping, and response shaping. The solve itself is unchanged.
+mapping, response shaping, and a short-lived cache of the per-gameweek
+data every request shares (`_gameweek_context`). The solve itself is
+unchanged.
 
 Run locally:
     uv run uvicorn service.app:app --reload
@@ -25,10 +27,12 @@ development works with no configuration.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import time
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -37,9 +41,18 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
-from collector.client import FPLNotFoundError, FPLServerError
+from collector.client import FPLClient, FPLNotFoundError, FPLServerError
 from collector.config import load_config
-from squad.live import LiveData, build_projections, fetch_live_data, live_data_caveat
+from squad.live import (
+    EntryData,
+    GameweekContext,
+    LiveData,
+    assemble_live_data,
+    build_projections,
+    fetch_entry_data,
+    fetch_gameweek_context,
+    live_data_caveat,
+)
 from squad.optimize import OptimizationResult, Player, pair_transfers_by_position, optimize_squad, prune_pool, template_risk_flags
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -69,6 +82,20 @@ POSITION_ORDER = {"GK": 0, "DEF": 1, "MID": 2, "FWD": 3}
 RATE_LIMIT_WINDOW_SECONDS = 60.0
 RATE_LIMIT_MAX_REQUESTS = 6
 _request_log: dict[str, deque[float]] = defaultdict(deque)
+
+# How long one fetched bootstrap/fixtures context (and everything built
+# from it) serves every request. Prices move once a night and a
+# gameweek rollover forces a refetch (run_recommendation), so ten minutes
+# costs nothing in accuracy and saves a ~2MB download plus a rebuild of
+# every gameweek-level table on each request after the first.
+CONTEXT_TTL_SECONDS = 600
+_context: GameweekContext | None = None
+_context_lock = asyncio.Lock()
+
+# See _client_kwargs.
+SERVICE_RATE_LIMIT_PER_SECOND = 4.0
+SERVICE_MAX_RETRIES = 2
+SERVICE_TIMEOUT_SECONDS = 10.0
 
 
 def _client_ip(request: Request) -> str:
@@ -204,14 +231,47 @@ def shape_response(
     }
 
 
-async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:
-    cfg = load_config(CONFIG_PATH)
-    live = await fetch_live_data(cfg, payload.entry_id, horizon=payload.horizon)
+def _client_kwargs() -> dict[str, Any]:
+    """The collector's client settings, tightened for an interactive
+    request: someone is watching a spinner, so a failing FPL call should
+    end in a clear 502 within ~30s, not after the collector's patient
+    5 retries x 30s timeout (several minutes -- the "it just stalls"
+    reports). The higher rate only lets one request's 2-3 independent
+    calls go out together; it is not a sustained load on FPL."""
+    return {
+        **load_config(CONFIG_PATH).api.client_kwargs(),
+        "rate_limit_per_second": SERVICE_RATE_LIMIT_PER_SECOND,
+        "max_retries": SERVICE_MAX_RETRIES,
+        "timeout": SERVICE_TIMEOUT_SECONDS,
+    }
+
+
+async def _gameweek_context(client: FPLClient, *, force: bool = False) -> GameweekContext:
+    """The shared, per-gameweek half of every request (see
+    `squad/live.py:GameweekContext`), reused for `CONTEXT_TTL_SECONDS`.
+    The lock means a burst of requests after expiry triggers one refetch,
+    not one each."""
+    global _context
+    async with _context_lock:
+        age = (datetime.now(timezone.utc) - _context.fetched_at).total_seconds() if _context else None
+        if force or age is None or age > CONTEXT_TTL_SECONDS:
+            _context = await fetch_gameweek_context(client)
+        return _context
+
+
+def _solve(ctx: GameweekContext, entry: EntryData, payload: RecommendRequest) -> dict[str, Any]:
+    """Everything after the HTTP calls: pure CPU, run in a worker thread so
+    one user's solve doesn't stall every other request (or the health
+    check) on the event loop."""
+    live = assemble_live_data(ctx, entry, horizon=payload.horizon)
     horizon = payload.horizon or [live.next_event, live.next_event + 1, live.next_event + 2]
 
-    projections = build_projections(
-        live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon,
-        availability=live.availability, scoreline=live.scoreline,
+    projections = ctx.derived(
+        ("projections", live.data_gw, tuple(horizon)),
+        lambda: build_projections(
+            live.train_df, live.target_roster, live.scoring_config, live.difficulty_table, horizon,
+            availability=live.availability, scoreline=live.scoreline,
+        ),
     )
     result = optimize_squad(
         live.squad,
@@ -224,6 +284,16 @@ async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:
         max_banked=live.scoring_config["free_transfers"]["max_banked"],
     )
     return shape_response(payload.entry_id, live, result, horizon)
+
+
+async def run_recommendation(payload: RecommendRequest) -> dict[str, Any]:
+    async with FPLClient(**_client_kwargs()) as client:
+        ctx = await _gameweek_context(client)
+        entry = await fetch_entry_data(client, payload.entry_id)
+        if entry.last_played_event > ctx.current_event:
+            # The gameweek rolled over since the context was cached.
+            ctx = await _gameweek_context(client, force=True)
+    return await asyncio.to_thread(_solve, ctx, entry, payload)
 
 
 def create_app() -> FastAPI:

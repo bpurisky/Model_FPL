@@ -37,4 +37,11 @@ EXPOSE 8000
 
 # Render (and most PaaS hosts) inject $PORT and expect the process to bind
 # to it; 8000 is the local/dev fallback. Shell form so ${PORT} expands.
-CMD uv run uvicorn service.app:app --host 0.0.0.0 --port ${PORT:-8000}
+#
+# --no-sync: a bare `uv run` re-syncs the environment to the project's
+# *default* groups before starting, which here means installing the dev
+# group (pytest) over the network on every container start -- and a
+# free-tier container starts cold after every idle spell, so that ran in
+# front of real users. The build-time `uv sync` above already installed
+# exactly what the service needs.
+CMD uv run --no-sync uvicorn service.app:app --host 0.0.0.0 --port ${PORT:-8000}
