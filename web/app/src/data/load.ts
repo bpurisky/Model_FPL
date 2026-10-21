@@ -57,6 +57,47 @@ export interface LoadProgress {
 }
 
 /**
+ * Read a response body to bytes, reporting progress as it arrives.
+ *
+ * `total` is null whenever the response carries a `Content-Encoding`.
+ * GitHub Pages gzips JSON, and then `Content-Length` is the *compressed*
+ * size while the reader counts *decoded* bytes: a 2 MB file would report
+ * "1960 KB of 160 KB", and a bar past 100%. Declining to give a total is
+ * honest, where giving a wrong one is not. Parquet is served as-is, so its
+ * length is the real one and the bar stays determinate.
+ */
+export async function readWithProgress(
+  response: Response,
+  onProgress?: (progress: LoadProgress) => void,
+): Promise<Uint8Array> {
+  if (!response.body) return new Uint8Array(await response.arrayBuffer());
+
+  const encoding = response.headers.get("content-encoding");
+  const header = response.headers.get("content-length");
+  const encoded = encoding !== null && encoding.trim().toLowerCase() !== "identity";
+  const total = !encoded && header ? Number(header) : null;
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.length;
+    onProgress?.({ received, total });
+  }
+
+  const merged = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return merged;
+}
+
+/**
  * §5.9 requires the user to know whether they are waiting on 200 KB or
  * 8 MB, and §5.8.8 forbids skeletons: a shimmer implies content shape
  * before it is known, which on a data tool is a small lie. So the fetch
@@ -70,32 +111,7 @@ async function fetchWithProgress(
   if (!response.ok) {
     throw new ContractError(url, `${response.status} ${response.statusText}`);
   }
-
-  const header = response.headers.get("content-length");
-  const total = header ? Number(header) : null;
-
-  if (!response.body || !onProgress) {
-    return response.json();
-  }
-
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    received += value.length;
-    onProgress({ received, total });
-  }
-
-  const merged = new Uint8Array(received);
-  let offset = 0;
-  for (const chunk of chunks) {
-    merged.set(chunk, offset);
-    offset += chunk.length;
-  }
-  return JSON.parse(new TextDecoder().decode(merged));
+  return JSON.parse(new TextDecoder().decode(await readWithProgress(response, onProgress)));
 }
 
 function assertContractVersion(file: string, version: number): void {
@@ -109,7 +125,34 @@ function assertContractVersion(file: string, version: number): void {
   }
 }
 
-async function loadFile<T extends z.ZodTypeAny>(
+/**
+ * One in-flight or settled load per file, for the life of the page.
+ *
+ * Every navigation used to re-download its exports: `columns.json` by
+ * seven views, the 2 MB `players.json` by three. A concurrent second
+ * caller shares the first's promise. Only the first caller's `onProgress`
+ * is called, which costs nothing once the file has resolved. A failure is
+ * dropped so the next visit retries rather than replaying the error.
+ */
+const cache = new Map<string, Promise<unknown>>();
+
+function loadFile<T extends z.ZodTypeAny>(
+  name: string,
+  schema: T,
+  onProgress?: (progress: LoadProgress) => void,
+): Promise<z.infer<T>> {
+  const hit = cache.get(name);
+  if (hit) return hit as Promise<z.infer<T>>;
+
+  const pending = fetchAndParse(name, schema, onProgress).catch((error: unknown) => {
+    cache.delete(name);
+    throw error;
+  });
+  cache.set(name, pending);
+  return pending;
+}
+
+async function fetchAndParse<T extends z.ZodTypeAny>(
   name: string,
   schema: T,
   onProgress?: (progress: LoadProgress) => void,
