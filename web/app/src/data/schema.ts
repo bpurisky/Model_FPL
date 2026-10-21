@@ -399,6 +399,50 @@ export const PlayersFile = z.object({
   players: z.array(PlayerRow),
 });
 
+/** One fixture a club plays in a projected gameweek. */
+export const ProjectionFixture = z.object({
+  opponent: z.string(),
+  home: z.boolean(),
+  difficulty: z.number().int().nullable(),
+});
+
+/** None is a blank, two a double. Present for every gameweek of the horizon. */
+export const ProjectionTeamGameweek = z.object({
+  gw: z.number().int(),
+  fixtures: z.array(ProjectionFixture),
+});
+
+export const ProjectionTeam = z.object({
+  team: z.string(),
+  short_name: z.string(),
+  gameweeks: z.array(ProjectionTeamGameweek),
+});
+
+/**
+ * `xp[i]` belongs to `ProjectionsFile.gameweeks[i]`. The minutes
+ * probabilities are the first projected gameweek's; `p_full` is P(60+).
+ */
+export const ProjectionPlayer = z.object({
+  element_id: z.number().int(),
+  name: z.string(),
+  team: z.string(),
+  position: z.string(),
+  price: z.number().int().nullable(),
+  xp: z.array(z.number().nullable()),
+  p_blank: z.number().nullable(),
+  p_short: z.number().nullable(),
+  p_full: z.number().nullable(),
+});
+
+export const ProjectionsFile = z.object({
+  header: Header,
+  season: z.string(),
+  gameweek: z.number().int(),
+  gameweeks: z.array(z.number().int()),
+  teams: z.array(ProjectionTeam),
+  players: z.array(ProjectionPlayer),
+});
+
 /**
  * What a season actually covers. `partial` keeps the season selector
  * honest: a rho over two gameweeks and one over thirty-eight look
@@ -540,6 +584,10 @@ export type BoardPlayer = z.infer<typeof BoardPlayer>;
 export type BoardFile = z.infer<typeof BoardFile>;
 export type PlayerRow = z.infer<typeof PlayerRow>;
 export type PlayersFile = z.infer<typeof PlayersFile>;
+export type ProjectionFixture = z.infer<typeof ProjectionFixture>;
+export type ProjectionTeam = z.infer<typeof ProjectionTeam>;
+export type ProjectionPlayer = z.infer<typeof ProjectionPlayer>;
+export type ProjectionsFile = z.infer<typeof ProjectionsFile>;
 export type ObservationRow = z.infer<typeof ObservationRow>;
 export type ObservationsFile = z.infer<typeof ObservationsFile>;
 export type SeasonSummary = z.infer<typeof SeasonSummary>;

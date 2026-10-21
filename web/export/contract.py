@@ -704,6 +704,74 @@ class PlayersFile(_Strict):
     players: list[PlayerRow]
 
 
+class ProjectionFixture(_Strict):
+    """One fixture a club plays in a projected gameweek.
+
+    `difficulty` is FPL's published 1-5 rating from this club's point of
+    view, null only if the reference table carries none for the fixture.
+    `opponent` is the opponent's three-letter short name, as the game
+    itself prints it.
+    """
+
+    opponent: str
+    home: bool
+    difficulty: int | None
+
+
+class ProjectionTeamGameweek(_Strict):
+    """A club's fixtures in one projected gameweek: none is a blank, two a
+    double. Present for every gameweek of the horizon so a blank is an
+    explicit empty list rather than an absent key."""
+
+    gw: int
+    fixtures: list[ProjectionFixture]
+
+
+class ProjectionTeam(_Strict):
+    team: str
+    short_name: str
+    gameweeks: list[ProjectionTeamGameweek]
+
+
+class ProjectionPlayer(_Strict):
+    """One element's projected points over the horizon.
+
+    `xp[i]` belongs to `ProjectionsFile.gameweeks[i]`. It is 0.0 in a blank
+    gameweek and the sum over both fixtures in a double, exactly as the
+    event model sums them. The three minutes probabilities are the minutes
+    head's distribution for the *first* projected gameweek only: FPL's
+    availability flag speaks to the next round and is applied there alone,
+    so the later gameweeks' distributions would differ and are not shipped.
+    `p_full` is P(60+ minutes). There is no P(start) -- the model has no
+    such head (see `web/export/projections.py`).
+    """
+
+    element_id: int
+    name: str
+    team: str
+    position: str
+    price: int | None
+    xp: list[float | None]
+    p_blank: float | None
+    p_short: float | None
+    p_full: float | None
+
+
+class ProjectionsFile(_Strict):
+    """`projections.json`: a player by gameweek table of expected points.
+
+    `gameweeks` is the horizon, up to six gameweeks starting at the one
+    after `gameweek`, and shorter when the season ends first.
+    """
+
+    header: Header
+    season: str
+    gameweek: int
+    gameweeks: list[int]
+    teams: list[ProjectionTeam]
+    players: list[ProjectionPlayer]
+
+
 class SeasonSummary(_Strict):
     """What a season actually covers.
 
@@ -1023,6 +1091,7 @@ def contract_shape() -> dict[str, Any]:
         ShrinkagePoint, ShrinkageFile,
         PositionWeights, BoardBucketAccuracy, BoardPlayer, BoardFile,
         PlayerMetric, PlayerProjection, PlayerRow, PlayersFile,
+        ProjectionFixture, ProjectionTeamGameweek, ProjectionTeam, ProjectionPlayer, ProjectionsFile,
         SeasonSummary, ObservationRow, ObservationsFile,
         PaperTradeGwNote, PaperTradeSquadLevelGw, PaperTradeSquadLevel,
         PaperTradePlayerLevelGw, PaperTradeLeakageCheck, PaperTradeFreezeProvenance,

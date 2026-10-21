@@ -62,6 +62,10 @@ const PaperTradeResults = lazy(() =>
   import("../views/PaperTradeResults").then((module) => ({ default: module.PaperTradeResults })),
 );
 
+const Projections = lazy(() =>
+  import("../views/Projections").then((module) => ({ default: module.Projections })),
+);
+
 const Scorecard = lazy(() =>
   import("../views/Scorecard").then((module) => ({ default: module.Scorecard })),
 );
@@ -231,6 +235,11 @@ function Shell() {
           </Suspense>
         )}
         {state.view === "board" && <ModelBoard />}
+        {state.view === "projections" && (
+          <Suspense fallback={<PageLoading />}>
+            <Projections />
+          </Suspense>
+        )}
         {state.view === "scorecard" && (
           <Suspense fallback={<PageLoading />}>
             <Scorecard />

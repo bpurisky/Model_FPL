@@ -23,6 +23,7 @@ import {
   ObservationsFile,
   PaperTradeFile,
   PlayersFile,
+  ProjectionsFile,
   ScorecardFile,
   ShrinkageFile,
 } from "./schema";
@@ -177,6 +178,13 @@ export const loadColumns = (onProgress?: (p: LoadProgress) => void) =>
 
 export const loadPlayers = (onProgress?: (p: LoadProgress) => void) =>
   loadFile("players.json", PlayersFile, onProgress);
+
+/**
+ * Expected points for each of the next six gameweeks. Committed, built
+ * from the same model and data as `players.json`.
+ */
+export const loadProjections = (onProgress?: (p: LoadProgress) => void) =>
+  loadFile("projections.json", ProjectionsFile, onProgress);
 
 /**
  * The model's own ranking (§5.4.6). Committed, so the Model Board works
