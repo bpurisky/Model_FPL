@@ -30,7 +30,12 @@ jobs:
   python:
     runs-on: ubuntu-latest
     steps:
+      # Full history: tests/test_freeze.py checks every committed freeze
+      # landed before its deadline by reading git log, and a shallow clone
+      # makes every file look first-committed at HEAD.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
